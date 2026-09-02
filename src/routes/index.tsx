@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Activity, Brain, Globe2, ShieldCheck, Volume2, Waves } from "lucide-react";
+import { Activity, Brain, ExternalLink, Globe2, ShieldCheck, Volume2, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/")({
@@ -47,6 +55,39 @@ const pillars = [
     body: "Runs on any phone with headphones, so routine screening reaches communities far from real-life audiology equipment.",
   },
 ];
+
+const adolescentStudies = [
+  {
+    title: "WHO: over 1 billion young people at risk of hearing loss from unsafe listening",
+    source: "World Health Organization / BMJ Global Health, 2022",
+    url: "https://www.who.int/news/item/15-11-2022-over-1-billion-young-people-at-risk-of-hearing-loss-from-unsafe-listening-practices",
+    finding:
+      "A review of 33 studies covering 19,000+ participants found 24% of 12-34 year olds use unsafe listening volumes on personal devices, and 48% are exposed to unsafe levels at venues.",
+  },
+  {
+    title: "Prevalence of hearing loss among US adolescents (NHANES)",
+    source: "JAMA / NHANES analyses",
+    url: "https://pubmed.ncbi.nlm.nih.gov/20716740/",
+    finding:
+      "Roughly 1 in 5 US adolescents aged 12-19 showed measurable hearing loss, with high-frequency loss rising significantly between survey cycles.",
+  },
+  {
+    title: "Personal listening devices and hearing thresholds in teenagers",
+    source: "Systematic reviews in International Journal of Audiology",
+    url: "https://pubmed.ncbi.nlm.nih.gov/28166675/",
+    finding:
+      "Regular high-volume headphone use is consistently linked to elevated thresholds at 4-6 kHz — the earliest, most easily missed sign of noise damage.",
+  },
+  {
+    title: "Tinnitus and hidden hearing damage in young adults",
+    source: "Scientific Reports / Nature, 2022",
+    url: "https://www.nature.com/articles/s41598-022-14406-4",
+    finding:
+      "Young adults with normal audiograms but heavy recreational noise exposure already show measurable difficulty understanding speech in noise.",
+  },
+];
+
+
 
 function Index() {
   return (
@@ -97,8 +138,43 @@ function Index() {
 
       <section className="border-t border-border/60 bg-card/30">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 md:grid-cols-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="group text-left">
+                <p className="font-display text-4xl font-semibold text-signal">1.5B</p>
+                <p className="mt-2 inline-flex items-center gap-1 text-sm text-muted-foreground underline decoration-dotted underline-offset-4 group-hover:text-foreground">
+                  people live with hearing loss worldwide
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </p>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Hearing loss in adolescents: current research</DialogTitle>
+                <DialogDescription>
+                  A short reading list on why teenage and young-adult hearing is the fastest-growing
+                  part of that 1.5 billion.
+                </DialogDescription>
+              </DialogHeader>
+              <ul className="space-y-4">
+                {adolescentStudies.map((s) => (
+                  <li key={s.url} className="rounded-xl border border-border/70 bg-card/60 p-4">
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-semibold underline-offset-4 hover:underline"
+                    >
+                      {s.title}
+                    </a>
+                    <p className="mt-1 text-xs text-muted-foreground">{s.source}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.finding}</p>
+                  </li>
+                ))}
+              </ul>
+            </DialogContent>
+          </Dialog>
           {[
-            ["1.5B", "people live with hearing loss worldwide"],
             ["10", "frequency-and-ear tracks measured per screening"],
             ["~4 min", "typical adaptive screening time"],
           ].map(([stat, label]) => (
@@ -109,6 +185,7 @@ function Index() {
           ))}
         </div>
       </section>
+
 
       <footer className="border-t border-border/60">
         <div className="mx-auto flex max-w-6xl items-center gap-2 px-5 py-8 text-xs text-muted-foreground">
