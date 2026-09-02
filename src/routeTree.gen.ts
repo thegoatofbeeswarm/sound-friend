@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as RisksRouteImport } from './routes/risks'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as TrainRouteImport } from './routes/train'
 
@@ -30,6 +31,11 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RisksRoute = RisksRouteImport.update({
+  id: '/risks',
+  path: '/risks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestRoute = TestRouteImport.update({
   id: '/test',
   path: '/test',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
+  '/risks': typeof RisksRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
+  '/risks': typeof RisksRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
 }
@@ -60,21 +68,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
+  '/risks': typeof RisksRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/history' | '/test' | '/train'
+  fullPaths: '/' | '/auth' | '/history' | '/risks' | '/test' | '/train'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/history' | '/test' | '/train'
-  id: '__root__' | '/' | '/auth' | '/history' | '/test' | '/train'
+  to: '/' | '/auth' | '/history' | '/risks' | '/test' | '/train'
+  id: '__root__' | '/' | '/auth' | '/history' | '/risks' | '/test' | '/train'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   HistoryRoute: typeof HistoryRoute
+  RisksRoute: typeof RisksRoute
   TestRoute: typeof TestRoute
   TrainRoute: typeof TrainRoute
 }
@@ -102,6 +112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/risks': {
+      id: '/risks'
+      path: '/risks'
+      fullPath: '/risks'
+      preLoaderRoute: typeof RisksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/test': {
       id: '/test'
       path: '/test'
@@ -123,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   HistoryRoute: HistoryRoute,
+  RisksRoute: RisksRoute,
   TestRoute: TestRoute,
   TrainRoute: TrainRoute,
 }
