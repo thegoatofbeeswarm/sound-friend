@@ -14,7 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      hearing_tests: {
+        Row: {
+          avg_threshold_db: number | null
+          created_at: string
+          environment_db: number | null
+          id: string
+          notes: string | null
+          safe_volume_offset_db: number | null
+          trials: number
+          user_id: string
+          worst_threshold_db: number | null
+        }
+        Insert: {
+          avg_threshold_db?: number | null
+          created_at?: string
+          environment_db?: number | null
+          id?: string
+          notes?: string | null
+          safe_volume_offset_db?: number | null
+          trials?: number
+          user_id: string
+          worst_threshold_db?: number | null
+        }
+        Update: {
+          avg_threshold_db?: number | null
+          created_at?: string
+          environment_db?: number | null
+          id?: string
+          notes?: string | null
+          safe_volume_offset_db?: number | null
+          trials?: number
+          user_id?: string
+          worst_threshold_db?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      threshold_points: {
+        Row: {
+          confidence: number
+          ear: string
+          frequency_hz: number
+          id: string
+          test_id: string
+          threshold_db: number
+          user_id: string
+        }
+        Insert: {
+          confidence?: number
+          ear: string
+          frequency_hz: number
+          id?: string
+          test_id: string
+          threshold_db: number
+          user_id: string
+        }
+        Update: {
+          confidence?: number
+          ear?: string
+          frequency_hz?: number
+          id?: string
+          test_id?: string
+          threshold_db?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "threshold_points_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "hearing_tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
