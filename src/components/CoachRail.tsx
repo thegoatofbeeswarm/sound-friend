@@ -33,7 +33,7 @@ export function CoachRail() {
           <TooltipTrigger asChild>
             <Button
               size="icon"
-              className="h-11 w-11 rounded-full"
+              className="icon-bubble h-11 w-11 rounded-full"
               aria-label="Start a conversation with your coach"
               disabled={create.isPending}
               onClick={() => {
@@ -57,7 +57,7 @@ export function CoachRail() {
                 to="/coach/$threadId"
                 params={{ threadId: t.id }}
                 aria-label={t.title}
-                className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold transition-colors ${
+                className={`icon-bubble flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold ${
                   t.id === activeId
                     ? "border-signal bg-signal/15 text-foreground"
                     : "border-border/70 bg-card/70 text-muted-foreground hover:border-signal/60 hover:text-foreground"
@@ -75,7 +75,7 @@ export function CoachRail() {
             <Link
               to="/coach"
               aria-label="All coach conversations"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
+              className="icon-bubble flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
             >
               <Sparkle className="h-4 w-4" />
             </Link>
