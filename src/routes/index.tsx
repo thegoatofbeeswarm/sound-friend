@@ -56,6 +56,39 @@ const pillars = [
   },
 ];
 
+const adolescentStudies = [
+  {
+    title: "WHO: over 1 billion young people at risk of hearing loss from unsafe listening",
+    source: "World Health Organization / BMJ Global Health, 2022",
+    url: "https://www.who.int/news/item/15-11-2022-over-1-billion-young-people-at-risk-of-hearing-loss-from-unsafe-listening-practices",
+    finding:
+      "A review of 33 studies covering 19,000+ participants found 24% of 12-34 year olds use unsafe listening volumes on personal devices, and 48% are exposed to unsafe levels at venues.",
+  },
+  {
+    title: "Prevalence of hearing loss among US adolescents (NHANES)",
+    source: "JAMA / NHANES analyses",
+    url: "https://pubmed.ncbi.nlm.nih.gov/20716740/",
+    finding:
+      "Roughly 1 in 5 US adolescents aged 12-19 showed measurable hearing loss, with high-frequency loss rising significantly between survey cycles.",
+  },
+  {
+    title: "Personal listening devices and hearing thresholds in teenagers",
+    source: "Systematic reviews in International Journal of Audiology",
+    url: "https://pubmed.ncbi.nlm.nih.gov/28166675/",
+    finding:
+      "Regular high-volume headphone use is consistently linked to elevated thresholds at 4-6 kHz — the earliest, most easily missed sign of noise damage.",
+  },
+  {
+    title: "Tinnitus and hidden hearing damage in young adults",
+    source: "Scientific Reports / Nature, 2022",
+    url: "https://www.nature.com/articles/s41598-022-14406-4",
+    finding:
+      "Young adults with normal audiograms but heavy recreational noise exposure already show measurable difficulty understanding speech in noise.",
+  },
+];
+
+
+
 function Index() {
   return (
     <div className="min-h-screen">
