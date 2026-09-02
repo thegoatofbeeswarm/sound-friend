@@ -37,7 +37,7 @@ const sections = [
     title: "Auditory training",
     body: [
       "Hearing is not only the ear. Understanding speech in a noisy room depends on how the brain separates a target voice from competing sound, and that separation improves with practice — the effect audiologists call auditory or perceptual learning.",
-      "Training works best when it is targeted and difficulty-adaptive: exercises should sit just above what you currently manage, and should use the frequency regions and listening situations where your own profile is weakest. Generic listening practice at a fixed difficulty produces much smaller gains.",
+      "Training works best when it is targeted and difficulty-adaptive: exercises should sit just above what you currently manage, and should use the frequency regions and listening situations where your own profile is weakest. Adaptive and task-specific training may improve learning efficiency and transfer, although the magnitude of benefit varies across studies and populations.",
       "This is why our training reads your screening profile rather than offering everyone the same exercise list. Improvements are in listening performance; training does not repair damaged cochlear hair cells.",
     ],
   },
