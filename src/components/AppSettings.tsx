@@ -1,6 +1,7 @@
 import { Languages, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { LANGUAGES, useI18n, type Language } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,27 +16,28 @@ export function AppSettings() {
 
   return (
     <div className="flex items-center gap-1">
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        size="icon"
         onClick={toggleTheme}
         aria-label={`${t("nav.theme")}: ${theme === "dark" ? t("nav.dark") : t("nav.light")}`}
         title={theme === "dark" ? t("nav.light") : t("nav.dark")}
-        className="icon-bubble inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70 bg-card/60 text-muted-foreground hover:text-signal"
+        className="icon-bubble rounded-full bg-card/60 text-muted-foreground hover:text-signal"
       >
-        {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-      </button>
+        {theme === "dark" ? <Sun /> : <Moon />}
+      </Button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button
-            type="button"
+          <Button
+            variant="outline"
             aria-label={t("nav.language")}
             title={t("nav.language")}
-            className="icon-bubble inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 text-xs text-muted-foreground hover:text-signal"
+            className="icon-bubble h-9 rounded-full bg-card/60 px-3 text-xs text-muted-foreground hover:text-signal"
           >
-            <Languages className="h-4 w-4" />
+            <Languages />
             {current.short}
-          </button>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {LANGUAGES.map((l) => (
