@@ -51,7 +51,7 @@ const sections = [
   {
     title: "Safe listening",
     body: [
-      "The WHO Make Listening Safe guidance and the IEC/WHO global standard for personal audio devices frame risk as a dose: level combined with duration, tracked over a week, rather than a single loudness threshold.",
+      "The WHO Make Listening Safe guidance and the WHO–ITU global standard for safe listening devices frame risk as a weekly sound dose: level combined with duration, tracked over a week, rather than a single loudness threshold. WHO references 80 dB for 40 hours per week for adults, with a more conservative 75 dB reference mode.",
       "The WHO reports that over 1 billion people aged 12-35 are at risk from unsafe recreational listening, and that more than 1.5 billion people live with some degree of hearing loss.",
       "Audiomaxxer therefore describes your listening behaviour — estimated exposure, loudest sessions, weekly trend — rather than claiming a personally validated medical exposure limit derived from your thresholds.",
     ],
