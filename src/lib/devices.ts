@@ -123,7 +123,11 @@ export const DEFAULT_DEVICE: DeviceId = "over-ear";
 const STORAGE_KEY = "audible.device";
 
 export function getDevice(id: string | null | undefined): DevicePreset {
-  return DEVICES.find((d) => d.id === id) ?? DEVICES.find((d) => d.id === DEFAULT_DEVICE)!;
+  const matching = DEVICES.find((d) => d.id === id);
+  if (matching) return matching;
+  const fallback = DEVICES.find((d) => d.id === DEFAULT_DEVICE) ?? DEVICES[0];
+  if (!fallback) throw new Error("No listening devices configured");
+  return fallback;
 }
 
 export function loadDevice(): DeviceId {
