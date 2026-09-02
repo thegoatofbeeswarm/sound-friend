@@ -22,7 +22,7 @@ export const themeBootstrapScript = `(function(){try{var t=localStorage.getItem(
 function applyTheme(theme: Theme) {
   if (typeof document === "undefined") return;
   document.documentElement.classList.toggle("dark", theme === "dark");
-  document.documentElement.dataset.theme = theme;
+  document.documentElement.dataset['theme'] = theme;
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
