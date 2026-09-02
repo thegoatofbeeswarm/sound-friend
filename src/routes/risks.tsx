@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, Headphones, Loader2, ShieldCheck, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,8 @@ import { Slider } from "@/components/ui/slider";
 import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { DevicePicker } from "@/components/DevicePicker";
+import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
 
 export const Route = createFileRoute("/risks")({
   head: () => ({
@@ -29,12 +31,9 @@ export const Route = createFileRoute("/risks")({
   component: RisksPage,
 });
 
-/** Max output of typical consumer headphones at 100% volume. */
-const MAX_OUTPUT_DB = 105;
-
-function volumeToDb(percent: number): number {
+function volumeToDb(percent: number, maxOutputDb: number): number {
   // Consumer volume curves are roughly logarithmic in perceived level.
-  return Math.round(MAX_OUTPUT_DB - 40 * Math.log10(100 / Math.max(5, percent)));
+  return Math.round(maxOutputDb - 40 * Math.log10(100 / Math.max(5, percent)));
 }
 
 /** WHO-style dose: 100% = 8h at 85 dB, halving allowance every 3 dB. */
@@ -47,6 +46,14 @@ function RisksPage() {
   const { user, loading } = useAuth();
   const [volume, setVolume] = useState(70);
   const [hours, setHours] = useState(3);
+  const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
+
+  useEffect(() => setDeviceState(loadDevice()), []);
+  const preset = getDevice(device);
+  const setDevice = (id: DeviceId) => {
+    setDeviceState(id);
+    saveDevice(id);
+  };
 
   const { data: latest, isLoading } = useQuery({
     enabled: !!user,
@@ -67,7 +74,7 @@ function RisksPage() {
   const worst = latest?.worst_threshold_db == null ? null : Number(latest.worst_threshold_db);
 
   const model = useMemo(() => {
-    const levelDb = volumeToDb(volume);
+    const levelDb = volumeToDb(volume, preset.maxOutputDb);
     const dose = dosePercent(levelDb, hours);
     // Same dose measured against the listener's own, stricter ceiling.
     const personalAllowed = 8 * Math.pow(2, (ceiling - levelDb) / 3);
@@ -80,7 +87,7 @@ function RisksPage() {
     const tone: "ok" | "watch" | "risk" =
       personalDose <= 100 ? "ok" : personalDose <= 250 ? "watch" : "risk";
     return { levelDb, dose, personalDose, over, tenYearShift, personalAllowed, tone };
-  }, [volume, hours, ceiling]);
+  }, [volume, hours, ceiling, preset.maxOutputDb]);
 
   const toneClass =
     model.tone === "ok" ? "text-signal" : model.tone === "watch" ? "text-caution" : "text-danger";
