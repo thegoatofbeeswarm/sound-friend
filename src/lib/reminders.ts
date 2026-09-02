@@ -46,7 +46,7 @@ export function nextRun(schedule: Schedule, from = new Date()): Date | null {
 function fire() {
   if (permission() !== "granted") return;
   new Notification("Time to train your hearing", {
-    body: "A five-minute Audible session keeps your listening sharp.",
+    body: "A five-minute Audiomaxxer session keeps your listening sharp.",
     icon: "/favicon.ico",
     tag: "audible-training",
   });

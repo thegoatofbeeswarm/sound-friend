@@ -12,13 +12,13 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in - Audible Hearing Screening" },
+      { title: "Sign in - Audiomaxxer Hearing Screening" },
       {
         name: "description",
         content:
-          "Sign in to Audible to save your audiograms, track hearing changes over time, and keep your personalized listening limits in sync.",
+          "Sign in to Audiomaxxer to save your audiograms, track hearing changes over time, and keep your personalized listening limits in sync.",
       },
-      { property: "og:title", content: "Sign in - Audible" },
+      { property: "og:title", content: "Sign in - Audiomaxxer" },
       {
         property: "og:description",
         content: "Access your saved hearing screenings and personalized listening limits.",
@@ -85,7 +85,7 @@ function AuthPage() {
           {mode === "signin" ? "Welcome back" : "Create your account"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Saved screenings let Audible track how your hearing shifts over time.
+          Saved screenings let Audiomaxxer track how your hearing shifts over time.
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">

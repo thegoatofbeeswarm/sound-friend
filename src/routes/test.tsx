@@ -31,13 +31,13 @@ import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from
 export const Route = createFileRoute("/test")({
   head: () => ({
     meta: [
-      { title: "Adaptive Hearing Test - Audible" },
+      { title: "Adaptive Hearing Test - Audiomaxxer" },
       {
         name: "description",
         content:
           "Run a browser-based adaptive hearing screening: tones across five frequencies per ear, guided by a Bayesian staircase that shortens the test without losing accuracy.",
       },
-      { property: "og:title", content: "Adaptive Hearing Test - Audible" },
+      { property: "og:title", content: "Adaptive Hearing Test - Audiomaxxer" },
       {
         property: "og:description",
         content: "Measure your hearing thresholds in minutes with an adaptive browser test.",

@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Audible - Personalized Hearing Screening" },
+      { title: "Audiomaxxer - Personalized Hearing Screening" },
       {
         name: "description",
         content:
           "Adaptive hearing screening and personalized safe-listening limits in your browser.",
       },
-      { property: "og:title", content: "Audible - Personalized Hearing Screening" },
+      { property: "og:title", content: "Audiomaxxer - Personalized Hearing Screening" },
       {
         property: "og:description",
         content:

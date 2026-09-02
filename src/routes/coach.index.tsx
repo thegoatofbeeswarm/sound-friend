@@ -8,13 +8,13 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/coach/")({
   head: () => ({
     meta: [
-      { title: "AI Hearing Coach - Audible" },
+      { title: "AI Hearing Coach - Audiomaxxer" },
       {
         name: "description",
         content:
           "Chat with an AI coach that reads your audiogram, training sessions and listening habits, then explains your progress and current hearing problems in plain language.",
       },
-      { property: "og:title", content: "AI Hearing Coach - Audible" },
+      { property: "og:title", content: "AI Hearing Coach - Audiomaxxer" },
       {
         property: "og:description",
         content: "Ask questions about your hearing results and get grounded, personalized answers.",
