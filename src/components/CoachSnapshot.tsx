@@ -8,7 +8,7 @@ import { dayStreak, type SessionRow } from "@/lib/gamification";
 import { scoreScreening } from "@/lib/test-quality";
 import { Button } from "@/components/ui/button";
 
-export function CoachSnapshot({ userId }: { userId: string }) {
+export function CoachSnapshot({ userId, onStartConversation }: { userId: string; onStartConversation: () => void }) {
   const [exposure, setExposure] = useState(() => lastSevenDays(loadExposure()));
   const { data } = useQuery({
     queryKey: ["coach-snapshot", userId],
@@ -81,7 +81,7 @@ export function CoachSnapshot({ userId }: { userId: string }) {
         <SnapshotMetric icon={Headphones} label="Listening log" value={STATUS_LABEL[status]} detail={`${exposure.totalMinutes} min logged this week`} />
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
-        <Button asChild size="sm"><Link to="/coach/$threadId" params={{ threadId: "new" }}>Ask about my latest results</Link></Button>
+        <Button size="sm" onClick={onStartConversation}>Ask about my latest results</Button>
         <Button asChild size="sm" variant="secondary"><Link to="/history">Open hearing dashboard</Link></Button>
       </div>
     </section>

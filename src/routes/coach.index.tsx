@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Loader2, MessageSquarePlus } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { CoachThreads, useCreateThread, useThreads } from "@/components/CoachThreads";
+import { CoachSnapshot } from "@/components/CoachSnapshot";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -56,11 +57,12 @@ function CoachIndex() {
                 <Link to="/auth">Sign in to start</Link>
               </Button>
             ) : (
-              <>
-                <Button className="mt-8" onClick={() => create.mutate()} disabled={create.isPending}>
-                  <MessageSquarePlus className="mr-2 h-4 w-4" /> New conversation
-                </Button>
-                {(threads ?? []).length > 0 ? (
+               <>
+                 <CoachSnapshot userId={user.id} onStartConversation={() => create.mutate()} />
+                 <Button className="mt-8" onClick={() => create.mutate()} disabled={create.isPending}>
+                   <MessageSquarePlus className="mr-2 h-4 w-4" /> New conversation
+                 </Button>
+                 {(threads ?? []).length > 0 ? (
                   <div className="mt-8 space-y-2">
                     <p className="text-sm text-muted-foreground">Recent conversations</p>
                     {threads!.map((t) => (
