@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, BookOpen, ExternalLink } from "lucide-react";
+import { AlertTriangle, BookOpen, ExternalLink, FlaskConical } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/science")({
@@ -29,7 +29,7 @@ const sections = [
     title: "Adaptive threshold estimation",
     body: [
       "A classic audiogram plays fixed tones and steps the level up and down until the listener stops responding. That works, but it spends most of its trials on levels that tell you almost nothing.",
-      "Audiomaxxer instead keeps a probability distribution over your threshold at each frequency and chooses the next tone level that is expected to reduce uncertainty the most — a Bayesian adaptive staircase. Catch trials (silent presentations) check that you are responding to sound rather than guessing, and the run stops when the estimate is stable rather than after a fixed number of tones.",
+      "Audiomaxxer instead keeps a probability distribution over your threshold at each frequency and ear, updates it after every answer, and puts the next tone where uncertainty is highest — a Bayesian adaptive procedure. The psychometric model carries explicit guess and lapse rates so an occasional stray or missed press does not distort the estimate, and the run stops when the estimate is stable rather than after a fixed number of tones.",
       "The result is a threshold estimate per ear per frequency with a confidence attached to it, in roughly four minutes.",
     ],
   },
@@ -55,6 +55,59 @@ const sections = [
       "The WHO reports that over 1 billion people aged 12-35 are at risk from unsafe recreational listening, and that more than 1.5 billion people live with some degree of hearing loss.",
       "Audiomaxxer therefore describes your listening behaviour — estimated exposure, loudest sessions, weekly trend — rather than claiming a personally validated medical exposure limit derived from your thresholds.",
     ],
+  },
+];
+
+const implementation: { term: string; value: string }[] = [
+  {
+    term: "Frequencies tested",
+    value:
+      "500, 1000, 2000, 4000 and 8000 Hz, each ear separately — 10 independent tracks per screening. Pure sine tones, no 250 Hz or 6 kHz point yet.",
+  },
+  {
+    term: "Tone duration",
+    value:
+      "900 ms per presentation, with 50 ms exponential onset and offset ramps to avoid audible clicks, and a short gap before the response window closes.",
+  },
+  {
+    term: "Catch trials",
+    value:
+      "None at present. Instead of silent catch trials, the psychometric model carries a fixed false-positive (guess) rate of 2% and a lapse rate of 3%, so isolated stray or missed presses are absorbed by the likelihood rather than shifting the threshold. Explicit silent catch trials are a planned addition; until then a screening cannot detect deliberate random responding.",
+  },
+  {
+    term: "Bayesian prior",
+    value:
+      "A Gaussian prior on a −10 to 90 dB grid at 2 dB resolution, SD 22 dB, centred at 10 dB for 500–2000 Hz and 20 dB for 4000 and 8000 Hz, reflecting that noise-related loss appears first in the high frequencies. The likelihood is a logistic function with slope 0.25 per dB.",
+  },
+  {
+    term: "Stopping criterion",
+    value:
+      "A track finishes once it has at least 3 trials and its posterior SD falls below 4.5 dB. The screening ends when every track has finished or 44 total trials have been presented, whichever comes first.",
+  },
+  {
+    term: "What the confidence value means",
+    value:
+      "It is a rescaling of the posterior standard deviation, not a p-value or a clinical accuracy claim: 100% corresponds to an SD of about 3 dB and it falls linearly to 0% at about 23 dB. It describes how tightly the procedure has pinned down the threshold given your answers — it says nothing about whether the absolute calibration of your headphones is correct.",
+  },
+  {
+    term: "Headphone models with a correction",
+    value:
+      "AirPods Pro 3 and Pro 2 (+6 dB), open-fit AirPods (+3 dB), wired EarPods (+2 dB), Sony WH-1000XM6 (+1 dB) and Bose QuietComfort Ultra (+1 dB). Generic form factors — other over-ear (0 dB), on-ear (+2 dB), in-ear (+6 dB) — are marked uncalibrated in the app.",
+  },
+  {
+    term: "How those corrections were obtained",
+    value:
+      "They are coarse form-factor offsets, derived from published third-party frequency-response and coupler measurements for each model, not from our own measurements on an ear simulator, and not per-frequency. Sealed in-ear tips couple more energy to the eardrum than open or over-ear drivers, which is the bulk of the difference. Treat every offset as ±5 dB or worse. We would rather state this than imply a calibration chain we do not have.",
+  },
+  {
+    term: "Environmental-noise rejection criterion",
+    value:
+      "Room level is estimated from the device microphone before the screening. Up to 35 dB counts as very quiet, up to 45 dB as acceptable, 45–55 dB costs the screening a large quality penalty, and above 55 dB the run is flagged as unreliable for low-level tones. Nothing is discarded automatically — a noisy run is recorded and clearly labelled so it never quietly poisons your trend.",
+  },
+  {
+    term: "Units",
+    value:
+      "Levels are relative, estimated dB — dB-HL-like values on an internal scale, not measured dB SPL and not clinically calibrated dB HL. Absolute output depends on your headphones, your operating-system volume and the browser audio path, none of which we can measure. Room-noise figures from the microphone are uncalibrated dB SPL estimates. The values are most meaningful compared against your own earlier screenings on the same device and volume setting.",
   },
 ];
 
@@ -143,6 +196,25 @@ function SciencePage() {
             ))}
           </article>
         ))}
+
+        <article className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <FlaskConical className="h-5 w-5 text-signal" /> Implementation details
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            The exact parameters the screening runs with today, so the method can be judged rather than taken on trust.
+          </p>
+          <dl className="mt-5 space-y-4">
+            {implementation.map((d) => (
+              <div key={d.term} className="border-t border-border/60 pt-4 first:border-t-0 first:pt-0">
+                <dt className="text-sm font-semibold">{d.term}</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-muted-foreground">{d.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </article>
+
+
 
         <article className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
           <h2 className="flex items-center gap-2 text-xl font-semibold">
