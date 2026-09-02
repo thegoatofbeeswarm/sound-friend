@@ -11,13 +11,13 @@ import type { Ear, ThresholdResult } from "@/lib/audiometry";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
-      { title: "Hearing History - Audible" },
+      { title: "Hearing History - Audiomaxxer" },
       {
         name: "description",
         content:
           "Review every saved hearing screening, compare audiograms over time, and see how your personalized safe-listening ceiling changes.",
       },
-      { property: "og:title", content: "Hearing History - Audible" },
+      { property: "og:title", content: "Hearing History - Audiomaxxer" },
       {
         property: "og:description",
         content: "Track your audiograms and listening limits over time.",

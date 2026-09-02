@@ -11,7 +11,7 @@ export function SiteNav() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <Link to="/" className="flex items-center gap-2">
           <AudioLines className="h-5 w-5 text-signal" />
-          <span className="font-display text-lg font-semibold tracking-tight">Audible</span>
+          <span className="font-display text-lg font-semibold tracking-tight">Audiomaxxer</span>
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           <Link

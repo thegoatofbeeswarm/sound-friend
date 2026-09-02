@@ -4,7 +4,7 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 type ChatRequestBody = { messages?: unknown; context?: unknown };
 
-const SYSTEM = `You are the Audible hearing coach: a warm, plain-spoken guide inside a hearing-health app.
+const SYSTEM = `You are the Audiomaxxer hearing coach: a warm, plain-spoken guide inside a hearing-health app.
 
 You help the user understand:
 - their audiogram and what each threshold means in everyday terms

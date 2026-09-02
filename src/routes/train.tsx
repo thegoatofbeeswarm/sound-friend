@@ -34,13 +34,13 @@ import {
 export const Route = createFileRoute("/train")({
   head: () => ({
     meta: [
-      { title: "Adaptive Hearing Training - Audible" },
+      { title: "Adaptive Hearing Training - Audiomaxxer" },
       {
         name: "description",
         content:
           "Train your hearing with real-world sounds - from light breathing to a passing motorcycle - in a closed-loop session that gets harder or easier as you answer.",
       },
-      { property: "og:title", content: "Adaptive Hearing Training - Audible" },
+      { property: "og:title", content: "Adaptive Hearing Training - Audiomaxxer" },
       {
         property: "og:description",
         content: "A closed-loop hearing gym built on real-world soundscapes, with progress tracking and reminders.",
@@ -405,7 +405,7 @@ function ScheduleCard() {
         )}
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
-        Reminders are delivered by your device from notifications. Add Audible to your home screen so they arrive like any other app notification. 
+        Reminders are delivered by your device from notifications. Add Audiomaxxer to your home screen so they arrive like any other app notification. 
       </p>
     </section>
   );

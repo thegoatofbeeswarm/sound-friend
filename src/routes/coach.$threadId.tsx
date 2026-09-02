@@ -12,13 +12,13 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/coach/$threadId")({
   head: () => ({
     meta: [
-      { title: "Coach Conversation - Audible" },
+      { title: "Coach Conversation - Audiomaxxer" },
       {
         name: "description",
         content:
-          "A saved conversation with the Audible hearing coach about your audiogram, safe listening ceiling and training progress.",
+          "A saved conversation with the Audiomaxxer hearing coach about your audiogram, safe listening ceiling and training progress.",
       },
-      { property: "og:title", content: "Coach Conversation - Audible" },
+      { property: "og:title", content: "Coach Conversation - Audiomaxxer" },
       {
         property: "og:description",
         content: "Revisit what your hearing coach explained about your results.",

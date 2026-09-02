@@ -14,13 +14,13 @@ import { SiteNav } from "@/components/SiteNav";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Audible - Personalized Hearing Screening & Safe Listening" },
+      { title: "Audiomaxxer - Personalized Hearing Screening & Safe Listening" },
       {
         name: "description",
         content:
           "Take a fast adaptive hearing test in your browser, get a personal audiogram, and receive listening limits tuned to your own ears instead of a generic 85 dB rule.",
       },
-      { property: "og:title", content: "Audible - Personalized Hearing Screening" },
+      { property: "og:title", content: "Audiomaxxer - Personalized Hearing Screening" },
       {
         property: "og:description",
         content:
@@ -114,7 +114,7 @@ function Index() {
              <span className="signal-text">Spread the awareness.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-             Studies show that 12~17% of teens are affected by hearing-related problems. To raise awareness of screening and train your hearing, use Audible, the world's first closed-loop training system.{"\u00a0"}
+             Studies show that 12~17% of teens are affected by hearing-related problems. To raise awareness of screening and train your hearing, use Audiomaxxer, the world's first closed-loop training system.{"\u00a0"}
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Button asChild size="lg">
