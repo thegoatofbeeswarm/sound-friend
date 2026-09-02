@@ -161,17 +161,20 @@ function TestPage() {
             </p>
 
             <ul className="mt-8 space-y-3 text-sm">
-              {[
-                [Headphones, "Wear headphones and set your device volume to about 50%."],
-                [Volume2, "Sit somewhere quiet - scan the room noise below first."],
-                [Ear, "Answer honestly, even for the faintest tones you think you hear."],
-              ].map(([Icon, text]) => (
-                <li key={text as string} className="flex items-start gap-3">
+              {(
+                [
+                  { Icon: Headphones, text: "Wear headphones and set your device volume to about 50%." },
+                  { Icon: Volume2, text: "Sit somewhere quiet - scan the room noise below first." },
+                  { Icon: Ear, text: "Answer honestly, even for the faintest tones you think you hear." },
+                ] as const
+              ).map(({ Icon, text }) => (
+                <li key={text} className="flex items-start gap-3">
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
-                  <span className="text-muted-foreground">{text as string}</span>
+                  <span className="text-muted-foreground">{text}</span>
                 </li>
               ))}
             </ul>
+
 
             <div className="mt-6">
               <NoiseMeter onLevel={setNoise} />
