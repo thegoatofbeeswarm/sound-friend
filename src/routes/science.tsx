@@ -58,6 +58,59 @@ const sections = [
   },
 ];
 
+const implementation: { term: string; value: string }[] = [
+  {
+    term: "Frequencies tested",
+    value:
+      "500, 1000, 2000, 4000 and 8000 Hz, each ear separately — 10 independent tracks per screening. Pure sine tones, no 250 Hz or 6 kHz point yet.",
+  },
+  {
+    term: "Tone duration",
+    value:
+      "900 ms per presentation, with 50 ms exponential onset and offset ramps to avoid audible clicks, and a short gap before the response window closes.",
+  },
+  {
+    term: "Catch trials",
+    value:
+      "None at present. Instead of silent catch trials, the psychometric model carries a fixed false-positive (guess) rate of 2% and a lapse rate of 3%, so isolated stray or missed presses are absorbed by the likelihood rather than shifting the threshold. Explicit silent catch trials are a planned addition; until then a screening cannot detect deliberate random responding.",
+  },
+  {
+    term: "Bayesian prior",
+    value:
+      "A Gaussian prior on a −10 to 90 dB grid at 2 dB resolution, SD 22 dB, centred at 10 dB for 500–2000 Hz and 20 dB for 4000 and 8000 Hz, reflecting that noise-related loss appears first in the high frequencies. The likelihood is a logistic function with slope 0.25 per dB.",
+  },
+  {
+    term: "Stopping criterion",
+    value:
+      "A track finishes once it has at least 3 trials and its posterior SD falls below 4.5 dB. The screening ends when every track has finished or 44 total trials have been presented, whichever comes first.",
+  },
+  {
+    term: "What the confidence value means",
+    value:
+      "It is a rescaling of the posterior standard deviation, not a p-value or a clinical accuracy claim: 100% corresponds to an SD of about 3 dB and it falls linearly to 0% at about 23 dB. It describes how tightly the procedure has pinned down the threshold given your answers — it says nothing about whether the absolute calibration of your headphones is correct.",
+  },
+  {
+    term: "Headphone models with a correction",
+    value:
+      "AirPods Pro 3 and Pro 2 (+6 dB), open-fit AirPods (+3 dB), wired EarPods (+2 dB), Sony WH-1000XM6 (+1 dB) and Bose QuietComfort Ultra (+1 dB). Generic form factors — other over-ear (0 dB), on-ear (+2 dB), in-ear (+6 dB) — are marked uncalibrated in the app.",
+  },
+  {
+    term: "How those corrections were obtained",
+    value:
+      "They are coarse form-factor offsets, derived from published third-party frequency-response and coupler measurements for each model, not from our own measurements on an ear simulator, and not per-frequency. Sealed in-ear tips couple more energy to the eardrum than open or over-ear drivers, which is the bulk of the difference. Treat every offset as ±5 dB or worse. We would rather state this than imply a calibration chain we do not have.",
+  },
+  {
+    term: "Environmental-noise rejection criterion",
+    value:
+      "Room level is estimated from the device microphone before the screening. Up to 35 dB counts as very quiet, up to 45 dB as acceptable, 45–55 dB costs the screening a large quality penalty, and above 55 dB the run is flagged as unreliable for low-level tones. Nothing is discarded automatically — a noisy run is recorded and clearly labelled so it never quietly poisons your trend.",
+  },
+  {
+    term: "Units",
+    value:
+      "Levels are relative, estimated dB — dB-HL-like values on an internal scale, not measured dB SPL and not clinically calibrated dB HL. Absolute output depends on your headphones, your operating-system volume and the browser audio path, none of which we can measure. Room-noise figures from the microphone are uncalibrated dB SPL estimates. The values are most meaningful compared against your own earlier screenings on the same device and volume setting.",
+  },
+];
+
 const limitations = [
   "Browser and operating-system volume are not known to the app, so absolute decibel values depend on your device settings.",
   "Headphone frequency responses differ substantially. We apply per-model corrections for the models we list; anything else is uncalibrated and best used for relative tracking.",
