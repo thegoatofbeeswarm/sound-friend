@@ -29,6 +29,9 @@ export function SiteNav() {
             <Link to="/risks" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
               {t("nav.risks")}
             </Link>
+            <Link to="/report" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+              Report
+            </Link>
             <Link to="/science" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
               Science
             </Link>
