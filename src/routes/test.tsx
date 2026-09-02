@@ -170,17 +170,16 @@ function TestPage() {
           <section>
             <h1 className="text-3xl font-semibold">Adaptive hearing screening</h1>
             <p className="mt-3 text-muted-foreground">
-              Ten tracks - five frequencies in each ear. After every answer the model updates its
-              estimate and probes only where it is still unsure, so the test ends as soon as the
-              picture is clear.
+              After every answer, the model updates its estimate and probes only where it is still
+              unsure, so the test ends as soon as the picture is clear.
             </p>
 
             <ul className="mt-8 space-y-3 text-sm">
               {(
                 [
                   { Icon: Headphones, text: "Wear headphones and set your device volume to about 50%." },
-                  { Icon: Volume2, text: "Sit somewhere quiet - scan the room noise below first." },
-                  { Icon: Ear, text: "Answer honestly, even for the faintest tones you think you hear." },
+                  { Icon: Volume2, text: "Sit somewhere quiet. Scan the room noise below first." },
+                  { Icon: Ear, text: "Answer honestly for the most reliable and beneficial data." },
                 ] as const
               ).map(({ Icon, text }) => (
                 <li key={text} className="flex items-start gap-3">

@@ -16,8 +16,8 @@ export function DevicePicker({
         <Headphones className="h-4 w-4 text-signal" /> What are you listening with?
       </p>
       <p className="mt-1 text-xs text-muted-foreground">
-        Each type couples sound to your ear differently, so this calibrates both the test tones and
-        your safe-volume ceiling.
+         Each type couples sound to your ear differently, so this calibrates both the test tones and
+         your volume ceiling.
       </p>
       <div className="mt-3 grid gap-2 sm:grid-cols-3">
         {DEVICES.map((d) => {
