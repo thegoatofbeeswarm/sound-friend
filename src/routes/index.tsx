@@ -97,8 +97,43 @@ function Index() {
 
       <section className="border-t border-border/60 bg-card/30">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 md:grid-cols-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="group text-left">
+                <p className="font-display text-4xl font-semibold text-signal">1.5B</p>
+                <p className="mt-2 inline-flex items-center gap-1 text-sm text-muted-foreground underline decoration-dotted underline-offset-4 group-hover:text-foreground">
+                  people live with hearing loss worldwide
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </p>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Hearing loss in adolescents: current research</DialogTitle>
+                <DialogDescription>
+                  A short reading list on why teenage and young-adult hearing is the fastest-growing
+                  part of that 1.5 billion.
+                </DialogDescription>
+              </DialogHeader>
+              <ul className="space-y-4">
+                {adolescentStudies.map((s) => (
+                  <li key={s.url} className="rounded-xl border border-border/70 bg-card/60 p-4">
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-semibold underline-offset-4 hover:underline"
+                    >
+                      {s.title}
+                    </a>
+                    <p className="mt-1 text-xs text-muted-foreground">{s.source}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.finding}</p>
+                  </li>
+                ))}
+              </ul>
+            </DialogContent>
+          </Dialog>
           {[
-            ["1.5B", "people live with hearing loss worldwide"],
             ["10", "frequency-and-ear tracks measured per screening"],
             ["~4 min", "typical adaptive screening time"],
           ].map(([stat, label]) => (
@@ -109,6 +144,7 @@ function Index() {
           ))}
         </div>
       </section>
+
 
       <footer className="border-t border-border/60">
         <div className="mx-auto flex max-w-6xl items-center gap-2 px-5 py-8 text-xs text-muted-foreground">
