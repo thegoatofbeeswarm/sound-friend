@@ -11,6 +11,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { ThemeProvider, themeBootstrapScript } from "@/lib/theme";
+import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { CoachRail } from "@/components/CoachRail";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -121,6 +123,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
         <HeadContent />
       </head>
       <body>
@@ -137,12 +140,16 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <div key={pathname} className="page-enter">
-        <Outlet />
-      </div>
-      <CoachRail />
-      <Toaster position="top-center" />
+      <ThemeProvider>
+        <I18nProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <div key={pathname} className="page-enter">
+            <Outlet />
+          </div>
+          <CoachRail />
+          <Toaster position="top-center" />
+        </I18nProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
