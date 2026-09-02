@@ -106,6 +106,69 @@ export type Database = {
           },
         ]
       }
+      training_schedules: {
+        Row: {
+          days: number[]
+          enabled: boolean
+          id: string
+          time_of_day: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          days?: number[]
+          enabled?: boolean
+          id?: string
+          time_of_day?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          days?: number[]
+          enabled?: boolean
+          id?: string
+          time_of_day?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      training_sessions: {
+        Row: {
+          accuracy: number
+          correct: number
+          created_at: string
+          end_level: number
+          id: string
+          quietest_db: number | null
+          rounds: number
+          start_level: number
+          user_id: string
+        }
+        Insert: {
+          accuracy?: number
+          correct?: number
+          created_at?: string
+          end_level?: number
+          id?: string
+          quietest_db?: number | null
+          rounds?: number
+          start_level?: number
+          user_id: string
+        }
+        Update: {
+          accuracy?: number
+          correct?: number
+          created_at?: string
+          end_level?: number
+          id?: string
+          quietest_db?: number | null
+          rounds?: number
+          start_level?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
