@@ -37,7 +37,7 @@ const sections = [
     title: "Auditory training",
     body: [
       "Hearing is not only the ear. Understanding speech in a noisy room depends on how the brain separates a target voice from competing sound, and that separation improves with practice — the effect audiologists call auditory or perceptual learning.",
-      "Training works best when it is targeted and difficulty-adaptive: exercises should sit just above what you currently manage, and should use the frequency regions and listening situations where your own profile is weakest. Generic listening practice at a fixed difficulty produces much smaller gains.",
+      "Training works best when it is targeted and difficulty-adaptive: exercises should sit just above what you currently manage, and should use the frequency regions and listening situations where your own profile is weakest. Adaptive and task-specific training may improve learning efficiency and transfer, although the magnitude of benefit varies across studies and populations.",
       "This is why our training reads your screening profile rather than offering everyone the same exercise list. Improvements are in listening performance; training does not repair damaged cochlear hair cells.",
     ],
   },
@@ -51,7 +51,7 @@ const sections = [
   {
     title: "Safe listening",
     body: [
-      "The WHO Make Listening Safe guidance and the IEC/WHO global standard for personal audio devices frame risk as a dose: level combined with duration, tracked over a week, rather than a single loudness threshold.",
+      "The WHO Make Listening Safe guidance and the WHO–ITU global standard for safe listening devices frame risk as a weekly sound dose: level combined with duration, tracked over a week, rather than a single loudness threshold. WHO references 80 dB for 40 hours per week for adults, with a more conservative 75 dB reference mode.",
       "The WHO reports that over 1 billion people aged 12-35 are at risk from unsafe recreational listening, and that more than 1.5 billion people live with some degree of hearing loss.",
       "Audiomaxxer therefore describes your listening behaviour — estimated exposure, loudest sessions, weekly trend — rather than claiming a personally validated medical exposure limit derived from your thresholds.",
     ],
@@ -146,9 +146,10 @@ const references = [
     url: "https://pubmed.ncbi.nlm.nih.gov/6844102/",
   },
   {
-    title: "Ferguson et al. — Auditory training can improve working memory, attention and communication in adults",
-    source: "Journal of Speech, Language, and Hearing Research, 2014",
-    url: "https://pubmed.ncbi.nlm.nih.gov/24686468/",
+    title:
+      "Ferguson MA & Henshaw H — Auditory training can improve working memory, attention, and communication in adverse conditions for adults with hearing loss",
+    source: "Frontiers in Psychology, 2015; 6:556",
+    url: "https://pubmed.ncbi.nlm.nih.gov/25999877/",
   },
   {
     title: "Henshaw & Ferguson — Efficacy of individual computer-based auditory training for people with hearing loss: a systematic review",
@@ -161,10 +162,11 @@ const references = [
     url: "https://pubmed.ncbi.nlm.nih.gov/20716740/",
   },
   {
-    title: "Liberman et al. — Cochlear synaptopathy in humans with normal audiograms",
-    source: "PLOS ONE / Scientific Reports",
+    title: "Liberman et al. — Toward a Differential Diagnosis of Hidden Hearing Loss in Humans",
+    source: "PLOS ONE, 2016; 11(9):e0162726",
     url: "https://pubmed.ncbi.nlm.nih.gov/27618300/",
   },
+
 ];
 
 function SciencePage() {
