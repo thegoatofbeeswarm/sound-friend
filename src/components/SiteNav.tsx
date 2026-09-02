@@ -36,13 +36,6 @@ export function SiteNav() {
             Risks
           </Link>
           <Link
-            to="/coach"
-            className="rounded-md px-3 py-2 text-muted-foreground transition-colors hover:text-foreground"
-            activeProps={{ className: "rounded-md px-3 py-2 text-foreground" }}
-          >
-            Coach
-          </Link>
-          <Link
             to="/history"
             className="rounded-md px-3 py-2 text-muted-foreground transition-colors hover:text-foreground"
             activeProps={{ className: "rounded-md px-3 py-2 text-foreground" }}
