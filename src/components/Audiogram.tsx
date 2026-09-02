@@ -52,7 +52,7 @@ export function Audiogram({ points }: { points: ThresholdResult[] }) {
               borderRadius: 12,
               color: "var(--popover-foreground)",
             }}
-            formatter={(v: number | null, name: string) => [v == null ? "-" : `${v} dB`, name]}
+            formatter={(v, name) => [v == null ? "-" : `${v as number} dB`, name as string]}
           />
           <Line
             type="monotone"
