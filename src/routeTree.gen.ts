@@ -15,6 +15,9 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as RisksRouteImport } from './routes/risks'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as TrainRouteImport } from './routes/train'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as CoachIndexRouteImport } from './routes/coach.index'
+import { Route as CoachThreadIdRouteImport } from './routes/coach.$threadId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +49,21 @@ const TrainRoute = TrainRouteImport.update({
   path: '/train',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachIndexRoute = CoachIndexRouteImport.update({
+  id: '/coach/',
+  path: '/coach/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachThreadIdRoute = CoachThreadIdRouteImport.update({
+  id: '/coach/$threadId',
+  path: '/coach/$threadId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +72,9 @@ export interface FileRoutesByFullPath {
   '/risks': typeof RisksRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
+  '/api/chat': typeof ApiChatRoute
+  '/coach/$threadId': typeof CoachThreadIdRoute
+  '/coach/': typeof CoachIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +83,9 @@ export interface FileRoutesByTo {
   '/risks': typeof RisksRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
+  '/api/chat': typeof ApiChatRoute
+  '/coach/$threadId': typeof CoachThreadIdRoute
+  '/coach': typeof CoachIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,13 +95,44 @@ export interface FileRoutesById {
   '/risks': typeof RisksRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
+  '/api/chat': typeof ApiChatRoute
+  '/coach/$threadId': typeof CoachThreadIdRoute
+  '/coach/': typeof CoachIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/history' | '/risks' | '/test' | '/train'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/history'
+    | '/risks'
+    | '/test'
+    | '/train'
+    | '/api/chat'
+    | '/coach/$threadId'
+    | '/coach/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/history' | '/risks' | '/test' | '/train'
-  id: '__root__' | '/' | '/auth' | '/history' | '/risks' | '/test' | '/train'
+  to:
+    | '/'
+    | '/auth'
+    | '/history'
+    | '/risks'
+    | '/test'
+    | '/train'
+    | '/api/chat'
+    | '/coach/$threadId'
+    | '/coach'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/history'
+    | '/risks'
+    | '/test'
+    | '/train'
+    | '/api/chat'
+    | '/coach/$threadId'
+    | '/coach/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,6 +142,9 @@ export interface RootRouteChildren {
   RisksRoute: typeof RisksRoute
   TestRoute: typeof TestRoute
   TrainRoute: typeof TrainRoute
+  ApiChatRoute: typeof ApiChatRoute
+  CoachThreadIdRoute: typeof CoachThreadIdRoute
+  CoachIndexRoute: typeof CoachIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,6 +191,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach/': {
+      id: '/coach/'
+      path: '/coach'
+      fullPath: '/coach/'
+      preLoaderRoute: typeof CoachIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach/$threadId': {
+      id: '/coach/$threadId'
+      path: '/coach/$threadId'
+      fullPath: '/coach/$threadId'
+      preLoaderRoute: typeof CoachThreadIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -143,6 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   RisksRoute: RisksRoute,
   TestRoute: TestRoute,
   TrainRoute: TrainRoute,
+  ApiChatRoute: ApiChatRoute,
+  CoachThreadIdRoute: CoachThreadIdRoute,
+  CoachIndexRoute: CoachIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

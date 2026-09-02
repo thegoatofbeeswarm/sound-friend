@@ -226,8 +226,18 @@ export async function unlockAudio(): Promise<void> {
  * 20 dB below that divides amplitude by ten, with an audible floor.
  */
 const MAX_GAIN = 0.3;
+
+/**
+ * Correction (dB) for the listening device in use. Sealed in-ear tips deliver
+ * more level to the eardrum than over-ear cups, so tones are trimmed to match.
+ */
+let deviceOffsetDb = 0;
+export function setDeviceCalibration(offsetDb: number) {
+  deviceOffsetDb = offsetDb;
+}
+
 function levelToGain(levelDb: number): number {
-  const clamped = Math.max(MIN_DB, Math.min(MAX_DB, levelDb));
+  const clamped = Math.max(MIN_DB, Math.min(MAX_DB, levelDb - deviceOffsetDb));
   const g = MAX_GAIN * Math.pow(10, (clamped - MAX_DB) / 20);
   return Math.max(0.0006, Math.min(MAX_GAIN, g));
 }

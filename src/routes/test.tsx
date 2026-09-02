@@ -23,7 +23,10 @@ import {
   type TestState,
   type ThresholdResult,
   type Trial,
+  setDeviceCalibration,
 } from "@/lib/audiometry";
+import { DevicePicker } from "@/components/DevicePicker";
+import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
 
 export const Route = createFileRoute("/test")({
   head: () => ({
@@ -58,6 +61,13 @@ function TestPage() {
   const [noise, setNoise] = useState<number | null>(null);
   const [final, setFinal] = useState<ThresholdResult[] | null>(null);
   const [saving, setSaving] = useState(false);
+  const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
+
+  useEffect(() => setDeviceState(loadDevice()), []);
+  const setDevice = (id: DeviceId) => {
+    setDeviceState(id);
+    saveDevice(id);
+  };
   const busy = useRef(false);
 
   const runTrial = useCallback(async (s: TestState) => {
@@ -87,6 +97,7 @@ function TestPage() {
 
   async function start() {
     // Must happen synchronously in the click handler for autoplay policies.
+    setDeviceCalibration(getDevice(device).calibrationOffsetDb);
     await unlockAudio();
     const fresh = createTestState();
     setState(fresh);
@@ -108,6 +119,7 @@ function TestPage() {
         worst_threshold_db: summary.worst,
         avg_threshold_db: summary.avg,
         safe_volume_offset_db: summary.offsetDb,
+        device_type: device,
       })
       .select("id")
       .single();
@@ -135,7 +147,7 @@ function TestPage() {
     }
     toast.success("Screening saved to your history.");
     void navigate({ to: "/history" });
-  }, [final, user, noise, state.trialCount, navigate]);
+  }, [final, user, noise, state.trialCount, navigate, device]);
 
   useEffect(() => {
     if (phase === "done" && final && user) void saveResults();
@@ -178,6 +190,8 @@ function TestPage() {
               ))}
             </ul>
 
+
+            <DevicePicker value={device} onChange={setDevice} className="mt-8" />
 
             <div className="mt-6">
               <NoiseMeter onLevel={setNoise} />
