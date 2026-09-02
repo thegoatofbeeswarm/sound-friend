@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Activity, Brain, ExternalLink, Globe2, ShieldCheck, Volume2, Waves } from "lucide-react";
+import { Activity, Brain, ExternalLink, Globe2, Headphones, MessagesSquare, ShieldCheck, Volume2, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -53,6 +53,16 @@ const pillars = [
     icon: Globe2,
     title: "Accessibility",
     body: "Runs on any phone with headphones",
+  },
+  {
+    icon: MessagesSquare,
+    title: "AI coach",
+    body: "AI conversations to help you understand your problems",
+  },
+  {
+    icon: Headphones,
+    title: "Closed-loop training",
+    body: "Custom hearing-training based off of real life sounds to stimulate and train your hearing",
   },
 ];
 
