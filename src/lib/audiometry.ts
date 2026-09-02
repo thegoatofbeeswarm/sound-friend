@@ -238,8 +238,9 @@ export async function playTone(
   ear: Ear,
   durationMs = 900,
 ): Promise<void> {
-  const audio = getAudioContext();
-  const now = audio.currentTime;
+  const audio = await getAudioContext();
+  const now = audio.currentTime + 0.02;
+  const dur = durationMs / 1000;
   const osc = audio.createOscillator();
   const gain = audio.createGain();
   const panner = audio.createStereoPanner();
@@ -249,10 +250,11 @@ export async function playTone(
   panner.pan.value = ear === "left" ? -1 : 1;
 
   const peak = levelToGain(levelDb);
-  gain.gain.setValueAtTime(0.0001, now);
+  const floor = peak * 0.001;
+  gain.gain.setValueAtTime(floor, now);
   gain.gain.exponentialRampToValueAtTime(peak, now + 0.05);
-  gain.gain.setValueAtTime(peak, now + durationMs / 1000 - 0.05);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000);
+  gain.gain.setValueAtTime(peak, now + dur - 0.05);
+  gain.gain.exponentialRampToValueAtTime(floor, now + dur);
 
   osc.connect(gain).connect(panner).connect(audio.destination);
   osc.start(now);
