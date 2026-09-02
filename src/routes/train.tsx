@@ -408,9 +408,7 @@ function ScheduleCard() {
         )}
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
-        Reminders are delivered by your device. Add Audible to your home screen so they arrive like
-        any other app notification; a reminder missed while the app was closed is shown next time
-        you open it.
+        Reminders are delivered by your device from notifications. Add Audible to your home screen so they arrive like any other app notification. 
       </p>
     </section>
   );
