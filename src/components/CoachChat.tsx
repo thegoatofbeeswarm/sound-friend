@@ -21,6 +21,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { buildCoachContext } from "@/lib/coach-context";
 import { CoachActions } from "@/components/CoachActions";
 
+function textOf(message: UIMessage): string {
+  return message.parts
+    .map((part) => (part.type === "text" ? part.text : ""))
+    .join("")
+    .trim();
+}
+
 export function CoachChat({
   threadId,
   initialMessages,
