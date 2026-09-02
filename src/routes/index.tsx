@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Activity, Brain, Globe2, ShieldCheck, Volume2, Waves } from "lucide-react";
+import { Activity, Brain, ExternalLink, Globe2, ShieldCheck, Volume2, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/")({
