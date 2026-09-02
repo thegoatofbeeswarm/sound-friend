@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Activity, Brain, ExternalLink, Globe2, ShieldCheck, Volume2, Waves } from "lucide-react";
+import { Activity, Brain, ExternalLink, Globe2, Headphones, MessagesSquare, ShieldCheck, Volume2, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
