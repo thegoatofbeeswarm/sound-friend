@@ -54,6 +54,16 @@ const pillars = [
     title: "Accessibility",
     body: "Runs on any phone with headphones",
   },
+  {
+    icon: MessagesSquare,
+    title: "AI coach",
+    body: "AI conversations to help you understand your problems",
+  },
+  {
+    icon: Headphones,
+    title: "Closed-loop training",
+    body: "Custom hearing-training based off of real life sounds to stimulate and train your hearing",
+  },
 ];
 
 const adolescentStudies = [
