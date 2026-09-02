@@ -80,17 +80,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Audiomaxxer - Personalized Hearing Screening" },
+      { title: "Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "Adaptive hearing screening and personalized safe-listening limits in your browser.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Audiomaxxer - Personalized Hearing Screening" },
+      { property: "og:title", content: "Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
         content:
-          "Adaptive hearing screening and personalized safe-listening limits in your browser.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
