@@ -28,23 +28,23 @@ export const Route = createFileRoute("/")({
 const pillars = [
   {
     icon: Brain,
-    title: "Adaptive, not repetitive",
-    body: "A Bayesian staircase updates its belief after every response and probes only where uncertainty remains - roughly half the trials of a fixed beep test.",
+    title: "Adaptive",
+    body: "A Bayesian staircase updates its belief after every response.",
   },
   {
     icon: Volume2,
     title: "Limits tuned to you",
-    body: "Early damage and frequency-specific sensitivity shift your ceiling below the generic 85 dB flag, with an exposure budget in hours.",
+    body: "Early damage and frequency-specific sensitivity shift your ceiling below the generic 85 dB flag.",
   },
   {
     icon: Activity,
-    title: "Environment aware",
+    title: "Environmental awareness",
     body: "The microphone estimates room noise so a screening is only trusted when the space is quiet enough.",
   },
   {
     icon: Globe2,
-    title: "No booth, no clinic",
-    body: "Runs on any phone with headphones, so routine screening reaches communities far from audiology equipment.",
+    title: "Accessibility",
+    body: "Runs on any phone with headphones, so routine screening reaches communities far from real-life audiology equipment.",
   },
 ];
 
@@ -59,13 +59,11 @@ function Index() {
             <Waves className="h-3.5 w-3.5 text-signal" /> Adaptive audiology for everyone
           </span>
           <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[1.05] md:text-6xl">
-            Your hearing is unique.{" "}
-            <span className="signal-text">Your volume limit should be too.</span>
+             Protect your hearing.{"\u00a0"}
+             <span className="signal-text">Spread the awareness.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Phones warn everyone at the same 85 dB. Audible measures your own thresholds across the
-            frequency range in a few minutes, then turns that audiogram into listening limits and a
-            daily exposure budget built for your ears.
+             Studies show that 12~17% of teens are affected by hearing-related problems. To raise awareness of screening and train your hearing, use Audible, the world's first closed-loop training system.{"\u00a0"}
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Button asChild size="lg">
@@ -76,7 +74,7 @@ function Index() {
             </Button>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
-            Headphones required. A screening tool, not a medical diagnosis.
+             Headphones required. This is not a medical diagnosis. For more accuracy, do a hearing screening at your local clinic/booth.
           </p>
         </div>
       </section>
