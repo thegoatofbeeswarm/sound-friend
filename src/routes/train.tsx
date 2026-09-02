@@ -89,7 +89,7 @@ export const Route = createFileRoute("/train")({
 const ROUNDS = 12;
 type Phase = "intro" | "playing" | "answer" | "done";
 
-type StoredSession = SessionRow & { id: string };
+type StoredSession = SessionRow & { id: string; quietest_db: number | null };
 
 const MODE_ICONS = {
   waves: Waves,
