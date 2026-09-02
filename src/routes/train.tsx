@@ -173,14 +173,11 @@ function TrainPage() {
           <section>
             <h1 className="text-3xl font-semibold">Hearing gym</h1>
             <p className="mt-3 text-muted-foreground">
-              Twelve rounds of real-world sounds - light breathing, rustling leaves, a fridge hum, a
-              motorcycle. Name what you hear. Every correct answer makes the next one quieter and
-              adds a closer-sounding decoy; a miss pulls the difficulty back down, so you always
-              train right at the edge of your own hearing.
+              Train your hearing. Customized sounds- such as the rustling of leaves and the opening of a fridge- will play, and the questions will adapt based on your responses.
             </p>
             {ceiling ? (
               <p className="mt-4 text-sm text-signal">
-                Calibrated to your screening: presentation capped near your {ceiling} dB ceiling.
+                This test is calibrated to your screening
               </p>
             ) : null}
             <Button size="lg" className="mt-8" onClick={() => void begin()}>
