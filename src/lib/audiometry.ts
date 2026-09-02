@@ -204,21 +204,32 @@ export function safeListening(rs: ThresholdResult[]) {
 
 let ctx: AudioContext | null = null;
 
-export function getAudioContext(): AudioContext {
+export async function getAudioContext(): Promise<AudioContext> {
   if (!ctx) {
     const Ctor =
       window.AudioContext ||
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     ctx = new Ctor();
   }
-  if (ctx.state === "suspended") void ctx.resume();
+  if (ctx.state === "suspended") await ctx.resume();
   return ctx;
 }
 
-/** Map a dB-HL-like level to a linear gain, with headroom for safety. */
+/** Prime the audio engine from a user gesture (autoplay policy). */
+export async function unlockAudio(): Promise<void> {
+  await getAudioContext();
+}
+
+/**
+ * Map a dB-HL-like level to a linear gain.
+ * The loudest presentable level (90 dB) maps to the safety ceiling, and each
+ * 20 dB below that divides amplitude by ten, with an audible floor.
+ */
+const MAX_GAIN = 0.3;
 function levelToGain(levelDb: number): number {
   const clamped = Math.max(MIN_DB, Math.min(MAX_DB, levelDb));
-  return Math.min(0.35, Math.pow(10, (clamped - 100) / 20) * 3);
+  const g = MAX_GAIN * Math.pow(10, (clamped - MAX_DB) / 20);
+  return Math.max(0.0006, Math.min(MAX_GAIN, g));
 }
 
 export async function playTone(
