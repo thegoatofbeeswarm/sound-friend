@@ -17,7 +17,7 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 /** Runs before hydration so the saved theme is applied without a flash. */
-export const themeBootstrapScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.classList.toggle("dark",t==="dark");document.documentElement.dataset.theme=t;}catch(e){}})();`;
+export const themeBootstrapScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.classList.toggle("dark",t==="dark");document.documentElement.dataset['theme']=t;}catch(e){}})();`;
 
 function applyTheme(theme: Theme) {
   if (typeof document === "undefined") return;

@@ -12,7 +12,7 @@ import {
 export function AppSettings() {
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useI18n();
-  const current = LANGUAGES.find((l) => l.value === language) ?? LANGUAGES[0];
+  const current = LANGUAGES.find((l) => l.value === language) ?? { value: "en" as Language, label: "English", short: "EN" };
 
   return (
     <div className="flex items-center gap-1">
