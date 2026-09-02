@@ -48,7 +48,7 @@ export const DEFAULT_DEVICE: DeviceId = "over-ear";
 const STORAGE_KEY = "audible.device";
 
 export function getDevice(id: string | null | undefined): DevicePreset {
-  return DEVICES.find((d) => d.id === id) ?? DEVICES[0];
+  return DEVICES.find((d) => d.id === id) ?? DEVICES[0]!;
 }
 
 export function loadDevice(): DeviceId {

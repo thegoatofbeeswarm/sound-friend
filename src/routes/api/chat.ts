@@ -39,7 +39,7 @@ export const Route = createFileRoute("/api/chat")({
               ? context
               : "No saved screenings or training sessions yet."
           }`,
-          messages: convertToModelMessages(messages as UIMessage[]),
+          messages: await convertToModelMessages(messages as UIMessage[]),
         });
 
         return result.toUIMessageStreamResponse({

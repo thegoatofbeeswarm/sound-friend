@@ -29,7 +29,7 @@ export async function buildCoachContext(): Promise<string> {
       );
     }
 
-    const latest = tests[0];
+    const latest = tests[0]!;
     const { data: points } = await supabase
       .from("threshold_points")
       .select("ear, frequency_hz, threshold_db")
