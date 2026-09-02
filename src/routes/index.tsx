@@ -41,8 +41,8 @@ const pillars = [
   },
   {
     icon: Volume2,
-    title: "Limits tuned to you",
-    body: "Early damage and frequency-specific sensitivity shift your ceiling below the generic 85 dB flag.",
+    title: "Your preferences matter",
+    body: "This app is custom-tailored to your needs and preferences",
   },
   {
     icon: Activity,
