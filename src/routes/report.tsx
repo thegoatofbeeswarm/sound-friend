@@ -264,7 +264,7 @@ function ReportPage() {
             <Target className="h-4 w-4 text-signal" /> Your focus next week
           </h2>
           <p className="mt-2 font-display text-2xl font-semibold">{focusMeta.label}</p>
-          <p className="mt-2 text-sm text-muted-foreground">{focusMeta.description}</p>
+          <p className="mt-2 text-sm text-muted-foreground">{focusMeta.blurb}</p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Button asChild>
               <Link to="/train">
