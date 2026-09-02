@@ -143,7 +143,9 @@ function RisksPage() {
                 <Headphones className="h-4 w-4 text-signal" /> How you actually listen
               </h2>
 
-              <div className="mt-6 space-y-7">
+              <DevicePicker value={device} onChange={setDevice} className="mt-6" />
+
+              <div className="mt-7 space-y-7">
                 <div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Typical headphone volume</span>
