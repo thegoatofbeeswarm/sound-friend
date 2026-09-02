@@ -36,9 +36,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { unlockAudio } from "@/lib/audiometry";
 import {
   createTrainer,
-  scoreRound,
   stopSoundscape,
-  quietestHeard,
   type TrainerState,
 } from "@/lib/soundscapes";
 import {
