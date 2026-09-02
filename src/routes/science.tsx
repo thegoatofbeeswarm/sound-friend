@@ -146,9 +146,10 @@ const references = [
     url: "https://pubmed.ncbi.nlm.nih.gov/6844102/",
   },
   {
-    title: "Ferguson et al. — Auditory training can improve working memory, attention and communication in adults",
-    source: "Journal of Speech, Language, and Hearing Research, 2014",
-    url: "https://pubmed.ncbi.nlm.nih.gov/24686468/",
+    title:
+      "Ferguson MA & Henshaw H — Auditory training can improve working memory, attention, and communication in adverse conditions for adults with hearing loss",
+    source: "Frontiers in Psychology, 2015; 6:556",
+    url: "https://pubmed.ncbi.nlm.nih.gov/25999877/",
   },
   {
     title: "Henshaw & Ferguson — Efficacy of individual computer-based auditory training for people with hearing loss: a systematic review",
@@ -161,10 +162,11 @@ const references = [
     url: "https://pubmed.ncbi.nlm.nih.gov/20716740/",
   },
   {
-    title: "Liberman et al. — Cochlear synaptopathy in humans with normal audiograms",
-    source: "PLOS ONE / Scientific Reports",
+    title: "Liberman et al. — Toward a Differential Diagnosis of Hidden Hearing Loss in Humans",
+    source: "PLOS ONE, 2016; 11(9):e0162726",
     url: "https://pubmed.ncbi.nlm.nih.gov/27618300/",
   },
+
 ];
 
 function SciencePage() {
