@@ -172,11 +172,14 @@ function TrainPage() {
     if (!round || phase !== "answer") return;
     const correct = id === round.answerId;
     setLastCorrect(correct);
-    const next = scoreRound(
-      trainer,
-      { target: { id: round.answerId, label: round.options.find((option) => option.id === round.answerId)?.label ?? "sound", realDb: 0, hint: "" }, options: [], levelDb: 0, choices: round.options.length },
-      correct,
-    );
+    const next = {
+      ...trainer,
+      rounds: trainer.rounds + 1,
+      correct: trainer.correct + (correct ? 1 : 0),
+      streak: correct ? trainer.streak + 1 : 0,
+      level: Math.max(1, Math.min(10, trainer.level + (correct ? (trainer.streak + 1 >= 3 ? 0.9 : 0.5) : -0.8))),
+      history: [...trainer.history, { round: trainer.rounds + 1, level: trainer.level, correct, levelDb: 0 }],
+    };
     setTrainer(next);
     await new Promise((resolve) => setTimeout(resolve, 750));
     if (next.rounds >= ROUNDS) {
