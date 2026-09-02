@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { SiteNav } from "@/components/SiteNav";
 import { NoiseMeter } from "@/components/NoiseMeter";
 import { Audiogram } from "@/components/Audiogram";
+import { ScreeningQuality } from "@/components/ScreeningQuality";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -27,6 +28,7 @@ import {
 } from "@/lib/audiometry";
 import { DevicePicker } from "@/components/DevicePicker";
 import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
+import { scoreScreening } from "@/lib/test-quality";
 
 export const Route = createFileRoute("/test")({
   head: () => ({
@@ -248,13 +250,33 @@ function TestPage() {
           </section>
         ) : null}
 
-        {phase === "done" && final ? <ResultsView points={final} saving={saving} /> : null}
+        {phase === "done" && final ? (
+          <ResultsView
+            points={final}
+            saving={saving}
+            environmentDb={noise}
+            trials={state.trialCount}
+            device={device}
+          />
+        ) : null}
       </main>
     </div>
   );
 }
 
-function ResultsView({ points, saving }: { points: ThresholdResult[]; saving: boolean }) {
+function ResultsView({
+  points,
+  saving,
+  environmentDb,
+  trials,
+  device,
+}: {
+  points: ThresholdResult[];
+  saving: boolean;
+  environmentDb: number | null;
+  trials: number;
+  device: DeviceId;
+}) {
   const summary = safeListening(points);
   const { user } = useAuth();
 
@@ -265,11 +287,21 @@ function ResultsView({ points, saving }: { points: ThresholdResult[]; saving: bo
         Lower is better. The shaded bands mark normal, early loss, and notable loss ranges.
       </p>
 
-      <div className="mt-8 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card">
-        <Audiogram points={points} />
-      </div>
+       <div className="mt-8 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card">
+         <Audiogram points={points} />
+       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+       <ScreeningQuality
+         quality={scoreScreening({
+           environmentDb,
+           trials,
+           confidences: points.map((point) => point.confidence),
+           device,
+         })}
+         className="mt-6"
+       />
+
+       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <Stat label="Average threshold" value={`${summary.avg} dB`} />
         <Stat label="Your volume ceiling" value={`${summary.ceilingDb} dB`} highlight />
         <Stat label="Safe daily exposure" value={`${summary.safeHours} h`} />

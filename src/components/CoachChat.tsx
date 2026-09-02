@@ -19,20 +19,14 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { supabase } from "@/integrations/supabase/client";
 import { buildCoachContext } from "@/lib/coach-context";
+import { CoachActions } from "@/components/CoachActions";
 
 function textOf(message: UIMessage): string {
   return message.parts
-    .map((p) => (p.type === "text" ? p.text : ""))
+    .map((part) => (part.type === "text" ? part.text : ""))
     .join("")
     .trim();
 }
-
-const STARTERS = [
-  "How is my hearing doing overall?",
-  "What are my weakest frequencies right now?",
-  "Am I listening too loud for my ears?",
-  "Is my training actually improving anything?",
-];
 
 export function CoachChat({
   threadId,
@@ -115,18 +109,7 @@ export function CoachChat({
               <p className="mt-2 text-sm text-muted-foreground">
                 It reads your screenings, audiogram, training sessions and device setup.
               </p>
-              <div className="mt-6 grid gap-2 sm:grid-cols-2">
-                {STARTERS.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => void send(s)}
-                    className="rounded-xl border border-border/70 bg-card/50 px-4 py-3 text-left text-sm text-muted-foreground transition-colors hover:border-signal/50 hover:text-foreground"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
+               <CoachActions onSelect={(prompt) => void send(prompt)} />
             </div>
           ) : null}
 
