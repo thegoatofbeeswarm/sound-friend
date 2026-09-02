@@ -29,7 +29,7 @@ const sections = [
     title: "Adaptive threshold estimation",
     body: [
       "A classic audiogram plays fixed tones and steps the level up and down until the listener stops responding. That works, but it spends most of its trials on levels that tell you almost nothing.",
-      "Audiomaxxer instead keeps a probability distribution over your threshold at each frequency and chooses the next tone level that is expected to reduce uncertainty the most — a Bayesian adaptive staircase. Catch trials (silent presentations) check that you are responding to sound rather than guessing, and the run stops when the estimate is stable rather than after a fixed number of tones.",
+      "Audiomaxxer instead keeps a probability distribution over your threshold at each frequency and ear, updates it after every answer, and puts the next tone where uncertainty is highest — a Bayesian adaptive procedure. The psychometric model carries explicit guess and lapse rates so an occasional stray or missed press does not distort the estimate, and the run stops when the estimate is stable rather than after a fixed number of tones.",
       "The result is a threshold estimate per ear per frequency with a confidence attached to it, in roughly four minutes.",
     ],
   },
