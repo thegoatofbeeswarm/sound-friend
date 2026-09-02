@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SiteNav } from "@/components/SiteNav";
+import { ExampleProfile } from "@/components/ExampleProfile";
 
 export const Route = createFileRoute("/")({
   head: () => ({
