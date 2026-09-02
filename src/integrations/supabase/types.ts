@@ -200,34 +200,43 @@ export type Database = {
           accuracy: number
           correct: number
           created_at: string
+          duration_sec: number
           end_level: number
           id: string
+          mode: string
           quietest_db: number | null
           rounds: number
           start_level: number
           user_id: string
+          xp: number
         }
         Insert: {
           accuracy?: number
           correct?: number
           created_at?: string
+          duration_sec?: number
           end_level?: number
           id?: string
+          mode?: string
           quietest_db?: number | null
           rounds?: number
           start_level?: number
           user_id: string
+          xp?: number
         }
         Update: {
           accuracy?: number
           correct?: number
           created_at?: string
+          duration_sec?: number
           end_level?: number
           id?: string
+          mode?: string
           quietest_db?: number | null
           rounds?: number
           start_level?: number
           user_id?: string
+          xp?: number
         }
         Relationships: []
       }

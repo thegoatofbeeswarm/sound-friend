@@ -22,6 +22,13 @@
       "when": 1788350519485,
       "tag": "0002_coach_threads_and_device_type",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788364677107,
+      "tag": "0003_training_modes_xp",
+      "breakpoints": true
     }
   ]
 }
