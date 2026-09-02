@@ -305,15 +305,18 @@ function ResultsView({ points, saving }: { points: ThresholdResult[]; saving: bo
       </div>
 
       <div className="mt-8 flex flex-wrap gap-3">
+        <Button asChild>
+          <Link to="/risks">See my overuse risk</Link>
+        </Button>
         <Button asChild variant="secondary">
-          <Link to="/test">Test again</Link>
+          <Link to="/train">Train my hearing</Link>
         </Button>
         {user ? (
-          <Button asChild disabled={saving}>
+          <Button asChild variant="secondary" disabled={saving}>
             <Link to="/history">{saving ? "Saving..." : "View history"}</Link>
           </Button>
         ) : (
-          <Button asChild>
+          <Button asChild variant="secondary">
             <Link to="/auth">Sign in to save this</Link>
           </Button>
         )}

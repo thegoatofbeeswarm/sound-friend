@@ -22,6 +22,20 @@ export function SiteNav() {
             Hearing test
           </Link>
           <Link
+            to="/train"
+            className="rounded-md px-3 py-2 text-muted-foreground transition-colors hover:text-foreground"
+            activeProps={{ className: "rounded-md px-3 py-2 text-foreground" }}
+          >
+            Train
+          </Link>
+          <Link
+            to="/risks"
+            className="hidden rounded-md px-3 py-2 text-muted-foreground transition-colors hover:text-foreground sm:inline-block"
+            activeProps={{ className: "hidden rounded-md px-3 py-2 text-foreground sm:inline-block" }}
+          >
+            Risks
+          </Link>
+          <Link
             to="/history"
             className="rounded-md px-3 py-2 text-muted-foreground transition-colors hover:text-foreground"
             activeProps={{ className: "rounded-md px-3 py-2 text-foreground" }}
