@@ -11,16 +11,16 @@ import type { Ear, ThresholdResult } from "@/lib/audiometry";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
-      { title: "Hearing History - Audiomaxxer" },
+      { title: "Hearing History | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "Review every saved hearing screening, compare audiograms over time, and see how your personalized safe-listening ceiling changes.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Hearing History - Audiomaxxer" },
+      { property: "og:title", content: "Hearing History | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
-        content: "Track your audiograms and listening limits over time.",
+        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

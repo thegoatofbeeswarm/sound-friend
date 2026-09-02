@@ -8,16 +8,16 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/coach/")({
   head: () => ({
     meta: [
-      { title: "AI Hearing Coach - Audiomaxxer" },
+      { title: "AI Hearing Coach | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "Chat with an AI coach that reads your audiogram, training sessions and listening habits, then explains your progress and current hearing problems in plain language.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "AI Hearing Coach - Audiomaxxer" },
+      { property: "og:title", content: "AI Hearing Coach | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
-        content: "Ask questions about your hearing results and get grounded, personalized answers.",
+        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -34,16 +34,16 @@ import {
 export const Route = createFileRoute("/train")({
   head: () => ({
     meta: [
-      { title: "Adaptive Hearing Training - Audiomaxxer" },
+      { title: "Adaptive Hearing Training | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "Train your hearing with real-world sounds - from light breathing to a passing motorcycle - in a closed-loop session that gets harder or easier as you answer.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Adaptive Hearing Training - Audiomaxxer" },
+      { property: "og:title", content: "Adaptive Hearing Training | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
-        content: "A closed-loop hearing gym built on real-world soundscapes, with progress tracking and reminders.",
+        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

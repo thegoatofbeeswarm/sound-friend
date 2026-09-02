@@ -12,16 +12,16 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in - Audiomaxxer Hearing Screening" },
+      { title: "Sign in | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "Sign in to Audiomaxxer to save your audiograms, track hearing changes over time, and keep your personalized listening limits in sync.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Sign in - Audiomaxxer" },
+      { property: "og:title", content: "Sign in | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
-        content: "Access your saved hearing screenings and personalized listening limits.",
+        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

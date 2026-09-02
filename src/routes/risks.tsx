@@ -13,16 +13,16 @@ import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from
 export const Route = createFileRoute("/risks")({
   head: () => ({
     meta: [
-      { title: "Your Headphone Risk Profile - Audiomaxxer" },
+      { title: "Your Headphone Risk Profile | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "See how your daily headphone volume and listening hours compare with your personal safe dose, and what continued overuse would cost your hearing.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Your Headphone Risk Profile - Audiomaxxer" },
+      { property: "og:title", content: "Your Headphone Risk Profile | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
-        content: "Personalized overuse risk from your own audiogram, not a generic 85 dB warning.",
+        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

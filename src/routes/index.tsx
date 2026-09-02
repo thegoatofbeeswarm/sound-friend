@@ -14,17 +14,17 @@ import { SiteNav } from "@/components/SiteNav";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Audiomaxxer - Personalized Hearing Screening & Safe Listening" },
+      { title: "Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "Take a fast adaptive hearing test in your browser, get a personal audiogram, and receive listening limits tuned to your own ears instead of a generic 85 dB rule.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Audiomaxxer - Personalized Hearing Screening" },
+      { property: "og:title", content: "Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
         content:
-          "Adaptive Bayesian hearing screening and personalized safe-listening limits, free in any browser.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

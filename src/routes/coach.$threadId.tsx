@@ -12,16 +12,16 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/coach/$threadId")({
   head: () => ({
     meta: [
-      { title: "Coach Conversation - Audiomaxxer" },
+      { title: "Coach Conversation | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         name: "description",
         content:
-          "A saved conversation with the Audiomaxxer hearing coach about your audiogram, safe listening ceiling and training progress.",
+          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Coach Conversation - Audiomaxxer" },
+      { property: "og:title", content: "Coach Conversation | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
       {
         property: "og:description",
-        content: "Revisit what your hearing coach explained about your results.",
+        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
