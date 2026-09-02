@@ -121,7 +121,7 @@ function Index() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-20">
-        <h2 className="text-3xl font-semibold">How it works differently</h2>
+        <h2 className="text-3xl font-semibold">What's different about this?</h2>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           {pillars.map((p) => (
             <article
