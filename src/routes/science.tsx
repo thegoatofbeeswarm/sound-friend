@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, BookOpen, ExternalLink } from "lucide-react";
+import { AlertTriangle, BookOpen, ExternalLink, FlaskConical } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/science")({
