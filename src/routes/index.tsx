@@ -52,7 +52,7 @@ const pillars = [
   {
     icon: Globe2,
     title: "Accessibility",
-    body: "Runs on any phone with headphones, so routine screening reaches communities far from real-life audiology equipment.",
+    body: "Runs on any phone with headphones",
   },
 ];
 
