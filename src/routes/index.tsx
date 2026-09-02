@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SiteNav } from "@/components/SiteNav";
+import { ExampleProfile } from "@/components/ExampleProfile";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -104,6 +105,8 @@ function Index() {
           <p className="mt-4 text-xs text-muted-foreground">{t("home.disclaimer")}</p>
         </div>
       </section>
+
+      <ExampleProfile />
 
       <section className="mx-auto max-w-6xl px-5 py-20">
         <h2 className="text-3xl font-semibold">{t("home.pillarsTitle")}</h2>
