@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { Audiogram } from "@/components/Audiogram";
+import { ScreeningQuality } from "@/components/ScreeningQuality";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +28,7 @@ import {
   summarizeEar,
   trainingStreak,
 } from "@/lib/hearing-summary";
+import { scoreScreening } from "@/lib/test-quality";
 
 export const Route = createFileRoute("/history")({
   head: () => ({
@@ -57,6 +59,7 @@ type SavedTest = {
   safe_volume_offset_db: number | null;
   trials: number;
   environment_db: number | null;
+  device_type: string | null;
   points: ThresholdResult[];
 };
 
@@ -112,9 +115,9 @@ function HistoryPage() {
       const [{ data: tests, error: testsError }, { data: points, error: pointsError }, { data: sessions, error: sessionsError }] =
         await Promise.all([
           supabase
-            .from("hearing_tests")
-            .select("id, created_at, avg_threshold_db, worst_threshold_db, safe_volume_offset_db, trials, environment_db")
-            .order("created_at", { ascending: false }),
+             .from("hearing_tests")
+             .select("id, created_at, avg_threshold_db, worst_threshold_db, safe_volume_offset_db, trials, environment_db, device_type")
+             .order("created_at", { ascending: false }),
           supabase
             .from("threshold_points")
             .select("test_id, ear, frequency_hz, threshold_db, confidence"),
@@ -219,13 +222,19 @@ function Dashboard({ data }: { data: { tests: SavedTest[]; sessions: DashboardSe
     Number(current.avg_threshold_db),
     previous ? Number(previous.avg_threshold_db) : null,
   );
-  const ceiling = 85 + Number(current.safe_volume_offset_db ?? 0);
-  const risk = listeningRisk(Number(current.worst_threshold_db), ceiling);
-  const screeningDue = nextScreening(current.created_at);
-  const streak = trainingStreak(data.sessions.map((session) => session.created_at));
-  const totalSessions = data.sessions.length;
-  const trainingMinutes = data.sessions.reduce((sum, session) => sum + Math.round(session.rounds * 0.55), 0);
-  const scoreDelta = score != null && previousScore != null ? score - previousScore : null;
+   const ceiling = 85 + Number(current.safe_volume_offset_db ?? 0);
+   const risk = listeningRisk(Number(current.worst_threshold_db), ceiling);
+   const screeningDue = nextScreening(current.created_at);
+   const streak = trainingStreak(data.sessions.map((session) => session.created_at));
+   const totalSessions = data.sessions.length;
+   const trainingMinutes = data.sessions.reduce((sum, session) => sum + Math.round(session.rounds * 0.55), 0);
+   const scoreDelta = score != null && previousScore != null ? score - previousScore : null;
+   const quality = scoreScreening({
+     environmentDb: current.environment_db,
+     trials: current.trials,
+     confidences: current.points.map((point) => point.confidence),
+     device: current.device_type,
+   });
 
   return (
     <>
@@ -238,8 +247,9 @@ function Dashboard({ data }: { data: { tests: SavedTest[]; sessions: DashboardSe
           <div className="flex items-center gap-2 rounded-full border border-signal/40 bg-signal/10 px-3 py-1.5 text-sm font-medium text-signal">
             <CheckCircle2 className="h-4 w-4" /> Profile updated
           </div>
-        </div>
-        <div className="mt-8 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+         </div>
+         <ScreeningQuality quality={quality} compact className="mt-6" />
+         <div className="mt-8 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
           <Metric
             label="Hearing score"
             value={score == null ? "—" : `${score}/100`}
