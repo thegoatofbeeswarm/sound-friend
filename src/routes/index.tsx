@@ -106,6 +106,8 @@ function Index() {
         </div>
       </section>
 
+      <ExampleProfile />
+
       <section className="mx-auto max-w-6xl px-5 py-20">
         <h2 className="text-3xl font-semibold">{t("home.pillarsTitle")}</h2>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
