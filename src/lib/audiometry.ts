@@ -204,21 +204,32 @@ export function safeListening(rs: ThresholdResult[]) {
 
 let ctx: AudioContext | null = null;
 
-export function getAudioContext(): AudioContext {
+export async function getAudioContext(): Promise<AudioContext> {
   if (!ctx) {
     const Ctor =
       window.AudioContext ||
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     ctx = new Ctor();
   }
-  if (ctx.state === "suspended") void ctx.resume();
+  if (ctx.state === "suspended") await ctx.resume();
   return ctx;
 }
 
-/** Map a dB-HL-like level to a linear gain, with headroom for safety. */
+/** Prime the audio engine from a user gesture (autoplay policy). */
+export async function unlockAudio(): Promise<void> {
+  await getAudioContext();
+}
+
+/**
+ * Map a dB-HL-like level to a linear gain.
+ * The loudest presentable level (90 dB) maps to the safety ceiling, and each
+ * 20 dB below that divides amplitude by ten, with an audible floor.
+ */
+const MAX_GAIN = 0.3;
 function levelToGain(levelDb: number): number {
   const clamped = Math.max(MIN_DB, Math.min(MAX_DB, levelDb));
-  return Math.min(0.35, Math.pow(10, (clamped - 100) / 20) * 3);
+  const g = MAX_GAIN * Math.pow(10, (clamped - MAX_DB) / 20);
+  return Math.max(0.0006, Math.min(MAX_GAIN, g));
 }
 
 export async function playTone(
@@ -227,8 +238,9 @@ export async function playTone(
   ear: Ear,
   durationMs = 900,
 ): Promise<void> {
-  const audio = getAudioContext();
-  const now = audio.currentTime;
+  const audio = await getAudioContext();
+  const now = audio.currentTime + 0.02;
+  const dur = durationMs / 1000;
   const osc = audio.createOscillator();
   const gain = audio.createGain();
   const panner = audio.createStereoPanner();
@@ -238,10 +250,11 @@ export async function playTone(
   panner.pan.value = ear === "left" ? -1 : 1;
 
   const peak = levelToGain(levelDb);
-  gain.gain.setValueAtTime(0.0001, now);
+  const floor = peak * 0.001;
+  gain.gain.setValueAtTime(floor, now);
   gain.gain.exponentialRampToValueAtTime(peak, now + 0.05);
-  gain.gain.setValueAtTime(peak, now + durationMs / 1000 - 0.05);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000);
+  gain.gain.setValueAtTime(peak, now + dur - 0.05);
+  gain.gain.exponentialRampToValueAtTime(floor, now + dur);
 
   osc.connect(gain).connect(panner).connect(audio.destination);
   osc.start(now);

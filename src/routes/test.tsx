@@ -19,6 +19,7 @@ import {
   progress,
   results,
   safeListening,
+  unlockAudio,
   type TestState,
   type ThresholdResult,
   type Trial,
@@ -85,6 +86,8 @@ function TestPage() {
   }
 
   async function start() {
+    // Must happen synchronously in the click handler for autoplay policies.
+    await unlockAudio();
     const fresh = createTestState();
     setState(fresh);
     setFinal(null);
