@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as ReportRouteImport } from './routes/report'
 import { Route as RisksRouteImport } from './routes/risks'
 import { Route as ScienceRouteImport } from './routes/science'
 import { Route as TestRouteImport } from './routes/test'
@@ -33,6 +34,11 @@ const AuthRoute = AuthRouteImport.update({
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RisksRoute = RisksRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
+  '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
   '/test': typeof TestRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
+  '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
   '/test': typeof TestRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
+  '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
   '/test': typeof TestRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/history'
+    | '/report'
     | '/risks'
     | '/science'
     | '/test'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/history'
+    | '/report'
     | '/risks'
     | '/science'
     | '/test'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/history'
+    | '/report'
     | '/risks'
     | '/science'
     | '/test'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   HistoryRoute: typeof HistoryRoute
+  ReportRoute: typeof ReportRoute
   RisksRoute: typeof RisksRoute
   ScienceRoute: typeof ScienceRoute
   TestRoute: typeof TestRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/risks': {
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   HistoryRoute: HistoryRoute,
+  ReportRoute: ReportRoute,
   RisksRoute: RisksRoute,
   ScienceRoute: ScienceRoute,
   TestRoute: TestRoute,
