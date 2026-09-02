@@ -199,6 +199,25 @@ function SciencePage() {
 
         <article className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
           <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <FlaskConical className="h-5 w-5 text-signal" /> Implementation details
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            The exact parameters the screening runs with today, so the method can be judged rather than taken on trust.
+          </p>
+          <dl className="mt-5 space-y-4">
+            {implementation.map((d) => (
+              <div key={d.term} className="border-t border-border/60 pt-4 first:border-t-0 first:pt-0">
+                <dt className="text-sm font-semibold">{d.term}</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-muted-foreground">{d.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </article>
+
+
+
+        <article className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
             <AlertTriangle className="h-5 w-5 text-signal" /> Limitations
           </h2>
           <ul className="mt-4 space-y-3">
