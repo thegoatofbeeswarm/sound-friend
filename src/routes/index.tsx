@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { SiteNav } from "@/components/SiteNav";
 import { ExampleProfile } from "@/components/ExampleProfile";
+import { HowItWorks } from "@/components/HowItWorks";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -107,6 +108,8 @@ function Index() {
       </section>
 
       <ExampleProfile />
+
+      <HowItWorks />
 
       <section className="mx-auto max-w-6xl px-5 py-20">
         <h2 className="text-3xl font-semibold">{t("home.pillarsTitle")}</h2>

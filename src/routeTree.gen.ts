@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as RisksRouteImport } from './routes/risks'
+import { Route as ScienceRouteImport } from './routes/science'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as TrainRouteImport } from './routes/train'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -37,6 +38,11 @@ const HistoryRoute = HistoryRouteImport.update({
 const RisksRoute = RisksRouteImport.update({
   id: '/risks',
   path: '/risks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScienceRoute = ScienceRouteImport.update({
+  id: '/science',
+  path: '/science',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestRoute = TestRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
   '/risks': typeof RisksRoute
+  '/science': typeof ScienceRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
   '/api/chat': typeof ApiChatRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
   '/risks': typeof RisksRoute
+  '/science': typeof ScienceRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
   '/api/chat': typeof ApiChatRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/history': typeof HistoryRoute
   '/risks': typeof RisksRoute
+  '/science': typeof ScienceRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
   '/api/chat': typeof ApiChatRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/history'
     | '/risks'
+    | '/science'
     | '/test'
     | '/train'
     | '/api/chat'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/history'
     | '/risks'
+    | '/science'
     | '/test'
     | '/train'
     | '/api/chat'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/history'
     | '/risks'
+    | '/science'
     | '/test'
     | '/train'
     | '/api/chat'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   HistoryRoute: typeof HistoryRoute
   RisksRoute: typeof RisksRoute
+  ScienceRoute: typeof ScienceRoute
   TestRoute: typeof TestRoute
   TrainRoute: typeof TrainRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/risks'
       fullPath: '/risks'
       preLoaderRoute: typeof RisksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/science': {
+      id: '/science'
+      path: '/science'
+      fullPath: '/science'
+      preLoaderRoute: typeof ScienceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test': {
@@ -220,6 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   HistoryRoute: HistoryRoute,
   RisksRoute: RisksRoute,
+  ScienceRoute: ScienceRoute,
   TestRoute: TestRoute,
   TrainRoute: TrainRoute,
   ApiChatRoute: ApiChatRoute,
