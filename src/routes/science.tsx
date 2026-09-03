@@ -28,9 +28,9 @@ const sections = [
   {
     title: "Adaptive threshold estimation",
     body: [
-      "A classic audiogram plays fixed tones and steps the level up and down until the listener stops responding. That works, but it spends most of its trials on levels that tell you almost nothing.",
-      "Audiomaxxer instead keeps a probability distribution over your threshold at each frequency and ear, updates it after every answer, and puts the next tone where uncertainty is highest — a Bayesian adaptive procedure. The psychometric model carries explicit guess and lapse rates so an occasional stray or missed press does not distort the estimate, and the run stops when the estimate is stable rather than after a fixed number of tones.",
-      "The result is a threshold estimate per ear per frequency with a confidence attached to it, in roughly four minutes.",
+      "A traditional hearing test, also known as an audiogram, typically involves playing a series of fixed tones and adjusting the volume up and down until the person being tested can no longer hear them. While this method can be effective, it tends to focus on a wide range of sound levels, many of which don't provide much useful information. As a result, a lot of time is spent on testing sound levels that don't really tell us anything new or important about the person's hearing.",
+      "Audiomaxxer uses a different approach to measure hearing thresholds. It keeps track of the probability of your threshold at each frequency and for each ear, and updates this information after every response. The next tone is then presented at the frequency where there is the most uncertainty about your threshold. This method is based on Bayesian principles and is adaptive, meaning it adjusts to your individual responses. The model also takes into account the possibility of occasional incorrect or missed responses, so a single mistake doesn't affect the overall estimate. The test stops when your threshold is stable, rather than after a fixed number of tones. This means that Audiomaxxer can provide a more accurate and efficient measurement of your hearing thresholds.",
+      "The outcome is an estimate of the hearing threshold for each ear at different frequencies, along with a measure of how confident we are in that estimate, all of which is determined in about four minutes.",
     ],
   },
   {
@@ -45,14 +45,14 @@ const sections = [
     title: "Environmental noise control",
     body: [
       "Background noise raises the level at which a tone becomes audible, so a screening taken in a noisy room reports thresholds that look worse than your real ones — especially at low frequencies, where room noise is loudest.",
-      "Audiomaxxer measures ambient level through the microphone before and during a screening and flags a run taken in a noisy environment instead of silently recording an inflated threshold. Quiet rooms produce comparisons you can trust across months.",
+      "Audiomaxxer uses the microphone to check the background noise level before and during a hearing test. If it's too loud, it will flag the test as unreliable. This way, you can be sure that the results are accurate and not affected by outside noise. When you test in a quiet room, you can trust that the results will be consistent over time, giving you a clear picture of any changes in your hearing.",
     ],
   },
   {
     title: "Safe listening",
     body: [
-      "The WHO Make Listening Safe guidance and the WHO–ITU global standard for safe listening devices frame risk as a weekly sound dose: level combined with duration, tracked over a week, rather than a single loudness threshold. WHO references 80 dB for 40 hours per week for adults, with a more conservative 75 dB reference mode.",
-      "The WHO reports that over 1 billion people aged 12-35 are at risk from unsafe recreational listening, and that more than 1.5 billion people live with some degree of hearing loss.",
+      "The World Health Organization has guidelines to help keep our listening safe. They look at how much sound we're exposed to over a whole week, not just how loud it is at one time. This is called a weekly sound dose. It's like a limit on how much sound we can handle in a week. The WHO says that for adults, it's safe to listen to sounds at 80 decibels for up to 40 hours a week. But they also have a more cautious guideline of 75 decibels. This is to help prevent hearing loss and other problems that can come from listening to loud sounds for too long.",
+      "The World Health Organization says a huge number of people, over a billion, between 12 and 35 years old, are in danger of damaging their hearing because of how they listen to music for fun. And sadly, more than 1.5 billion people already have some kind of hearing problem.",
       "Audiomaxxer therefore describes your listening behaviour — estimated exposure, loudest sessions, weekly trend — rather than claiming a personally validated medical exposure limit derived from your thresholds.",
     ],
   },
@@ -62,17 +62,17 @@ const implementation: { term: string; value: string }[] = [
   {
     term: "Frequencies tested",
     value:
-      "500, 1000, 2000, 4000 and 8000 Hz, each ear separately — 10 independent tracks per screening. Pure sine tones, no 250 Hz or 6 kHz point yet.",
+      "We test hearing at different frequencies — 500, 1000, 2000, 4000 and 8000 Hz. Each ear is tested separately, and we use 10 different tracks for each screening. The sounds used are pure sine tones. Currently, we don't test at 250 Hz or 6 kHz.",
   },
   {
     term: "Tone duration",
     value:
-      "900 ms per presentation, with 50 ms exponential onset and offset ramps to avoid audible clicks, and a short gap before the response window closes.",
+      "Each sound is played for 900 milliseconds, with a gradual increase and decrease in volume over 50 milliseconds to prevent any sharp clicks. There's also a brief pause before the time to respond runs out.",
   },
   {
     term: "Catch trials",
     value:
-      "None at present. Instead of silent catch trials, the psychometric model carries a fixed false-positive (guess) rate of 2% and a lapse rate of 3%, so isolated stray or missed presses are absorbed by the likelihood rather than shifting the threshold. Explicit silent catch trials are a planned addition; until then a screening cannot detect deliberate random responding.",
+      "Instead of using silent catch trials, the psychometric model has a fixed rate of false positives, which is 2%, and a lapse rate of 3%. This means that if someone accidentally presses a button or misses a press, it won't affect the results as much. The model can absorb these small mistakes. However, this also means that the screening can't detect if someone is responding randomly on purpose. To fix this, silent catch trials will be added later. For now, the model just works with the fixed rates to account for any stray or missed presses. This way, isolated mistakes won't shift the threshold too much.",
   },
   {
     term: "Bayesian prior",
@@ -82,42 +82,43 @@ const implementation: { term: string; value: string }[] = [
   {
     term: "Stopping criterion",
     value:
-      "A track finishes once it has at least 3 trials and its posterior SD falls below 4.5 dB. The screening ends when every track has finished or 44 total trials have been presented, whichever comes first.",
+      "So, here's how it works: a track is considered complete when two things happen — it's been tried at least three times, and the difference in results, or posterior SD, gets below a certain threshold, 4.5 dB. The whole screening process wraps up when all tracks have finished or when we've done a total of 44 trials, whichever happens first.",
   },
   {
     term: "What the confidence value means",
     value:
-      "It is a rescaling of the posterior standard deviation, not a p-value or a clinical accuracy claim: 100% corresponds to an SD of about 3 dB and it falls linearly to 0% at about 23 dB. It describes how tightly the procedure has pinned down the threshold given your answers — it says nothing about whether the absolute calibration of your headphones is correct.",
+      "This isn't about how accurate your headphones are, but rather how sure we are about the results. Think of it like a confidence score — 100% means we're very confident, with a small margin of error, around 3 dB. As we get closer to 0%, our confidence drops, and the margin of error increases, up to about 23 dB. It's like a measure of how precise our measurement is, based on your responses.",
   },
   {
     term: "Headphone models with a correction",
     value:
-      "AirPods Pro 3 and Pro 2 (+6 dB), open-fit AirPods (+3 dB), wired EarPods (+2 dB), Sony WH-1000XM6 (+1 dB) and Bose QuietComfort Ultra (+1 dB). Generic form factors — other over-ear (0 dB), on-ear (+2 dB), in-ear (+6 dB) — are marked uncalibrated in the app.",
+      "Here's how different headphones affect sound levels: the AirPods Pro 3 and Pro 2 make sounds 6 decibels louder, while the open-fit AirPods make them 3 decibels louder. Wired EarPods make sounds 2 decibels louder, and the Sony WH-1000XM6 and Bose QuietComfort Ultra make them 1 decibel louder. Other types of headphones, like over-ear, on-ear, and in-ear, have different effects on sound levels too — for example, in-ear headphones can make sounds 6 decibels louder, and on-ear headphones can make them 2 decibels louder. However, these types of headphones aren't calibrated in the app, so the exact effects might vary.",
   },
   {
     term: "How those corrections were obtained",
     value:
-      "They are coarse form-factor offsets, derived from published third-party frequency-response and coupler measurements for each model, not from our own measurements on an ear simulator, and not per-frequency. Sealed in-ear tips couple more energy to the eardrum than open or over-ear drivers, which is the bulk of the difference. Treat every offset as ±5 dB or worse. We would rather state this than imply a calibration chain we do not have.",
+      "They are rough estimates of how sound levels change, based on what other people have measured about how different headphones respond to sound. These estimates aren't super precise, and they're not based on our own tests using a fake ear to measure sound. Also, the type of headphones you use can make a big difference — for example, headphones that fit inside your ear canal can make sounds seem louder than headphones that sit outside your ear. We're being upfront about how rough these estimates are, because we don't want to make it seem like we have a more precise system for measuring sound than we actually do. Think of these estimates as being accurate to within about 5 decibels, give or take — and even that's not a hard and fast rule.",
   },
   {
     term: "Environmental-noise rejection criterion",
     value:
-      "Room level is estimated from the device microphone before the screening. Up to 35 dB counts as very quiet, up to 45 dB as acceptable, 45–55 dB costs the screening a large quality penalty, and above 55 dB the run is flagged as unreliable for low-level tones. Nothing is discarded automatically — a noisy run is recorded and clearly labelled so it never quietly poisons your trend.",
+      "When we're getting ready to do a screening, we first check how loud the room is using the device's microphone. If it's really quiet, like up to 35 decibels, that's great. If it's a bit louder, up to 45 decibels, that's still okay. But if it gets too loud, between 45 and 55 decibels, the quality of the screening might not be as good. And if it's even louder, above 55 decibels, we might not be able to trust the results, especially when it comes to quiet sounds. The good thing is that we don't just throw away the results if it's too loud — we still record them and make a note that they might not be accurate, so we can take that into account later on.",
   },
   {
     term: "Units",
     value:
-      "Levels are relative, estimated dB — dB-HL-like values on an internal scale, not measured dB SPL and not clinically calibrated dB HL. Absolute output depends on your headphones, your operating-system volume and the browser audio path, none of which we can measure. Room-noise figures from the microphone are uncalibrated dB SPL estimates. The values are most meaningful compared against your own earlier screenings on the same device and volume setting.",
+      "The sound levels we're talking about are not absolute — they're more like estimates. We use a special scale that's similar to the ones used in clinics, but it's not exactly the same. The actual sound level you hear depends on a few things: your headphones, the volume on your computer, and how the sound is processed by your browser. Unfortunately, we can't measure these things. When we look at the background noise in your room, we get an estimate of the sound level, but this isn't a precise measurement either. The best way to use our sound levels is to compare them to your own previous tests, done on the same device and with the same volume settings. This will give you a better idea of how your hearing is doing over time.",
   },
 ];
 
 const limitations = [
-  "Browser and operating-system volume are not known to the app, so absolute decibel values depend on your device settings.",
-  "Headphone frequency responses differ substantially. We apply per-model corrections for the models we list; anything else is uncalibrated and best used for relative tracking.",
-  "Phone and laptop microphones are not calibrated sound level meters — noise and exposure readings are estimates.",
-  "Attention, fatigue, and response strategy affect any behavioural hearing test, including this one.",
-  "Audiomaxxer is a screening and training tool. It does not diagnose hearing loss, tinnitus, or any medical condition, and it cannot detect conductive or middle-ear problems. See an audiologist for a clinical audiogram.",
+  "The volume on your browser and operating system isn't something the app can detect, so the actual loudness you hear depends on how you've set up your device.",
+  "Headphones can have really different sound profiles. To get accurate sound, we make adjustments for specific models that we support. If you're using a different model, the sound won't be perfectly calibrated, but you can still use it to compare sounds relatively.",
+  "Phone and laptop microphones aren't super accurate when it comes to measuring sound levels. They can give you an idea of how loud something is, but the readings are really just estimates.",
+  "Things like paying attention, feeling tired, and how someone responds can impact the results of a hearing test that relies on behavior.",
+  "Audiomaxxer is a tool that helps check your hearing and can even help train your ears. But it's not a doctor, so it can't tell you if you have hearing loss or other medical problems like tinnitus. It also can't find problems with the middle part of your ear. If you're worried about your hearing, you should go see a special kind of doctor called an audiologist. They can do a thorough check of your hearing and give you a proper diagnosis.",
 ];
+
 
 const references = [
   {
