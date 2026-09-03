@@ -10,8 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AudiogramExplainedRouteImport } from './routes/audiogram-explained'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BayesianHearingTestRouteImport } from './routes/bayesian-hearing-test'
+import { Route as HeadphoneHearingTestAccuracyRouteImport } from './routes/headphone-hearing-test-accuracy'
+import { Route as HearingLossPreventionRouteImport } from './routes/hearing-loss-prevention'
+import { Route as HearingThresholdsRouteImport } from './routes/hearing-thresholds'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as HowOnlineHearingTestsWorkRouteImport } from './routes/how-online-hearing-tests-work'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as RisksRouteImport } from './routes/risks'
 import { Route as ScienceRouteImport } from './routes/science'
@@ -26,9 +32,35 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AudiogramExplainedRoute = AudiogramExplainedRouteImport.update({
+  id: '/audiogram-explained',
+  path: '/audiogram-explained',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BayesianHearingTestRoute = BayesianHearingTestRouteImport.update({
+  id: '/bayesian-hearing-test',
+  path: '/bayesian-hearing-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HeadphoneHearingTestAccuracyRoute =
+  HeadphoneHearingTestAccuracyRouteImport.update({
+    id: '/headphone-hearing-test-accuracy',
+    path: '/headphone-hearing-test-accuracy',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const HearingLossPreventionRoute = HearingLossPreventionRouteImport.update({
+  id: '/hearing-loss-prevention',
+  path: '/hearing-loss-prevention',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HearingThresholdsRoute = HearingThresholdsRouteImport.update({
+  id: '/hearing-thresholds',
+  path: '/hearing-thresholds',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
@@ -36,6 +68,12 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HowOnlineHearingTestsWorkRoute =
+  HowOnlineHearingTestsWorkRouteImport.update({
+    id: '/how-online-hearing-tests-work',
+    path: '/how-online-hearing-tests-work',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ReportRoute = ReportRouteImport.update({
   id: '/report',
   path: '/report',
@@ -79,8 +117,14 @@ const CoachThreadIdRoute = CoachThreadIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/audiogram-explained': typeof AudiogramExplainedRoute
   '/auth': typeof AuthRoute
+  '/bayesian-hearing-test': typeof BayesianHearingTestRoute
+  '/headphone-hearing-test-accuracy': typeof HeadphoneHearingTestAccuracyRoute
+  '/hearing-loss-prevention': typeof HearingLossPreventionRoute
+  '/hearing-thresholds': typeof HearingThresholdsRoute
   '/history': typeof HistoryRoute
+  '/how-online-hearing-tests-work': typeof HowOnlineHearingTestsWorkRoute
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
@@ -92,8 +136,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/audiogram-explained': typeof AudiogramExplainedRoute
   '/auth': typeof AuthRoute
+  '/bayesian-hearing-test': typeof BayesianHearingTestRoute
+  '/headphone-hearing-test-accuracy': typeof HeadphoneHearingTestAccuracyRoute
+  '/hearing-loss-prevention': typeof HearingLossPreventionRoute
+  '/hearing-thresholds': typeof HearingThresholdsRoute
   '/history': typeof HistoryRoute
+  '/how-online-hearing-tests-work': typeof HowOnlineHearingTestsWorkRoute
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
@@ -106,8 +156,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/audiogram-explained': typeof AudiogramExplainedRoute
   '/auth': typeof AuthRoute
+  '/bayesian-hearing-test': typeof BayesianHearingTestRoute
+  '/headphone-hearing-test-accuracy': typeof HeadphoneHearingTestAccuracyRoute
+  '/hearing-loss-prevention': typeof HearingLossPreventionRoute
+  '/hearing-thresholds': typeof HearingThresholdsRoute
   '/history': typeof HistoryRoute
+  '/how-online-hearing-tests-work': typeof HowOnlineHearingTestsWorkRoute
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
@@ -121,8 +177,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/audiogram-explained'
     | '/auth'
+    | '/bayesian-hearing-test'
+    | '/headphone-hearing-test-accuracy'
+    | '/hearing-loss-prevention'
+    | '/hearing-thresholds'
     | '/history'
+    | '/how-online-hearing-tests-work'
     | '/report'
     | '/risks'
     | '/science'
@@ -134,8 +196,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/audiogram-explained'
     | '/auth'
+    | '/bayesian-hearing-test'
+    | '/headphone-hearing-test-accuracy'
+    | '/hearing-loss-prevention'
+    | '/hearing-thresholds'
     | '/history'
+    | '/how-online-hearing-tests-work'
     | '/report'
     | '/risks'
     | '/science'
@@ -147,8 +215,14 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/audiogram-explained'
     | '/auth'
+    | '/bayesian-hearing-test'
+    | '/headphone-hearing-test-accuracy'
+    | '/hearing-loss-prevention'
+    | '/hearing-thresholds'
     | '/history'
+    | '/how-online-hearing-tests-work'
     | '/report'
     | '/risks'
     | '/science'
@@ -161,8 +235,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AudiogramExplainedRoute: typeof AudiogramExplainedRoute
   AuthRoute: typeof AuthRoute
+  BayesianHearingTestRoute: typeof BayesianHearingTestRoute
+  HeadphoneHearingTestAccuracyRoute: typeof HeadphoneHearingTestAccuracyRoute
+  HearingLossPreventionRoute: typeof HearingLossPreventionRoute
+  HearingThresholdsRoute: typeof HearingThresholdsRoute
   HistoryRoute: typeof HistoryRoute
+  HowOnlineHearingTestsWorkRoute: typeof HowOnlineHearingTestsWorkRoute
   ReportRoute: typeof ReportRoute
   RisksRoute: typeof RisksRoute
   ScienceRoute: typeof ScienceRoute
@@ -182,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/audiogram-explained': {
+      id: '/audiogram-explained'
+      path: '/audiogram-explained'
+      fullPath: '/audiogram-explained'
+      preLoaderRoute: typeof AudiogramExplainedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -189,11 +276,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bayesian-hearing-test': {
+      id: '/bayesian-hearing-test'
+      path: '/bayesian-hearing-test'
+      fullPath: '/bayesian-hearing-test'
+      preLoaderRoute: typeof BayesianHearingTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/headphone-hearing-test-accuracy': {
+      id: '/headphone-hearing-test-accuracy'
+      path: '/headphone-hearing-test-accuracy'
+      fullPath: '/headphone-hearing-test-accuracy'
+      preLoaderRoute: typeof HeadphoneHearingTestAccuracyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hearing-loss-prevention': {
+      id: '/hearing-loss-prevention'
+      path: '/hearing-loss-prevention'
+      fullPath: '/hearing-loss-prevention'
+      preLoaderRoute: typeof HearingLossPreventionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hearing-thresholds': {
+      id: '/hearing-thresholds'
+      path: '/hearing-thresholds'
+      fullPath: '/hearing-thresholds'
+      preLoaderRoute: typeof HearingThresholdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/history': {
       id: '/history'
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-online-hearing-tests-work': {
+      id: '/how-online-hearing-tests-work'
+      path: '/how-online-hearing-tests-work'
+      fullPath: '/how-online-hearing-tests-work'
+      preLoaderRoute: typeof HowOnlineHearingTestsWorkRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/report': {
@@ -257,8 +379,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AudiogramExplainedRoute: AudiogramExplainedRoute,
   AuthRoute: AuthRoute,
+  BayesianHearingTestRoute: BayesianHearingTestRoute,
+  HeadphoneHearingTestAccuracyRoute: HeadphoneHearingTestAccuracyRoute,
+  HearingLossPreventionRoute: HearingLossPreventionRoute,
+  HearingThresholdsRoute: HearingThresholdsRoute,
   HistoryRoute: HistoryRoute,
+  HowOnlineHearingTestsWorkRoute: HowOnlineHearingTestsWorkRoute,
   ReportRoute: ReportRoute,
   RisksRoute: RisksRoute,
   ScienceRoute: ScienceRoute,
