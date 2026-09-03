@@ -73,6 +73,83 @@ export type Database = {
         }
         Relationships: []
       }
+      clinical_reports: {
+        Row: {
+          created_at: string
+          error: string | null
+          file_name: string
+          file_path: string
+          id: string
+          mime_type: string
+          source_label: string | null
+          status: string
+          summary: string | null
+          test_date: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          file_name: string
+          file_path: string
+          id?: string
+          mime_type: string
+          source_label?: string | null
+          status?: string
+          summary?: string | null
+          test_date?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime_type?: string
+          source_label?: string | null
+          status?: string
+          summary?: string | null
+          test_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      clinical_threshold_points: {
+        Row: {
+          ear: string
+          frequency_hz: number
+          id: string
+          report_id: string
+          threshold_db: number
+          user_id: string
+        }
+        Insert: {
+          ear: string
+          frequency_hz: number
+          id?: string
+          report_id: string
+          threshold_db: number
+          user_id?: string
+        }
+        Update: {
+          ear?: string
+          frequency_hz?: number
+          id?: string
+          report_id?: string
+          threshold_db?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_threshold_points_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hearing_tests: {
         Row: {
           avg_threshold_db: number | null

@@ -29,6 +29,13 @@
       "when": 1788364677107,
       "tag": "0003_training_modes_xp",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788413542079,
+      "tag": "0004_clinical_reports",
+      "breakpoints": true
     }
   ]
 }
