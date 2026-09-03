@@ -82,11 +82,19 @@ export const analyzeClinicalReport = createServerFn({ method: "POST" })
 
     if (!response.ok) {
       const body = await response.text();
-      if (response.status === 429) return fail("AI is busy right now. Try again in a moment.");
-      if (response.status === 402) return fail("AI credits are exhausted for this workspace.");
-      if (response.status === 403) return fail("AI access is currently blocked for this workspace.");
+      let gatewayMessage = "The AI could not read this document.";
+      try {
+        const parsed = JSON.parse(body) as { error?: { message?: string }; message?: string };
+        const candidate = parsed.error?.message ?? parsed.message;
+        if (candidate && candidate.length <= 240) gatewayMessage = candidate;
+      } catch {
+        // Keep a clear fallback for non-JSON gateway responses.
+      }
+      if (response.status === 429) return fail(`AI is busy right now. ${gatewayMessage}`);
+      if (response.status === 402) return fail(gatewayMessage);
+      if (response.status === 403) return fail(gatewayMessage);
       console.error("clinical extraction failed", response.status, body);
-      return fail("The AI could not read this document.");
+      return fail(gatewayMessage);
     }
 
     const json = (await response.json()) as { choices?: { message?: { content?: string } }[] };
