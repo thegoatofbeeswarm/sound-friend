@@ -9,7 +9,10 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "native:sync": "bun run build && bunx cap sync",
+    "native:ios": "bunx cap open ios",
+    "native:android": "bunx cap open android"
   },
   "overrides": {
     "rolldown": "1.2.1"
