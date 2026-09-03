@@ -1,7 +1,7 @@
 import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Calculator, Database } from "lucide-react";
+import { ArrowRight, Calculator, Database, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClinicalReports } from "@/components/ClinicalReports";
 import { SiteNav } from "@/components/SiteNav";
@@ -128,6 +128,11 @@ function DataPage() {
           </p>
         </div>
 
+        {loading ? (
+          <div className="mt-12 flex justify-center">
+            <Loader2 className="h-5 w-5 animate-spin text-signal" />
+          </div>
+        ) : null}
         {!user && !loading ? (
           <div className="mt-10 rounded-xl border border-border/70 bg-card/60 p-7">
             <p className="text-muted-foreground">
@@ -139,58 +144,35 @@ function DataPage() {
               </Link>
             </Button>
           </div>
-        ) : loading ? (
-          <div className="mt-12 flex justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-signal" />
-          </div>
-        ) : (
-          <>
-            <div className="mt-12">
-              <ClinicalReports />
+        ) : null}
+        {user ? <div className="mt-12"><ClinicalReports /></div> : null}
+        <section className="mt-16 border-t border-border/70 pt-10">
+          <div className="flex items-start gap-4">
+            <div className="rounded-lg bg-signal/10 p-3 text-signal">
+              <Calculator className="h-5 w-5" />
             </div>
-            <section className="mt-16 border-t border-border/70 pt-10">
-              <div className="flex items-start gap-4">
-                <div className="rounded-lg bg-signal/10 p-3 text-signal">
-                  <Calculator className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-semibold">How the comparison is calculated</h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                    Only frequency-and-ear pairs visible in both datasets are compared. The sign
-                    tells you which result is higher; the absolute value tells you how far apart
-                    they are.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-8 grid gap-5 lg:grid-cols-2">
-                <EquationCard
-                  title="Difference at one matched point"
-                  formula={
-                    <>
-                      <i>Difference</i> = <i>T</i>
-                      <sub>Audiomaxxer</sub> − <i>T</i>
-                      <sub>Clinic</sub>
-                    </>
-                  }
-                  detail="A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher."
-                />
-                <EquationCard
-                  title="Mean absolute error (MAE)"
-                  formula={
-                    <>
-                      <i>MAE</i> = <sup>1</sup>⁄<sub>n</sub> ∑<sub>i=1</sub>
-                      <sup>n</sup> |<i>T</i>
-                      <sub>Audiomaxxer,i</sub> − <i>T</i>
-                      <sub>Clinic,i</sub>|
-                    </>
-                  }
-                  detail="MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate."
-                />
-              </div>
-              <ComparisonTable data={query.data} />
-            </section>
-          </>
-        )}
+            <div>
+              <h2 className="text-2xl font-semibold">How the comparison is calculated</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Only frequency-and-ear pairs visible in both datasets are compared. The sign tells
+                you which result is higher; the absolute value tells you how far apart they are.
+              </p>
+            </div>
+          </div>
+          <div className="mt-8 grid gap-5 lg:grid-cols-2">
+            <EquationCard
+              title="Difference at one matched point"
+              formula={<><i>Difference</i> = <i>T</i><sub>Audiomaxxer</sub> − <i>T</i><sub>Clinic</sub></>}
+              detail="A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher."
+            />
+            <EquationCard
+              title="Mean absolute error (MAE)"
+              formula={<><i>MAE</i> = <sup>1</sup>⁄<sub>n</sub> ∑<sub>i=1</sub><sup>n</sup> |<i>T</i><sub>Audiomaxxer,i</sub> − <i>T</i><sub>Clinic,i</sub>|</>}
+              detail="MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate."
+            />
+          </div>
+          <ComparisonTable data={query.data} />
+        </section>
       </main>
     </div>
   );
