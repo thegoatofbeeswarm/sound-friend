@@ -1,8 +1,7 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Calculator, Database, Loader2 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Calculator, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClinicalReports } from "@/components/ClinicalReports";
 import { SiteNav } from "@/components/SiteNav";
@@ -35,7 +34,7 @@ export const Route = createFileRoute("/data")({
 type Point = { ear: string; frequency_hz: number; threshold_db: number };
 
 type ComparisonData = {
-  latestTest: { created_at: string } | null;
+  latestTest: { id: string; created_at: string } | null;
   audiomaxxerPoints: Point[];
   reports: {
     id: string;
@@ -68,7 +67,7 @@ function DataPage() {
           .limit(1),
         supabase
           .from("threshold_points")
-          .select("ear, frequency_hz, threshold_db")
+          .select("test_id, ear, frequency_hz, threshold_db")
           .order("frequency_hz", { ascending: true }),
         supabase
           .from("clinical_reports")
@@ -96,12 +95,16 @@ function DataPage() {
         }));
       }
 
+      const latest = tests?.[0] ?? null;
       return {
-        latestTest: tests?.[0] ? { created_at: tests[0].created_at } : null,
-        audiomaxxerPoints: (audiomaxxerPoints ?? []).map((point) => ({
-          ...point,
-          threshold_db: Number(point.threshold_db),
-        })),
+        latestTest: latest ? { id: latest.id, created_at: latest.created_at } : null,
+        audiomaxxerPoints: (audiomaxxerPoints ?? [])
+          .filter((point) => point.test_id === latest?.id)
+          .map((point) => ({
+            ear: point.ear,
+            frequency_hz: point.frequency_hz,
+            threshold_db: Number(point.threshold_db),
+          })),
         reports: (reports ?? []) as ComparisonData["reports"],
         clinicalPoints,
       };

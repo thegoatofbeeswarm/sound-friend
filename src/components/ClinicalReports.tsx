@@ -52,7 +52,7 @@ export function ClinicalReports() {
   });
 
   const helperText = useMemo(() => {
-    if (!selectedFile) return "PDF, PNG or JPG · up to 20 MB";
+    if (!selectedFile) return "PDF, PNG or JPG · up to 15 MB";
     return `${selectedFile.name} · ${(selectedFile.size / 1024 / 1024).toFixed(1)} MB`;
   }, [selectedFile]);
 
