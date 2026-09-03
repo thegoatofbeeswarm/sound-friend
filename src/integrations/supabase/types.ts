@@ -75,12 +75,14 @@ export type Database = {
       }
       clinical_reports: {
         Row: {
+          comparison_summary: string | null
           created_at: string
           error: string | null
           file_name: string
           file_path: string
           id: string
           mime_type: string
+          next_steps: string | null
           source_label: string | null
           status: string
           summary: string | null
@@ -88,12 +90,14 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          comparison_summary?: string | null
           created_at?: string
           error?: string | null
           file_name: string
           file_path: string
           id?: string
           mime_type: string
+          next_steps?: string | null
           source_label?: string | null
           status?: string
           summary?: string | null
@@ -101,12 +105,14 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          comparison_summary?: string | null
           created_at?: string
           error?: string | null
           file_name?: string
           file_path?: string
           id?: string
           mime_type?: string
+          next_steps?: string | null
           source_label?: string | null
           status?: string
           summary?: string | null
