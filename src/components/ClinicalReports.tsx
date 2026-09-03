@@ -11,7 +11,8 @@ import { analyzeClinicalReport } from "@/lib/clinical.functions";
 import { useServerFn } from "@tanstack/react-start";
 
 const ACCEPTED_TYPES = ["application/pdf", "image/png", "image/jpeg"];
-const MAX_FILE_SIZE = 20 * 1024 * 1024;
+const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
 
 type Report = {
   id: string;
@@ -61,7 +62,7 @@ export function ClinicalReports() {
       return;
     }
     if (selectedFile.size <= 0 || selectedFile.size > MAX_FILE_SIZE) {
-      toast.error("The file must be between 1 byte and 20 MB.");
+      toast.error("The file must be between 1 byte and 15 MB.");
       return;
     }
 

@@ -93,8 +93,8 @@ function DataPage() {
                 </div>
               </div>
               <div className="mt-8 grid gap-5 lg:grid-cols-2">
-                <EquationCard title="Difference at one matched point" formula="Difference = T_Audiomaxxer − T_Clinic" detail="A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher." />
-                <EquationCard title="Mean absolute error (MAE)" formula="MAE = (1 / n) Σ |T_Audiomaxxer,i − T_Clinic,i|" detail="MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate." />
+                <EquationCard title="Difference at one matched point" formula={<><i>Difference</i> = <i>T</i><sub>Audiomaxxer</sub> − <i>T</i><sub>Clinic</sub></>} detail="A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher." />
+                <EquationCard title="Mean absolute error (MAE)" formula={<><i>MAE</i> = <sup>1</sup>⁄<sub>n</sub> ∑<sub>i=1</sub><sup>n</sup> |<i>T</i><sub>Audiomaxxer,i</sub> − <i>T</i><sub>Clinic,i</sub>|</>} detail="MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate." />
               </div>
               <ComparisonTable data={query.data} />
             </section>
@@ -105,7 +105,7 @@ function DataPage() {
   );
 }
 
-function EquationCard({ title, formula, detail }: { title: string; formula: string; detail: string }) {
+function EquationCard({ title, formula, detail }: { title: string; formula: React.ReactNode; detail: string }) {
   return (
     <article className="rounded-xl border border-border/70 bg-card/70 p-6 shadow-card">
       <h3 className="font-semibold">{title}</h3>
