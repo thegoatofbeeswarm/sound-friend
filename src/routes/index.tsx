@@ -17,13 +17,13 @@ import { HowItWorks } from "@/components/HowItWorks";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
+      { title: "Free Online Hearing Test & Hearing Health Tracker | Audiomaxxer" },
       {
         name: "description",
         content:
           "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
       },
-      { property: "og:title", content: "Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
+      { property: "og:title", content: "Free Online Hearing Test & Hearing Health Tracker | Audiomaxxer" },
       {
         property: "og:description",
         content:
