@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AudiogramExplainedRouteImport } from './routes/audiogram-explained'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BayesianHearingTestRouteImport } from './routes/bayesian-hearing-test'
+import { Route as DataRouteImport } from './routes/data'
 import { Route as HeadphoneHearingTestAccuracyRouteImport } from './routes/headphone-hearing-test-accuracy'
 import { Route as HearingLossPreventionRouteImport } from './routes/hearing-loss-prevention'
 import { Route as HearingThresholdsRouteImport } from './routes/hearing-thresholds'
@@ -45,6 +46,11 @@ const AuthRoute = AuthRouteImport.update({
 const BayesianHearingTestRoute = BayesianHearingTestRouteImport.update({
   id: '/bayesian-hearing-test',
   path: '/bayesian-hearing-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataRoute = DataRouteImport.update({
+  id: '/data',
+  path: '/data',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HeadphoneHearingTestAccuracyRoute =
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/audiogram-explained': typeof AudiogramExplainedRoute
   '/auth': typeof AuthRoute
   '/bayesian-hearing-test': typeof BayesianHearingTestRoute
+  '/data': typeof DataRoute
   '/headphone-hearing-test-accuracy': typeof HeadphoneHearingTestAccuracyRoute
   '/hearing-loss-prevention': typeof HearingLossPreventionRoute
   '/hearing-thresholds': typeof HearingThresholdsRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/audiogram-explained': typeof AudiogramExplainedRoute
   '/auth': typeof AuthRoute
   '/bayesian-hearing-test': typeof BayesianHearingTestRoute
+  '/data': typeof DataRoute
   '/headphone-hearing-test-accuracy': typeof HeadphoneHearingTestAccuracyRoute
   '/hearing-loss-prevention': typeof HearingLossPreventionRoute
   '/hearing-thresholds': typeof HearingThresholdsRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/audiogram-explained': typeof AudiogramExplainedRoute
   '/auth': typeof AuthRoute
   '/bayesian-hearing-test': typeof BayesianHearingTestRoute
+  '/data': typeof DataRoute
   '/headphone-hearing-test-accuracy': typeof HeadphoneHearingTestAccuracyRoute
   '/hearing-loss-prevention': typeof HearingLossPreventionRoute
   '/hearing-thresholds': typeof HearingThresholdsRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/audiogram-explained'
     | '/auth'
     | '/bayesian-hearing-test'
+    | '/data'
     | '/headphone-hearing-test-accuracy'
     | '/hearing-loss-prevention'
     | '/hearing-thresholds'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/audiogram-explained'
     | '/auth'
     | '/bayesian-hearing-test'
+    | '/data'
     | '/headphone-hearing-test-accuracy'
     | '/hearing-loss-prevention'
     | '/hearing-thresholds'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/audiogram-explained'
     | '/auth'
     | '/bayesian-hearing-test'
+    | '/data'
     | '/headphone-hearing-test-accuracy'
     | '/hearing-loss-prevention'
     | '/hearing-thresholds'
@@ -238,6 +250,7 @@ export interface RootRouteChildren {
   AudiogramExplainedRoute: typeof AudiogramExplainedRoute
   AuthRoute: typeof AuthRoute
   BayesianHearingTestRoute: typeof BayesianHearingTestRoute
+  DataRoute: typeof DataRoute
   HeadphoneHearingTestAccuracyRoute: typeof HeadphoneHearingTestAccuracyRoute
   HearingLossPreventionRoute: typeof HearingLossPreventionRoute
   HearingThresholdsRoute: typeof HearingThresholdsRoute
@@ -281,6 +294,13 @@ declare module '@tanstack/react-router' {
       path: '/bayesian-hearing-test'
       fullPath: '/bayesian-hearing-test'
       preLoaderRoute: typeof BayesianHearingTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data': {
+      id: '/data'
+      path: '/data'
+      fullPath: '/data'
+      preLoaderRoute: typeof DataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/headphone-hearing-test-accuracy': {
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   AudiogramExplainedRoute: AudiogramExplainedRoute,
   AuthRoute: AuthRoute,
   BayesianHearingTestRoute: BayesianHearingTestRoute,
+  DataRoute: DataRoute,
   HeadphoneHearingTestAccuracyRoute: HeadphoneHearingTestAccuracyRoute,
   HearingLossPreventionRoute: HearingLossPreventionRoute,
   HearingThresholdsRoute: HearingThresholdsRoute,

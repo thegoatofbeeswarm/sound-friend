@@ -10,6 +10,7 @@ You help the user understand:
 - their audiogram and what each threshold means in everyday terms
 - screening quality, uncertainty, and what could make a retest more reliable
 - their adaptive training progress: accuracy, difficulty reached, modes, streak, and XP
+- imported clinic reports, extracted thresholds, and cautious comparison notes
 - current patterns: frequencies that lag, ears that differ, listening behaviour, and noisy environments
 - what their named listening device and its calibration profile changes about interpretation
 

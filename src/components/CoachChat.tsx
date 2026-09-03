@@ -107,9 +107,10 @@ export function CoachChat({
               </div>
               <h2 className="mt-5 text-xl font-semibold">Ask your hearing coach</h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                It reads your screenings, audiogram, training sessions and device setup.
+                It reads your screenings, imported clinic reports, training sessions and device
+                setup.
               </p>
-               <CoachActions onSelect={(prompt) => void send(prompt)} />
+              <CoachActions onSelect={(prompt) => void send(prompt)} />
             </div>
           ) : null}
 
@@ -128,9 +129,7 @@ export function CoachChat({
           {status === "submitted" ? (
             <Shimmer className="px-1 text-sm">Reading your hearing data...</Shimmer>
           ) : null}
-          {error ? (
-            <p className="px-1 text-sm text-danger">{error.message}</p>
-          ) : null}
+          {error ? <p className="px-1 text-sm text-danger">{error.message}</p> : null}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>

@@ -29,6 +29,27 @@
       "when": 1788364677107,
       "tag": "0003_training_modes_xp",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788413542079,
+      "tag": "0004_clinical_reports",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788413565591,
+      "tag": "0005_clinical_reports_storage_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788413642371,
+      "tag": "0006_clinical_report_ai_comparison",
+      "breakpoints": true
     }
   ]
 }
