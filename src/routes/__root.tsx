@@ -16,7 +16,7 @@ import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { CoachRail } from "@/components/CoachRail";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-
+import { initNativeShell } from "@/lib/native";
 
 function NotFoundComponent() {
   return (
@@ -137,6 +137,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    void initNativeShell();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

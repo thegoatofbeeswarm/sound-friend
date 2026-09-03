@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Audiomaxxer</string>
+    <string name="title_activity_main">Audiomaxxer</string>
+    <string name="package_name">app.audiomaxxer</string>
+    <string name="custom_url_scheme">app.audiomaxxer</string>
+</resources>
