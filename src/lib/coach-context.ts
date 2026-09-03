@@ -1,6 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getDevice, loadDevice } from "@/lib/devices";
-import { loadExposure, lastSevenDays, weeklyTrendPercent, STATUS_LABEL, statusForDose } from "@/lib/exposure";
+import {
+  loadExposure,
+  lastSevenDays,
+  weeklyTrendPercent,
+  STATUS_LABEL,
+  statusForDose,
+} from "@/lib/exposure";
 import { dayStreak, totalXp } from "@/lib/gamification";
 import { TRAINING_MODES } from "@/lib/training-modes";
 import { scoreScreening } from "@/lib/test-quality";
@@ -17,7 +23,9 @@ export async function buildCoachContext(): Promise<string> {
 
   const { data: tests } = await supabase
     .from("hearing_tests")
-    .select("id, created_at, avg_threshold_db, worst_threshold_db, safe_volume_offset_db, trials, environment_db, device_type")
+    .select(
+      "id, created_at, avg_threshold_db, worst_threshold_db, safe_volume_offset_db, trials, environment_db, device_type",
+    )
     .order("created_at", { ascending: false })
     .limit(5);
 
@@ -29,7 +37,9 @@ export async function buildCoachContext(): Promise<string> {
       const deviceForTest = getDevice(t.device_type);
       lines.push(
         `- ${new Date(t.created_at).toLocaleDateString()}: avg ${Number(t.avg_threshold_db ?? 0).toFixed(1)} dB HL, worst ${Number(t.worst_threshold_db ?? 0).toFixed(1)} dB HL, ${t.trials} trials, quality inputs: ${deviceForTest.calibrated ? "model profile" : "uncalibrated device"}${
-          t.environment_db == null ? ", room noise not measured" : `, room noise ~${Number(t.environment_db)} dB`
+          t.environment_db == null
+            ? ", room noise not measured"
+            : `, room noise ~${Number(t.environment_db)} dB`
         }${t.device_type ? `, device ${deviceForTest.label}` : ""}`,
       );
     }
@@ -53,14 +63,18 @@ export async function buildCoachContext(): Promise<string> {
           device: latest.device_type,
         });
         lines.push(`Latest audiogram thresholds: ${fmt}.`);
-        lines.push(`Latest screening quality: ${quality.score}/100, ${quality.label}. ${quality.interpretation}`);
+        lines.push(
+          `Latest screening quality: ${quality.score}/100, ${quality.label}. ${quality.interpretation}`,
+        );
       }
     }
   }
 
   const { data: importedReports } = await supabase
     .from("clinical_reports")
-    .select("id, source_label, file_name, test_date, status, summary, comparison_summary, next_steps")
+    .select(
+      "id, source_label, file_name, test_date, status, summary, comparison_summary, next_steps",
+    )
     .eq("status", "ready")
     .order("created_at", { ascending: false })
     .limit(3);
@@ -71,17 +85,23 @@ export async function buildCoachContext(): Promise<string> {
     lines.push(`Imported clinic reports: ${importedReports.length} ready report(s).`);
     const latestReport = importedReports[0];
     if (latestReport) {
-      lines.push(`Latest clinic report: ${latestReport.source_label || latestReport.file_name}${latestReport.test_date ? `, test date ${latestReport.test_date}` : ""}.`);
+      lines.push(
+        `Latest clinic report: ${latestReport.source_label || latestReport.file_name}${latestReport.test_date ? `, test date ${latestReport.test_date}` : ""}.`,
+      );
       if (latestReport.summary) lines.push(`Clinic report summary: ${latestReport.summary}`);
-      if (latestReport.comparison_summary) lines.push(`Clinic comparison note: ${latestReport.comparison_summary}`);
-      if (latestReport.next_steps) lines.push(`Clinic report next step: ${latestReport.next_steps}`);
+      if (latestReport.comparison_summary)
+        lines.push(`Clinic comparison note: ${latestReport.comparison_summary}`);
+      if (latestReport.next_steps)
+        lines.push(`Clinic report next step: ${latestReport.next_steps}`);
       const { data: clinicPoints } = await supabase
         .from("clinical_threshold_points")
         .select("ear, frequency_hz, threshold_db")
         .eq("report_id", latestReport.id)
         .order("frequency_hz", { ascending: true });
       if (clinicPoints?.length) {
-        lines.push(`Latest clinic thresholds: ${clinicPoints.map((point) => `${point.ear} ${point.frequency_hz}Hz ${Number(point.threshold_db).toFixed(0)}dB HL`).join(", ")}.`);
+        lines.push(
+          `Latest clinic thresholds: ${clinicPoints.map((point) => `${point.ear} ${point.frequency_hz}Hz ${Number(point.threshold_db).toFixed(0)}dB HL`).join(", ")}.`,
+        );
       }
     }
   }
@@ -106,7 +126,9 @@ export async function buildCoachContext(): Promise<string> {
       duration_sec: Number(s.duration_sec) || 0,
     }));
     const focus = TRAINING_MODES.find((mode) => mode.id === (rows[0]?.mode ?? "soundscape"));
-    lines.push(`Training summary: ${rows.length} recent sessions, ${totalXp(rows)} XP, ${dayStreak(rows)} day streak.`);
+    lines.push(
+      `Training summary: ${rows.length} recent sessions, ${totalXp(rows)} XP, ${dayStreak(rows)} day streak.`,
+    );
     lines.push(`Most recent training focus: ${focus?.label ?? "Everyday sounds"}.`);
     for (const s of rows.slice(0, 8)) {
       lines.push(
@@ -120,7 +142,9 @@ export async function buildCoachContext(): Promise<string> {
     const week = lastSevenDays(exposure);
     const trend = weeklyTrendPercent(exposure);
     const status = statusForDose(week.avgDosePercent);
-    lines.push(`Logged listening behaviour: ${week.totalMinutes} minutes in the last 7 days, average estimate ${week.avgDb ?? "not logged"} dB, peak ${week.peakDb ?? "not logged"} dB, exposure status ${STATUS_LABEL[status]}${trend == null ? "" : `, ${trend >= 0 ? "+" : ""}${trend}% vs prior week`}.`);
+    lines.push(
+      `Logged listening behaviour: ${week.totalMinutes} minutes in the last 7 days, average estimate ${week.avgDb ?? "not logged"} dB, peak ${week.peakDb ?? "not logged"} dB, exposure status ${STATUS_LABEL[status]}${trend == null ? "" : `, ${trend >= 0 ? "+" : ""}${trend}% vs prior week`}.`,
+    );
   } else {
     lines.push("Logged listening behaviour: unavailable during server rendering.");
   }
