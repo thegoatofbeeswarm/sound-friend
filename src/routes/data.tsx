@@ -145,7 +145,11 @@ function DataPage() {
             </Button>
           </div>
         ) : null}
-        {user ? <div className="mt-12"><ClinicalReports /></div> : null}
+        {user ? (
+          <div className="mt-12">
+            <ClinicalReports />
+          </div>
+        ) : null}
         <section className="mt-16 border-t border-border/70 pt-10">
           <div className="flex items-start gap-4">
             <div className="rounded-lg bg-signal/10 p-3 text-signal">
@@ -162,12 +166,25 @@ function DataPage() {
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
             <EquationCard
               title="Difference at one matched point"
-              formula={<><i>Difference</i> = <i>T</i><sub>Audiomaxxer</sub> − <i>T</i><sub>Clinic</sub></>}
+              formula={
+                <>
+                  <i>Difference</i> = <i>T</i>
+                  <sub>Audiomaxxer</sub> − <i>T</i>
+                  <sub>Clinic</sub>
+                </>
+              }
               detail="A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher."
             />
             <EquationCard
               title="Mean absolute error (MAE)"
-              formula={<><i>MAE</i> = <sup>1</sup>⁄<sub>n</sub> ∑<sub>i=1</sub><sup>n</sup> |<i>T</i><sub>Audiomaxxer,i</sub> − <i>T</i><sub>Clinic,i</sub>|</>}
+              formula={
+                <>
+                  <i>MAE</i> = <sup>1</sup>⁄<sub>n</sub> ∑<sub>i=1</sub>
+                  <sup>n</sup> |<i>T</i>
+                  <sub>Audiomaxxer,i</sub> − <i>T</i>
+                  <sub>Clinic,i</sub>|
+                </>
+              }
               detail="MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate."
             />
           </div>
