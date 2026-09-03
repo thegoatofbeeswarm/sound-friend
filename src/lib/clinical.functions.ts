@@ -36,7 +36,11 @@ type Extracted = {
 };
 
 function parseJson(text: string): Extracted {
-  const cleaned = text.trim().replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const cleaned = text
+    .trim()
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/, "")
+    .trim();
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
   if (start === -1 || end === -1) throw new Error("The AI response could not be read.");
@@ -46,38 +50,77 @@ function parseJson(text: string): Extracted {
 export const analyzeClinicalReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { reportId: string }) => {
-    if (!input?.reportId || typeof input.reportId !== "string" || input.reportId.length > 100) throw new Error("reportId is required");
+    if (!input?.reportId || typeof input.reportId !== "string" || input.reportId.length > 100)
+      throw new Error("reportId is required");
     return input;
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: report, error: reportError } = await supabase.from("clinical_reports").select("id, file_path, mime_type, file_name").eq("id", data.reportId).maybeSingle();
+    const { data: report, error: reportError } = await supabase
+      .from("clinical_reports")
+      .select("id, file_path, mime_type, file_name")
+      .eq("id", data.reportId)
+      .maybeSingle();
     if (reportError || !report) throw new Error("Report not found.");
 
-    const { data: latestTest } = await supabase.from("hearing_tests").select("id").order("created_at", { ascending: false }).limit(1).maybeSingle();
+    const { data: latestTest } = await supabase
+      .from("hearing_tests")
+      .select("id")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
     const { data: audiomaxxerPoints } = latestTest
-      ? await supabase.from("threshold_points").select("ear, frequency_hz, threshold_db").eq("test_id", latestTest.id)
+      ? await supabase
+          .from("threshold_points")
+          .select("ear, frequency_hz, threshold_db")
+          .eq("test_id", latestTest.id)
       : { data: [] };
-    const comparisonData = (audiomaxxerPoints ?? []).map((point) => `${point.ear} ${point.frequency_hz}Hz ${Number(point.threshold_db).toFixed(1)} dB (relative/estimated Audiomaxxer level)`).join(", ");
+    const comparisonData = (audiomaxxerPoints ?? [])
+      .map(
+        (point) =>
+          `${point.ear} ${point.frequency_hz}Hz ${Number(point.threshold_db).toFixed(1)} dB (relative/estimated Audiomaxxer level)`,
+      )
+      .join(", ");
 
     const key = process.env["LOVABLE_API_KEY"];
     if (!key) throw new Error("AI is not configured.");
     const fail = async (message: string) => {
-      await supabase.from("clinical_reports").update({ status: "failed", error: message }).eq("id", report.id);
+      await supabase
+        .from("clinical_reports")
+        .update({ status: "failed", error: message })
+        .eq("id", report.id);
       return { ok: false as const, error: message };
     };
 
-    const { data: blob, error: dlError } = await supabase.storage.from("clinical-reports").download(report.file_path);
+    const { data: blob, error: dlError } = await supabase.storage
+      .from("clinical-reports")
+      .download(report.file_path);
     if (dlError || !blob) return fail("We could not read the uploaded file.");
     const base64 = toBase64(new Uint8Array(await blob.arrayBuffer()));
     if (!base64) return fail("The uploaded file appears to be empty.");
     const dataUrl = `data:${report.mime_type};base64,${base64}`;
-    const contentBlock = report.mime_type.startsWith("image/") ? { type: "image_url", image_url: { url: dataUrl } } : { type: "file", file: { filename: report.file_name, file_data: dataUrl } };
+    const contentBlock = report.mime_type.startsWith("image/")
+      ? { type: "image_url", image_url: { url: dataUrl } }
+      : { type: "file", file: { filename: report.file_name, file_data: dataUrl } };
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Lovable-API-Key": key },
-      body: JSON.stringify({ model: "google/gemini-3.7-flash", messages: [{ role: "user", content: [{ type: "text", text: `${EXTRACTION_PROMPT}\n\nLATEST AUDIOMAXXER POINTS:\n${comparisonData || "No Audiomaxxer screening is saved yet."}` }, contentBlock] }] }),
+      body: JSON.stringify({
+        model: "google/gemini-3.7-flash",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `${EXTRACTION_PROMPT}\n\nLATEST AUDIOMAXXER POINTS:\n${comparisonData || "No Audiomaxxer screening is saved yet."}`,
+              },
+              contentBlock,
+            ],
+          },
+        ],
+      }),
     });
 
     if (!response.ok) {
@@ -105,14 +148,45 @@ export const analyzeClinicalReport = createServerFn({ method: "POST" })
       return fail("The AI response could not be read. Try a clearer photo or the original PDF.");
     }
 
-    const points = (extracted.points ?? []).filter((point) => (point.ear === "left" || point.ear === "right") && Number.isFinite(point.frequencyHz) && Number.isFinite(point.thresholdDb) && Math.abs(point.frequencyHz as number) <= 100000 && Math.abs(point.thresholdDb as number) <= 150).map((point) => ({ report_id: report.id, user_id: userId, ear: point.ear as string, frequency_hz: Math.round(point.frequencyHz as number), threshold_db: point.thresholdDb as number }));
+    const points = (extracted.points ?? [])
+      .filter(
+        (point) =>
+          (point.ear === "left" || point.ear === "right") &&
+          Number.isFinite(point.frequencyHz) &&
+          Number.isFinite(point.thresholdDb) &&
+          Math.abs(point.frequencyHz as number) <= 100000 &&
+          Math.abs(point.thresholdDb as number) <= 150,
+      )
+      .map((point) => ({
+        report_id: report.id,
+        user_id: userId,
+        ear: point.ear as string,
+        frequency_hz: Math.round(point.frequencyHz as number),
+        threshold_db: point.thresholdDb as number,
+      }));
     await supabase.from("clinical_threshold_points").delete().eq("report_id", report.id);
     if (points.length) {
-      const { error: insertError } = await supabase.from("clinical_threshold_points").insert(points);
+      const { error: insertError } = await supabase
+        .from("clinical_threshold_points")
+        .insert(points);
       if (insertError) return fail("We could not save the extracted thresholds.");
     }
 
-    const testDate = typeof extracted.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(extracted.testDate) ? extracted.testDate : null;
-    await supabase.from("clinical_reports").update({ status: points.length ? "ready" : "empty", summary: extracted.summary ?? null, source_label: extracted.sourceLabel ?? null, test_date: testDate, comparison_summary: extracted.comparisonSummary ?? null, next_steps: extracted.nextSteps ?? null, error: null }).eq("id", report.id);
+    const testDate =
+      typeof extracted.testDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(extracted.testDate)
+        ? extracted.testDate
+        : null;
+    await supabase
+      .from("clinical_reports")
+      .update({
+        status: points.length ? "ready" : "empty",
+        summary: extracted.summary ?? null,
+        source_label: extracted.sourceLabel ?? null,
+        test_date: testDate,
+        comparison_summary: extracted.comparisonSummary ?? null,
+        next_steps: extracted.nextSteps ?? null,
+        error: null,
+      })
+      .eq("id", report.id);
     return { ok: true as const, points: points.length };
   });

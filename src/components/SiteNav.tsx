@@ -20,35 +20,72 @@ export function SiteNav() {
         </Link>
         <div className="flex min-w-0 items-center gap-2">
           <nav className="flex items-center gap-0.5 text-sm max-[760px]:hidden">
-            <Link to="/test" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+            <Link
+              to="/test"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
               {t("nav.test")}
             </Link>
-            <Link to="/train" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+            <Link
+              to="/train"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
               {t("nav.train")}
             </Link>
-            <Link to="/risks" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+            <Link
+              to="/risks"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
               {t("nav.risks")}
             </Link>
-            <Link to="/data" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+            <Link
+              to="/data"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
               Data
             </Link>
-            <Link to="/report" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+            <Link
+              to="/report"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
               Report
             </Link>
-            <Link to="/science" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+            <Link
+              to="/science"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
               Science
             </Link>
-            <Link to="/history" className="nav-link rounded-md px-3 py-2 text-muted-foreground" activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}>
+            <Link
+              to="/history"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
               {t("nav.history")}
             </Link>
           </nav>
           <AppSettings />
           {user ? (
-            <Button variant="ghost" size="sm" className="transition-transform hover:scale-105 max-[760px]:hidden" onClick={() => void signOut()}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="transition-transform hover:scale-105 max-[760px]:hidden"
+              onClick={() => void signOut()}
+            >
               {t("nav.signOut")}
             </Button>
           ) : (
-            <Button asChild size="sm" className="transition-transform hover:scale-105 max-[760px]:hidden">
+            <Button
+              asChild
+              size="sm"
+              className="transition-transform hover:scale-105 max-[760px]:hidden"
+            >
               <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
           )}
@@ -57,4 +94,3 @@ export function SiteNav() {
     </header>
   );
 }
-

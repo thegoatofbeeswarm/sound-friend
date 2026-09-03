@@ -13,7 +13,6 @@ import { useServerFn } from "@tanstack/react-start";
 const ACCEPTED_TYPES = ["application/pdf", "image/png", "image/jpeg"];
 const MAX_FILE_SIZE = 15 * 1024 * 1024;
 
-
 type Report = {
   id: string;
   created_at: string;
@@ -43,7 +42,9 @@ export function ClinicalReports() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clinical_reports")
-        .select("id, created_at, file_name, mime_type, source_label, test_date, status, summary, error, comparison_summary, next_steps")
+        .select(
+          "id, created_at, file_name, mime_type, source_label, test_date, status, summary, error, comparison_summary, next_steps",
+        )
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as Report[];
@@ -91,7 +92,9 @@ export function ClinicalReports() {
       const result = await analyze({ data: { reportId: report.id } });
       if (!result.ok) throw new Error(result.error);
 
-      toast.success(`Report analyzed · ${result.points} threshold${result.points === 1 ? "" : "s"} found`);
+      toast.success(
+        `Report analyzed · ${result.points} threshold${result.points === 1 ? "" : "s"} found`,
+      );
       setSelectedFile(null);
       setSourceLabel("");
       if (inputRef.current) inputRef.current.value = "";
@@ -108,7 +111,10 @@ export function ClinicalReports() {
   if (!user) {
     return (
       <div className="rounded-xl border border-border/70 bg-card/60 p-6">
-        <p className="text-sm text-muted-foreground">Sign in to upload a clinic or hearing-center report and compare it with your Audiomaxxer screening.</p>
+        <p className="text-sm text-muted-foreground">
+          Sign in to upload a clinic or hearing-center report and compare it with your Audiomaxxer
+          screening.
+        </p>
       </div>
     );
   }
@@ -117,11 +123,15 @@ export function ClinicalReports() {
     <div className="space-y-8">
       <section className="border-b border-border/70 pb-8">
         <div className="flex items-start gap-4">
-          <div className="rounded-lg bg-signal/10 p-3 text-signal"><UploadCloud className="h-5 w-5" /></div>
+          <div className="rounded-lg bg-signal/10 p-3 text-signal">
+            <UploadCloud className="h-5 w-5" />
+          </div>
           <div>
             <h2 className="text-xl font-semibold">Add a past hearing report</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Upload an audiogram or hearing screening from a clinic, hearing center, or another app. Lovable AI will read the report, extract visible air-conduction thresholds, and compare them with your latest Audiomaxxer screening.
+              Upload an audiogram or hearing screening from a clinic, hearing center, or another
+              app. Lovable AI will read the report, extract visible air-conduction thresholds, and
+              compare them with your latest Audiomaxxer screening.
             </p>
           </div>
         </div>
@@ -139,7 +149,13 @@ export function ClinicalReports() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="report-source">Source (optional)</Label>
-            <Input id="report-source" value={sourceLabel} maxLength={100} placeholder="Clinic or provider" onChange={(event) => setSourceLabel(event.target.value)} />
+            <Input
+              id="report-source"
+              value={sourceLabel}
+              maxLength={100}
+              placeholder="Clinic or provider"
+              onChange={(event) => setSourceLabel(event.target.value)}
+            />
           </div>
           <Button onClick={() => void uploadAndAnalyze()} disabled={!selectedFile || busy}>
             {busy ? <Loader2 className="animate-spin" /> : <UploadCloud />}
@@ -148,7 +164,8 @@ export function ClinicalReports() {
         </div>
         <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-caution" />
-          Keep the original report for clinical use. AI extraction is a convenience layer and can miss symbols or values in a low-quality scan.
+          Keep the original report for clinical use. AI extraction is a convenience layer and can
+          miss symbols or values in a low-quality scan.
         </p>
       </section>
 
@@ -156,15 +173,23 @@ export function ClinicalReports() {
         <div className="flex items-end justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold">Imported reports</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Your private reports and extracted comparison notes.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Your private reports and extracted comparison notes.
+            </p>
           </div>
-          <span className="text-sm text-muted-foreground">{reportsQuery.data?.length ?? 0} saved</span>
+          <span className="text-sm text-muted-foreground">
+            {reportsQuery.data?.length ?? 0} saved
+          </span>
         </div>
         {reportsQuery.isLoading ? (
-          <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-signal" /></div>
+          <div className="mt-8 flex justify-center">
+            <Loader2 className="h-5 w-5 animate-spin text-signal" />
+          </div>
         ) : reportsQuery.data?.length ? (
           <div className="mt-5 space-y-4">
-            {reportsQuery.data.map((report) => <ReportItem key={report.id} report={report} />)}
+            {reportsQuery.data.map((report) => (
+              <ReportItem key={report.id} report={report} />
+            ))}
           </div>
         ) : (
           <div className="mt-5 rounded-xl border border-dashed border-border/80 p-8 text-center">
@@ -183,25 +208,46 @@ function ReportItem({ report }: { report: Report }) {
     <article className="rounded-xl border border-border/70 bg-card/70 p-5 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
-          {report.mime_type === "application/pdf" ? <FileText className="mt-0.5 h-5 w-5 shrink-0 text-signal" /> : <FileImage className="mt-0.5 h-5 w-5 shrink-0 text-signal" />}
+          {report.mime_type === "application/pdf" ? (
+            <FileText className="mt-0.5 h-5 w-5 shrink-0 text-signal" />
+          ) : (
+            <FileImage className="mt-0.5 h-5 w-5 shrink-0 text-signal" />
+          )}
           <div className="min-w-0">
             <h3 className="truncate font-medium">{report.source_label || report.file_name}</h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              {report.test_date ? `Test date ${report.test_date}` : "Date not detected"} · uploaded {new Date(report.created_at).toLocaleDateString()}
+              {report.test_date ? `Test date ${report.test_date}` : "Date not detected"} · uploaded{" "}
+              {new Date(report.created_at).toLocaleDateString()}
             </p>
           </div>
         </div>
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${ready ? "bg-signal/10 text-signal" : report.status === "failed" ? "bg-danger/10 text-danger" : "bg-muted text-muted-foreground"}`}>
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${ready ? "bg-signal/10 text-signal" : report.status === "failed" ? "bg-danger/10 text-danger" : "bg-muted text-muted-foreground"}`}
+        >
           {ready ? <CheckCircle2 className="h-3.5 w-3.5" /> : null}
-          {ready ? "Compared" : report.status === "failed" ? "Needs another upload" : report.status === "empty" ? "No thresholds found" : "Processing"}
+          {ready
+            ? "Compared"
+            : report.status === "failed"
+              ? "Needs another upload"
+              : report.status === "empty"
+                ? "No thresholds found"
+                : "Processing"}
         </span>
       </div>
-      {report.summary ? <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{report.summary}</p> : null}
+      {report.summary ? (
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{report.summary}</p>
+      ) : null}
       {report.comparison_summary ? (
         <div className="mt-4 border-l-2 border-signal/50 pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-signal">AI comparison</p>
-          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{report.comparison_summary}</p>
-          {report.next_steps ? <p className="mt-2 text-sm leading-relaxed text-foreground/80"><span className="font-medium">Next:</span> {report.next_steps}</p> : null}
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            {report.comparison_summary}
+          </p>
+          {report.next_steps ? (
+            <p className="mt-2 text-sm leading-relaxed text-foreground/80">
+              <span className="font-medium">Next:</span> {report.next_steps}
+            </p>
+          ) : null}
         </div>
       ) : null}
       {report.error ? <p className="mt-3 text-sm text-danger">{report.error}</p> : null}
