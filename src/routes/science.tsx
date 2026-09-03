@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, BookOpen, ExternalLink, FlaskConical } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AlertTriangle, BookOpen, ExternalLink } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
+import { scienceLinks } from "@/lib/science-links";
 
 export const Route = createFileRoute("/science")({
   head: () => ({
     meta: [
-      { title: "The science behind Audiomaxxer — methods, evidence, limits" },
+      { title: "The Science Behind Audiomaxxer — Methods, Evidence, Limits" },
       {
         name: "description",
         content:
@@ -18,11 +19,22 @@ export const Route = createFileRoute("/science")({
           "Bayesian threshold estimation, auditory training evidence, safe-listening guidance, and an honest list of limitations.",
       },
       { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://audiomaxxer.app/science" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://audiomaxxer.app/science" }],
   }),
   component: SciencePage,
 });
+
+const topics = [
+  scienceLinks.howTestsWork,
+  scienceLinks.bayesian,
+  scienceLinks.audiogram,
+  scienceLinks.thresholds,
+  scienceLinks.headphones,
+  scienceLinks.prevention,
+];
 
 const sections = [
   {
