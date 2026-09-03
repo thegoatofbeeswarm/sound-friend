@@ -40,9 +40,8 @@ const sections = [
   {
     title: "Adaptive threshold estimation",
     body: [
-      "A traditional hearing test, also known as an audiogram, typically involves playing a series of fixed tones and adjusting the volume up and down until the person being tested can no longer hear them. While this method can be effective, it tends to focus on a wide range of sound levels, many of which don't provide much useful information. As a result, a lot of time is spent on testing sound levels that don't really tell us anything new or important about the person's hearing.",
-      "Audiomaxxer uses a different approach to measure hearing thresholds. It keeps track of the probability of your threshold at each frequency and for each ear, and updates this information after every response. The next tone is then presented at the frequency where there is the most uncertainty about your threshold. This method is based on Bayesian principles and is adaptive, meaning it adjusts to your individual responses. The model also takes into account the possibility of occasional incorrect or missed responses, so a single mistake doesn't affect the overall estimate. The test stops when your threshold is stable, rather than after a fixed number of tones. This means that Audiomaxxer can provide a more accurate and efficient measurement of your hearing thresholds.",
-      "The outcome is an estimate of the hearing threshold for each ear at different frequencies, along with a measure of how confident we are in that estimate, all of which is determined in about four minutes.",
+      "Rather than sweeping every level like a traditional audiogram, Audiomaxxer tracks a probability distribution over your threshold at each frequency and ear, updates it after every response, and presents the next tone where uncertainty is highest. Tracks stop when the estimate is stable, so a ten-track screening fits into about four minutes.",
+      "The full algorithm, the prior, the stopping criterion and every other parameter are documented on the Bayesian hearing test page.",
     ],
   },
   {
@@ -63,9 +62,8 @@ const sections = [
   {
     title: "Safe listening",
     body: [
-      "The World Health Organization has guidelines to help keep our listening safe. They look at how much sound we're exposed to over a whole week, not just how loud it is at one time. This is called a weekly sound dose. It's like a limit on how much sound we can handle in a week. The WHO says that for adults, it's safe to listen to sounds at 80 decibels for up to 40 hours a week. But they also have a more cautious guideline of 75 decibels. This is to help prevent hearing loss and other problems that can come from listening to loud sounds for too long.",
-      "The World Health Organization says a huge number of people, over a billion, between 12 and 35 years old, are in danger of damaging their hearing because of how they listen to music for fun. And sadly, more than 1.5 billion people already have some kind of hearing problem.",
-      "Audiomaxxer therefore describes your listening behaviour — estimated exposure, loudest sessions, weekly trend — rather than claiming a personally validated medical exposure limit derived from your thresholds.",
+      "WHO safe-listening guidance, developed with the ITU, is built on a weekly sound dose: an adult reference of 80 decibels for up to 40 hours a week, plus a more conservative 75 decibel mode. WHO estimates over a billion people aged 12–35 are at risk from unsafe recreational listening, and more than 1.5 billion already live with some degree of hearing loss.",
+      "Audiomaxxer therefore describes your listening behaviour — estimated exposure, loudest sessions, weekly trend — rather than claiming a personally validated medical exposure limit derived from your thresholds. The prevention page covers the dose model in detail.",
     ],
   },
 ];
