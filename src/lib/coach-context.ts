@@ -58,6 +58,34 @@ export async function buildCoachContext(): Promise<string> {
     }
   }
 
+  const { data: importedReports } = await supabase
+    .from("clinical_reports")
+    .select("id, source_label, file_name, test_date, status, summary, comparison_summary, next_steps")
+    .eq("status", "ready")
+    .order("created_at", { ascending: false })
+    .limit(3);
+
+  if (!importedReports || importedReports.length === 0) {
+    lines.push("Imported clinic reports: none ready yet.");
+  } else {
+    lines.push(`Imported clinic reports: ${importedReports.length} ready report(s).`);
+    const latestReport = importedReports[0];
+    if (latestReport) {
+      lines.push(`Latest clinic report: ${latestReport.source_label || latestReport.file_name}${latestReport.test_date ? `, test date ${latestReport.test_date}` : ""}.`);
+      if (latestReport.summary) lines.push(`Clinic report summary: ${latestReport.summary}`);
+      if (latestReport.comparison_summary) lines.push(`Clinic comparison note: ${latestReport.comparison_summary}`);
+      if (latestReport.next_steps) lines.push(`Clinic report next step: ${latestReport.next_steps}`);
+      const { data: clinicPoints } = await supabase
+        .from("clinical_threshold_points")
+        .select("ear, frequency_hz, threshold_db")
+        .eq("report_id", latestReport.id)
+        .order("frequency_hz", { ascending: true });
+      if (clinicPoints?.length) {
+        lines.push(`Latest clinic thresholds: ${clinicPoints.map((point) => `${point.ear} ${point.frequency_hz}Hz ${Number(point.threshold_db).toFixed(0)}dB HL`).join(", ")}.`);
+      }
+    }
+  }
+
   const { data: sessions } = await supabase
     .from("training_sessions")
     .select("created_at, accuracy, end_level, quietest_db, rounds, correct, mode, xp, duration_sec")

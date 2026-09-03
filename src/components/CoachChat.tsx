@@ -106,9 +106,9 @@ export function CoachChat({
                 <AudioLines className="h-6 w-6 text-signal" />
               </div>
               <h2 className="mt-5 text-xl font-semibold">Ask your hearing coach</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                It reads your screenings, audiogram, training sessions and device setup.
-              </p>
+               <p className="mt-2 text-sm text-muted-foreground">
+                 It reads your screenings, imported clinic reports, training sessions and device setup.
+               </p>
                <CoachActions onSelect={(prompt) => void send(prompt)} />
             </div>
           ) : null}
