@@ -5,13 +5,13 @@ export const charts: {
 } = {
   en: {
     "chart.frequencyHz": "Frequency (Hz)",
-    "chart.hearingLevel": "Hearing level (dB HL)",
+    "chart.hearingLevel": "Estimated level (dB, relative)",
     "chart.leftEar": "Left ear",
     "chart.rightEar": "Right ear",
     "chart.hz": "{v} Hz",
-    "chart.dbHl": "{v} dB HL",
+    "chart.dbHl": "{v} dB",
     "chart.audiogramHelp":
-      "Read it like a clinical audiogram: quieter sounds sit at the top, so a line high on the chart means better hearing. Anything below about 20 dB HL is where hearing loss begins.",
+      "Read it like an audiogram: quieter sounds sit at the top, so a line high on the chart means you detected softer tones. These are estimated, device-dependent levels rather than clinical dB HL, so use them to compare your own screenings over time.",
     "chart.accuracy": "Accuracy %",
     "chart.difficulty": "Difficulty reached",
 
@@ -54,11 +54,11 @@ export const charts: {
   },
   zh: {
     "chart.frequencyHz": "频率（Hz）",
-    "chart.hearingLevel": "听力级（dB HL）",
+    "chart.hearingLevel": "估算音量（dB，相对值）",
     "chart.leftEar": "左耳",
     "chart.rightEar": "右耳",
     "chart.hz": "{v} Hz",
-    "chart.dbHl": "{v} dB HL",
+    "chart.dbHl": "{v} dB",
     "chart.audiogramHelp":
       "可以像临床听力图那样阅读：越安静的声音位置越靠上，因此曲线越高代表听力越好。大约 20 dB HL 以下即为听力损失的起点。",
     "chart.accuracy": "正确率 %",
@@ -97,11 +97,11 @@ export const charts: {
   },
   es: {
     "chart.frequencyHz": "Frecuencia (Hz)",
-    "chart.hearingLevel": "Nivel auditivo (dB HL)",
+    "chart.hearingLevel": "Nivel estimado (dB, relativo)",
     "chart.leftEar": "Oído izquierdo",
     "chart.rightEar": "Oído derecho",
     "chart.hz": "{v} Hz",
-    "chart.dbHl": "{v} dB HL",
+    "chart.dbHl": "{v} dB",
     "chart.audiogramHelp":
       "Léelo como un audiograma clínico: los sonidos más suaves están arriba, así que una línea alta indica mejor audición. Por debajo de unos 20 dB HL empieza la pérdida auditiva.",
     "chart.accuracy": "Precisión %",
