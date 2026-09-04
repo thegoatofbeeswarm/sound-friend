@@ -35,6 +35,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { unlockAudio } from "@/lib/audiometry";
 import { useI18n } from "@/lib/i18n";
+import { buildTrainingPlan, type TrainingPlan } from "@/lib/training-plan";
 import {
   createTrainer,
   quietestHeard,
@@ -127,6 +128,67 @@ function TrainPage() {
         .limit(1)
         .maybeSingle();
       return 85 + Number(data?.safe_volume_offset_db ?? 0);
+    },
+  });
+
+  const { data: plan } = useQuery({
+    enabled: !!user,
+    queryKey: ["training-plan", user?.id],
+    queryFn: async (): Promise<TrainingPlan> => {
+      const [reportsRes, testsRes, speechRes, trainedRes] = await Promise.all([
+        supabase
+          .from("clinical_reports")
+          .select("id, source_label, file_name, status, created_at")
+          .eq("status", "ready")
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase
+          .from("hearing_tests")
+          .select("id")
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase
+          .from("speech_tests")
+          .select("score")
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase.from("training_sessions").select("mode"),
+      ]);
+
+      const report = reportsRes.data?.[0] ?? null;
+      const clinicPoints = report
+        ? ((
+            await supabase
+              .from("clinical_threshold_points")
+              .select("ear, frequency_hz, threshold_db")
+              .eq("report_id", report.id)
+          ).data ?? [])
+        : [];
+      const testId = testsRes.data?.[0]?.id ?? null;
+      const screeningPoints = testId
+        ? ((
+            await supabase
+              .from("threshold_points")
+              .select("ear, frequency_hz, threshold_db")
+              .eq("test_id", testId)
+          ).data ?? [])
+        : [];
+
+      return buildTrainingPlan({
+        clinicPoints: clinicPoints.map((point) => ({
+          ear: point.ear,
+          frequency_hz: point.frequency_hz,
+          threshold_db: Number(point.threshold_db),
+        })),
+        clinicLabel: report ? report.source_label || report.file_name : null,
+        screeningPoints: screeningPoints.map((point) => ({
+          ear: point.ear,
+          frequency_hz: point.frequency_hz,
+          threshold_db: Number(point.threshold_db),
+        })),
+        sinScore: speechRes.data?.[0]?.score ?? null,
+        trainedModes: (trainedRes.data ?? []).map((row) => row.mode as ModeId),
+      });
     },
   });
 
