@@ -16,7 +16,10 @@ export type ModeId =
   | "localization"
   | "frequency-discrimination"
   | "conversation"
-  | "rapid-speech";
+  | "rapid-speech"
+  | "restaurant"
+  | "street"
+  | "phone-call";
 
 export interface ModeOption {
   id: string;
