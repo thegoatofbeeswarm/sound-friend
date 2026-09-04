@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, ExternalLink, FlaskConical } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
 import { scienceLinks } from "@/lib/science-links";
+import { useI18n } from "@/lib/i18n";
 
 const TITLE = "The Science Behind Audiomaxxer — Methods, Evidence, Limits";
 const DESCRIPTION =
