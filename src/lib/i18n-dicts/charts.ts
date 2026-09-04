@@ -1,0 +1,133 @@
+export const charts: {
+  en: Record<string, string>;
+  zh: Record<string, string>;
+  es: Record<string, string>;
+} = {
+  en: {
+    "chart.frequencyHz": "Frequency (Hz)",
+    "chart.hearingLevel": "Hearing level (dB HL)",
+    "chart.leftEar": "Left ear",
+    "chart.rightEar": "Right ear",
+    "chart.hz": "{v} Hz",
+    "chart.dbHl": "{v} dB HL",
+    "chart.audiogramHelp":
+      "Read it like a clinical audiogram: quieter sounds sit at the top, so a line high on the chart means better hearing. Anything below about 20 dB HL is where hearing loss begins.",
+    "chart.accuracy": "Accuracy %",
+    "chart.difficulty": "Difficulty reached",
+
+    "quality.title": "Screening quality",
+    "quality.compact": "Screening quality {score}/100 · {label}",
+    "quality.heading": "Screening quality — {label}",
+    "quality.label.excellent": "Excellent conditions",
+    "quality.label.good": "Good conditions",
+    "quality.label.fair": "Fair conditions",
+    "quality.label.low": "Limited reliability",
+    "quality.interpretation.excellent":
+      "Absolute thresholds from this screening can be compared to standard ranges with confidence.",
+    "quality.interpretation.good":
+      "Thresholds are dependable for tracking, with roughly a few dB of uncertainty.",
+    "quality.interpretation.fair":
+      "Use this run for relative tracking; absolute thresholds may be shifted by conditions.",
+    "quality.interpretation.low":
+      "Treat these numbers as indicative only and repeat the screening in better conditions.",
+    "quality.issue.noNoiseScan": "Room noise was not measured before the screening.",
+    "quality.issue.noisy": "Background noise was ~{db} dB, which can mask the quietest tones.",
+    "quality.issue.veryNoisy": "Background noise was ~{db} dB — too loud for reliable low-level tones.",
+    "quality.issue.noDevice": "No listening device was recorded for this screening.",
+    "quality.issue.uncalibrated":
+      "{device} is uncalibrated, so absolute levels may be off by several dB.",
+    "quality.issue.fewTrials": "Only {n} trials were answered, so estimates stayed coarse.",
+    "quality.issue.noTrials": "No trials recorded.",
+    "quality.issue.lowConfidence": "Average estimate confidence was only {pct}%.",
+    "quality.issue.unsettled":
+      "At least one frequency never settled — answers there may have been inconsistent.",
+    "quality.strength.veryQuiet": "Very quiet room (~{db} dB).",
+    "quality.strength.quiet": "Reasonably quiet room (~{db} dB).",
+    "quality.strength.calibrated": "{device} has a calibration profile applied.",
+    "quality.strength.trials": "{n} trials answered.",
+    "quality.strength.confidence": "Average estimate confidence {pct}%.",
+  },
+  zh: {
+    "chart.frequencyHz": "频率（Hz）",
+    "chart.hearingLevel": "听力级（dB HL）",
+    "chart.leftEar": "左耳",
+    "chart.rightEar": "右耳",
+    "chart.hz": "{v} Hz",
+    "chart.dbHl": "{v} dB HL",
+    "chart.audiogramHelp":
+      "可以像临床听力图那样阅读：越安静的声音位置越靠上，因此曲线越高代表听力越好。大约 20 dB HL 以下即为听力损失的起点。",
+    "chart.accuracy": "正确率 %",
+    "chart.difficulty": "达到的难度",
+
+    "quality.title": "筛查质量",
+    "quality.compact": "筛查质量 {score}/100 · {label}",
+    "quality.heading": "筛查质量 — {label}",
+    "quality.label.excellent": "条件优秀",
+    "quality.label.good": "条件良好",
+    "quality.label.fair": "条件一般",
+    "quality.label.low": "可靠性有限",
+    "quality.interpretation.excellent": "本次筛查的绝对听阈可以放心地与标准范围进行比较。",
+    "quality.interpretation.good": "听阈可用于长期追踪，误差大约在几个分贝之内。",
+    "quality.interpretation.fair": "本次结果适合用于相对追踪；绝对听阈可能因环境条件而偏移。",
+    "quality.interpretation.low": "请将这些数字仅作参考，并在更好的条件下重新筛查。",
+    "quality.issue.noNoiseScan": "筛查前未测量环境噪音。",
+    "quality.issue.noisy": "背景噪音约为 {db} dB，可能会掩盖最轻的声音。",
+    "quality.issue.veryNoisy": "背景噪音约为 {db} dB —— 对低音量测试来说过于嘈杂。",
+    "quality.issue.noDevice": "本次筛查未记录所使用的听音设备。",
+    "quality.issue.uncalibrated": "{device} 未校准，绝对音量可能相差数分贝。",
+    "quality.issue.fewTrials": "仅完成 {n} 次测试，估计结果较为粗略。",
+    "quality.issue.noTrials": "未记录任何测试。",
+    "quality.issue.lowConfidence": "平均估计置信度仅为 {pct}%。",
+    "quality.issue.unsettled": "至少有一个频率始终未收敛 —— 该处的回答可能不够一致。",
+    "quality.strength.veryQuiet": "环境非常安静（约 {db} dB）。",
+    "quality.strength.quiet": "环境比较安静（约 {db} dB）。",
+    "quality.strength.calibrated": "{device} 已应用校准配置。",
+    "quality.strength.trials": "已完成 {n} 次测试。",
+    "quality.strength.confidence": "平均估计置信度为 {pct}%。",
+  },
+  es: {
+    "chart.frequencyHz": "Frecuencia (Hz)",
+    "chart.hearingLevel": "Nivel auditivo (dB HL)",
+    "chart.leftEar": "Oído izquierdo",
+    "chart.rightEar": "Oído derecho",
+    "chart.hz": "{v} Hz",
+    "chart.dbHl": "{v} dB HL",
+    "chart.audiogramHelp":
+      "Léelo como un audiograma clínico: los sonidos más suaves están arriba, así que una línea alta indica mejor audición. Por debajo de unos 20 dB HL empieza la pérdida auditiva.",
+    "chart.accuracy": "Precisión %",
+    "chart.difficulty": "Dificultad alcanzada",
+
+    "quality.title": "Calidad del cribado",
+    "quality.compact": "Calidad del cribado {score}/100 · {label}",
+    "quality.heading": "Calidad del cribado — {label}",
+    "quality.label.excellent": "Condiciones excelentes",
+    "quality.label.good": "Buenas condiciones",
+    "quality.label.fair": "Condiciones aceptables",
+    "quality.label.low": "Fiabilidad limitada",
+    "quality.interpretation.excellent":
+      "Los umbrales absolutos de este cribado pueden compararse con los rangos estándar con confianza.",
+    "quality.interpretation.good":
+      "Los umbrales son fiables para el seguimiento, con unos pocos dB de incertidumbre.",
+    "quality.interpretation.fair":
+      "Usa esta sesión para seguimiento relativo; los umbrales absolutos pueden estar desplazados por las condiciones.",
+    "quality.interpretation.low":
+      "Toma estos números solo como indicativos y repite el cribado en mejores condiciones.",
+    "quality.issue.noNoiseScan": "No se midió el ruido de la sala antes del cribado.",
+    "quality.issue.noisy": "El ruido de fondo era de ~{db} dB, lo que puede enmascarar los tonos más suaves.",
+    "quality.issue.veryNoisy":
+      "El ruido de fondo era de ~{db} dB: demasiado alto para tonos de bajo nivel fiables.",
+    "quality.issue.noDevice": "No se registró ningún dispositivo de escucha para este cribado.",
+    "quality.issue.uncalibrated":
+      "{device} no está calibrado, así que los niveles absolutos pueden desviarse varios dB.",
+    "quality.issue.fewTrials": "Solo se respondieron {n} ensayos, así que las estimaciones son aproximadas.",
+    "quality.issue.noTrials": "No se registraron ensayos.",
+    "quality.issue.lowConfidence": "La confianza media de la estimación fue solo del {pct}%.",
+    "quality.issue.unsettled":
+      "Al menos una frecuencia nunca se estabilizó: las respuestas allí pueden haber sido inconsistentes.",
+    "quality.strength.veryQuiet": "Sala muy silenciosa (~{db} dB).",
+    "quality.strength.quiet": "Sala razonablemente silenciosa (~{db} dB).",
+    "quality.strength.calibrated": "{device} tiene un perfil de calibración aplicado.",
+    "quality.strength.trials": "{n} ensayos respondidos.",
+    "quality.strength.confidence": "Confianza media de la estimación {pct}%.",
+  },
+};

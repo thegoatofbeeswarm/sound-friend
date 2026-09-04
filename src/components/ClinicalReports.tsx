@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { analyzeClinicalReport } from "@/lib/clinical.functions";
 import { useServerFn } from "@tanstack/react-start";
+import { useI18n } from "@/lib/i18n";
 
 const ACCEPTED_TYPES = ["application/pdf", "image/png", "image/jpeg"];
 const MAX_FILE_SIZE = 15 * 1024 * 1024;
@@ -29,6 +30,7 @@ type Report = {
 
 export function ClinicalReports() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const analyze = useServerFn(analyzeClinicalReport);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,18 +54,18 @@ export function ClinicalReports() {
   });
 
   const helperText = useMemo(() => {
-    if (!selectedFile) return "PDF, PNG or JPG · up to 15 MB";
+    if (!selectedFile) return t("data.report.helperDefault");
     return `${selectedFile.name} · ${(selectedFile.size / 1024 / 1024).toFixed(1)} MB`;
-  }, [selectedFile]);
+  }, [selectedFile, t]);
 
   async function uploadAndAnalyze() {
     if (!user || !selectedFile) return;
     if (!ACCEPTED_TYPES.includes(selectedFile.type)) {
-      toast.error("Choose a PDF, PNG or JPG hearing report.");
+      toast.error(t("data.report.errChooseFile"));
       return;
     }
     if (selectedFile.size <= 0 || selectedFile.size > MAX_FILE_SIZE) {
-      toast.error("The file must be between 1 byte and 15 MB.");
+      toast.error(t("data.report.errFileSize"));
       return;
     }
 
@@ -87,21 +89,19 @@ export function ClinicalReports() {
         })
         .select("id")
         .single();
-      if (insertError || !report) throw insertError ?? new Error("Could not save the report.");
+      if (insertError || !report) throw insertError ?? new Error(t("data.report.errSaveFail"));
 
       const result = await analyze({ data: { reportId: report.id } });
       if (!result.ok) throw new Error(result.error);
 
-      toast.success(
-        `Report analyzed · ${result.points} threshold${result.points === 1 ? "" : "s"} found`,
-      );
+      toast.success(t("data.report.toastAnalyzed").replace("{n}", String(result.points)));
       setSelectedFile(null);
       setSourceLabel("");
       if (inputRef.current) inputRef.current.value = "";
       await queryClient.invalidateQueries({ queryKey: ["clinical-reports", user.id] });
       await queryClient.invalidateQueries({ queryKey: ["clinical-data", user.id] });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "The report could not be analyzed.");
+      toast.error(error instanceof Error ? error.message : t("data.report.errAnalyzeFail"));
       await queryClient.invalidateQueries({ queryKey: ["clinical-reports", user.id] });
     } finally {
       setBusy(false);
@@ -111,10 +111,7 @@ export function ClinicalReports() {
   if (!user) {
     return (
       <div className="rounded-xl border border-border/70 bg-card/60 p-6">
-        <p className="text-sm text-muted-foreground">
-          Sign in to upload a clinic or hearing-center report and compare it with your Audiomaxxer
-          screening.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("data.report.signIn")}</p>
       </div>
     );
   }
@@ -127,17 +124,15 @@ export function ClinicalReports() {
             <UploadCloud className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold">Add a past hearing report</h2>
+            <h2 className="text-xl font-semibold">{t("data.report.addTitle")}</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Upload an audiogram or hearing screening from a clinic, hearing center, or another
-              app. Lovable AI will read the report, extract visible air-conduction thresholds, and
-              compare them with your latest Audiomaxxer screening.
+              {t("data.report.addDesc")}
             </p>
           </div>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-[1fr_220px_auto] md:items-end">
           <div className="space-y-2">
-            <Label htmlFor="clinical-report">Report file</Label>
+            <Label htmlFor="clinical-report">{t("data.report.fileLabel")}</Label>
             <Input
               ref={inputRef}
               id="clinical-report"
@@ -148,37 +143,34 @@ export function ClinicalReports() {
             <p className="text-xs text-muted-foreground">{helperText}</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="report-source">Source (optional)</Label>
+            <Label htmlFor="report-source">{t("data.report.sourceLabel")}</Label>
             <Input
               id="report-source"
               value={sourceLabel}
               maxLength={100}
-              placeholder="Clinic or provider"
+              placeholder={t("data.report.sourcePlaceholder")}
               onChange={(event) => setSourceLabel(event.target.value)}
             />
           </div>
           <Button onClick={() => void uploadAndAnalyze()} disabled={!selectedFile || busy}>
             {busy ? <Loader2 className="animate-spin" /> : <UploadCloud />}
-            {busy ? "Analyzing…" : "Upload and analyze"}
+            {busy ? t("data.report.analyzing") : t("data.report.uploadBtn")}
           </Button>
         </div>
         <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-caution" />
-          Keep the original report for clinical use. AI extraction is a convenience layer and can
-          miss symbols or values in a low-quality scan.
+          {t("data.report.note")}
         </p>
       </section>
 
       <section>
         <div className="flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold">Imported reports</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Your private reports and extracted comparison notes.
-            </p>
+            <h2 className="text-xl font-semibold">{t("data.report.importedTitle")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("data.report.importedDesc")}</p>
           </div>
           <span className="text-sm text-muted-foreground">
-            {reportsQuery.data?.length ?? 0} saved
+            {t("data.report.saved").replace("{n}", String(reportsQuery.data?.length ?? 0))}
           </span>
         </div>
         {reportsQuery.isLoading ? (
@@ -194,7 +186,7 @@ export function ClinicalReports() {
         ) : (
           <div className="mt-5 rounded-xl border border-dashed border-border/80 p-8 text-center">
             <FileText className="mx-auto h-6 w-6 text-muted-foreground" />
-            <p className="mt-3 text-sm text-muted-foreground">No external reports yet.</p>
+            <p className="mt-3 text-sm text-muted-foreground">{t("data.report.empty")}</p>
           </div>
         )}
       </section>
@@ -203,6 +195,7 @@ export function ClinicalReports() {
 }
 
 function ReportItem({ report }: { report: Report }) {
+  const { t } = useI18n();
   const ready = report.status === "ready";
   return (
     <article className="rounded-xl border border-border/70 bg-card/70 p-5 shadow-card">
@@ -216,8 +209,14 @@ function ReportItem({ report }: { report: Report }) {
           <div className="min-w-0">
             <h3 className="truncate font-medium">{report.source_label || report.file_name}</h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              {report.test_date ? `Test date ${report.test_date}` : "Date not detected"} · uploaded{" "}
-              {new Date(report.created_at).toLocaleDateString()}
+              {report.test_date
+                ? t("data.report.testDate").replace("{date}", report.test_date)
+                : t("data.report.dateUnknown")}{" "}
+              ·{" "}
+              {t("data.report.uploaded").replace(
+                "{date}",
+                new Date(report.created_at).toLocaleDateString(),
+              )}
             </p>
           </div>
         </div>
@@ -226,12 +225,12 @@ function ReportItem({ report }: { report: Report }) {
         >
           {ready ? <CheckCircle2 className="h-3.5 w-3.5" /> : null}
           {ready
-            ? "Compared"
+            ? t("data.report.statusCompared")
             : report.status === "failed"
-              ? "Needs another upload"
+              ? t("data.report.statusFailed")
               : report.status === "empty"
-                ? "No thresholds found"
-                : "Processing"}
+                ? t("data.report.statusEmpty")
+                : t("data.report.statusProcessing")}
         </span>
       </div>
       {report.summary ? (
@@ -239,13 +238,15 @@ function ReportItem({ report }: { report: Report }) {
       ) : null}
       {report.comparison_summary ? (
         <div className="mt-4 border-l-2 border-signal/50 pl-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-signal">AI comparison</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-signal">
+            {t("data.report.aiComparison")}
+          </p>
           <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
             {report.comparison_summary}
           </p>
           {report.next_steps ? (
             <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-              <span className="font-medium">Next:</span> {report.next_steps}
+              <span className="font-medium">{t("data.report.next")}</span> {report.next_steps}
             </p>
           ) : null}
         </div>

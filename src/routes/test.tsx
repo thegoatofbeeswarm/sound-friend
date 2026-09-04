@@ -29,6 +29,7 @@ import {
 import { DevicePicker } from "@/components/DevicePicker";
 import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
 import { scoreScreening } from "@/lib/test-quality";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/test")({
   head: () => ({
@@ -55,6 +56,7 @@ type Phase = "intro" | "running" | "done";
 
 function TestPage() {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [phase, setPhase] = useState<Phase>("intro");
   const [state, setState] = useState<TestState>(() => createTestState());
@@ -128,7 +130,7 @@ function TestPage() {
 
     if (error || !data) {
       setSaving(false);
-      toast.error("Could not save this screening.");
+      toast.error(t("test.toastSaveTestFail"));
       return;
     }
 
@@ -144,10 +146,10 @@ function TestPage() {
     );
     setSaving(false);
     if (pointsError) {
-      toast.error("Could not save the audiogram points.");
+      toast.error(t("test.toastSavePointsFail"));
       return;
     }
-    toast.success("Screening saved to your history.");
+    toast.success(t("test.toastSaveSuccess"));
     void navigate({ to: "/history" });
   }, [final, user, noise, state.trialCount, navigate, device]);
 
@@ -170,18 +172,15 @@ function TestPage() {
       <main className="mx-auto max-w-3xl px-5 py-12">
         {phase === "intro" ? (
           <section>
-            <h1 className="text-3xl font-semibold">Adaptive hearing screening</h1>
-            <p className="mt-3 text-muted-foreground">
-              After every answer, the model updates its estimate and probes only where it is still
-              unsure, so the test ends as soon as the picture is clear.
-            </p>
+            <h1 className="text-3xl font-semibold">{t("test.introTitle")}</h1>
+            <p className="mt-3 text-muted-foreground">{t("test.introBody")}</p>
 
             <ul className="mt-8 space-y-3 text-sm">
               {(
                 [
-                  { Icon: Headphones, text: "Wear headphones and set your device volume to about 50%." },
-                  { Icon: Volume2, text: "Sit somewhere quiet. Scan the room noise below first." },
-                  { Icon: Ear, text: "Answer honestly for the most reliable and beneficial data." },
+                  { Icon: Headphones, text: t("test.step1") },
+                  { Icon: Volume2, text: t("test.step2") },
+                  { Icon: Ear, text: t("test.step3") },
                 ] as const
               ).map(({ Icon, text }) => (
                 <li key={text} className="flex items-start gap-3">
@@ -200,16 +199,16 @@ function TestPage() {
 
             {!user ? (
               <p className="mt-6 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-                You can test without an account, but{" "}
+                {t("test.guestPre")}{" "}
                 <Link to="/auth" className="text-signal underline-offset-4 hover:underline">
-                  sign in
+                  {t("test.guestLink")}
                 </Link>{" "}
-                to save results and track changes over time.
+                {t("test.guestPost")}
               </p>
             ) : null}
 
             <Button size="lg" className="mt-8" onClick={() => void start()}>
-              <Play className="mr-2 h-4 w-4" /> Begin screening
+              <Play className="mr-2 h-4 w-4" /> {t("test.begin")}
             </Button>
           </section>
         ) : null}
@@ -225,18 +224,18 @@ function TestPage() {
               <Ear className="h-10 w-10 text-signal" />
             </div>
             <p className="mt-6 text-sm uppercase tracking-widest text-muted-foreground">
-              {trial.ear} ear
+              {trial.ear === "left" ? t("test.earLeft") : t("test.earRight")}
             </p>
             <h2 className="mt-2 text-2xl font-semibold">
-              {playing ? "Listening..." : "Did you hear that tone?"}
+              {playing ? t("test.listening") : t("test.question")}
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Trial {state.trialCount + 1} of up to {state.maxTrials}
+              {t("test.trialOf").replace("{n}", String(state.trialCount + 1)).replace("{max}", String(state.maxTrials))}
             </p>
 
             <div className="mt-8 flex justify-center gap-3">
               <Button size="lg" disabled={playing} onClick={() => void respond(true)}>
-                I heard it
+                {t("test.heard")}
               </Button>
               <Button
                 size="lg"
@@ -244,7 +243,7 @@ function TestPage() {
                 disabled={playing}
                 onClick={() => void respond(false)}
               >
-                Nothing
+                {t("test.nothing")}
               </Button>
             </div>
           </section>
@@ -279,13 +278,12 @@ function ResultsView({
 }) {
   const summary = safeListening(points);
   const { user } = useAuth();
+  const { t } = useI18n();
 
   return (
     <section>
-      <h1 className="text-3xl font-semibold">Your audiogram</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Lower is better. The shaded bands mark normal, early loss, and notable loss ranges.
-      </p>
+      <h1 className="text-3xl font-semibold">{t("test.resultsTitle")}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{t("test.resultsBody")}</p>
 
        <div className="mt-8 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card">
          <Audiogram points={points} />
@@ -302,15 +300,16 @@ function ResultsView({
        />
 
        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Stat label="Average threshold" value={`${summary.avg} dB`} />
-        <Stat label="Your volume ceiling" value={`${summary.ceilingDb} dB`} highlight />
-        <Stat label="Safe daily exposure" value={`${summary.safeHours} h`} />
+        <Stat label={t("test.avgThreshold")} value={`${summary.avg} dB`} />
+        <Stat label={t("test.volumeCeiling")} value={`${summary.ceilingDb} dB`} highlight />
+        <Stat label={t("test.safeExposure")} value={`${summary.safeHours} h`} />
       </div>
 
       <p className="mt-4 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-        The standard phone warning triggers at 85 dB. Based on your thresholds your personal ceiling
-        is {summary.ceilingDb} dB ({summary.offsetDb} dB versus the generic rule), which allows about{" "}
-        {summary.safeHours} hours of continuous listening per day.
+        {t("test.warningTemplate")
+          .replace("{ceiling}", String(summary.ceilingDb))
+          .replace("{offset}", String(summary.offsetDb))
+          .replace("{hours}", String(summary.safeHours))}
       </p>
 
       <div className="mt-8 space-y-2">
@@ -330,7 +329,7 @@ function ResultsView({
                 </span>
                 <span className="flex items-center gap-3">
                   <span className="text-xs text-muted-foreground">
-                    {Math.round(p.confidence * 100)}% confidence
+                    {t("test.confidenceTemplate").replace("{pct}", String(Math.round(p.confidence * 100)))}
                   </span>
                   <span
                     className={
@@ -351,18 +350,18 @@ function ResultsView({
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Button asChild>
-          <Link to="/risks">See my overuse risk</Link>
+          <Link to="/risks">{t("test.seeRisk")}</Link>
         </Button>
         <Button asChild variant="secondary">
-          <Link to="/train">Train my hearing</Link>
+          <Link to="/train">{t("test.trainHearing")}</Link>
         </Button>
         {user ? (
           <Button asChild variant="secondary" disabled={saving}>
-            <Link to="/history">{saving ? "Saving..." : "View history"}</Link>
+            <Link to="/history">{saving ? t("test.saving") : t("test.viewHistory")}</Link>
           </Button>
         ) : (
           <Button asChild variant="secondary">
-            <Link to="/auth">Sign in to save this</Link>
+            <Link to="/auth">{t("test.signInSave")}</Link>
           </Button>
         )}
       </div>

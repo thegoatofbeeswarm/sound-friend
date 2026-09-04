@@ -34,6 +34,7 @@ import { TrainingProgress, type ProgressPoint } from "@/components/TrainingProgr
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { unlockAudio } from "@/lib/audiometry";
+import { useI18n } from "@/lib/i18n";
 import {
   createTrainer,
   quietestHeard,
@@ -105,6 +106,7 @@ const MODE_ICONS = {
 
 function TrainPage() {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const qc = useQueryClient();
   const [trainer, setTrainer] = useState<TrainerState>(() => createTrainer());
   const [round, setRound] = useState<ModeRound | null>(null);
@@ -220,9 +222,9 @@ function TrainPage() {
         xp,
         duration_sec: startedAt == null ? 0 : Math.round((Date.now() - startedAt) / 1000),
       });
-      if (error) toast.error("Could not save this session.");
+      if (error) toast.error(t("train.toastSessionFail"));
       else {
-        toast.success(`Session saved · +${xp} XP`);
+        toast.success(t("train.toastSessionSavedTemplate").replace("{xp}", String(xp)));
         void qc.invalidateQueries({ queryKey: ["training-sessions", user.id] });
       }
     })();
@@ -251,11 +253,9 @@ function TrainPage() {
           <>
             <section className="flex flex-wrap items-end justify-between gap-6">
               <div className="max-w-2xl">
-                <p className="text-sm font-medium text-signal">Closed-loop hearing training</p>
-                <h1 className="mt-2 text-4xl font-semibold">Train the skills you use in real life.</h1>
-                <p className="mt-4 text-muted-foreground">
-                  Choose a focus. Each session adjusts to your performance, so you practice at the edge of your current ability — not on a one-size-fits-all playlist.
-                </p>
+                <p className="text-sm font-medium text-signal">{t("train.tagline")}</p>
+                <h1 className="mt-2 text-4xl font-semibold">{t("train.heroTitle")}</h1>
+                <p className="mt-4 text-muted-foreground">{t("train.heroBody")}</p>
               </div>
               {user ? <LevelSummary level={level} streak={dayStreak(allSessions)} /> : null}
             </section>
@@ -263,12 +263,12 @@ function TrainPage() {
             <section className="mt-10">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-2xl font-semibold">Choose a training track</h2>
+                  <h2 className="text-2xl font-semibold">{t("train.chooseTrack")}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Your next focus: <span className="text-foreground">{modeById(focus).label}</span>
+                    {t("train.nextFocusPrefix")} <span className="text-foreground">{t(`train.mode.${modeById(focus).id}.label`)}</span>
                   </p>
                 </div>
-                {ceiling ? <p className="text-xs text-signal">Calibrated to your latest screening</p> : null}
+                {ceiling ? <p className="text-xs text-signal">{t("train.calibrated")}</p> : null}
               </div>
               <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {TRAINING_MODES.map((mode) => {
@@ -292,11 +292,11 @@ function TrainPage() {
                         </span>
                         {selected ? <Check className="h-4 w-4 text-signal" /> : <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />}
                       </div>
-                      <h3 className="mt-5 font-semibold">{mode.label}</h3>
-                      <p className="mt-2 min-h-12 text-sm leading-relaxed text-muted-foreground">{mode.blurb}</p>
+                      <h3 className="mt-5 font-semibold">{t(`train.mode.${mode.id}.label`)}</h3>
+                      <p className="mt-2 min-h-12 text-sm leading-relaxed text-muted-foreground">{t(`train.mode.${mode.id}.blurb`)}</p>
                       <div className="mt-4 flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                        <span>{mode.skill}</span>
-                        {best ? <span className="text-foreground">Best {best.bestAccuracy}%</span> : <span>New track</span>}
+                        <span>{t(`train.mode.${mode.id}.skill`)}</span>
+                        {best ? <span className="text-foreground">{t("train.bestTemplate").replace("{pct}", String(best.bestAccuracy))}</span> : <span>{t("train.newTrack")}</span>}
                       </div>
                     </button>
                   );
@@ -304,11 +304,11 @@ function TrainPage() {
               </div>
               <div className="mt-6 flex flex-wrap items-center gap-4">
                 <Button size="lg" onClick={() => void begin()}>
-                  <Play className="mr-2 h-4 w-4" /> Start {currentMode.label.toLowerCase()}
+                  <Play className="mr-2 h-4 w-4" /> {t("train.startPrefix")} {t(`train.mode.${currentMode.id}.label`).toLowerCase()}
                 </Button>
                 {currentMode.needsSpeech ? (
                   <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Volume2 className="h-4 w-4 text-signal" /> Uses your device speaker or headphones
+                    <Volume2 className="h-4 w-4 text-signal" /> {t("train.usesSpeaker")}
                   </span>
                 ) : null}
               </div>
@@ -321,7 +321,7 @@ function TrainPage() {
               </section>
             ) : (
               <p className="mt-10 max-w-xl text-sm text-muted-foreground">
-                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">Sign in</Link> to save your XP, streak, and track-by-track improvement.
+                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInXpSuffix")}
               </p>
             )}
           </>
@@ -330,15 +330,15 @@ function TrainPage() {
         {(phase === "playing" || phase === "answer") && round ? (
           <section className="mx-auto max-w-2xl text-center">
             <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
-              <span>{currentMode.label}</span>
-              <span>Round {trainer.rounds + 1} of {ROUNDS}</span>
+              <span>{t(`train.mode.${currentMode.id}.label`)}</span>
+              <span>{t("train.roundOf").replace("{n}", String(trainer.rounds + 1)).replace("{max}", String(ROUNDS))}</span>
             </div>
             <Progress value={(trainer.rounds / ROUNDS) * 100} className="mt-3" />
             <div className={`mx-auto mt-16 flex h-36 w-36 items-center justify-center rounded-full border border-border bg-card ${phase === "playing" ? "pulse-ring" : ""}`}>
               {currentMode.icon === "compass" ? <Compass className="h-9 w-9 text-signal" /> : <Volume2 className="h-9 w-9 text-signal" />}
             </div>
-            <p className="mt-7 text-sm uppercase tracking-widest text-muted-foreground">Difficulty {trainer.level.toFixed(1)}/10</p>
-            <h2 className="mt-2 text-2xl font-semibold">{phase === "playing" ? "Listening..." : round.prompt}</h2>
+            <p className="mt-7 text-sm uppercase tracking-widest text-muted-foreground">{t("train.difficultyTemplate").replace("{level}", trainer.level.toFixed(1))}</p>
+            <h2 className="mt-2 text-2xl font-semibold">{phase === "playing" ? t("train.listening") : round.prompt}</h2>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {round.options.map((option) => (
                 <Button
@@ -356,7 +356,7 @@ function TrainPage() {
             </div>
             {lastCorrect !== null ? (
               <p className={`mt-5 text-sm ${lastCorrect ? "text-signal" : "text-caution"}`}>
-                {lastCorrect ? "Correct — increasing the challenge." : "Not quite — adjusting the next round."}
+                {lastCorrect ? t("train.correctMsg") : t("train.incorrectMsg")}
               </p>
             ) : null}
           </section>
@@ -364,23 +364,23 @@ function TrainPage() {
 
         {phase === "done" ? (
           <section className="mx-auto max-w-3xl">
-            <p className="text-sm font-medium text-signal">{currentMode.label}</p>
-            <h1 className="mt-2 text-4xl font-semibold">Session complete</h1>
-            <p className="mt-3 text-muted-foreground">You stayed with the track and pushed your listening edge forward.</p>
+            <p className="text-sm font-medium text-signal">{t(`train.mode.${currentMode.id}.label`)}</p>
+            <h1 className="mt-2 text-4xl font-semibold">{t("train.sessionComplete")}</h1>
+            <p className="mt-3 text-muted-foreground">{t("train.sessionBody")}</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <Stat label="Accuracy" value={`${Math.round((trainer.correct / Math.max(1, trainer.rounds)) * 100)}%`} highlight />
-              <Stat label="Difficulty reached" value={`${trainer.level.toFixed(1)}/10`} />
-              <Stat label="XP earned" value={`+${sessionXp(trainer.correct, trainer.rounds, trainer.level)}`} />
+              <Stat label={t("train.accuracy")} value={`${Math.round((trainer.correct / Math.max(1, trainer.rounds)) * 100)}%`} highlight />
+              <Stat label={t("train.difficultyReached")} value={`${trainer.level.toFixed(1)}/10`} />
+              <Stat label={t("train.xpEarned")} value={`+${sessionXp(trainer.correct, trainer.rounds, trainer.level)}`} />
             </div>
             {!user ? (
               <p className="mt-6 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">Sign in</Link> to save this session and track your improvement.
+                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInSessionSuffix")}
               </p>
             ) : null}
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button onClick={() => void begin()}><RefreshCw className="mr-2 h-4 w-4" /> Train again</Button>
-              <Button variant="secondary" onClick={() => setPhase("intro")}><Target className="mr-2 h-4 w-4" /> Choose another track</Button>
-              <Button asChild variant="secondary"><Link to="/history"><LineChart className="mr-2 h-4 w-4" /> View my dashboard</Link></Button>
+              <Button onClick={() => void begin()}><RefreshCw className="mr-2 h-4 w-4" /> {t("train.trainAgain")}</Button>
+              <Button variant="secondary" onClick={() => setPhase("intro")}><Target className="mr-2 h-4 w-4" /> {t("train.chooseAnother")}</Button>
+              <Button asChild variant="secondary"><Link to="/history"><LineChart className="mr-2 h-4 w-4" /> {t("train.viewDashboard")}</Link></Button>
             </div>
           </section>
         ) : null}
@@ -390,13 +390,13 @@ function TrainPage() {
             <section className="mt-14">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold">Your training curve</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Accuracy and difficulty across completed sessions.</p>
+                  <h2 className="text-xl font-semibold">{t("train.curveTitle")}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">{t("train.curveBody")}</p>
                 </div>
-                {allSessions.length > 0 ? <span className="text-sm text-signal">{total} total XP</span> : null}
+                {allSessions.length > 0 ? <span className="text-sm text-signal">{t("train.totalXpTemplate").replace("{total}", String(total))}</span> : null}
               </div>
               {points.length === 0 ? (
-                <p className="mt-4 rounded-2xl border border-border/70 bg-card/60 p-5 text-sm text-muted-foreground">Finish a session to start the curve.</p>
+                <p className="mt-4 rounded-2xl border border-border/70 bg-card/60 p-5 text-sm text-muted-foreground">{t("train.finishSession")}</p>
               ) : (
                 <div className="mt-4 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card"><TrainingProgress points={points} /></div>
               )}
@@ -410,47 +410,50 @@ function TrainPage() {
 }
 
 function LevelSummary({ level, streak }: { level: ReturnType<typeof levelFromXp>; streak: number }) {
+  const { t } = useI18n();
   return (
     <div className="min-w-64 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2"><Award className="h-4 w-4 text-signal" /><span className="text-sm font-semibold">Level {level.level}</span></div>
+        <div className="flex items-center gap-2"><Award className="h-4 w-4 text-signal" /><span className="text-sm font-semibold">{t("train.levelTemplate").replace("{level}", String(level.level))}</span></div>
         <span className="text-xs text-muted-foreground">{level.into}/{level.needed} XP</span>
       </div>
       <Progress value={level.pct} className="mt-3" />
       <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-        <span>{level.pct}% to next level</span>
-        <span className="flex items-center gap-1 text-caution"><Trophy className="h-3.5 w-3.5" /> {streak} day streak</span>
+        <span>{t("train.pctToNextTemplate").replace("{pct}", String(level.pct))}</span>
+        <span className="flex items-center gap-1 text-caution"><Trophy className="h-3.5 w-3.5" /> {t("train.dayStreakTemplate").replace("{streak}", String(streak))}</span>
       </div>
     </div>
   );
 }
 
 function WeeklyProgress({ sessions, total }: { sessions: SessionRow[]; total: number }) {
+  const { t } = useI18n();
   const count = sessions.length;
   const pct = Math.min(100, Math.round((count / WEEKLY_GOAL_SESSIONS) * 100));
   return (
     <section className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
       <div className="flex items-start justify-between gap-4">
-        <div><p className="text-sm font-medium text-signal">This week</p><h2 className="mt-1 text-xl font-semibold">Keep the loop moving</h2></div>
+        <div><p className="text-sm font-medium text-signal">{t("train.thisWeek")}</p><h2 className="mt-1 text-xl font-semibold">{t("train.keepMoving")}</h2></div>
         <span className="flex items-center gap-1 text-sm text-caution"><Trophy className="h-4 w-4" /> {count}/{WEEKLY_GOAL_SESSIONS}</span>
       </div>
       <Progress value={pct} className="mt-5" />
       <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
-        <MiniStat label="Sessions" value={`${count}`} />
-        <MiniStat label="Minutes" value={`${Math.round(sessions.reduce((sum, s) => sum + (Number(s.duration_sec) || s.rounds * 0.55), 0))}`} />
-        <MiniStat label="All time" value={`${total}`} />
+        <MiniStat label={t("train.sessions")} value={`${count}`} />
+        <MiniStat label={t("train.minutes")} value={`${Math.round(sessions.reduce((sum, s) => sum + (Number(s.duration_sec) || s.rounds * 0.55), 0))}`} />
+        <MiniStat label={t("train.allTime")} value={`${total}`} />
       </div>
-      <p className="mt-5 text-xs text-muted-foreground">{count >= WEEKLY_GOAL_SESSIONS ? "Weekly goal complete. Your next session can deepen the skill." : `${WEEKLY_GOAL_SESSIONS - count} more ${WEEKLY_GOAL_SESSIONS - count === 1 ? "session" : "sessions"} to reach your weekly goal.`}</p>
+      <p className="mt-5 text-xs text-muted-foreground">{count >= WEEKLY_GOAL_SESSIONS ? t("train.weeklyGoalComplete") : (WEEKLY_GOAL_SESSIONS - count === 1 ? t("train.moreSessionsOne") : t("train.moreSessionsMany")).replace("{n}", String(WEEKLY_GOAL_SESSIONS - count))}</p>
     </section>
   );
 }
 
 function ModeBests({ bests }: { bests: ReturnType<typeof bestsByMode> }) {
+  const { t } = useI18n();
   const visible = TRAINING_MODES.filter((mode) => bests[mode.id]).slice(0, 4);
   return (
     <section className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-      <div className="flex items-center gap-2"><Brain className="h-4 w-4 text-signal" /><h2 className="text-xl font-semibold">Personal bests</h2></div>
-      {visible.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">Your best scores will appear here as you explore tracks.</p> : <div className="mt-4 space-y-3">{visible.map((mode) => { const best = bests[mode.id]; if (!best) return null; return <div key={mode.id} className="flex items-center justify-between gap-4 border-t border-border/60 pt-3"><span className="min-w-0 truncate text-sm">{mode.label}</span><span className="shrink-0 font-display text-sm text-signal">{best.bestAccuracy}% <span className="font-sans text-xs text-muted-foreground">· L{best.bestLevel.toFixed(1)}</span></span></div>; })}</div>}
+      <div className="flex items-center gap-2"><Brain className="h-4 w-4 text-signal" /><h2 className="text-xl font-semibold">{t("train.personalBests")}</h2></div>
+      {visible.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">{t("train.bestsEmpty")}</p> : <div className="mt-4 space-y-3">{visible.map((mode) => { const best = bests[mode.id]; if (!best) return null; return <div key={mode.id} className="flex items-center justify-between gap-4 border-t border-border/60 pt-3"><span className="min-w-0 truncate text-sm">{t(`train.mode.${mode.id}.label`)}</span><span className="shrink-0 font-display text-sm text-signal">{best.bestAccuracy}% <span className="font-sans text-xs text-muted-foreground">· L{best.bestLevel.toFixed(1)}</span></span></div>; })}</div>}
     </section>
   );
 }
@@ -461,6 +464,7 @@ function MiniStat({ label, value }: { label: string; value: string }) {
 
 function ScheduleCard() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const qc = useQueryClient();
   const [perm, setPerm] = useState<string>("default");
 
@@ -484,17 +488,17 @@ function ScheduleCard() {
     if (!user) return;
     qc.setQueryData(["training-schedule", user.id], next);
     const { error } = await supabase.from("training_schedules").upsert({ user_id: user.id, enabled: next.enabled, days: next.days, time_of_day: next.timeOfDay, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
-    if (error) toast.error("Could not save your schedule.");
+    if (error) toast.error(t("train.toastScheduleFail"));
   }
 
   if (!schedule) return null;
 
   return (
     <section className="mt-14 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-      <div className="flex items-start justify-between gap-4"><div><h2 className="flex items-center gap-2 text-xl font-semibold"><Bell className="h-4 w-4 text-signal" /> Training reminders</h2><p className="mt-1 text-sm text-muted-foreground">{formatNextRun(schedule)}</p></div><Switch checked={schedule.enabled} onCheckedChange={async (value) => { if (value && permission() !== "granted") { const nextPermission = await requestNotificationPermission(); setPerm(nextPermission); if (nextPermission !== "granted") { toast.error("Allow notifications in your browser to get reminders."); return; } } void save({ ...schedule, enabled: value }); }} /></div>
+      <div className="flex items-start justify-between gap-4"><div><h2 className="flex items-center gap-2 text-xl font-semibold"><Bell className="h-4 w-4 text-signal" /> {t("train.remindersTitle")}</h2><p className="mt-1 text-sm text-muted-foreground">{formatNextRun(schedule)}</p></div><Switch checked={schedule.enabled} onCheckedChange={async (value) => { if (value && permission() !== "granted") { const nextPermission = await requestNotificationPermission(); setPerm(nextPermission); if (nextPermission !== "granted") { toast.error(t("train.toastNotifFail")); return; } } void save({ ...schedule, enabled: value }); }} /></div>
       <div className="mt-5 flex flex-wrap gap-2">{DAY_LABELS.map((day, index) => { const on = schedule.days.includes(index); return <button key={day} type="button" onClick={() => void save({ ...schedule, days: on ? schedule.days.filter((x) => x !== index) : [...schedule.days, index].sort() })} className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${on ? "border-signal/50 bg-signal/10 text-signal" : "border-border/70 text-muted-foreground hover:text-foreground"}`}>{day}</button>; })}</div>
-      <div className="mt-5 flex items-center gap-3"><Input type="time" value={schedule.timeOfDay} className="w-36" onChange={(event) => void save({ ...schedule, timeOfDay: event.target.value })} />{perm === "granted" ? <span className="flex items-center gap-1 text-xs text-signal"><BellRing className="h-3.5 w-3.5" /> Notifications on</span> : <span className="text-xs text-muted-foreground">{perm === "unsupported" ? "This browser cannot show notifications." : "Notifications not enabled yet."}</span>}</div>
-      <p className="mt-4 text-xs text-muted-foreground">Reminders are delivered by your device from notifications. Add Audiomaxxer to your home screen so they arrive like any other app notification.</p>
+      <div className="mt-5 flex items-center gap-3"><Input type="time" value={schedule.timeOfDay} className="w-36" onChange={(event) => void save({ ...schedule, timeOfDay: event.target.value })} />{perm === "granted" ? <span className="flex items-center gap-1 text-xs text-signal"><BellRing className="h-3.5 w-3.5" /> {t("train.notifOn")}</span> : <span className="text-xs text-muted-foreground">{perm === "unsupported" ? t("train.notifUnsupported") : t("train.notifNotEnabled")}</span>}</div>
+      <p className="mt-4 text-xs text-muted-foreground">{t("train.remindersFooter")}</p>
     </section>
   );
 }

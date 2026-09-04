@@ -155,18 +155,50 @@ const es: Record<TranslationKey, string> = {
     "Los resultados quedan en tu cuenta privada. Solo cribado: consulta a un profesional para un diagnóstico.",
 };
 
-const dictionaries: Record<Language, Record<TranslationKey, string>> = { en, zh, es };
+import { charts } from "@/lib/i18n-dicts/charts";
+import { common } from "@/lib/i18n-dicts/common";
+import { testPage } from "@/lib/i18n-dicts/test";
+import { trainPage } from "@/lib/i18n-dicts/train";
+import { historyPage } from "@/lib/i18n-dicts/history";
+import { risksPage } from "@/lib/i18n-dicts/risks";
+import { reportPage } from "@/lib/i18n-dicts/report";
+import { dataPage } from "@/lib/i18n-dicts/data";
+import { coachPage } from "@/lib/i18n-dicts/coach";
+
+export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
+
+const packs: Dict[] = [
+  charts,
+  common,
+  testPage,
+  trainPage,
+  historyPage,
+  risksPage,
+  reportPage,
+  dataPage,
+  coachPage,
+];
+
+function merge(lang: Language, base: Record<string, string>): Record<string, string> {
+  return Object.assign({}, base, ...packs.map((p) => p[lang]));
+}
+
+const dictionaries: Record<Language, Record<string, string>> = {
+  en: merge("en", en),
+  zh: merge("zh", zh),
+  es: merge("es", es),
+};
 
 type I18nContextValue = {
   language: Language;
   setLanguage: (l: Language) => void;
-  t: (key: TranslationKey) => string;
+  t: (key: string) => string;
 };
 
 const I18nContext = createContext<I18nContextValue>({
   language: "en",
   setLanguage: () => {},
-  t: (key) => en[key],
+  t: (key) => (en as Record<string, string>)[key] ?? key,
 });
 
 export function I18nProvider({ children }: { children: ReactNode }) {
@@ -199,7 +231,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     () => ({
       language,
       setLanguage,
-      t: (key: TranslationKey) => dictionaries[language][key] ?? en[key],
+      t: (key: string) => dictionaries[language][key] ?? dictionaries.en[key] ?? key,
     }),
     [language, setLanguage],
   );

@@ -5,6 +5,7 @@ import { ArrowRight, CalendarDays, Flame, Loader2, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
+import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { TRAINING_MODES, modeById } from "@/lib/training-modes";
 import {
@@ -19,7 +20,6 @@ import {
   formatMinutes,
   lastSevenDays,
   loadExposure,
-  STATUS_LABEL,
   statusForDose,
   weeklyTrendPercent,
   type ExposureEntry,
@@ -67,6 +67,13 @@ function avg(nums: number[]): number | null {
 
 function ReportPage() {
   const { user, loading } = useAuth();
+  const { t, language } = useI18n();
+  const locale = language === "zh" ? "zh-CN" : language === "es" ? "es-ES" : "en-US";
+  const f = (key: string, vals: Record<string, string | number> = {}) => {
+    let out = t(key);
+    for (const [k, v] of Object.entries(vals)) out = out.replace(`{${k}}`, String(v));
+    return out;
+  };
   const [exposure, setExposure] = useState<ExposureEntry[]>([]);
   useEffect(() => setExposure(loadExposure()), []);
 
@@ -157,13 +164,10 @@ function ReportPage() {
       <div className="min-h-screen">
         <SiteNav />
         <main className="mx-auto max-w-2xl px-5 py-20 text-center">
-          <h1 className="text-3xl font-semibold">Your weekly hearing report</h1>
-          <p className="mt-3 text-muted-foreground">
-            Sign in and Audiomaxxer sums up every week: training time, accuracy per skill, listening
-            exposure and what changed in your screenings.
-          </p>
+          <h1 className="text-3xl font-semibold">{t("report.signedOutTitle")}</h1>
+          <p className="mt-3 text-muted-foreground">{t("report.signedOutBody")}</p>
           <Button asChild className="mt-6">
-            <Link to="/auth">Create a free account</Link>
+            <Link to="/auth">{t("report.createAccount")}</Link>
           </Button>
         </main>
       </div>
@@ -176,39 +180,41 @@ function ReportPage() {
       <main className="mx-auto max-w-3xl px-5 py-12">
         <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
           <CalendarDays className="h-4 w-4 text-signal" />
-          Week of{" "}
-          {startOfWeek().toLocaleDateString(undefined, { month: "long", day: "numeric" })}
+          {f("report.weekOf", {
+            date: startOfWeek().toLocaleDateString(locale, { month: "long", day: "numeric" }),
+          })}
         </p>
-        <h1 className="mt-2 text-3xl font-semibold">This week</h1>
+        <h1 className="mt-2 text-3xl font-semibold">{t("report.thisWeek")}</h1>
 
         <section className="mt-8 grid gap-4 sm:grid-cols-4">
-          <Stat label="Training time" value={formatMinutes(report.minutes)} />
+          <Stat label={t("report.trainingTime")} value={formatMinutes(report.minutes)} />
           <Stat
-            label="Sessions"
+            label={t("report.sessions")}
             value={`${report.sessions}`}
-            sub={`goal ${WEEKLY_GOAL_SESSIONS} · last week ${report.prevSessions}`}
+            sub={f("report.goalLastWeek", {
+              goal: WEEKLY_GOAL_SESSIONS,
+              n: report.prevSessions,
+            })}
             highlight={report.sessions >= WEEKLY_GOAL_SESSIONS}
           />
-          <Stat label="XP earned" value={`${report.xp}`} />
-          <Stat label="Streak" value={`${report.streak} d`} />
+          <Stat label={t("report.xpEarned")} value={`${report.xp}`} />
+          <Stat label={t("report.streak")} value={`${report.streak} ${t("report.daysShort")}`} />
         </section>
 
         <section className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-          <h2 className="text-xl font-semibold">Accuracy by skill</h2>
+          <h2 className="text-xl font-semibold">{t("report.accuracyBySkill")}</h2>
           {report.perMode.length === 0 ? (
-            <p className="mt-3 text-sm text-muted-foreground">
-              No training logged in the last two weeks. One session is enough to start the trend.
-            </p>
+            <p className="mt-3 text-sm text-muted-foreground">{t("report.noTraining")}</p>
           ) : (
             <ul className="mt-5 space-y-3">
               {report.perMode.map((m) => {
                 const delta = m.now != null && m.before != null ? m.now - m.before : null;
                 return (
                   <li key={m.id} className="flex items-center justify-between gap-4 text-sm">
-                    <span className="min-w-0 truncate">{m.label}</span>
+                    <span className="min-w-0 truncate">{t(`report.mode.${m.id}.label`)}</span>
                     <span className="shrink-0 font-medium">
                       {m.before != null ? `${m.before}% → ` : ""}
-                      {m.now != null ? `${m.now}%` : "not trained"}
+                      {m.now != null ? `${m.now}%` : t("report.notTrained")}
                       {delta != null ? (
                         <span
                           className={
@@ -229,59 +235,74 @@ function ReportPage() {
 
         <section className="mt-6 grid gap-4 sm:grid-cols-3">
           <Stat
-            label="Logged listening"
+            label={t("report.loggedListening")}
             value={formatMinutes(week.totalMinutes)}
-            sub={week.avgDb == null ? "nothing logged yet" : `avg ~${week.avgDb} dB`}
+            sub={
+              week.avgDb == null
+                ? t("report.nothingLoggedYet")
+                : f("report.avgAbbrev", { n: week.avgDb })
+            }
           />
           <Stat
-            label="Exposure status"
-            value={STATUS_LABEL[status]}
-            sub={`avg daily dose ${week.avgDosePercent}%`}
+            label={t("report.exposureStatus")}
+            value={t(`report.status.${status}`)}
+            sub={f("report.avgDailyDose", { n: week.avgDosePercent })}
           />
           <Stat
-            label="7-day trend"
+            label={t("report.sevenDayTrend")}
             value={trend == null ? "-" : `${trend > 0 ? "↑" : trend < 0 ? "↓" : ""}${Math.abs(trend)}%`}
-            sub="vs the week before"
+            sub={t("report.vsWeekBefore")}
           />
         </section>
 
         <section className="mt-6 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-          <h2 className="text-xl font-semibold">Screening</h2>
+          <h2 className="text-xl font-semibold">{t("report.screening")}</h2>
           <p className="mt-3 text-sm text-muted-foreground">
             {report.testsThisWeek > 0
-              ? `${report.testsThisWeek} screening${report.testsThisWeek > 1 ? "s" : ""} this week. `
-              : "No screening this week. "}
+              ? f("report.screeningsThisWeek", {
+                  n: report.testsThisWeek,
+                  plural: report.testsThisWeek > 1 && language === "en" ? "s" : "",
+                })
+              : t("report.noScreeningThisWeek")}
             {report.screeningChange == null
-              ? "Two screenings are needed before Audiomaxxer can describe a change."
-              : Math.abs(report.screeningChange) < 3
-                ? `Average threshold moved ${report.screeningChange > 0 ? "+" : ""}${report.screeningChange} dB — within normal test-to-test variation, so no significant change.`
-                : `Average threshold moved ${report.screeningChange > 0 ? "+" : ""}${report.screeningChange} dB since the previous screening. Re-test in a quiet room to confirm before reading anything into it.`}
+              ? t("report.needTwoScreenings")
+              : f(
+                  Math.abs(report.screeningChange) < 3
+                    ? "report.withinVariation"
+                    : "report.movedSince",
+                  {
+                    sign: report.screeningChange > 0 ? "+" : "",
+                    n: report.screeningChange,
+                  },
+                )}
           </p>
         </section>
 
         <section className="mt-6 rounded-2xl border border-signal/40 bg-signal/5 p-6 shadow-glow">
           <h2 className="flex items-center gap-2 text-xl font-semibold">
-            <Target className="h-4 w-4 text-signal" /> Your focus next week
+            <Target className="h-4 w-4 text-signal" /> {t("report.focusNextWeek")}
           </h2>
-          <p className="mt-2 font-display text-2xl font-semibold">{focusMeta.label}</p>
-          <p className="mt-2 text-sm text-muted-foreground">{focusMeta.blurb}</p>
+          <p className="mt-2 font-display text-2xl font-semibold">{t(`report.mode.${focusMeta.id}.label`)}</p>
+          <p className="mt-2 text-sm text-muted-foreground">{t(`report.mode.${focusMeta.id}.blurb`)}</p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Button asChild>
               <Link to="/train">
-                Start this track <ArrowRight className="ml-1 h-4 w-4" />
+                {t("report.startTrack")} <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="secondary">
-              <Link to="/risks">Review listening habits</Link>
+              <Link to="/risks">{t("report.reviewHabits")}</Link>
             </Button>
           </div>
           <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
             <Flame className="h-3.5 w-3.5 text-caution" />
             {report.sessions >= WEEKLY_GOAL_SESSIONS
-              ? "Weekly goal met. Keep the streak alive with one short session."
-              : `${WEEKLY_GOAL_SESSIONS - report.sessions} more session${
-                  WEEKLY_GOAL_SESSIONS - report.sessions === 1 ? "" : "s"
-                } to hit this week's goal.`}
+              ? t("report.goalMet")
+              : f("report.moreSessions", {
+                  n: WEEKLY_GOAL_SESSIONS - report.sessions,
+                  plural:
+                    WEEKLY_GOAL_SESSIONS - report.sessions === 1 || language !== "en" ? "" : "s",
+                })}
           </p>
         </section>
       </main>

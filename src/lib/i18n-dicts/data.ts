@@ -1,0 +1,336 @@
+export const dataPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
+  en: {
+    "data.badge": "Your hearing data",
+    "data.title": "Compare screenings, transparently.",
+    "data.lead":
+      "Bring a past clinic or hearing-center result into the same view as your Audiomaxxer data. The comparison is a measurement check, not a diagnosis.",
+    "data.signInPrompt": "Sign in to upload reports and inspect your saved hearing data.",
+    "data.signIn": "Sign in",
+    "data.howCalcTitle": "How the comparison is calculated",
+    "data.howCalcDesc":
+      "Only frequency-and-ear pairs visible in both datasets are compared. The sign tells you which result is higher; the absolute value tells you how far apart they are.",
+    "data.eq1.title": "Difference at one matched point",
+    "data.eq1.detail":
+      "A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher.",
+    "data.eq2.title": "Mean absolute error (MAE)",
+    "data.eq2.detail":
+      "MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate.",
+    "data.table.title": "Matched threshold data",
+    "data.table.subtitle": "{source} vs latest Audiomaxxer screening",
+    "data.table.uploadPrompt": "Upload and analyze a report to populate this table.",
+    "data.table.mae": "MAE",
+    "data.table.header.ear": "Ear",
+    "data.table.header.frequency": "Frequency",
+    "data.table.header.audiomaxxer": "Audiomaxxer",
+    "data.table.header.clinic": "Clinic",
+    "data.table.header.difference": "Difference",
+    "data.table.empty":
+      "There are no matched ear-frequency points yet. Audiomaxxer currently tests {freqs} Hz; a clinic report needs a readable value at the same frequency for the calculation to include it.",
+    "data.table.footnote":
+      "These values compare units as printed: clinic results are usually clinical dB HL, while Audiomaxxer levels are relative/estimated and device-dependent. Treat a large difference as a reason to review the source reports with an audiologist, not as a diagnosis.",
+
+    "data.report.signIn":
+      "Sign in to upload a clinic or hearing-center report and compare it with your Audiomaxxer screening.",
+    "data.report.addTitle": "Add a past hearing report",
+    "data.report.addDesc":
+      "Upload an audiogram or hearing screening from a clinic, hearing center, or another app. Lovable AI will read the report, extract visible air-conduction thresholds, and compare them with your latest Audiomaxxer screening.",
+    "data.report.fileLabel": "Report file",
+    "data.report.helperDefault": "PDF, PNG or JPG · up to 15 MB",
+    "data.report.sourceLabel": "Source (optional)",
+    "data.report.sourcePlaceholder": "Clinic or provider",
+    "data.report.uploadBtn": "Upload and analyze",
+    "data.report.analyzing": "Analyzing…",
+    "data.report.note":
+      "Keep the original report for clinical use. AI extraction is a convenience layer and can miss symbols or values in a low-quality scan.",
+    "data.report.importedTitle": "Imported reports",
+    "data.report.importedDesc": "Your private reports and extracted comparison notes.",
+    "data.report.saved": "{n} saved",
+    "data.report.empty": "No external reports yet.",
+    "data.report.testDate": "Test date {date}",
+    "data.report.dateUnknown": "Date not detected",
+    "data.report.uploaded": "uploaded {date}",
+    "data.report.statusCompared": "Compared",
+    "data.report.statusFailed": "Needs another upload",
+    "data.report.statusEmpty": "No thresholds found",
+    "data.report.statusProcessing": "Processing",
+    "data.report.aiComparison": "AI comparison",
+    "data.report.next": "Next:",
+    "data.report.errChooseFile": "Choose a PDF, PNG or JPG hearing report.",
+    "data.report.errFileSize": "The file must be between 1 byte and 15 MB.",
+    "data.report.errAnalyzeFail": "The report could not be analyzed.",
+    "data.report.errSaveFail": "Could not save the report.",
+    "data.report.toastAnalyzed": "Report analyzed · {n} threshold(s) found",
+
+    "noise.title": "Room noise",
+    "noise.scanPrompt": "Scan your surroundings before testing.",
+    "noise.tooLoud": "~{n} dB - too loud, find a quieter space.",
+    "noise.ok": "~{n} dB - quiet enough to test.",
+    "noise.error": "Microphone access was denied.",
+    "noise.stop": "Stop",
+    "noise.scan": "Scan",
+
+    "device.question": "What are you listening with?",
+    "device.desc":
+      "Every headphone has its own frequency response, so the model you pick calibrates both the test tones and your volume ceiling.",
+    "device.calibratedAria": "Calibrated",
+    "device.calibratedNote": "Calibration profile applied.",
+    "device.calibratedDetail":
+      "Tones are corrected for the typical response of the {device}, so absolute thresholds are more trustworthy.",
+    "device.uncalibratedNote": "Uncalibrated headphones.",
+    "device.uncalibratedDetail":
+      "We only assume a generic {hint} response. Results still track relative changes over time, but absolute thresholds may be off by several dB.",
+    "device.peaks": "peaks ~{db} dB",
+
+    "how.title": "How Audiomaxxer works",
+    "how.desc":
+      "A closed loop: every screening changes your training, and every training block feeds the next screening comparison.",
+    "how.scienceLink": "The science behind it",
+    "how.step": "STEP",
+    "how.step.screen.title": "Screen",
+    "how.step.screen.body":
+      "Adaptive tones narrow in on the quietest level you can hear at each frequency, in each ear.",
+    "how.step.analyze.title": "Analyze",
+    "how.step.analyze.body":
+      "Your responses build an individual hearing profile — where you are strong, and where sensitivity drops.",
+    "how.step.train.title": "Train",
+    "how.step.train.body":
+      "Exercises concentrate on the sounds your profile says you have the most difficulty distinguishing.",
+    "how.step.adapt.title": "Adapt",
+    "how.step.adapt.body": "How you perform in a session changes the difficulty and content of the next one.",
+    "how.step.track.title": "Track",
+    "how.step.track.body":
+      "Repeat screenings show how your profile moves over weeks and months, not just once.",
+    "how.feedbackPre":
+      "Step 5 feeds back into step 3: an updated profile re-targets your training instead of repeating the same exercises. That feedback arrow is what we mean by {loop}.",
+    "how.closedLoop": "closed loop",
+
+    "example.title": "Your Hearing Profile",
+    "example.badge": "Example result",
+    "example.detected": "Audiomaxxer detected",
+    "example.finding1": "Strong low-frequency hearing",
+    "example.finding2": "Slightly reduced sensitivity at 4–8 kHz",
+    "example.finding3": "Recommended training: speech-in-noise + high-frequency recognition",
+    "example.cta": "See what your hearing looks like",
+    "example.footnote": "Illustrative data — your own screening takes about four minutes.",
+  },
+  zh: {
+    "data.badge": "你的听力数据",
+    "data.title": "透明地对比筛查结果。",
+    "data.lead":
+      "将过去在诊所或听力中心得到的结果与你的 Audiomaxxer 数据放在同一视图中查看。此对比只是测量核对，并非诊断。",
+    "data.signInPrompt": "登录以上传报告并查看已保存的听力数据。",
+    "data.signIn": "登录",
+    "data.howCalcTitle": "对比是如何计算的",
+    "data.howCalcDesc":
+      "只有在两个数据集中都可见的频率与耳别组合才会被比较。正负号表示哪个结果更高；绝对值表示两者相差多少。",
+    "data.eq1.title": "单个匹配点的差值",
+    "data.eq1.detail":
+      "正值表示 Audiomaxxer 阈值更高（Audiomaxxer 筛查中需要更安静的音调才能听到）。负值表示诊所阈值更高。",
+    "data.eq2.title": "平均绝对误差（MAE）",
+    "data.eq2.detail":
+      "MAE 汇总了 n 个匹配的耳别-频率点之间的平均绝对差异。它并不能证明任一结果在临床上是准确的。",
+    "data.table.title": "匹配的阈值数据",
+    "data.table.subtitle": "{source} 与最新的 Audiomaxxer 筛查对比",
+    "data.table.uploadPrompt": "上传并分析一份报告以填充此表格。",
+    "data.table.mae": "MAE",
+    "data.table.header.ear": "耳别",
+    "data.table.header.frequency": "频率",
+    "data.table.header.audiomaxxer": "Audiomaxxer",
+    "data.table.header.clinic": "诊所",
+    "data.table.header.difference": "差值",
+    "data.table.empty":
+      "目前还没有匹配的耳别-频率点。Audiomaxxer 目前测试 {freqs} Hz；诊所报告需要在相同频率上有可读数值才能计入计算。",
+    "data.table.footnote":
+      "这些数值按原始单位比较：诊所结果通常是临床 dB HL，而 Audiomaxxer 的数值是相对/估算的，且与设备相关。若差异较大，应视为需要请听力科医生复核原始报告的理由，而非诊断结论。",
+
+    "data.report.signIn": "登录以上传诊所或听力中心的报告，并与你的 Audiomaxxer 筛查进行比较。",
+    "data.report.addTitle": "添加过往的听力报告",
+    "data.report.addDesc":
+      "上传来自诊所、听力中心或其他应用的听力图或筛查结果。Lovable AI 将读取报告，提取可见的气导阈值，并与你最新的 Audiomaxxer 筛查进行比较。",
+    "data.report.fileLabel": "报告文件",
+    "data.report.helperDefault": "PDF、PNG 或 JPG · 最大 15 MB",
+    "data.report.sourceLabel": "来源（可选）",
+    "data.report.sourcePlaceholder": "诊所或提供方",
+    "data.report.uploadBtn": "上传并分析",
+    "data.report.analyzing": "分析中…",
+    "data.report.note":
+      "请保留原始报告以供临床使用。AI 提取只是一项便利功能，在低质量扫描件中可能会遗漏符号或数值。",
+    "data.report.importedTitle": "已导入的报告",
+    "data.report.importedDesc": "你的私人报告及提取出的对比说明。",
+    "data.report.saved": "已保存 {n} 份",
+    "data.report.empty": "还没有外部报告。",
+    "data.report.testDate": "检测日期 {date}",
+    "data.report.dateUnknown": "未检测到日期",
+    "data.report.uploaded": "于 {date} 上传",
+    "data.report.statusCompared": "已对比",
+    "data.report.statusFailed": "需要重新上传",
+    "data.report.statusEmpty": "未找到阈值",
+    "data.report.statusProcessing": "处理中",
+    "data.report.aiComparison": "AI 对比",
+    "data.report.next": "下一步：",
+    "data.report.errChooseFile": "请选择一份 PDF、PNG 或 JPG 格式的听力报告。",
+    "data.report.errFileSize": "文件大小必须在 1 字节到 15 MB 之间。",
+    "data.report.errAnalyzeFail": "无法分析该报告。",
+    "data.report.errSaveFail": "无法保存该报告。",
+    "data.report.toastAnalyzed": "报告已分析 · 找到 {n} 个阈值",
+
+    "noise.title": "房间噪音",
+    "noise.scanPrompt": "测试前先扫描一下周围环境。",
+    "noise.tooLoud": "约 {n} dB —— 太吵了，请找一个更安静的地方。",
+    "noise.ok": "约 {n} dB —— 足够安静，可以测试。",
+    "noise.error": "麦克风访问被拒绝。",
+    "noise.stop": "停止",
+    "noise.scan": "扫描",
+
+    "device.question": "你正在使用什么设备聆听？",
+    "device.desc": "每款耳机都有其独特的频率响应，因此你选择的型号会同时校准测试音调和音量上限。",
+    "device.calibratedAria": "已校准",
+    "device.calibratedNote": "已应用校准配置。",
+    "device.calibratedDetail": "音调已根据 {device} 的典型响应进行了校正，因此绝对阈值更可信。",
+    "device.uncalibratedNote": "未校准的耳机。",
+    "device.uncalibratedDetail":
+      "我们只能假设一个通用的 {hint} 响应。结果仍能追踪相对变化，但绝对阈值可能存在若干 dB 的偏差。",
+    "device.peaks": "峰值约 {db} dB",
+
+    "how.title": "Audiomaxxer 的工作原理",
+    "how.desc": "一个闭环系统：每次筛查都会改变你的训练，而每个训练模块又会反馈到下一次筛查对比中。",
+    "how.scienceLink": "背后的科学原理",
+    "how.step": "步骤",
+    "how.step.screen.title": "筛查",
+    "how.step.screen.body": "自适应音调会逐步逼近你在每个频率、每只耳朵能听到的最安静音量。",
+    "how.step.analyze.title": "分析",
+    "how.step.analyze.body": "你的回答会构建出一份个人听力画像——哪里表现良好，哪里敏感度下降。",
+    "how.step.train.title": "训练",
+    "how.step.train.body": "训练内容会集中在你的听力画像显示你最难区分的声音上。",
+    "how.step.adapt.title": "适应",
+    "how.step.adapt.body": "你在一次训练中的表现会改变下一次训练的难度和内容。",
+    "how.step.track.title": "追踪",
+    "how.step.track.body": "重复的筛查会展示你的听力画像在数周乃至数月间的变化，而不只是一次性结果。",
+    "how.feedbackPre":
+      "第 5 步会反馈到第 3 步：更新后的画像会重新定位你的训练，而不是重复相同的练习。这个反馈箭头正是我们所说的{loop}。",
+    "how.closedLoop": "闭环",
+
+    "example.title": "你的听力画像",
+    "example.badge": "示例结果",
+    "example.detected": "Audiomaxxer 检测到",
+    "example.finding1": "低频听力良好",
+    "example.finding2": "4–8 kHz 处敏感度略有下降",
+    "example.finding3": "推荐训练：噪音中的言语识别 + 高频识别",
+    "example.cta": "查看你的听力状况",
+    "example.footnote": "这是示例数据 —— 你自己的筛查大约只需四分钟。",
+  },
+  es: {
+    "data.badge": "Tus datos auditivos",
+    "data.title": "Compara cribados con total transparencia.",
+    "data.lead":
+      "Trae un resultado anterior de una clínica o centro auditivo a la misma vista que tus datos de Audiomaxxer. La comparación es una verificación de medición, no un diagnóstico.",
+    "data.signInPrompt": "Inicia sesión para subir informes e inspeccionar tus datos auditivos guardados.",
+    "data.signIn": "Iniciar sesión",
+    "data.howCalcTitle": "Cómo se calcula la comparación",
+    "data.howCalcDesc":
+      "Solo se comparan los pares de frecuencia y oído visibles en ambos conjuntos de datos. El signo indica cuál resultado es más alto; el valor absoluto indica cuán distintos son.",
+    "data.eq1.title": "Diferencia en un punto coincidente",
+    "data.eq1.detail":
+      "Un valor positivo significa que el umbral de Audiomaxxer es más alto (se necesitó un tono más suave en el cribado de Audiomaxxer). Un valor negativo significa que el umbral de la clínica es más alto.",
+    "data.eq2.title": "Error absoluto medio (MAE)",
+    "data.eq2.detail":
+      "El MAE resume la separación absoluta promedio en n puntos de oído-frecuencia coincidentes. No prueba que alguno de los resultados sea clínicamente exacto.",
+    "data.table.title": "Datos de umbral coincidentes",
+    "data.table.subtitle": "{source} frente al último cribado de Audiomaxxer",
+    "data.table.uploadPrompt": "Sube y analiza un informe para completar esta tabla.",
+    "data.table.mae": "MAE",
+    "data.table.header.ear": "Oído",
+    "data.table.header.frequency": "Frecuencia",
+    "data.table.header.audiomaxxer": "Audiomaxxer",
+    "data.table.header.clinic": "Clínica",
+    "data.table.header.difference": "Diferencia",
+    "data.table.empty":
+      "Todavía no hay puntos de oído-frecuencia coincidentes. Audiomaxxer actualmente prueba {freqs} Hz; un informe clínico necesita un valor legible en la misma frecuencia para que se incluya en el cálculo.",
+    "data.table.footnote":
+      "Estos valores comparan las unidades tal como están impresas: los resultados clínicos suelen ser dB HL clínicos, mientras que los niveles de Audiomaxxer son relativos/estimados y dependen del dispositivo. Trata una diferencia grande como motivo para revisar los informes con un audiólogo, no como un diagnóstico.",
+
+    "data.report.signIn":
+      "Inicia sesión para subir un informe de una clínica o centro auditivo y compararlo con tu cribado de Audiomaxxer.",
+    "data.report.addTitle": "Añadir un informe auditivo anterior",
+    "data.report.addDesc":
+      "Sube un audiograma o cribado auditivo de una clínica, centro auditivo u otra aplicación. Lovable AI leerá el informe, extraerá los umbrales de conducción aérea visibles y los comparará con tu último cribado de Audiomaxxer.",
+    "data.report.fileLabel": "Archivo del informe",
+    "data.report.helperDefault": "PDF, PNG o JPG · hasta 15 MB",
+    "data.report.sourceLabel": "Fuente (opcional)",
+    "data.report.sourcePlaceholder": "Clínica o proveedor",
+    "data.report.uploadBtn": "Subir y analizar",
+    "data.report.analyzing": "Analizando…",
+    "data.report.note":
+      "Conserva el informe original para uso clínico. La extracción con IA es una capa de conveniencia y puede pasar por alto símbolos o valores en un escaneo de baja calidad.",
+    "data.report.importedTitle": "Informes importados",
+    "data.report.importedDesc": "Tus informes privados y notas de comparación extraídas.",
+    "data.report.saved": "{n} guardados",
+    "data.report.empty": "Aún no hay informes externos.",
+    "data.report.testDate": "Fecha de la prueba {date}",
+    "data.report.dateUnknown": "Fecha no detectada",
+    "data.report.uploaded": "subido {date}",
+    "data.report.statusCompared": "Comparado",
+    "data.report.statusFailed": "Necesita otra subida",
+    "data.report.statusEmpty": "No se encontraron umbrales",
+    "data.report.statusProcessing": "Procesando",
+    "data.report.aiComparison": "Comparación de IA",
+    "data.report.next": "Siguiente:",
+    "data.report.errChooseFile": "Elige un informe auditivo en PDF, PNG o JPG.",
+    "data.report.errFileSize": "El archivo debe pesar entre 1 byte y 15 MB.",
+    "data.report.errAnalyzeFail": "No se pudo analizar el informe.",
+    "data.report.errSaveFail": "No se pudo guardar el informe.",
+    "data.report.toastAnalyzed": "Informe analizado · {n} umbral(es) encontrado(s)",
+
+    "noise.title": "Ruido de la sala",
+    "noise.scanPrompt": "Escanea tu entorno antes de la prueba.",
+    "noise.tooLoud": "~{n} dB - demasiado ruido, busca un lugar más silencioso.",
+    "noise.ok": "~{n} dB - lo bastante silencioso para probar.",
+    "noise.error": "Se denegó el acceso al micrófono.",
+    "noise.stop": "Detener",
+    "noise.scan": "Escanear",
+
+    "device.question": "¿Con qué estás escuchando?",
+    "device.desc":
+      "Cada auricular tiene su propia respuesta en frecuencia, así que el modelo que elijas calibra tanto los tonos de prueba como tu límite de volumen.",
+    "device.calibratedAria": "Calibrado",
+    "device.calibratedNote": "Perfil de calibración aplicado.",
+    "device.calibratedDetail":
+      "Los tonos se corrigen según la respuesta típica del {device}, por lo que los umbrales absolutos son más confiables.",
+    "device.uncalibratedNote": "Auriculares sin calibrar.",
+    "device.uncalibratedDetail":
+      "Solo asumimos una respuesta genérica de {hint}. Los resultados aún siguen los cambios relativos con el tiempo, pero los umbrales absolutos pueden variar varios dB.",
+    "device.peaks": "picos ~{db} dB",
+
+    "how.title": "Cómo funciona Audiomaxxer",
+    "how.desc":
+      "Un circuito cerrado: cada cribado cambia tu entrenamiento, y cada bloque de entrenamiento alimenta la siguiente comparación de cribado.",
+    "how.scienceLink": "La ciencia detrás de esto",
+    "how.step": "PASO",
+    "how.step.screen.title": "Cribar",
+    "how.step.screen.body":
+      "Los tonos adaptativos se acercan al nivel más suave que puedes oír en cada frecuencia, en cada oído.",
+    "how.step.analyze.title": "Analizar",
+    "how.step.analyze.body":
+      "Tus respuestas construyen un perfil auditivo individual: dónde eres fuerte y dónde baja la sensibilidad.",
+    "how.step.train.title": "Entrenar",
+    "how.step.train.body":
+      "Los ejercicios se concentran en los sonidos que, según tu perfil, más te cuesta distinguir.",
+    "how.step.adapt.title": "Adaptar",
+    "how.step.adapt.body": "Cómo te desempeñas en una sesión cambia la dificultad y el contenido de la siguiente.",
+    "how.step.track.title": "Seguir",
+    "how.step.track.body":
+      "Los cribados repetidos muestran cómo evoluciona tu perfil a lo largo de semanas y meses, no solo una vez.",
+    "how.feedbackPre":
+      "El paso 5 retroalimenta al paso 3: un perfil actualizado reorienta tu entrenamiento en lugar de repetir los mismos ejercicios. Esa flecha de retroalimentación es lo que llamamos {loop}.",
+    "how.closedLoop": "circuito cerrado",
+
+    "example.title": "Tu perfil auditivo",
+    "example.badge": "Resultado de ejemplo",
+    "example.detected": "Audiomaxxer detectó",
+    "example.finding1": "Buena audición en frecuencias bajas",
+    "example.finding2": "Sensibilidad ligeramente reducida entre 4 y 8 kHz",
+    "example.finding3": "Entrenamiento recomendado: habla en ruido + reconocimiento de alta frecuencia",
+    "example.cta": "Mira cómo es tu audición",
+    "example.footnote": "Datos ilustrativos: tu propio cribado toma unos cuatro minutos.",
+  },
+};
