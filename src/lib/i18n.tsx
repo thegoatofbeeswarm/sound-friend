@@ -26,7 +26,7 @@ const en = {
   "home.title1": "Protect your hearing.",
   "home.title2": "Spread the awareness.",
   "home.lead":
-    "Studies show that 12~17% of teens are affected by hearing-related problems. To raise awareness of screening and train your hearing, use Audiomaxxer, the world's first closed-loop training system.",
+    "Studies show that 12~17% of teens are affected by hearing-related problems. To raise awareness of screening and train your hearing, use Audiomaxxer, an efficient closed-loop training platform.",
   "home.ctaTest": "Start a screening",
   "home.ctaHistory": "See saved results",
   "home.disclaimer":
