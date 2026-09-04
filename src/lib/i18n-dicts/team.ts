@@ -11,11 +11,11 @@ export const teamPage: {
       "A small team building an honest, science-backed way to check on and improve your hearing.",
     "team.role.founder": "Founder & Developer",
     "team.role.tester": "Lead Tester",
-    "team.role.social": "Social Media Manager",
+    "team.role.social": "Contributor",
     "team.bio.andrew": "The owner and developer of Audiomaxxer",
     "team.bio.julius":
       "The lead tester of Audiomaxxer, has the job of finding and reporting bugs and determining the effectiveness of the website/app",
-    "team.bio.brandon": "The Social Media Manager of Audiomaxxer",
+    "team.bio.brandon": "\n",
     "team.contact.title": "Contact us",
     "team.contact.body": "Questions, bug reports or feedback can be sent to",
     "team.contact.cta": "Email the team",
