@@ -118,6 +118,55 @@ export function SiteNav() {
               <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
           )}
+
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label={t("nav.menu")}
+                className="icon-bubble rounded-full bg-card/60 text-muted-foreground hover:text-signal min-[761px]:hidden"
+              >
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72">
+              <SheetHeader>
+                <SheetTitle>{t("nav.menu")}</SheetTitle>
+              </SheetHeader>
+              <nav className="mt-2 flex flex-col gap-1 px-4 pb-6">
+                {links.map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setOpen(false)}
+                    className="rounded-md px-3 py-3 text-base text-muted-foreground"
+                    activeProps={{ className: "rounded-md px-3 py-3 text-base font-semibold text-foreground" }}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+                <div className="mt-4">
+                  {user ? (
+                    <Button
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => {
+                        setOpen(false);
+                        void signOut();
+                      }}
+                    >
+                      {t("nav.signOut")}
+                    </Button>
+                  ) : (
+                    <Button asChild className="w-full" onClick={() => setOpen(false)}>
+                      <Link to="/auth">{t("nav.signIn")}</Link>
+                    </Button>
+                  )}
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
