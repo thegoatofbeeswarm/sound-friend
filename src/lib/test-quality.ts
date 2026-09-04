@@ -30,7 +30,7 @@ export type QualityTier = "excellent" | "good" | "fair" | "low";
 /** A localizable message: translation key plus interpolation values. */
 export interface QualityMessage {
   key: string;
-  vals?: Record<string, string | number>;
+  vals?: Record<string, string | number> | undefined;
 }
 
 export interface QualityResult {
