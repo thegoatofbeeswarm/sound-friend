@@ -21,13 +21,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
+          "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
       },
       { property: "og:title", content: "Free Online Hearing Test & Hearing Health Tracker | Audiomaxxer" },
       {
         property: "og:description",
         content:
-          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
+          "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
