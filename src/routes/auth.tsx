@@ -49,6 +49,10 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
+        if (!PASSWORD_RULE.test(password)) {
+          toast.error(t("auth.passwordRule"));
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -56,6 +60,7 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success(t("auth.created"));
+
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
