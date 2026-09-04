@@ -774,6 +774,203 @@ const RAPID_SENTENCES: Array<{
 ];
 
 /* ------------------------------------------------------------------ */
+/* real-world scene banks                                              */
+/* ------------------------------------------------------------------ */
+
+type Scene = { text: string; question: string; options: string[]; answer: string };
+
+const RESTAURANT_SCENES: Scene[] = [
+  {
+    text: "I'll have the chicken curry, but with rice instead of naan.",
+    question: "What did they order instead of naan?",
+    options: ["Rice", "Salad", "Chips", "Soup"],
+    answer: "Rice",
+  },
+  {
+    text: "Could we move to the table by the window, it's quieter there.",
+    question: "Where do they want to move?",
+    options: ["By the window", "By the door", "Outside", "Upstairs"],
+    answer: "By the window",
+  },
+  {
+    text: "The bill came to forty-two pounds, so that's fourteen each.",
+    question: "How much does each person pay?",
+    options: ["Fourteen", "Forty", "Twenty-four", "Twelve"],
+    answer: "Fourteen",
+  },
+  {
+    text: "She's allergic to peanuts, so please check the sauce.",
+    question: "What is she allergic to?",
+    options: ["Peanuts", "Shellfish", "Dairy", "Eggs"],
+    answer: "Peanuts",
+  },
+  {
+    text: "Two coffees and one orange juice, no sugar in either coffee.",
+    question: "How many coffees were ordered?",
+    options: ["Two", "One", "Three", "None"],
+    answer: "Two",
+  },
+  {
+    text: "Our booking is under the name Patterson, for seven o'clock.",
+    question: "What name is the booking under?",
+    options: ["Patterson", "Peterson", "Patton", "Pemberton"],
+    answer: "Patterson",
+  },
+  {
+    text: "The waiter said the kitchen closes in twenty minutes.",
+    question: "When does the kitchen close?",
+    options: ["In twenty minutes", "In twelve minutes", "In two minutes", "At midnight"],
+    answer: "In twenty minutes",
+  },
+  {
+    text: "Let's split a starter and each get our own main.",
+    question: "What are they sharing?",
+    options: ["A starter", "A main", "A dessert", "A drink"],
+    answer: "A starter",
+  },
+  {
+    text: "Can we get the sauce on the side rather than on top?",
+    question: "How do they want the sauce?",
+    options: ["On the side", "On top", "Extra hot", "Left out"],
+    answer: "On the side",
+  },
+  {
+    text: "He's paying by card, and she's leaving the tip in cash.",
+    question: "How is the tip being left?",
+    options: ["In cash", "By card", "On the app", "Not at all"],
+    answer: "In cash",
+  },
+];
+
+const STREET_SCENES: Scene[] = [
+  {
+    text: "Cross here, then take the first left after the bank.",
+    question: "Which turn should you take after the bank?",
+    options: ["First left", "First right", "Second left", "Straight on"],
+    answer: "First left",
+  },
+  {
+    text: "The bus you want is the twenty-nine, from the far stop.",
+    question: "Which bus number do you want?",
+    options: ["Twenty-nine", "Ninety-two", "Twenty-five", "Nine"],
+    answer: "Twenty-nine",
+  },
+  {
+    text: "The station entrance is behind the scaffolding on the right.",
+    question: "Where is the station entrance?",
+    options: ["Behind the scaffolding", "Under the bridge", "Across the park", "Next to the bank"],
+    answer: "Behind the scaffolding",
+  },
+  {
+    text: "Wait for the green man, the cars turn fast on this corner.",
+    question: "What should you wait for?",
+    options: ["The green man", "The bus", "Your friend", "The rain to stop"],
+    answer: "The green man",
+  },
+  {
+    text: "It's about a ten minute walk, mostly uphill.",
+    question: "How long is the walk?",
+    options: ["Ten minutes", "Two minutes", "Twenty minutes", "An hour"],
+    answer: "Ten minutes",
+  },
+  {
+    text: "Meet me by the cafe on the corner, not the one inside.",
+    question: "Which cafe should you meet at?",
+    options: ["The one on the corner", "The one inside", "The one by the park", "Either one"],
+    answer: "The one on the corner",
+  },
+  {
+    text: "The taxi rank moved to the other side of the roadworks.",
+    question: "What moved?",
+    options: ["The taxi rank", "The bus stop", "The market", "The car park"],
+    answer: "The taxi rank",
+  },
+  {
+    text: "Careful, that lane is for bikes, not for walking.",
+    question: "What is the lane for?",
+    options: ["Bikes", "Walking", "Buses", "Parking"],
+    answer: "Bikes",
+  },
+  {
+    text: "The parade starts at noon so this road will be shut.",
+    question: "When does the parade start?",
+    options: ["Noon", "Nine", "Four", "Midnight"],
+    answer: "Noon",
+  },
+  {
+    text: "Keep going past the church and it's the blue door.",
+    question: "What colour is the door?",
+    options: ["Blue", "Green", "Red", "Black"],
+    answer: "Blue",
+  },
+];
+
+const PHONE_SCENES: Scene[] = [
+  {
+    text: "Your appointment has been moved to Wednesday at ten fifteen.",
+    question: "What is the new appointment time?",
+    options: ["Ten fifteen", "Ten fifty", "Nine fifteen", "Eleven fifteen"],
+    answer: "Ten fifteen",
+  },
+  {
+    text: "Please call back on oh one six three, double two four one.",
+    question: "How does the number end?",
+    options: ["Two two four one", "Two four four one", "Two two one four", "Four two two one"],
+    answer: "Two two four one",
+  },
+  {
+    text: "The engineer will arrive between two and four this afternoon.",
+    question: "When will the engineer arrive?",
+    options: ["Between two and four", "Between four and six", "Before noon", "Tomorrow morning"],
+    answer: "Between two and four",
+  },
+  {
+    text: "Your reference number is Alpha seven three Delta.",
+    question: "What is the reference number?",
+    options: ["Alpha seven three Delta", "Alpha three seven Delta", "Alpha seven three Bravo", "Delta seven three Alpha"],
+    answer: "Alpha seven three Delta",
+  },
+  {
+    text: "I'm calling about the order that was delivered damaged.",
+    question: "Why are they calling?",
+    options: ["A damaged delivery", "A late delivery", "A refund request", "A new order"],
+    answer: "A damaged delivery",
+  },
+  {
+    text: "We can refund you or send a replacement, whichever you prefer.",
+    question: "What two options were offered?",
+    options: ["Refund or replacement", "Refund or credit", "Repair or refund", "Credit or discount"],
+    answer: "Refund or replacement",
+  },
+  {
+    text: "The office is closed Friday, so try again on Monday morning.",
+    question: "When should you try again?",
+    options: ["Monday morning", "Friday morning", "Monday evening", "Sunday"],
+    answer: "Monday morning",
+  },
+  {
+    text: "Sorry, you've come through to accounts, I'll transfer you to sales.",
+    question: "Where will they be transferred?",
+    options: ["Sales", "Accounts", "Support", "Reception"],
+    answer: "Sales",
+  },
+  {
+    text: "The total on your account is one hundred and nineteen pounds.",
+    question: "What is the total?",
+    options: ["One hundred and nineteen", "One hundred and ninety", "One hundred and nine", "Nineteen"],
+    answer: "One hundred and nineteen",
+  },
+  {
+    text: "I've emailed the form, just sign it and send it back today.",
+    question: "What should they do with the form?",
+    options: ["Sign it and send it back", "Print and keep it", "Ignore it", "Post it next week"],
+    answer: "Sign it and send it back",
+  },
+];
+
+
+
+/* ------------------------------------------------------------------ */
 /* modes                                                               */
 /* ------------------------------------------------------------------ */
 
