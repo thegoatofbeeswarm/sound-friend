@@ -10,10 +10,12 @@ import {
   YAxis,
 } from "recharts";
 import { FREQUENCIES, type ThresholdResult } from "@/lib/audiometry";
+import { useI18n } from "@/lib/i18n";
 
 const Y_TICKS = [-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
 
 export function Audiogram({ points }: { points: ThresholdResult[] }) {
+  const { t } = useI18n();
   const data = FREQUENCIES.map((f) => ({
     frequency: f,
     label: f >= 1000 ? `${f / 1000}k` : `${f}`,
@@ -37,7 +39,7 @@ export function Audiogram({ points }: { points: ThresholdResult[] }) {
               tickMargin={8}
               padding={{ left: 12, right: 12 }}
               label={{
-                value: "Frequency (Hz)",
+                value: t("chart.frequencyHz"),
                 position: "insideBottom",
                 offset: -24,
                 fill: "var(--muted-foreground)",
@@ -54,7 +56,7 @@ export function Audiogram({ points }: { points: ThresholdResult[] }) {
               tickMargin={6}
               width={64}
               label={{
-                value: "Hearing level (dB HL)",
+                value: t("chart.hearingLevel"),
                 angle: -90,
                 position: "insideLeft",
                 offset: 4,
@@ -70,14 +72,17 @@ export function Audiogram({ points }: { points: ThresholdResult[] }) {
                 borderRadius: 12,
                 color: "var(--popover-foreground)",
               }}
-              labelFormatter={(l) => `${l} Hz`}
-              formatter={(v, name) => [v == null ? "-" : `${v as number} dB HL`, name as string]}
+              labelFormatter={(l) => t("chart.hz").replace("{v}", String(l))}
+              formatter={(v, name) => [
+                v == null ? "-" : t("chart.dbHl").replace("{v}", String(v)),
+                name as string,
+              ]}
             />
             <Legend verticalAlign="top" height={28} iconType="plainline" />
             <Line
               type="monotone"
               dataKey="left"
-              name="Left ear"
+              name={t("chart.leftEar")}
               stroke="var(--left-ear)"
               strokeWidth={2.5}
               dot={{ r: 4 }}
@@ -86,7 +91,7 @@ export function Audiogram({ points }: { points: ThresholdResult[] }) {
             <Line
               type="monotone"
               dataKey="right"
-              name="Right ear"
+              name={t("chart.rightEar")}
               stroke="var(--right-ear)"
               strokeWidth={2.5}
               dot={{ r: 4 }}
@@ -95,10 +100,7 @@ export function Audiogram({ points }: { points: ThresholdResult[] }) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Read it like a clinical audiogram: quieter sounds sit at the top, so a line high on the chart
-        means better hearing. Anything below about 20 dB HL is where hearing loss begins.
-      </p>
+      <p className="mt-2 text-xs text-muted-foreground">{t("chart.audiogramHelp")}</p>
     </div>
   );
 }

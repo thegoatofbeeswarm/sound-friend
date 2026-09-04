@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useI18n } from "@/lib/i18n";
 
 export interface ProgressPoint {
   date: string;
@@ -16,6 +17,7 @@ export interface ProgressPoint {
 }
 
 export function TrainingProgress({ points }: { points: ProgressPoint[] }) {
+  const { t } = useI18n();
   const data = points.map((p) => ({
     ...p,
     label: new Date(p.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
@@ -54,7 +56,7 @@ export function TrainingProgress({ points }: { points: ProgressPoint[] }) {
             yAxisId="acc"
             type="monotone"
             dataKey="accuracy"
-            name="Accuracy %"
+            name={t("chart.accuracy")}
             stroke="var(--signal)"
             strokeWidth={2.5}
             dot={{ r: 3 }}
@@ -63,7 +65,7 @@ export function TrainingProgress({ points }: { points: ProgressPoint[] }) {
             yAxisId="lvl"
             type="monotone"
             dataKey="level"
-            name="Difficulty reached"
+            name={t("chart.difficulty")}
             stroke="var(--caution)"
             strokeWidth={2}
             strokeDasharray="4 3"
