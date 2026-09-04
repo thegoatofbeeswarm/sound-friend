@@ -6,7 +6,7 @@
  * A mode's difficulty argument is the shared 1..10 trainer level.
  */
 
-import { getAudioContext } from "@/lib/audiometry";
+import { getAudioContext, unlockAudio } from "@/lib/audiometry";
 import { playSoundscape, SOUNDSCAPES, levelToDb } from "@/lib/soundscapes";
 
 export type ModeId =
@@ -181,6 +181,7 @@ async function noiseBurst(opts: {
   pan?: number;
 }): Promise<void> {
   const ctx = await getAudioContext();
+  await unlockAudio();
   const dur = opts.ms / 1000;
   const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
   const buf = ctx.createBuffer(1, len, ctx.sampleRate);
@@ -194,7 +195,8 @@ async function noiseBurst(opts: {
   filter.frequency.value = opts.freq;
   filter.Q.value = opts.q;
   const g = ctx.createGain();
-  const now = ctx.currentTime + 0.02;
+  const now = ctx.currentTime + 0.08;
+
   g.gain.setValueAtTime(0.0001, now);
   g.gain.exponentialRampToValueAtTime(Math.max(0.0005, opts.gain), now + 0.02);
   g.gain.setValueAtTime(Math.max(0.0005, opts.gain), now + dur - 0.05);
@@ -211,8 +213,9 @@ async function noiseBurst(opts: {
 /** A pure tone with optional pan. */
 async function tone(freq: number, ms: number, gain: number, pan = 0): Promise<void> {
   const ctx = await getAudioContext();
+  await unlockAudio();
   const dur = ms / 1000;
-  const now = ctx.currentTime + 0.02;
+  const now = ctx.currentTime + 0.08;
   const osc = ctx.createOscillator();
   osc.frequency.value = freq;
   const g = ctx.createGain();
@@ -599,7 +602,7 @@ export const TRAINING_MODES: TrainingMode[] = [
     needsSpeech: false,
     makeRound: (level) => {
       const target = pickFresh("fricative", FRICATIVES);
-      const gain = gainFor(70 - level * 4);
+      const gain = gainFor(78 - level * 3);
       return {
         prompt: "Which sound was that?",
         options: shuffle(FRICATIVES).map((f) => ({ id: f.id, label: f.label })),

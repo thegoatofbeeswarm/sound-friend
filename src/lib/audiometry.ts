@@ -215,10 +215,33 @@ export async function getAudioContext(): Promise<AudioContext> {
   return ctx;
 }
 
-/** Prime the audio engine from a user gesture (autoplay policy). */
+/**
+ * Prime the audio engine from a user gesture (autoplay policy).
+ * Browsers routinely drop the first one or two nodes scheduled right after a
+ * context is created or resumed, which made the opening rounds of a training
+ * session play silence. Pushing a short silent buffer through the graph and
+ * waiting for the clock to advance makes the first real sound audible.
+ */
 export async function unlockAudio(): Promise<void> {
-  await getAudioContext();
+  const audio = await getAudioContext();
+  try {
+    const buf = audio.createBuffer(1, Math.max(1, Math.floor(audio.sampleRate * 0.05)), audio.sampleRate);
+    const src = audio.createBufferSource();
+    src.buffer = buf;
+    const g = audio.createGain();
+    g.gain.value = 0.0001;
+    src.connect(g).connect(audio.destination);
+    src.start();
+  } catch {
+    /* priming is best-effort */
+  }
+  const start = audio.currentTime;
+  for (let i = 0; i < 20; i++) {
+    if (audio.state === "running" && audio.currentTime > start) break;
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
 }
+
 
 /**
  * Map a dB-HL-like level to a linear gain.
