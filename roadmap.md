@@ -7,3 +7,9 @@
 - [x] Separate rapid-speech sentence bank; specific conversation questions
 - [x] Team page (/team) with contact + Instagram
 - [x] Sign-up password rule: 8+ chars, 1 special character
+- [x] Speech-in-noise (digits-in-noise) test at /speech: SNR threshold + listening score, saved to history
+- [ ] Listening Profile as hero (5 dimensions, homepage repositioning)
+- [ ] Reliability: silent catch trials + consistency score in the tone screening
+- [ ] Wording cleanup: "train listening skills", "estimated headphone profiles", drop dB HL claims, fix clinic-comparison sentence
+- [ ] Clinic audiogram -> personalized training plan
+- [ ] Transfer testing on unseen material
