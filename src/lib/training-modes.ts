@@ -81,24 +81,95 @@ function wait(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+/** Resolve once the speech engine has actually loaded its voice list. */
+function loadVoices(): Promise<SpeechSynthesisVoice[]> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return resolve([]);
+    const synth = window.speechSynthesis;
+    const existing = synth.getVoices();
+    if (existing.length) return resolve(existing);
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      synth.removeEventListener("voiceschanged", finish);
+      resolve(synth.getVoices());
+    };
+    synth.addEventListener("voiceschanged", finish);
+    // Some engines only populate after a poll.
+    const start = Date.now();
+    const poll = setInterval(() => {
+      if (synth.getVoices().length || Date.now() - start > 2500) {
+        clearInterval(poll);
+        finish();
+      }
+    }, 100);
+  });
+}
+
+let speechWarmed = false;
+
+/**
+ * Prime the speech engine. The first utterance in a session is frequently
+ * dropped (voices still loading, engine not yet started), which made the first
+ * couple of speech-in-noise rounds play silence.
+ */
+export async function warmUpSpeech(): Promise<void> {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  if (speechWarmed) return;
+  speechWarmed = true;
+  const voices = await loadVoices();
+  try {
+    const u = new SpeechSynthesisUtterance(" ");
+    u.volume = 0;
+    const v = voices.find((x) => x.lang?.toLowerCase().startsWith("en"));
+    if (v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  } catch {
+    /* ignore */
+  }
+  await wait(150);
+}
+
 /** Speech synthesis with a rate and volume, resolving when it stops. */
 async function speak(text: string, rate: number, volume: number): Promise<void> {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     await wait(900);
     return;
   }
+  const synth = window.speechSynthesis;
+  const voices = await loadVoices();
+  await warmUpSpeech();
+  synth.cancel();
+  // Chrome needs a beat between cancel() and speak() or the utterance is lost.
+  await wait(120);
   return new Promise((resolve) => {
     const u = new SpeechSynthesisUtterance(text);
     u.rate = rate;
     u.volume = Math.max(0.05, Math.min(1, volume));
-    u.onend = () => resolve();
-    u.onerror = () => resolve();
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+    const v =
+      voices.find((x) => x.default && x.lang?.toLowerCase().startsWith("en")) ??
+      voices.find((x) => x.lang?.toLowerCase().startsWith("en"));
+    if (v) u.voice = v;
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      clearInterval(keepAlive);
+      resolve();
+    };
+    u.onend = finish;
+    u.onerror = finish;
+    // Chrome pauses long-running synthesis; resume keeps it flowing.
+    const keepAlive = setInterval(() => {
+      if (synth.speaking && !synth.paused) synth.resume();
+    }, 4000);
+    synth.speak(u);
     // Safety net in case the engine never fires onend.
-    setTimeout(resolve, 6000);
+    setTimeout(finish, 8000);
   });
 }
+
 
 /** A steady band of noise, used as a masker or as a fricative burst. */
 async function noiseBurst(opts: {
