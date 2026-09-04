@@ -30,7 +30,7 @@ type Report = {
 
 export function ClinicalReports() {
   const { user } = useAuth();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const queryClient = useQueryClient();
   const analyze = useServerFn(analyzeClinicalReport);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,7 +91,7 @@ export function ClinicalReports() {
         .single();
       if (insertError || !report) throw insertError ?? new Error(t("data.report.errSaveFail"));
 
-      const result = await analyze({ data: { reportId: report.id } });
+      const result = await analyze({ data: { reportId: report.id, language } });
       if (!result.ok) throw new Error(result.error);
 
       toast.success(t("data.report.toastAnalyzed").replace("{n}", String(result.points)));

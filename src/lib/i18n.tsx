@@ -164,6 +164,7 @@ import { risksPage } from "@/lib/i18n-dicts/risks";
 import { reportPage } from "@/lib/i18n-dicts/report";
 import { dataPage } from "@/lib/i18n-dicts/data";
 import { coachPage } from "@/lib/i18n-dicts/coach";
+import { sciencePack } from "@/lib/i18n-dicts/science";
 
 export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
 
@@ -177,6 +178,7 @@ const packs: Dict[] = [
   reportPage,
   dataPage,
   coachPage,
+  sciencePack,
 ];
 
 function merge(lang: Language, base: Record<string, string>): Record<string, string> {
