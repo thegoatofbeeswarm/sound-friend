@@ -201,13 +201,35 @@ async function startBabble(gain: number): Promise<() => void> {
 /* word banks                                                          */
 /* ------------------------------------------------------------------ */
 
-const WORDS = [
-  "boat", "coat", "goat", "note",
-  "seat", "feet", "heat", "beat",
-  "pin", "thin", "fin", "shin",
-  "cap", "cat", "cab", "can",
-  "rice", "rise", "ride", "ripe",
-  "mask", "mast", "match", "map",
+/**
+ * Minimal-pair sets. Distractors come from the same set, so the choice really
+ * tests fine phonetic detail rather than gross word shape.
+ */
+const WORD_SETS: string[][] = [
+  ["boat", "coat", "goat", "note", "vote"],
+  ["seat", "feet", "heat", "beat", "wheat"],
+  ["pin", "thin", "fin", "shin", "chin"],
+  ["cap", "cat", "cab", "can", "catch"],
+  ["rice", "rise", "ride", "ripe", "right"],
+  ["mask", "mast", "match", "map", "mat"],
+  ["sing", "thing", "ring", "king", "wing"],
+  ["sun", "son", "fun", "run", "ton"],
+  ["bath", "bass", "batch", "back", "bad"],
+  ["five", "fine", "file", "fight", "find"],
+  ["shoe", "chew", "two", "true", "through"],
+  ["light", "night", "might", "white", "bite"],
+  ["pear", "bear", "chair", "share", "fair"],
+  ["dish", "ditch", "did", "dig", "dim"],
+  ["thought", "taught", "fought", "sought", "caught"],
+  ["vest", "best", "rest", "test", "west"],
+  ["lace", "race", "face", "place", "space"],
+  ["moon", "noon", "soon", "spoon", "tune"],
+  ["cold", "gold", "hold", "sold", "told"],
+  ["chip", "ship", "sip", "tip", "trip"],
+  ["half", "have", "hat", "hash", "hand"],
+  ["press", "dress", "stress", "bless", "guess"],
+  ["thirty", "thirsty", "dirty", "sturdy", "thursday"],
+  ["free", "three", "tree", "she", "sea"],
 ];
 
 const SENTENCES: Array<{ text: string; question: string; options: string[]; answer: string }> = [
@@ -247,7 +269,189 @@ const SENTENCES: Array<{ text: string; question: string; options: string[]; answ
     options: ["Five percent", "Fifteen percent", "Fifty percent", "Thirteen percent"],
     answer: "Fifteen percent",
   },
+  {
+    text: "The appointment is at quarter past three.",
+    question: "What time is the appointment?",
+    options: ["Quarter past two", "Quarter past three", "Half past three", "Quarter to three"],
+    answer: "Quarter past three",
+  },
+  {
+    text: "Please bring your passport and a printed ticket.",
+    question: "What should you bring?",
+    options: [
+      "Passport and printed ticket",
+      "Passport and photo",
+      "Licence and ticket",
+      "Passport only",
+    ],
+    answer: "Passport and printed ticket",
+  },
+  {
+    text: "The parcel was delivered to the neighbour at number twelve.",
+    question: "Which house number?",
+    options: ["Number ten", "Number twelve", "Number twenty", "Number two"],
+    answer: "Number twelve",
+  },
+  {
+    text: "We are meeting outside the library, not the museum.",
+    question: "Where are you meeting?",
+    options: ["Outside the library", "Inside the library", "At the museum", "At the station"],
+    answer: "Outside the library",
+  },
+  {
+    text: "My flight lands at seven forty in the evening.",
+    question: "When does the flight land?",
+    options: ["Seven fourteen", "Seven forty", "Seventeen forty", "Six forty"],
+    answer: "Seven forty",
+  },
+  {
+    text: "The recipe needs three eggs and a cup of milk.",
+    question: "How many eggs?",
+    options: ["Two", "Three", "Four", "Six"],
+    answer: "Three",
+  },
+  {
+    text: "She works in the office on Mondays and Wednesdays.",
+    question: "Which days is she in the office?",
+    options: [
+      "Mondays and Wednesdays",
+      "Mondays and Fridays",
+      "Tuesdays and Thursdays",
+      "Wednesdays only",
+    ],
+    answer: "Mondays and Wednesdays",
+  },
+  {
+    text: "Turn the heating down to nineteen degrees before you leave.",
+    question: "What temperature?",
+    options: ["Nine degrees", "Ninety degrees", "Nineteen degrees", "Fifteen degrees"],
+    answer: "Nineteen degrees",
+  },
+  {
+    text: "The doctor prescribed one tablet twice a day.",
+    question: "How often?",
+    options: ["Once a day", "Twice a day", "Three times a day", "Every other day"],
+    answer: "Twice a day",
+  },
+  {
+    text: "Our table is booked under the name Patterson.",
+    question: "Which name is the booking under?",
+    options: ["Patterson", "Peterson", "Patten", "Pattinson"],
+    answer: "Patterson",
+  },
+  {
+    text: "The blue folder is on the top shelf in the cupboard.",
+    question: "Where is the blue folder?",
+    options: ["Top shelf", "Bottom drawer", "On the desk", "Under the chair"],
+    answer: "Top shelf",
+  },
+  {
+    text: "He cycled fourteen miles before breakfast on Sunday.",
+    question: "How far did he cycle?",
+    options: ["Four miles", "Fourteen miles", "Forty miles", "Fifteen miles"],
+    answer: "Fourteen miles",
+  },
+  {
+    text: "The concert was cancelled because the singer was ill.",
+    question: "Why was it cancelled?",
+    options: ["The singer was ill", "Bad weather", "Low ticket sales", "A power cut"],
+    answer: "The singer was ill",
+  },
+  {
+    text: "Send the invoice to accounts before the end of the month.",
+    question: "Where should the invoice go?",
+    options: ["Accounts", "Sales", "The manager", "The client"],
+    answer: "Accounts",
+  },
+  {
+    text: "There is a bus every twenty minutes from the high street.",
+    question: "How often does the bus run?",
+    options: ["Every ten minutes", "Every twenty minutes", "Every hour", "Every twelve minutes"],
+    answer: "Every twenty minutes",
+  },
+  {
+    text: "The password ends with the number thirty-six.",
+    question: "Which number does it end with?",
+    options: ["Thirty-six", "Twenty-six", "Sixty-three", "Thirty-five"],
+    answer: "Thirty-six",
+  },
+  {
+    text: "We stayed in a small hotel near the harbour in Galway.",
+    question: "Where did they stay?",
+    options: ["Near the harbour", "Near the airport", "In the city centre", "By the station"],
+    answer: "Near the harbour",
+  },
+  {
+    text: "The lecture starts in room B four on the second floor.",
+    question: "Which room?",
+    options: ["B four", "D four", "B fourteen", "P four"],
+    answer: "B four",
+  },
+  {
+    text: "Add the sugar after the butter has melted completely.",
+    question: "When do you add the sugar?",
+    options: [
+      "After the butter melts",
+      "Before the butter",
+      "With the flour",
+      "At the very end",
+    ],
+    answer: "After the butter melts",
+  },
+  {
+    text: "My sister moved to Manchester in the spring.",
+    question: "When did she move?",
+    options: ["Spring", "Summer", "Autumn", "Winter"],
+    answer: "Spring",
+  },
+  {
+    text: "The car needs new brake pads and an oil change.",
+    question: "What does the car need?",
+    options: [
+      "Brake pads and an oil change",
+      "New tyres and an oil change",
+      "Brake pads only",
+      "A new battery",
+    ],
+    answer: "Brake pads and an oil change",
+  },
+  {
+    text: "Leave the parcel with reception if nobody answers.",
+    question: "What if nobody answers?",
+    options: [
+      "Leave it with reception",
+      "Take it back",
+      "Leave it at the door",
+      "Try the neighbour",
+    ],
+    answer: "Leave it with reception",
+  },
+  {
+    text: "Tickets cost eighteen pounds each, or fifty for a group.",
+    question: "How much is one ticket?",
+    options: ["Eight pounds", "Eighteen pounds", "Eighty pounds", "Fifty pounds"],
+    answer: "Eighteen pounds",
+  },
+  {
+    text: "The dentist called to move your check-up to next Friday.",
+    question: "Who called?",
+    options: ["The dentist", "The doctor", "The optician", "The pharmacy"],
+    answer: "The dentist",
+  },
+  {
+    text: "Water the plants every third day while we are away.",
+    question: "How often should you water them?",
+    options: ["Every day", "Every second day", "Every third day", "Once a week"],
+    answer: "Every third day",
+  },
+  {
+    text: "The film we booked starts at nine, not eight thirty.",
+    question: "What time does the film start?",
+    options: ["Eight thirty", "Nine", "Nine thirty", "Eight"],
+    answer: "Nine",
+  },
 ];
+
 
 /** Fricatives are the first thing to go with high-frequency loss. */
 const FRICATIVES = [
