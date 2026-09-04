@@ -22,6 +22,7 @@ import { Route as HowOnlineHearingTestsWorkRouteImport } from './routes/how-onli
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as RisksRouteImport } from './routes/risks'
 import { Route as ScienceRouteImport } from './routes/science'
+import { Route as SpeechRouteImport } from './routes/speech'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as TrainRouteImport } from './routes/train'
@@ -96,6 +97,11 @@ const ScienceRoute = ScienceRouteImport.update({
   path: '/science',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpeechRoute = SpeechRouteImport.update({
+  id: '/speech',
+  path: '/speech',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
+  '/speech': typeof SpeechRoute
   '/team': typeof TeamRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
+  '/speech': typeof SpeechRoute
   '/team': typeof TeamRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
+  '/speech': typeof SpeechRoute
   '/team': typeof TeamRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/risks'
     | '/science'
+    | '/speech'
     | '/team'
     | '/test'
     | '/train'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/risks'
     | '/science'
+    | '/speech'
     | '/team'
     | '/test'
     | '/train'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/risks'
     | '/science'
+    | '/speech'
     | '/team'
     | '/test'
     | '/train'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   ReportRoute: typeof ReportRoute
   RisksRoute: typeof RisksRoute
   ScienceRoute: typeof ScienceRoute
+  SpeechRoute: typeof SpeechRoute
   TeamRoute: typeof TeamRoute
   TestRoute: typeof TestRoute
   TrainRoute: typeof TrainRoute
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScienceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/speech': {
+      id: '/speech'
+      path: '/speech'
+      fullPath: '/speech'
+      preLoaderRoute: typeof SpeechRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/team': {
       id: '/team'
       path: '/team'
@@ -431,6 +451,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportRoute: ReportRoute,
   RisksRoute: RisksRoute,
   ScienceRoute: ScienceRoute,
+  SpeechRoute: SpeechRoute,
   TeamRoute: TeamRoute,
   TestRoute: TestRoute,
   TrainRoute: TrainRoute,
