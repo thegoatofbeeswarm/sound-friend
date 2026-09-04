@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Audiogram } from "@/components/charts/lazy";
+import { WhenVisible } from "@/components/WhenVisible";
 import { Button } from "@/components/ui/button";
 import type { ThresholdResult } from "@/lib/audiometry";
 import { useI18n } from "@/lib/i18n";
@@ -34,7 +35,11 @@ export function ExampleProfile() {
               </span>
             </div>
             <div className="mt-4">
-              <Audiogram points={EXAMPLE_POINTS} />
+              <WhenVisible
+                fallback={<div className="h-80 w-full animate-pulse rounded-xl bg-muted/40" />}
+              >
+                <Audiogram points={EXAMPLE_POINTS} />
+              </WhenVisible>
             </div>
           </div>
 

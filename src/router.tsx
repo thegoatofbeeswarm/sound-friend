@@ -20,7 +20,10 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
+    // Start fetching a page as soon as the pointer touches its link, and reuse
+    // that work for half a minute so the click itself feels instant.
+    defaultPreload: "intent",
+    defaultPreloadStaleTime: 30_000,
   });
 
   return router;
