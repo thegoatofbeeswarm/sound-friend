@@ -275,7 +275,7 @@ function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
                   <td className="py-3">
                     {row.frequency >= 1000 ? `${row.frequency / 1000} kHz` : `${row.frequency} Hz`}
                   </td>
-                  <td className="py-3">{row.audiomaxxer} dB HL</td>
+                  <td className="py-3">{row.audiomaxxer} dB (est.)</td>
                   <td className="py-3">{row.clinic} dB HL</td>
                   <td className="py-3 font-medium">
                     {row.difference > 0 ? "+" : ""}
