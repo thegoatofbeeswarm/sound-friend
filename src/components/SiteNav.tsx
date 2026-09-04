@@ -1,13 +1,34 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AudioLines } from "lucide-react";
+import { AudioLines, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { AppSettings } from "@/components/AppSettings";
 import { useI18n } from "@/lib/i18n";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export function SiteNav() {
   const { user, signOut } = useAuth();
   const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+
+  const links = [
+    { to: "/test" as const, label: t("nav.test") },
+    { to: "/train" as const, label: t("nav.train") },
+    { to: "/risks" as const, label: t("nav.risks") },
+    { to: "/data" as const, label: t("nav.data") },
+    { to: "/report" as const, label: t("nav.report") },
+    { to: "/science" as const, label: t("nav.science") },
+    { to: "/history" as const, label: t("nav.history") },
+    { to: "/team" as const, label: t("nav.team") },
+  ];
+
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
@@ -97,6 +118,55 @@ export function SiteNav() {
               <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
           )}
+
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label={t("nav.menu")}
+                className="icon-bubble rounded-full bg-card/60 text-muted-foreground hover:text-signal min-[761px]:hidden"
+              >
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72">
+              <SheetHeader>
+                <SheetTitle>{t("nav.menu")}</SheetTitle>
+              </SheetHeader>
+              <nav className="mt-2 flex flex-col gap-1 px-4 pb-6">
+                {links.map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setOpen(false)}
+                    className="rounded-md px-3 py-3 text-base text-muted-foreground"
+                    activeProps={{ className: "rounded-md px-3 py-3 text-base font-semibold text-foreground" }}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+                <div className="mt-4">
+                  {user ? (
+                    <Button
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => {
+                        setOpen(false);
+                        void signOut();
+                      }}
+                    >
+                      {t("nav.signOut")}
+                    </Button>
+                  ) : (
+                    <Button asChild className="w-full" onClick={() => setOpen(false)}>
+                      <Link to="/auth">{t("nav.signIn")}</Link>
+                    </Button>
+                  )}
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
