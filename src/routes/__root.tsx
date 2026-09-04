@@ -15,6 +15,7 @@ import { ThemeProvider, themeBootstrapScript } from "@/lib/theme";
 import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { CoachRail } from "@/components/CoachRail";
+import { RouteProgress } from "@/components/RouteProgress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { initNativeShell } from "@/lib/native";
 
@@ -147,6 +148,7 @@ function RootComponent() {
       <ThemeProvider>
         <I18nProvider>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <RouteProgress />
           <div key={pathname} className="page-enter">
             <Outlet />
           </div>
