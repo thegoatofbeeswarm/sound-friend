@@ -8,16 +8,16 @@ import {
   Scripts,
   useRouterState,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { Suspense, lazy, useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { ThemeProvider, themeBootstrapScript } from "@/lib/theme";
 import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
-import { CoachRail } from "@/components/CoachRail";
 import { RouteProgress } from "@/components/RouteProgress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { initNativeShell } from "@/lib/native";
+import { AuthProvider } from "@/hooks/useAuth";
 
 function NotFoundComponent() {
   return (
@@ -120,6 +120,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+/** The coach rail is a floating extra: load it after the page itself is up. */
+const CoachRail = lazy(() =>
+  import("@/components/CoachRail").then((m) => ({ default: m.CoachRail })),
+);
+
+function DeferredCoachRail() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const idle =
+      typeof requestIdleCallback === "function"
+        ? requestIdleCallback(() => setShow(true))
+        : window.setTimeout(() => setShow(true), 200);
+    return () => {
+      if (typeof cancelIdleCallback === "function" && typeof idle === "number") {
+        cancelIdleCallback(idle);
+      } else {
+        clearTimeout(idle as number);
+      }
+    };
+  }, []);
+  if (!show) return null;
+  return (
+    <Suspense fallback={null}>
+      <CoachRail />
+    </Suspense>
+  );
+}
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -147,13 +175,15 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <I18nProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <RouteProgress />
-          <div key={pathname} className="page-enter">
-            <Outlet />
-          </div>
-          <CoachRail />
-          <Toaster position="top-center" />
+          <AuthProvider>
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <RouteProgress />
+            <div key={pathname} className="page-enter">
+              <Outlet />
+            </div>
+            <DeferredCoachRail />
+            <Toaster position="top-center" />
+          </AuthProvider>
         </I18nProvider>
       </ThemeProvider>
     </QueryClientProvider>

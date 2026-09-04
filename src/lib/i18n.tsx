@@ -198,11 +198,13 @@ function merge(lang: Language, base: Record<string, string>): Record<string, str
   return Object.assign({}, base, ...packs.map((p) => p[lang]));
 }
 
-const dictionaries: Record<Language, Record<string, string>> = {
-  en: merge("en", en),
-  zh: merge("zh", zh),
-  es: merge("es", es),
-};
+const bases: Record<Language, Record<string, string>> = { en, zh, es };
+const built: Partial<Record<Language, Record<string, string>>> = {};
+
+/** Build a language's dictionary the first time it is actually used. */
+function dictionary(lang: Language): Record<string, string> {
+  return (built[lang] ??= merge(lang, bases[lang]!));
+}
 
 type I18nContextValue = {
   language: Language;
@@ -246,7 +248,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     () => ({
       language,
       setLanguage,
-      t: (key: string) => dictionaries[language][key] ?? dictionaries.en[key] ?? key,
+      t: (key: string) => dictionary(language)[key] ?? dictionary("en")[key] ?? key,
     }),
     [language, setLanguage],
   );
