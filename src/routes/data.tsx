@@ -8,6 +8,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { FREQUENCIES } from "@/lib/audiometry";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/data")({
   head: () => ({
@@ -51,6 +52,7 @@ type ComparisonData = {
 
 function DataPage() {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const query = useQuery({
     enabled: !!user,
     queryKey: ["clinical-data", user?.id],
@@ -117,15 +119,10 @@ function DataPage() {
       <main className="mx-auto max-w-6xl px-5 py-12">
         <div className="max-w-3xl">
           <p className="flex items-center gap-2 text-sm font-medium text-signal">
-            <Database className="h-4 w-4" /> Your hearing data
+            <Database className="h-4 w-4" /> {t("data.badge")}
           </p>
-          <h1 className="mt-3 text-4xl font-semibold md:text-5xl">
-            Compare screenings, transparently.
-          </h1>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            Bring a past clinic or hearing-center result into the same view as your Audiomaxxer
-            data. The comparison is a measurement check, not a diagnosis.
-          </p>
+          <h1 className="mt-3 text-4xl font-semibold md:text-5xl">{t("data.title")}</h1>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">{t("data.lead")}</p>
         </div>
 
         {loading ? (
@@ -135,12 +132,10 @@ function DataPage() {
         ) : null}
         {!user && !loading ? (
           <div className="mt-10 rounded-xl border border-border/70 bg-card/60 p-7">
-            <p className="text-muted-foreground">
-              Sign in to upload reports and inspect your saved hearing data.
-            </p>
+            <p className="text-muted-foreground">{t("data.signInPrompt")}</p>
             <Button asChild className="mt-5">
               <Link to="/auth">
-                Sign in <ArrowRight />
+                {t("data.signIn")} <ArrowRight />
               </Link>
             </Button>
           </div>
@@ -156,16 +151,15 @@ function DataPage() {
               <Calculator className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold">How the comparison is calculated</h2>
+              <h2 className="text-2xl font-semibold">{t("data.howCalcTitle")}</h2>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                Only frequency-and-ear pairs visible in both datasets are compared. The sign tells
-                you which result is higher; the absolute value tells you how far apart they are.
+                {t("data.howCalcDesc")}
               </p>
             </div>
           </div>
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
             <EquationCard
-              title="Difference at one matched point"
+              title={t("data.eq1.title")}
               formula={
                 <>
                   <i>Difference</i> = <i>T</i>
@@ -173,10 +167,10 @@ function DataPage() {
                   <sub>Clinic</sub>
                 </>
               }
-              detail="A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher."
+              detail={t("data.eq1.detail")}
             />
             <EquationCard
-              title="Mean absolute error (MAE)"
+              title={t("data.eq2.title")}
               formula={
                 <>
                   <i>MAE</i> = <sup>1</sup>⁄<sub>n</sub> ∑<sub>i=1</sub>
@@ -185,7 +179,7 @@ function DataPage() {
                   <sub>Clinic,i</sub>|
                 </>
               }
-              detail="MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate."
+              detail={t("data.eq2.detail")}
             />
           </div>
           <ComparisonTable data={query.data} />
@@ -216,6 +210,7 @@ function EquationCard({
 }
 
 function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
+  const { t } = useI18n();
   const latestReport = data?.reports.find((report) => report.status === "ready");
   const matches =
     data && latestReport
@@ -244,15 +239,18 @@ function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
     <div className="mt-8 rounded-xl border border-border/70 bg-card/60 p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h3 className="font-semibold">Matched threshold data</h3>
+          <h3 className="font-semibold">{t("data.table.title")}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             {latestReport
-              ? `${latestReport.source_label || latestReport.file_name} vs latest Audiomaxxer screening`
-              : "Upload and analyze a report to populate this table."}
+              ? t("data.table.subtitle").replace(
+                  "{source}",
+                  latestReport.source_label || latestReport.file_name,
+                )
+              : t("data.table.uploadPrompt")}
           </p>
         </div>
         <p className="text-sm font-medium text-signal">
-          MAE {mae == null ? "—" : `${mae.toFixed(1)} dB`}
+          {t("data.table.mae")} {mae == null ? "—" : `${mae.toFixed(1)} dB`}
         </p>
       </div>
       {matches.length ? (
@@ -260,11 +258,11 @@ function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
           <table className="w-full min-w-[520px] text-left text-sm">
             <thead className="border-b border-border/70 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
-                <th className="pb-3 font-medium">Ear</th>
-                <th className="pb-3 font-medium">Frequency</th>
-                <th className="pb-3 font-medium">Audiomaxxer</th>
-                <th className="pb-3 font-medium">Clinic</th>
-                <th className="pb-3 font-medium">Difference</th>
+                <th className="pb-3 font-medium">{t("data.table.header.ear")}</th>
+                <th className="pb-3 font-medium">{t("data.table.header.frequency")}</th>
+                <th className="pb-3 font-medium">{t("data.table.header.audiomaxxer")}</th>
+                <th className="pb-3 font-medium">{t("data.table.header.clinic")}</th>
+                <th className="pb-3 font-medium">{t("data.table.header.difference")}</th>
               </tr>
             </thead>
             <tbody>
@@ -290,16 +288,10 @@ function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
         </div>
       ) : (
         <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-          There are no matched ear-frequency points yet. Audiomaxxer currently tests{" "}
-          {FREQUENCIES.join(", ")} Hz; a clinic report needs a readable value at the same frequency
-          for the calculation to include it.
+          {t("data.table.empty").replace("{freqs}", FREQUENCIES.join(", "))}
         </p>
       )}
-      <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
-        These values compare units as printed: clinic results are usually clinical dB HL, while
-        Audiomaxxer levels are relative/estimated and device-dependent. Treat a large difference as
-        a reason to review the source reports with an audiologist, not as a diagnosis.
-      </p>
+      <p className="mt-5 text-xs leading-relaxed text-muted-foreground">{t("data.table.footnote")}</p>
     </div>
   );
 }

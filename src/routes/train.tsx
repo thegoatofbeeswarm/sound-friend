@@ -34,6 +34,7 @@ import { TrainingProgress, type ProgressPoint } from "@/components/TrainingProgr
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { unlockAudio } from "@/lib/audiometry";
+import { useI18n } from "@/lib/i18n";
 import {
   createTrainer,
   quietestHeard,
@@ -105,6 +106,7 @@ const MODE_ICONS = {
 
 function TrainPage() {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const qc = useQueryClient();
   const [trainer, setTrainer] = useState<TrainerState>(() => createTrainer());
   const [round, setRound] = useState<ModeRound | null>(null);
@@ -220,9 +222,9 @@ function TrainPage() {
         xp,
         duration_sec: startedAt == null ? 0 : Math.round((Date.now() - startedAt) / 1000),
       });
-      if (error) toast.error("Could not save this session.");
+      if (error) toast.error(t("train.toastSessionFail"));
       else {
-        toast.success(`Session saved · +${xp} XP`);
+        toast.success(t("train.toastSessionSavedTemplate").replace("{xp}", String(xp)));
         void qc.invalidateQueries({ queryKey: ["training-sessions", user.id] });
       }
     })();
@@ -251,11 +253,9 @@ function TrainPage() {
           <>
             <section className="flex flex-wrap items-end justify-between gap-6">
               <div className="max-w-2xl">
-                <p className="text-sm font-medium text-signal">Closed-loop hearing training</p>
-                <h1 className="mt-2 text-4xl font-semibold">Train the skills you use in real life.</h1>
-                <p className="mt-4 text-muted-foreground">
-                  Choose a focus. Each session adjusts to your performance, so you practice at the edge of your current ability — not on a one-size-fits-all playlist.
-                </p>
+                <p className="text-sm font-medium text-signal">{t("train.tagline")}</p>
+                <h1 className="mt-2 text-4xl font-semibold">{t("train.heroTitle")}</h1>
+                <p className="mt-4 text-muted-foreground">{t("train.heroBody")}</p>
               </div>
               {user ? <LevelSummary level={level} streak={dayStreak(allSessions)} /> : null}
             </section>
@@ -263,12 +263,12 @@ function TrainPage() {
             <section className="mt-10">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-2xl font-semibold">Choose a training track</h2>
+                  <h2 className="text-2xl font-semibold">{t("train.chooseTrack")}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Your next focus: <span className="text-foreground">{modeById(focus).label}</span>
+                    {t("train.nextFocusPrefix")} <span className="text-foreground">{t(`train.mode.${modeById(focus).id}.label`)}</span>
                   </p>
                 </div>
-                {ceiling ? <p className="text-xs text-signal">Calibrated to your latest screening</p> : null}
+                {ceiling ? <p className="text-xs text-signal">{t("train.calibrated")}</p> : null}
               </div>
               <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {TRAINING_MODES.map((mode) => {
@@ -292,11 +292,11 @@ function TrainPage() {
                         </span>
                         {selected ? <Check className="h-4 w-4 text-signal" /> : <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />}
                       </div>
-                      <h3 className="mt-5 font-semibold">{mode.label}</h3>
-                      <p className="mt-2 min-h-12 text-sm leading-relaxed text-muted-foreground">{mode.blurb}</p>
+                      <h3 className="mt-5 font-semibold">{t(`train.mode.${mode.id}.label`)}</h3>
+                      <p className="mt-2 min-h-12 text-sm leading-relaxed text-muted-foreground">{t(`train.mode.${mode.id}.blurb`)}</p>
                       <div className="mt-4 flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                        <span>{mode.skill}</span>
-                        {best ? <span className="text-foreground">Best {best.bestAccuracy}%</span> : <span>New track</span>}
+                        <span>{t(`train.mode.${mode.id}.skill`)}</span>
+                        {best ? <span className="text-foreground">{t("train.bestTemplate").replace("{pct}", String(best.bestAccuracy))}</span> : <span>{t("train.newTrack")}</span>}
                       </div>
                     </button>
                   );
@@ -304,11 +304,11 @@ function TrainPage() {
               </div>
               <div className="mt-6 flex flex-wrap items-center gap-4">
                 <Button size="lg" onClick={() => void begin()}>
-                  <Play className="mr-2 h-4 w-4" /> Start {currentMode.label.toLowerCase()}
+                  <Play className="mr-2 h-4 w-4" /> {t("train.startPrefix")} {t(`train.mode.${currentMode.id}.label`).toLowerCase()}
                 </Button>
                 {currentMode.needsSpeech ? (
                   <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Volume2 className="h-4 w-4 text-signal" /> Uses your device speaker or headphones
+                    <Volume2 className="h-4 w-4 text-signal" /> {t("train.usesSpeaker")}
                   </span>
                 ) : null}
               </div>
@@ -321,7 +321,7 @@ function TrainPage() {
               </section>
             ) : (
               <p className="mt-10 max-w-xl text-sm text-muted-foreground">
-                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">Sign in</Link> to save your XP, streak, and track-by-track improvement.
+                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInXpSuffix")}
               </p>
             )}
           </>
@@ -330,15 +330,15 @@ function TrainPage() {
         {(phase === "playing" || phase === "answer") && round ? (
           <section className="mx-auto max-w-2xl text-center">
             <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
-              <span>{currentMode.label}</span>
-              <span>Round {trainer.rounds + 1} of {ROUNDS}</span>
+              <span>{t(`train.mode.${currentMode.id}.label`)}</span>
+              <span>{t("train.roundOf").replace("{n}", String(trainer.rounds + 1)).replace("{max}", String(ROUNDS))}</span>
             </div>
             <Progress value={(trainer.rounds / ROUNDS) * 100} className="mt-3" />
             <div className={`mx-auto mt-16 flex h-36 w-36 items-center justify-center rounded-full border border-border bg-card ${phase === "playing" ? "pulse-ring" : ""}`}>
               {currentMode.icon === "compass" ? <Compass className="h-9 w-9 text-signal" /> : <Volume2 className="h-9 w-9 text-signal" />}
             </div>
-            <p className="mt-7 text-sm uppercase tracking-widest text-muted-foreground">Difficulty {trainer.level.toFixed(1)}/10</p>
-            <h2 className="mt-2 text-2xl font-semibold">{phase === "playing" ? "Listening..." : round.prompt}</h2>
+            <p className="mt-7 text-sm uppercase tracking-widest text-muted-foreground">{t("train.difficultyTemplate").replace("{level}", trainer.level.toFixed(1))}</p>
+            <h2 className="mt-2 text-2xl font-semibold">{phase === "playing" ? t("train.listening") : round.prompt}</h2>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {round.options.map((option) => (
                 <Button
@@ -356,7 +356,7 @@ function TrainPage() {
             </div>
             {lastCorrect !== null ? (
               <p className={`mt-5 text-sm ${lastCorrect ? "text-signal" : "text-caution"}`}>
-                {lastCorrect ? "Correct — increasing the challenge." : "Not quite — adjusting the next round."}
+                {lastCorrect ? t("train.correctMsg") : t("train.incorrectMsg")}
               </p>
             ) : null}
           </section>
@@ -364,23 +364,23 @@ function TrainPage() {
 
         {phase === "done" ? (
           <section className="mx-auto max-w-3xl">
-            <p className="text-sm font-medium text-signal">{currentMode.label}</p>
-            <h1 className="mt-2 text-4xl font-semibold">Session complete</h1>
-            <p className="mt-3 text-muted-foreground">You stayed with the track and pushed your listening edge forward.</p>
+            <p className="text-sm font-medium text-signal">{t(`train.mode.${currentMode.id}.label`)}</p>
+            <h1 className="mt-2 text-4xl font-semibold">{t("train.sessionComplete")}</h1>
+            <p className="mt-3 text-muted-foreground">{t("train.sessionBody")}</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <Stat label="Accuracy" value={`${Math.round((trainer.correct / Math.max(1, trainer.rounds)) * 100)}%`} highlight />
-              <Stat label="Difficulty reached" value={`${trainer.level.toFixed(1)}/10`} />
-              <Stat label="XP earned" value={`+${sessionXp(trainer.correct, trainer.rounds, trainer.level)}`} />
+              <Stat label={t("train.accuracy")} value={`${Math.round((trainer.correct / Math.max(1, trainer.rounds)) * 100)}%`} highlight />
+              <Stat label={t("train.difficultyReached")} value={`${trainer.level.toFixed(1)}/10`} />
+              <Stat label={t("train.xpEarned")} value={`+${sessionXp(trainer.correct, trainer.rounds, trainer.level)}`} />
             </div>
             {!user ? (
               <p className="mt-6 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">Sign in</Link> to save this session and track your improvement.
+                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInSessionSuffix")}
               </p>
             ) : null}
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button onClick={() => void begin()}><RefreshCw className="mr-2 h-4 w-4" /> Train again</Button>
-              <Button variant="secondary" onClick={() => setPhase("intro")}><Target className="mr-2 h-4 w-4" /> Choose another track</Button>
-              <Button asChild variant="secondary"><Link to="/history"><LineChart className="mr-2 h-4 w-4" /> View my dashboard</Link></Button>
+              <Button onClick={() => void begin()}><RefreshCw className="mr-2 h-4 w-4" /> {t("train.trainAgain")}</Button>
+              <Button variant="secondary" onClick={() => setPhase("intro")}><Target className="mr-2 h-4 w-4" /> {t("train.chooseAnother")}</Button>
+              <Button asChild variant="secondary"><Link to="/history"><LineChart className="mr-2 h-4 w-4" /> {t("train.viewDashboard")}</Link></Button>
             </div>
           </section>
         ) : null}
@@ -390,13 +390,13 @@ function TrainPage() {
             <section className="mt-14">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold">Your training curve</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Accuracy and difficulty across completed sessions.</p>
+                  <h2 className="text-xl font-semibold">{t("train.curveTitle")}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">{t("train.curveBody")}</p>
                 </div>
-                {allSessions.length > 0 ? <span className="text-sm text-signal">{total} total XP</span> : null}
+                {allSessions.length > 0 ? <span className="text-sm text-signal">{t("train.totalXpTemplate").replace("{total}", String(total))}</span> : null}
               </div>
               {points.length === 0 ? (
-                <p className="mt-4 rounded-2xl border border-border/70 bg-card/60 p-5 text-sm text-muted-foreground">Finish a session to start the curve.</p>
+                <p className="mt-4 rounded-2xl border border-border/70 bg-card/60 p-5 text-sm text-muted-foreground">{t("train.finishSession")}</p>
               ) : (
                 <div className="mt-4 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card"><TrainingProgress points={points} /></div>
               )}
