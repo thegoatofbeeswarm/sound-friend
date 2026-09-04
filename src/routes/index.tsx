@@ -38,7 +38,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const pillars = [
 const heroCards = [
   { key: "profile.dim.speech", value: 72 },
   { key: "profile.dim.attention", value: 91 },
@@ -47,6 +46,7 @@ const heroCards = [
 
 const pillars = [
   { icon: Brain, title: "pillar.adaptive.title", body: "pillar.adaptive.body" },
+
 
   { icon: Volume2, title: "pillar.prefs.title", body: "pillar.prefs.body" },
   { icon: Activity, title: "pillar.env.title", body: "pillar.env.body" },
