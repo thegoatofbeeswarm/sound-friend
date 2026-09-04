@@ -256,40 +256,40 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
       <section className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <p className="text-sm font-medium text-muted-foreground">Latest screening</p>
+            <p className="text-sm font-medium text-muted-foreground">{t("history.latestScreening")}</p>
             <p className="mt-1 text-sm text-muted-foreground">{new Date(current.created_at).toLocaleString()}</p>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-signal/40 bg-signal/10 px-3 py-1.5 text-sm font-medium text-signal">
-            <CheckCircle2 className="h-4 w-4" /> Profile updated
+            <CheckCircle2 className="h-4 w-4" /> {t("history.profileUpdated")}
           </div>
          </div>
          <ScreeningQuality quality={quality} compact className="mt-6" />
          <div className="mt-8 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
           <Metric
-            label="Hearing score"
+            label={t("history.hearingScore")}
             value={score == null ? "—" : `${score}/100`}
-            detail={scoreDelta == null ? "Baseline established" : `${scoreDelta >= 0 ? "+" : ""}${scoreDelta} points since last test`}
+            detail={scoreDelta == null ? t("history.baselineEstablished") : t("history.pointsSinceLast").replace("{sign}", scoreDelta >= 0 ? "+" : "").replace("{n}", String(scoreDelta))}
             icon={Ear}
             tone={score == null ? "default" : scoreTone(score)}
           />
           <Metric
-            label="Listening risk"
-            value={risk.label}
-            detail={`Personal guidance near ${ceiling} dB`}
+            label={t("history.listeningRisk")}
+            value={t(riskLabelKey[risk.label] ?? "history.risk.unknown")}
+            detail={t("history.personalGuidance").replace("{n}", String(ceiling))}
             icon={ShieldAlert}
             tone={risk.tone}
           />
           <Metric
-            label="Training streak"
-            value={`${streak} ${streak === 1 ? "day" : "days"}`}
-            detail={`${totalSessions} ${totalSessions === 1 ? "session" : "sessions"} completed`}
+            label={t("history.trainingStreak")}
+            value={`${streak} ${streak === 1 ? t("history.day") : t("history.days")}`}
+            detail={`${totalSessions} ${totalSessions === 1 ? t("history.session") : t("history.sessions")} ${t("history.completedSuffix")}`}
             icon={Flame}
             tone={streak > 0 ? "watch" : "default"}
           />
           <Metric
-            label="Next screening"
-            value={screeningDue == null ? "—" : screeningDue <= 0 ? "Due now" : `In ${screeningDue} days`}
-            detail="Recommended 30-day check-in"
+            label={t("history.nextScreening")}
+            value={screeningDue == null ? "—" : screeningDue <= 0 ? t("history.dueNow") : t("history.inDays").replace("{n}", String(screeningDue))}
+            detail={t("history.recommendedCheckin")}
             icon={CalendarClock}
             tone={screeningDue != null && screeningDue <= 0 ? "watch" : "default"}
           />
@@ -300,8 +300,8 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
         <div className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-semibold">Ear-by-ear profile</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Thresholds from your latest screening</p>
+              <h2 className="text-xl font-semibold">{t("history.earProfileTitle")}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{t("history.earProfileSub")}</p>
             </div>
             <Headphones className="h-5 w-5 text-signal" />
           </div>
@@ -311,12 +311,12 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
                 <div key={ear.ear} className="rounded-xl border border-border/70 bg-background/60 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold capitalize">{ear.ear} ear</span>
+                      <span className="text-sm font-semibold capitalize">{t(ear.ear === "left" ? "history.earLeft" : "history.earRight")} {t("history.earSuffix")}</span>
                       <span className={`rounded-full bg-muted px-2 py-0.5 text-xs font-medium ${toneClass(ear.tone)}`}>
-                        {ear.label}
+                        {t(earLabelKey[ear.label] ?? "history.ear.normal")}
                       </span>
                     </div>
-                    <span className="text-sm text-muted-foreground">avg {ear.avgDb.toFixed(1)} dB HL</span>
+                    <span className="text-sm text-muted-foreground">{t("history.avgDbHl").replace("{n}", ear.avgDb.toFixed(1))}</span>
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{ear.detail}</p>
                 </div>
@@ -328,9 +328,9 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
         <div className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-semibold">Change over time</h2>
+              <h2 className="text-xl font-semibold">{t("history.changeOverTime")}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {change == null ? "Your next screening will create a comparison." : `${change > 0 ? "Average thresholds rose" : change < 0 ? "Average thresholds improved" : "Average thresholds are stable"} by ${Math.abs(change).toFixed(1)} dB`}
+                {change == null ? t("history.nextComparison") : `${change > 0 ? t("history.thresholdsRose") : change < 0 ? t("history.thresholdsImproved") : t("history.thresholdsStable")} ${t("history.byDb").replace("{n}", Math.abs(change).toFixed(1))}`}
               </p>
             </div>
             {change == null ? <TrendingDown className="h-5 w-5 text-muted-foreground" /> : change > 0 ? <TrendingUp className="h-5 w-5 text-danger" /> : <TrendingDown className="h-5 w-5 text-signal" />}
@@ -344,22 +344,22 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
       <section className="mt-8 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold">Training momentum</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Small, consistent sessions build a useful baseline.</p>
+            <h2 className="text-xl font-semibold">{t("history.trainingMomentum")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("history.trainingMomentumSub")}</p>
           </div>
           <Button asChild variant="secondary">
-            <Link to="/train">Continue training</Link>
+            <Link to="/train">{t("history.continueTraining")}</Link>
           </Button>
         </div>
         <div className="mt-6 grid gap-6 sm:grid-cols-3">
-          <Metric label="Completed" value={`${totalSessions}`} detail="Total training sessions" icon={CheckCircle2} tone="ok" />
-          <Metric label="Training time" value={`${trainingMinutes} min`} detail="Estimated from completed rounds" icon={Headphones} />
-          <Metric label="Last result" value={data.sessions[0] ? `${data.sessions[0].accuracy}%` : "—"} detail="Accuracy in your latest session" icon={Target} tone="watch" />
+          <Metric label={t("history.completed")} value={`${totalSessions}`} detail={t("history.totalSessions")} icon={CheckCircle2} tone="ok" />
+          <Metric label={t("history.trainingTime")} value={`${trainingMinutes} min`} detail={t("history.estimatedFromRounds")} icon={Headphones} />
+          <Metric label={t("history.lastResult")} value={data.sessions[0] ? `${data.sessions[0].accuracy}%` : "—"} detail={t("history.accuracyLatest")} icon={Target} tone="watch" />
         </div>
       </section>
 
       <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-        This dashboard is a screening and self-tracking tool, not a medical diagnosis. If you notice sudden change, pain, or persistent ringing, seek a qualified hearing professional.
+        {t("history.disclaimer")}
       </p>
     </>
   );
