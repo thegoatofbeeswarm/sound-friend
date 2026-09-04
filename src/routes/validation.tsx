@@ -1,16 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { FlaskConical, Loader2 } from "lucide-react";
-import {
-  CartesianGrid,
-  ReferenceLine,
-  ResponsiveContainer,
-  Scatter,
-  ScatterChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { AgreementScatter } from "@/components/charts/lazy";
 import { SiteNav } from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -191,36 +182,11 @@ function ValidationPage() {
 
             <section className="mt-8 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card">
               <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart margin={{ top: 10, right: 16, bottom: 24, left: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis
-                      type="number"
-                      dataKey="clinicDb"
-                      name={t("valid.tableClinic")}
-                      unit=" dB"
-                      tick={{ fontSize: 12 }}
-                    />
-                    <YAxis
-                      type="number"
-                      dataKey="appDb"
-                      name={t("valid.tableApp")}
-                      unit=" dB"
-                      tick={{ fontSize: 12 }}
-                    />
-                    <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-                    <ReferenceLine
-                      segment={[
-                        { x: 0, y: 0 },
-                        { x: 100, y: 100 },
-                      ]}
-                      stroke="currentColor"
-                      strokeDasharray="4 4"
-                      className="text-muted-foreground"
-                    />
-                    <Scatter data={pairs} fill="hsl(var(--signal))" />
-                  </ScatterChart>
-                </ResponsiveContainer>
+                <AgreementScatter
+                  pairs={pairs}
+                  clinicLabel={t("valid.tableClinic")}
+                  appLabel={t("valid.tableApp")}
+                />
               </div>
             </section>
 

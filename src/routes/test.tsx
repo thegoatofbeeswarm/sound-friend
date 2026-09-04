@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SiteNav } from "@/components/SiteNav";
 import { NoiseMeter } from "@/components/NoiseMeter";
-import { Audiogram } from "@/components/Audiogram";
+import { Audiogram } from "@/components/charts/lazy";
 import { ScreeningQuality } from "@/components/ScreeningQuality";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";

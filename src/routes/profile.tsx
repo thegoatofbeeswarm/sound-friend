@@ -1,15 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Activity, Compass, Ear, Loader2, MessagesSquare, Music, Target } from "lucide-react";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { ScoreTrend } from "@/components/charts/lazy";
 import { SiteNav } from "@/components/SiteNav";
 import { ScoreRing } from "@/components/ScoreRing";
 import { Button } from "@/components/ui/button";
@@ -194,21 +186,7 @@ function ProfilePage() {
                         : t("trend.changeDown").replace("{n}", String(Math.abs(trendChange)))}
                   </p>
                   <div className="mt-4 h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={timeline} margin={{ top: 8, right: 12, bottom: 8, left: -12 }}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                        <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                        <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
-                        <Tooltip formatter={(v) => [`${v}`, t("trend.score")]} />
-                        <Line
-                          type="monotone"
-                          dataKey="score"
-                          stroke="hsl(var(--signal))"
-                          strokeWidth={2}
-                          dot={{ r: 3 }}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    <ScoreTrend timeline={timeline} scoreLabel={t("trend.score")} />
                   </div>
                 </>
               )}
