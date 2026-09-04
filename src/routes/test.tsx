@@ -74,6 +74,24 @@ function TestPage() {
   };
   const busy = useRef(false);
 
+  /**
+   * Reliability checks woven into the screening:
+   * - catch trials play nothing at all; the honest answer is "nothing".
+   * - repeat trials replay a tone already answered; the answer should match.
+   * Neither feeds the threshold estimate, only the reliability score.
+   */
+  const answered = useRef<{ trial: Trial; heard: boolean }[]>([]);
+  const kind = useRef<"real" | "catch" | "repeat">("real");
+  const expected = useRef<boolean | null>(null);
+  const [rel, setRel] = useState({
+    catchTrials: 0,
+    catchPassed: 0,
+    repeatTrials: 0,
+    repeatAgreed: 0,
+  });
+  const relRef = useRef(rel);
+  relRef.current = rel;
+
   const runTrial = useCallback(async (s: TestState) => {
     const t = nextTrial(s);
     if (!t || isComplete(s)) {
@@ -82,20 +100,66 @@ function TestPage() {
       setPhase("done");
       return;
     }
-    setTrial(t);
+
+    const lastWasSpecial = kind.current !== "real";
+    kind.current = "real";
+    expected.current = null;
+    let shown = t;
+    let silent = false;
+
+    if (!lastWasSpecial && s.trialCount >= 6) {
+      const r = relRef.current;
+      if (r.catchTrials < 3 && Math.random() < 0.13) {
+        kind.current = "catch";
+        silent = true;
+      } else if (r.repeatTrials < 3 && answered.current.length >= 4 && Math.random() < 0.13) {
+        const prior = answered.current[Math.floor(Math.random() * answered.current.length)];
+        if (prior) {
+          kind.current = "repeat";
+          expected.current = prior.heard;
+          shown = prior.trial;
+        }
+      }
+    }
+
+    setTrial(shown);
     setPlaying(true);
     // Random pre-delay so responses reflect hearing, not rhythm.
     await new Promise((r) => setTimeout(r, 400 + Math.random() * 900));
-    await playTone(t.frequency, t.levelDb, t.ear);
+    if (silent) {
+      // Nothing plays: the same wait as a tone, so it feels identical.
+      await new Promise((r) => setTimeout(r, 900));
+    } else {
+      await playTone(shown.frequency, shown.levelDb, shown.ear);
+    }
     setPlaying(false);
   }, []);
 
   async function respond(heard: boolean) {
     if (!trial || busy.current) return;
     busy.current = true;
-    const next = applyResponse(state, trial, heard);
-    setState(next);
-    await runTrial(next);
+
+    if (kind.current === "catch") {
+      setRel((r) => ({
+        ...r,
+        catchTrials: r.catchTrials + 1,
+        catchPassed: r.catchPassed + (heard ? 0 : 1),
+      }));
+      await runTrial(state);
+    } else if (kind.current === "repeat") {
+      const agreed = heard === expected.current;
+      setRel((r) => ({
+        ...r,
+        repeatTrials: r.repeatTrials + 1,
+        repeatAgreed: r.repeatAgreed + (agreed ? 1 : 0),
+      }));
+      await runTrial(state);
+    } else {
+      answered.current = [...answered.current.slice(-19), { trial, heard }];
+      const next = applyResponse(state, trial, heard);
+      setState(next);
+      await runTrial(next);
+    }
     busy.current = false;
   }
 
@@ -104,11 +168,16 @@ function TestPage() {
     setDeviceCalibration(getDevice(device).calibrationOffsetDb);
     await unlockAudio();
     const fresh = createTestState();
+    answered.current = [];
+    kind.current = "real";
+    expected.current = null;
+    setRel({ catchTrials: 0, catchPassed: 0, repeatTrials: 0, repeatAgreed: 0 });
     setState(fresh);
     setFinal(null);
     setPhase("running");
     await runTrial(fresh);
   }
+
 
   const saveResults = useCallback(async () => {
     if (!final || !user) return;
