@@ -25,15 +25,15 @@ export const Route = createFileRoute("/science")({
 
 const topicGroups = [
   {
-    label: "Understand the test",
+    labelKey: "sci.group.test",
     links: [scienceLinks.howTestsWork, scienceLinks.audiogram, scienceLinks.thresholds],
   },
   {
-    label: "Understand the method",
+    labelKey: "sci.group.method",
     links: [scienceLinks.bayesian, scienceLinks.headphones],
   },
   {
-    label: "Protect your hearing",
+    labelKey: "sci.group.protect",
     links: [scienceLinks.prevention],
   },
 ];
