@@ -976,7 +976,89 @@ export const TRAINING_MODES: TrainingMode[] = [
       };
     },
   },
+  /* ---------------- real-world scenes ---------------- */
+  {
+    id: "restaurant",
+    label: "Restaurant table",
+    blurb: "Catch an order across a busy table: voices, clatter and all.",
+    skill: "Speech in a crowded room",
+    icon: "utensils",
+    needsSpeech: true,
+    makeRound: (level) => {
+      const item = pickFresh("scene-restaurant", RESTAURANT_SCENES);
+      const babble = 0.03 + level * 0.026;
+      const voice = Math.max(0.14, 1 - level * 0.08);
+      const rate = 0.98 + Math.max(0, level - 3) * 0.07;
+      return {
+        prompt: item.question,
+        options: shuffle(item.options).map((o) => ({ id: o, label: o })),
+        answerId: item.answer,
+        play: async () => {
+          await warmUpSpeech();
+          const stop = await startBabble(babble);
+          void noiseBurst({ ms: 220, type: "highpass", freq: 4200, q: 0.8, gain: 0.02 + level * 0.006 });
+          await wait(520);
+          await speak(item.text, rate, voice);
+          await wait(250);
+          stop();
+        },
+      };
+    },
+  },
+  {
+    id: "street",
+    label: "Street corner",
+    blurb: "Follow directions over real traffic before the light changes.",
+    skill: "Speech in low-frequency noise",
+    icon: "car",
+    needsSpeech: true,
+    makeRound: (level) => {
+      const item = pickFresh("scene-street", STREET_SCENES);
+      const traffic = 0.025 + level * 0.024;
+      const voice = Math.max(0.16, 1 - level * 0.075);
+      const rate = 1 + Math.max(0, level - 3) * 0.07;
+      return {
+        prompt: item.question,
+        options: shuffle(item.options).map((o) => ({ id: o, label: o })),
+        answerId: item.answer,
+        play: async () => {
+          await warmUpSpeech();
+          const stop = await startLoop("/sounds/traffic.ogg", traffic);
+          await wait(520);
+          await speak(item.text, rate, voice);
+          await wait(250);
+          stop();
+        },
+      };
+    },
+  },
+  {
+    id: "phone-call",
+    label: "Phone call",
+    blurb: "A thin, hissy line with no lips to read — pure listening.",
+    skill: "Degraded-channel speech",
+    icon: "phone",
+    needsSpeech: true,
+    makeRound: (level) => {
+      const item = pickFresh("scene-phone", PHONE_SCENES);
+      const voice = Math.max(0.18, 0.9 - level * 0.07);
+      const rate = 1.02 + Math.max(0, level - 2) * 0.08;
+      const hiss = 0.012 + level * 0.009;
+      return {
+        prompt: item.question,
+        options: shuffle(item.options).map((o) => ({ id: o, label: o })),
+        answerId: item.answer,
+        play: async () => {
+          await warmUpSpeech();
+          void noiseBurst({ ms: 2600, type: "bandpass", freq: 2200, q: 0.7, gain: hiss });
+          await wait(250);
+          await speak(item.text, rate, voice);
+        },
+      };
+    },
+  },
 ];
+
 
 
 export function modeById(id: string): TrainingMode {
