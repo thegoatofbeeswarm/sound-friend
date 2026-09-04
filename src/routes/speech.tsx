@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Delete, Headphones, Loader2, MessagesSquare, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ const NOISE_IDS = Object.keys(NOISE_TRACKS) as NoiseId[];
 
 function SpeechPage() {
   const { user, loading } = useAuth();
+  const queryClient = useQueryClient();
   const { t } = useI18n();
   const navigate = useNavigate();
 
@@ -126,8 +128,9 @@ function SpeechPage() {
       toast.error(t("sin.saveFail"));
       return;
     }
+    void queryClient.invalidateQueries();
     toast.success(t("sin.saved"));
-  }, [final, user, noise, device, t]);
+  }, [final, user, noise, device, t, queryClient]);
 
   useEffect(() => {
     if (phase === "done" && final && user) void saveResult();
