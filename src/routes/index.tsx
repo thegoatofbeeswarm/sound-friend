@@ -100,6 +100,9 @@ function Index() {
               <Link to="/test">{t("home.ctaTest")}</Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
+              <Link to="/profile">{t("home.ctaProfile")}</Link>
+            </Button>
+            <Button asChild size="lg" variant="secondary">
               <Link to="/speech">{t("home.ctaSpeech")}</Link>
             </Button>
             <Button asChild size="lg" variant="secondary">

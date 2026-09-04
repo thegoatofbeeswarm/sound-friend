@@ -119,7 +119,7 @@ export function bandOf(score: number): "strong" | "typical" | "watch" | "low" {
 }
 
 /** Where to send the user to improve a given dimension. */
-export const DIMENSION_ACTION: Record<DimensionId, { to: string; labelKey: string }> = {
+export const DIMENSION_ACTION: Record<DimensionId, { to: "/test" | "/speech" | "/train"; labelKey: string }> = {
   sensitivity: { to: "/test", labelKey: "profile.act.tone" },
   speech: { to: "/speech", labelKey: "profile.act.speech" },
   discrimination: { to: "/train", labelKey: "profile.act.train" },

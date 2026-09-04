@@ -19,6 +19,7 @@ import { Route as HearingLossPreventionRouteImport } from './routes/hearing-loss
 import { Route as HearingThresholdsRouteImport } from './routes/hearing-thresholds'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as HowOnlineHearingTestsWorkRouteImport } from './routes/how-online-hearing-tests-work'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as RisksRouteImport } from './routes/risks'
 import { Route as ScienceRouteImport } from './routes/science'
@@ -82,6 +83,11 @@ const HowOnlineHearingTestsWorkRoute =
     path: '/how-online-hearing-tests-work',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportRoute = ReportRouteImport.update({
   id: '/report',
   path: '/report',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/hearing-thresholds': typeof HearingThresholdsRoute
   '/history': typeof HistoryRoute
   '/how-online-hearing-tests-work': typeof HowOnlineHearingTestsWorkRoute
+  '/profile': typeof ProfileRoute
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/hearing-thresholds': typeof HearingThresholdsRoute
   '/history': typeof HistoryRoute
   '/how-online-hearing-tests-work': typeof HowOnlineHearingTestsWorkRoute
+  '/profile': typeof ProfileRoute
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/hearing-thresholds': typeof HearingThresholdsRoute
   '/history': typeof HistoryRoute
   '/how-online-hearing-tests-work': typeof HowOnlineHearingTestsWorkRoute
+  '/profile': typeof ProfileRoute
   '/report': typeof ReportRoute
   '/risks': typeof RisksRoute
   '/science': typeof ScienceRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/hearing-thresholds'
     | '/history'
     | '/how-online-hearing-tests-work'
+    | '/profile'
     | '/report'
     | '/risks'
     | '/science'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/hearing-thresholds'
     | '/history'
     | '/how-online-hearing-tests-work'
+    | '/profile'
     | '/report'
     | '/risks'
     | '/science'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/hearing-thresholds'
     | '/history'
     | '/how-online-hearing-tests-work'
+    | '/profile'
     | '/report'
     | '/risks'
     | '/science'
@@ -280,6 +292,7 @@ export interface RootRouteChildren {
   HearingThresholdsRoute: typeof HearingThresholdsRoute
   HistoryRoute: typeof HistoryRoute
   HowOnlineHearingTestsWorkRoute: typeof HowOnlineHearingTestsWorkRoute
+  ProfileRoute: typeof ProfileRoute
   ReportRoute: typeof ReportRoute
   RisksRoute: typeof RisksRoute
   ScienceRoute: typeof ScienceRoute
@@ -362,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/how-online-hearing-tests-work'
       fullPath: '/how-online-hearing-tests-work'
       preLoaderRoute: typeof HowOnlineHearingTestsWorkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/report': {
@@ -448,6 +468,7 @@ const rootRouteChildren: RootRouteChildren = {
   HearingThresholdsRoute: HearingThresholdsRoute,
   HistoryRoute: HistoryRoute,
   HowOnlineHearingTestsWorkRoute: HowOnlineHearingTestsWorkRoute,
+  ProfileRoute: ProfileRoute,
   ReportRoute: ReportRoute,
   RisksRoute: RisksRoute,
   ScienceRoute: ScienceRoute,
