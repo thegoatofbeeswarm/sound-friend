@@ -170,6 +170,7 @@ import { profilePage } from "@/lib/i18n-dicts/profile";
 import { speechPage } from "@/lib/i18n-dicts/speech";
 import { planPack } from "@/lib/i18n-dicts/plan";
 import { loopPack } from "@/lib/i18n-dicts/loop";
+import { navPack } from "@/lib/i18n-dicts/nav";
 
 export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
 
@@ -189,6 +190,7 @@ const packs: Dict[] = [
   profilePage,
   planPack,
   loopPack,
+  navPack,
 ];
 
 
