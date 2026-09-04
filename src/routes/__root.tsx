@@ -18,6 +18,7 @@ import { CoachRail } from "@/components/CoachRail";
 import { RouteProgress } from "@/components/RouteProgress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { initNativeShell } from "@/lib/native";
+import { AuthProvider } from "@/hooks/useAuth";
 
 function NotFoundComponent() {
   return (
@@ -147,6 +148,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <I18nProvider>
+          <AuthProvider>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <RouteProgress />
           <div key={pathname} className="page-enter">
@@ -154,6 +156,7 @@ function RootComponent() {
           </div>
           <CoachRail />
           <Toaster position="top-center" />
+          </AuthProvider>
         </I18nProvider>
       </ThemeProvider>
     </QueryClientProvider>
