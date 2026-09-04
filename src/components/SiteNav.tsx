@@ -21,6 +21,7 @@ export function SiteNav() {
   const links = [
     { to: "/test" as const, label: t("nav.test") },
     { to: "/speech" as const, label: t("nav.speech") },
+    { to: "/profile" as const, label: t("nav.profile") },
     { to: "/train" as const, label: t("nav.train") },
     { to: "/risks" as const, label: t("nav.risks") },
     { to: "/data" as const, label: t("nav.data") },
@@ -55,6 +56,13 @@ export function SiteNav() {
               activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
             >
               {t("nav.speech")}
+            </Link>
+            <Link
+              to="/profile"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
+              {t("nav.profile")}
             </Link>
             <Link
               to="/train"
