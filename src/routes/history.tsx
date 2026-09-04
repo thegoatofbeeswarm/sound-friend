@@ -34,16 +34,16 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
-      { title: "Your Hearing | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
+      { title: "Your Hearing | Audiomaxxer- Train your listening skills" },
       {
         name: "description",
         content:
-          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
+          "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
       },
-      { property: "og:title", content: "Your Hearing | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
+      { property: "og:title", content: "Your Hearing | Audiomaxxer- Train your listening skills" },
       {
         property: "og:description",
-        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
+        content: "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
