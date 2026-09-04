@@ -13,6 +13,8 @@ import {
 import { SiteNav } from "@/components/SiteNav";
 import { ExampleProfile } from "@/components/ExampleProfile";
 import { HowItWorks } from "@/components/HowItWorks";
+import { SoundwaveGlow } from "@/components/SoundwaveGlow";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,8 +38,16 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const heroCards = [
+  { key: "profile.dim.speech", value: 72 },
+  { key: "profile.dim.attention", value: 91 },
+  { key: "profile.dim.sensitivity", value: 84 },
+] as const;
+
 const pillars = [
   { icon: Brain, title: "pillar.adaptive.title", body: "pillar.adaptive.body" },
+
+
   { icon: Volume2, title: "pillar.prefs.title", body: "pillar.prefs.body" },
   { icon: Activity, title: "pillar.env.title", body: "pillar.env.body" },
   { icon: Globe2, title: "pillar.access.title", body: "pillar.access.body" },
@@ -85,30 +95,62 @@ function Index() {
     <div className="min-h-screen">
       <SiteNav />
 
-      <section className="hero-surface border-b border-border/60">
-        <div className="mx-auto max-w-6xl px-5 py-24">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs text-muted-foreground">
-            <Waves className="h-3.5 w-3.5 text-signal" /> {t("home.badge")}
-          </span>
-          <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[1.05] md:text-6xl">
-            {t("home.title1")} {"\u00a0"}
-            <span className="signal-text">{t("home.title2")}</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">{t("home.lead")}</p>
-          <div className="mt-9 flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link to="/profile">{t("home.ctaProfile")}</Link>
-            </Button>
-            <Button asChild size="lg" variant="secondary">
-              <Link to="/test">{t("home.ctaTest")}</Link>
-            </Button>
-            <Button asChild size="lg" variant="secondary">
-              <Link to="/train">{t("nav.train")}</Link>
-            </Button>
+      <section className="night-surface border-b border-border/60">
+        <SoundwaveGlow />
+        <div className="mx-auto max-w-6xl px-5 py-24 md:py-32">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-night-border bg-white/5 px-3 py-1 text-xs text-night-muted backdrop-blur">
+              <Waves className="h-3.5 w-3.5 text-night-accent" /> {t("home.badge")}
+            </span>
+            <h1 className="mt-7 text-balance text-5xl font-semibold leading-[1.03] tracking-tight md:text-6xl">
+              {t("home.title1")}{" "}
+              <span className="bg-gradient-to-r from-[oklch(0.86_0.1_200)] via-[oklch(0.8_0.13_230)] to-[oklch(0.75_0.14_290)] bg-clip-text text-transparent">
+                {t("home.title2")}
+              </span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-night-muted">{t("home.lead")}</p>
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
+              <Button asChild size="lg">
+                <Link to="/profile">{t("home.ctaProfile")}</Link>
+              </Button>
+              <Link
+                to="/test"
+                className="glass-panel inline-flex h-11 items-center rounded-xl px-6 text-sm font-medium text-night-foreground transition-colors hover:bg-white/10"
+              >
+                {t("home.ctaTest")}
+              </Link>
+              <Link
+                to="/train"
+                className="glass-panel inline-flex h-11 items-center rounded-xl px-6 text-sm font-medium text-night-foreground transition-colors hover:bg-white/10"
+              >
+                {t("nav.train")}
+              </Link>
+            </div>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">{t("home.disclaimer")}</p>
+
+          <div className="mt-16 grid gap-4 sm:grid-cols-3">
+            {heroCards.map((card, i) => (
+              <div
+                key={card.key}
+                className="float-card glass-panel rounded-2xl p-5 text-left"
+                style={{ animationDelay: `${i * 1.1}s` }}
+              >
+                <p className="text-xs uppercase tracking-wide text-night-muted">{t(card.key)}</p>
+                <p className="mt-3 font-display text-4xl font-semibold text-night-foreground">{card.value}</p>
+                <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[oklch(0.8_0.13_200)] to-[oklch(0.72_0.15_285)]"
+                    style={{ width: `${card.value}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-10 text-center text-xs text-night-muted">{t("home.disclaimer")}</p>
         </div>
       </section>
+
 
       <ExampleProfile />
 

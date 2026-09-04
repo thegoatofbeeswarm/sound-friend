@@ -11,8 +11,10 @@ import {
   YAxis,
 } from "recharts";
 import { SiteNav } from "@/components/SiteNav";
+import { ScoreRing } from "@/components/ScoreRing";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
@@ -65,6 +67,15 @@ function bandClass(score: number | null) {
   if (band === "watch") return "text-caution";
   return "text-danger";
 }
+
+function toneOf(score: number | null): "accent" | "caution" | "danger" | "muted" {
+  if (score == null) return "muted";
+  const band = bandOf(score);
+  if (band === "watch") return "caution";
+  if (band === "low") return "danger";
+  return "accent";
+}
+
 
 function DimensionCard({ dim }: { dim: Dimension }) {
   const { t } = useI18n();
@@ -203,43 +214,64 @@ function ProfilePage() {
               )}
             </section>
 
-            <section className="mt-6 grid gap-5 md:grid-cols-2">
-              <div className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {t("profile.overall")}
-                </p>
-                {overall == null ? (
-                  <p className="mt-3 text-sm text-muted-foreground">{t("profile.overallEmpty")}</p>
-                ) : (
-                  <>
-                    <p className={`mt-2 font-display text-6xl font-semibold ${bandClass(overall)}`}>
-                      {overall}
-                    </p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {t(`profile.band.${bandOf(overall)}`)}
-                    </p>
-                  </>
-                )}
+            <section className="relative mt-6 overflow-hidden rounded-3xl border border-border/70 bg-card/70 p-6 shadow-card md:p-10">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full opacity-40 blur-3xl"
+                style={{ background: "radial-gradient(circle, var(--signal), transparent 70%)" }}
+              />
+              <div className="relative grid gap-10 lg:grid-cols-[auto_1fr] lg:items-center">
+                <div className="flex flex-col items-center">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    {t("profile.overall")}
+                  </p>
+                  <div className="mt-4">
+                    <ScoreRing value={overall} size={220} stroke={12} tone={toneOf(overall)} />
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {overall == null ? t("profile.overallEmpty") : t(`profile.band.${bandOf(overall)}`)}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
+                  {dims.map((d) => (
+                    <Link
+                      key={d.id}
+                      to={DIMENSION_ACTION[d.id].to}
+                      className="flex flex-col items-center transition-transform hover:-translate-y-1"
+                    >
+                      <ScoreRing value={d.score} size={92} stroke={7} tone={toneOf(d.score)} />
+                      <span className="mt-2 text-center text-xs text-muted-foreground">
+                        {t(`profile.dim.${d.id}`)}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               </div>
-              <div className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-                <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  <Target className="h-4 w-4 text-signal" /> {t("profile.focus")}
+
+              <div className="relative mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border/70 bg-background/60 p-5">
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    <Target className="h-4 w-4 text-signal" /> {t("profile.focus")}
+                  </div>
+                  {weakest ? (
+                    <>
+                      <p className="mt-2 text-2xl font-semibold">{t(`profile.dim.${weakest.id}`)}</p>
+                      <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                        {t("profile.focusBody").replace("{name}", t(`profile.dim.${weakest.id}`))}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-2 text-sm text-muted-foreground">{t("profile.overallEmpty")}</p>
+                  )}
                 </div>
                 {weakest ? (
-                  <>
-                    <p className="mt-2 text-2xl font-semibold">{t(`profile.dim.${weakest.id}`)}</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {t("profile.focusBody").replace("{name}", t(`profile.dim.${weakest.id}`))}
-                    </p>
-                    <Button asChild size="sm" className="mt-4">
-                      <Link to={DIMENSION_ACTION[weakest.id].to}>
-                        {t(DIMENSION_ACTION[weakest.id].labelKey)}
-                      </Link>
-                    </Button>
-                  </>
-                ) : (
-                  <p className="mt-3 text-sm text-muted-foreground">{t("profile.overallEmpty")}</p>
-                )}
+                  <Button asChild size="lg">
+                    <Link to={DIMENSION_ACTION[weakest.id].to}>
+                      {t(DIMENSION_ACTION[weakest.id].labelKey)}
+                    </Link>
+                  </Button>
+                ) : null}
               </div>
             </section>
 
@@ -248,6 +280,7 @@ function ProfilePage() {
                 <DimensionCard key={d.id} dim={d} />
               ))}
             </section>
+
           </>
         )}
 
