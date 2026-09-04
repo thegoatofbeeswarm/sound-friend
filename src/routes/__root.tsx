@@ -149,13 +149,13 @@ function RootComponent() {
       <ThemeProvider>
         <I18nProvider>
           <AuthProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <RouteProgress />
-          <div key={pathname} className="page-enter">
-            <Outlet />
-          </div>
-          <CoachRail />
-          <Toaster position="top-center" />
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <RouteProgress />
+            <div key={pathname} className="page-enter">
+              <Outlet />
+            </div>
+            <CoachRail />
+            <Toaster position="top-center" />
           </AuthProvider>
         </I18nProvider>
       </ThemeProvider>
