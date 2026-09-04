@@ -11,7 +11,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "Only frequency-and-ear pairs visible in both datasets are compared. The sign tells you which result is higher; the absolute value tells you how far apart they are.",
     "data.eq1.title": "Difference at one matched point",
     "data.eq1.detail":
-      "A positive value means the Audiomaxxer threshold is higher (a quieter tone was needed in the Audiomaxxer screening). A negative value means the clinic threshold is higher.",
+      "A positive value means the Audiomaxxer threshold is higher — the tone had to be louder before you responded in the Audiomaxxer screening than in the clinic. A negative value means the clinic threshold is higher.",
     "data.eq2.title": "Mean absolute error (MAE)",
     "data.eq2.detail":
       "MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate.",
@@ -71,14 +71,14 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "device.question": "What are you listening with?",
     "device.desc":
-      "Every headphone has its own frequency response, so the model you pick calibrates both the test tones and your volume ceiling.",
-    "device.calibratedAria": "Calibrated",
-    "device.calibratedNote": "Calibration profile applied.",
+      "Every headphone has its own frequency response, so the model you pick sets which estimated correction profile is applied to the test tones and your volume ceiling.",
+    "device.calibratedAria": "Supported model",
+    "device.calibratedNote": "Estimated correction profile applied.",
     "device.calibratedDetail":
-      "Tones are corrected for the typical response of the {device}, so absolute thresholds are more trustworthy.",
-    "device.uncalibratedNote": "Uncalibrated headphones.",
+      "Tones use an estimated correction for the typical response of the {device}. This is not a calibration, but levels are closer than a generic guess.",
+    "device.uncalibratedNote": "No model profile for these headphones.",
     "device.uncalibratedDetail":
-      "We only assume a generic {hint} response. Results still track relative changes over time, but absolute thresholds may be off by several dB.",
+      "We only assume a generic {hint} response. Results still track relative changes over time, but levels may be off by several dB.",
     "device.peaks": "peaks ~{db} dB",
 
     "how.title": "How Audiomaxxer works",
@@ -125,7 +125,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "只有在两个数据集中都可见的频率与耳别组合才会被比较。正负号表示哪个结果更高；绝对值表示两者相差多少。",
     "data.eq1.title": "单个匹配点的差值",
     "data.eq1.detail":
-      "正值表示 Audiomaxxer 阈值更高（Audiomaxxer 筛查中需要更安静的音调才能听到）。负值表示诊所阈值更高。",
+      "正值表示 Audiomaxxer 阈值更高——在 Audiomaxxer 筛查中，音调必须比诊所测试时更响你才有反应。负值表示诊所阈值更高。",
     "data.eq2.title": "平均绝对误差（MAE）",
     "data.eq2.detail":
       "MAE 汇总了 n 个匹配的耳别-频率点之间的平均绝对差异。它并不能证明任一结果在临床上是准确的。",
@@ -183,13 +183,13 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "noise.scan": "扫描",
 
     "device.question": "你正在使用什么设备聆听？",
-    "device.desc": "每款耳机都有其独特的频率响应，因此你选择的型号会同时校准测试音调和音量上限。",
-    "device.calibratedAria": "已校准",
-    "device.calibratedNote": "已应用校准配置。",
-    "device.calibratedDetail": "音调已根据 {device} 的典型响应进行了校正，因此绝对阈值更可信。",
-    "device.uncalibratedNote": "未校准的耳机。",
+    "device.desc": "每款耳机都有其独特的频率响应，因此你选择的型号决定了对测试音调和音量上限应用哪种估算校正配置。",
+    "device.calibratedAria": "已支持的型号",
+    "device.calibratedNote": "已应用估算校正配置。",
+    "device.calibratedDetail": "音调已按 {device} 的典型响应做了估算校正。这并非真正的校准，但数值比通用估计更接近。",
+    "device.uncalibratedNote": "该耳机没有对应的型号配置。",
     "device.uncalibratedDetail":
-      "我们只能假设一个通用的 {hint} 响应。结果仍能追踪相对变化，但绝对阈值可能存在若干 dB 的偏差。",
+      "我们只能假设一个通用的 {hint} 响应。结果仍能追踪相对变化，但数值可能存在若干 dB 的偏差。",
     "device.peaks": "峰值约 {db} dB",
 
     "how.title": "Audiomaxxer 的工作原理",
@@ -231,7 +231,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "Solo se comparan los pares de frecuencia y oído visibles en ambos conjuntos de datos. El signo indica cuál resultado es más alto; el valor absoluto indica cuán distintos son.",
     "data.eq1.title": "Diferencia en un punto coincidente",
     "data.eq1.detail":
-      "Un valor positivo significa que el umbral de Audiomaxxer es más alto (se necesitó un tono más suave en el cribado de Audiomaxxer). Un valor negativo significa que el umbral de la clínica es más alto.",
+      "Un valor positivo significa que el umbral de Audiomaxxer es más alto: el tono tuvo que sonar más fuerte para que respondieras en el cribado de Audiomaxxer que en la clínica. Un valor negativo significa que el umbral de la clínica es más alto.",
     "data.eq2.title": "Error absoluto medio (MAE)",
     "data.eq2.detail":
       "El MAE resume la separación absoluta promedio en n puntos de oído-frecuencia coincidentes. No prueba que alguno de los resultados sea clínicamente exacto.",
@@ -291,14 +291,14 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "device.question": "¿Con qué estás escuchando?",
     "device.desc":
-      "Cada auricular tiene su propia respuesta en frecuencia, así que el modelo que elijas calibra tanto los tonos de prueba como tu límite de volumen.",
-    "device.calibratedAria": "Calibrado",
-    "device.calibratedNote": "Perfil de calibración aplicado.",
+      "Cada auricular tiene su propia respuesta en frecuencia, así que el modelo que elijas define qué perfil de corrección estimada se aplica a los tonos y a tu límite de volumen.",
+    "device.calibratedAria": "Modelo compatible",
+    "device.calibratedNote": "Perfil de corrección estimada aplicado.",
     "device.calibratedDetail":
-      "Los tonos se corrigen según la respuesta típica del {device}, por lo que los umbrales absolutos son más confiables.",
-    "device.uncalibratedNote": "Auriculares sin calibrar.",
+      "Los tonos usan una corrección estimada según la respuesta típica del {device}. No es una calibración, pero los niveles se acercan más que una suposición genérica.",
+    "device.uncalibratedNote": "Sin perfil de modelo para estos auriculares.",
     "device.uncalibratedDetail":
-      "Solo asumimos una respuesta genérica de {hint}. Los resultados aún siguen los cambios relativos con el tiempo, pero los umbrales absolutos pueden variar varios dB.",
+      "Solo asumimos una respuesta genérica de {hint}. Los resultados aún siguen los cambios relativos con el tiempo, pero los niveles pueden variar varios dB.",
     "device.peaks": "picos ~{db} dB",
 
     "how.title": "Cómo funciona Audiomaxxer",

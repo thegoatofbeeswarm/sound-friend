@@ -5,13 +5,13 @@ export const charts: {
 } = {
   en: {
     "chart.frequencyHz": "Frequency (Hz)",
-    "chart.hearingLevel": "Hearing level (dB HL)",
+    "chart.hearingLevel": "Estimated level (dB, relative)",
     "chart.leftEar": "Left ear",
     "chart.rightEar": "Right ear",
     "chart.hz": "{v} Hz",
-    "chart.dbHl": "{v} dB HL",
+    "chart.dbHl": "{v} dB",
     "chart.audiogramHelp":
-      "Read it like a clinical audiogram: quieter sounds sit at the top, so a line high on the chart means better hearing. Anything below about 20 dB HL is where hearing loss begins.",
+      "Read it like an audiogram: quieter sounds sit at the top, so a line high on the chart means you detected softer tones. These are estimated, device-dependent levels rather than clinical dB HL, so use them to compare your own screenings over time.",
     "chart.accuracy": "Accuracy %",
     "chart.difficulty": "Difficulty reached",
 
@@ -35,7 +35,7 @@ export const charts: {
     "quality.issue.veryNoisy": "Background noise was ~{db} dB — too loud for reliable low-level tones.",
     "quality.issue.noDevice": "No listening device was recorded for this screening.",
     "quality.issue.uncalibrated":
-      "{device} is uncalibrated, so absolute levels may be off by several dB.",
+      "No model profile for {device}, so levels may be off by several dB.",
     "quality.issue.fewTrials": "Only {n} trials were answered, so estimates stayed coarse.",
     "quality.issue.noTrials": "No trials recorded.",
     "quality.issue.lowConfidence": "Average estimate confidence was only {pct}%.",
@@ -43,7 +43,7 @@ export const charts: {
       "At least one frequency never settled — answers there may have been inconsistent.",
     "quality.strength.veryQuiet": "Very quiet room (~{db} dB).",
     "quality.strength.quiet": "Reasonably quiet room (~{db} dB).",
-    "quality.strength.calibrated": "{device} has a calibration profile applied.",
+    "quality.strength.calibrated": "{device} has an estimated correction profile applied.",
     "quality.strength.trials": "{n} trials answered.",
     "quality.strength.confidence": "Average estimate confidence {pct}%.",
     "quality.issue.catchFail": "Reported hearing a tone on {failed} of {total} silent catch trials.",
@@ -54,13 +54,13 @@ export const charts: {
   },
   zh: {
     "chart.frequencyHz": "频率（Hz）",
-    "chart.hearingLevel": "听力级（dB HL）",
+    "chart.hearingLevel": "估算音量（dB，相对值）",
     "chart.leftEar": "左耳",
     "chart.rightEar": "右耳",
     "chart.hz": "{v} Hz",
-    "chart.dbHl": "{v} dB HL",
+    "chart.dbHl": "{v} dB",
     "chart.audiogramHelp":
-      "可以像临床听力图那样阅读：越安静的声音位置越靠上，因此曲线越高代表听力越好。大约 20 dB HL 以下即为听力损失的起点。",
+      "可以像听力图那样阅读：越安静的声音位置越靠上，因此曲线越高表示你能听到更轻的声音。这些是估算的、与设备相关的数值，而非临床 dB HL，请用它们来比较你自己历次筛查的变化。",
     "chart.accuracy": "正确率 %",
     "chart.difficulty": "达到的难度",
 
@@ -79,14 +79,14 @@ export const charts: {
     "quality.issue.noisy": "背景噪音约为 {db} dB，可能会掩盖最轻的声音。",
     "quality.issue.veryNoisy": "背景噪音约为 {db} dB —— 对低音量测试来说过于嘈杂。",
     "quality.issue.noDevice": "本次筛查未记录所使用的听音设备。",
-    "quality.issue.uncalibrated": "{device} 未校准，绝对音量可能相差数分贝。",
+    "quality.issue.uncalibrated": "{device} 没有型号配置，音量数值可能相差数分贝。",
     "quality.issue.fewTrials": "仅完成 {n} 次测试，估计结果较为粗略。",
     "quality.issue.noTrials": "未记录任何测试。",
     "quality.issue.lowConfidence": "平均估计置信度仅为 {pct}%。",
     "quality.issue.unsettled": "至少有一个频率始终未收敛 —— 该处的回答可能不够一致。",
     "quality.strength.veryQuiet": "环境非常安静（约 {db} dB）。",
     "quality.strength.quiet": "环境比较安静（约 {db} dB）。",
-    "quality.strength.calibrated": "{device} 已应用校准配置。",
+    "quality.strength.calibrated": "{device} 已应用估算校正配置。",
     "quality.strength.trials": "已完成 {n} 次测试。",
     "quality.strength.confidence": "平均估计置信度为 {pct}%。",
     "quality.issue.catchFail": "在 {total} 次静音测验中，有 {failed} 次报告听到了声音。",
@@ -97,13 +97,13 @@ export const charts: {
   },
   es: {
     "chart.frequencyHz": "Frecuencia (Hz)",
-    "chart.hearingLevel": "Nivel auditivo (dB HL)",
+    "chart.hearingLevel": "Nivel estimado (dB, relativo)",
     "chart.leftEar": "Oído izquierdo",
     "chart.rightEar": "Oído derecho",
     "chart.hz": "{v} Hz",
-    "chart.dbHl": "{v} dB HL",
+    "chart.dbHl": "{v} dB",
     "chart.audiogramHelp":
-      "Léelo como un audiograma clínico: los sonidos más suaves están arriba, así que una línea alta indica mejor audición. Por debajo de unos 20 dB HL empieza la pérdida auditiva.",
+      "Léelo como un audiograma: los sonidos más suaves están arriba, así que una línea alta indica que detectaste tonos más suaves. Son niveles estimados y dependientes del dispositivo, no dB HL clínicos, así que úsalos para comparar tus propios cribados a lo largo del tiempo.",
     "chart.accuracy": "Precisión %",
     "chart.difficulty": "Dificultad alcanzada",
 
@@ -128,7 +128,7 @@ export const charts: {
       "El ruido de fondo era de ~{db} dB: demasiado alto para tonos de bajo nivel fiables.",
     "quality.issue.noDevice": "No se registró ningún dispositivo de escucha para este cribado.",
     "quality.issue.uncalibrated":
-      "{device} no está calibrado, así que los niveles absolutos pueden desviarse varios dB.",
+      "{device} no tiene perfil de modelo, así que los niveles pueden desviarse varios dB.",
     "quality.issue.fewTrials": "Solo se respondieron {n} ensayos, así que las estimaciones son aproximadas.",
     "quality.issue.noTrials": "No se registraron ensayos.",
     "quality.issue.lowConfidence": "La confianza media de la estimación fue solo del {pct}%.",
@@ -136,7 +136,7 @@ export const charts: {
       "Al menos una frecuencia nunca se estabilizó: las respuestas allí pueden haber sido inconsistentes.",
     "quality.strength.veryQuiet": "Sala muy silenciosa (~{db} dB).",
     "quality.strength.quiet": "Sala razonablemente silenciosa (~{db} dB).",
-    "quality.strength.calibrated": "{device} tiene un perfil de calibración aplicado.",
+    "quality.strength.calibrated": "{device} tiene un perfil de corrección estimada aplicado.",
     "quality.strength.trials": "{n} ensayos respondidos.",
     "quality.strength.confidence": "Confianza media de la estimación {pct}%.",
     "quality.issue.catchFail": "Dijiste oír un tono en {failed} de {total} ensayos silenciosos de control.",

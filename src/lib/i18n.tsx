@@ -22,11 +22,11 @@ const en = {
   "nav.light": "Light",
   "nav.dark": "Dark",
 
-  "home.badge": "Adaptive audiology for everyone",
+  "home.badge": "A listening profile, not just a hearing test",
   "home.title1": "Protect your hearing.",
-  "home.title2": "Spread the awareness.",
+  "home.title2": "Hear smarter, not louder.",
   "home.lead":
-    "Studies show that 12~17% of teens are affected by hearing-related problems. To raise awareness of screening and train your hearing, use Audiomaxxer, an efficient closed-loop training platform.",
+    "Studies show that 12~17% of teens are affected by hearing-related problems. Audiomaxxer builds a five-part listening profile — sensitivity, speech in noise, discrimination, attention and memory — then trains your weakest skill and retests it.",
   "home.ctaTest": "Start a screening",
   "home.ctaHistory": "See saved results",
   "home.disclaimer":
@@ -73,11 +73,11 @@ const zh: Record<TranslationKey, string> = {
   "nav.light": "浅色",
   "nav.dark": "深色",
 
-  "home.badge": "人人可用的自适应听力学",
+  "home.badge": "不只是听力测试，而是一份聆听档案",
   "home.title1": "保护你的听力。",
-  "home.title2": "传播这份意识。",
+  "home.title2": "听得更聪明，而不是更大声。",
   "home.lead":
-    "研究显示，12%~17% 的青少年受到听力相关问题的影响。为了提高筛查意识并训练你的听力，请使用 Audiomaxxer——全球首个闭环听力训练系统。",
+    "研究显示，12%~17% 的青少年受到听力相关问题的影响。Audiomaxxer 会建立由五部分组成的聆听档案——敏感度、噪声中的言语、辨别力、注意力与记忆——然后训练你最弱的技能并重新测量。",
   "home.ctaTest": "开始筛查",
   "home.ctaHistory": "查看已保存结果",
   "home.disclaimer":
@@ -118,11 +118,11 @@ const es: Record<TranslationKey, string> = {
   "nav.light": "Claro",
   "nav.dark": "Oscuro",
 
-  "home.badge": "Audiología adaptativa para todos",
+  "home.badge": "Un perfil auditivo, no solo una prueba de oído",
   "home.title1": "Protege tu audición.",
-  "home.title2": "Difunde la conciencia.",
+  "home.title2": "Oye mejor, no más fuerte.",
   "home.lead":
-    "Los estudios muestran que entre el 12 % y el 17 % de los adolescentes tienen problemas relacionados con la audición. Para fomentar el cribado auditivo y entrenar tu oído, usa Audiomaxxer, el primer sistema de entrenamiento de circuito cerrado del mundo.",
+    "Los estudios muestran que entre el 12 % y el 17 % de los adolescentes tienen problemas relacionados con la audición. Audiomaxxer crea un perfil auditivo de cinco partes —sensibilidad, habla con ruido, discriminación, atención y memoria—, entrena tu punto más débil y lo vuelve a medir.",
   "home.ctaTest": "Comenzar un cribado",
   "home.ctaHistory": "Ver resultados guardados",
   "home.disclaimer":

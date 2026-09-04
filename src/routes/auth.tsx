@@ -15,16 +15,16 @@ const PASSWORD_RULE = /^(?=.*[^A-Za-z0-9]).{8,}$/;
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
+      { title: "Sign in | Audiomaxxer- Train your listening skills" },
       {
         name: "description",
         content:
-          "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
+          "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
       },
-      { property: "og:title", content: "Sign in | Audiomaxxer- Check on and Improve your hearing with Audiomaxxer" },
+      { property: "og:title", content: "Sign in | Audiomaxxer- Train your listening skills" },
       {
         property: "og:description",
-        content: "Take a quick hearing screening and know your results. Improve your hearing with custom tests.",
+        content: "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

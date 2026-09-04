@@ -124,13 +124,13 @@ export function scoreScreening(input: QualityInput): QualityResult {
     score -= 12;
     issue("No listening device was recorded for this screening.", "quality.issue.noDevice");
   } else if (device.calibrated) {
-    strength(`${device.label} has a calibration profile applied.`, "quality.strength.calibrated", {
+    strength(`${device.label} has an estimated correction profile applied.`, "quality.strength.calibrated", {
       device: device.label,
     });
   } else {
     score -= 18;
     issue(
-      `${device.label} is uncalibrated, so absolute levels may be off by several dB.`,
+      `No model profile for ${device.label}, so levels may be off by several dB.`,
       "quality.issue.uncalibrated",
       { device: device.label },
     );
