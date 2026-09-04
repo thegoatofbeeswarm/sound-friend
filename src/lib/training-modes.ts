@@ -181,6 +181,7 @@ async function noiseBurst(opts: {
   pan?: number;
 }): Promise<void> {
   const ctx = await getAudioContext();
+  await unlockAudio();
   const dur = opts.ms / 1000;
   const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
   const buf = ctx.createBuffer(1, len, ctx.sampleRate);
@@ -194,7 +195,8 @@ async function noiseBurst(opts: {
   filter.frequency.value = opts.freq;
   filter.Q.value = opts.q;
   const g = ctx.createGain();
-  const now = ctx.currentTime + 0.02;
+  const now = ctx.currentTime + 0.08;
+
   g.gain.setValueAtTime(0.0001, now);
   g.gain.exponentialRampToValueAtTime(Math.max(0.0005, opts.gain), now + 0.02);
   g.gain.setValueAtTime(Math.max(0.0005, opts.gain), now + dur - 0.05);
