@@ -3,8 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { FlaskConical, Loader2 } from "lucide-react";
 import {
   CartesianGrid,
-  Line,
-  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Scatter,
@@ -265,6 +263,3 @@ function ValidationPage() {
     </div>
   );
 }
-
-/** Unused placeholder keeps recharts' line chart tree-shaken consistently. */
-export const _charts = { LineChart, Line };
