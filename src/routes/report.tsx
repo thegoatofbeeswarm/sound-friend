@@ -20,7 +20,6 @@ import {
   formatMinutes,
   lastSevenDays,
   loadExposure,
-  STATUS_LABEL,
   statusForDose,
   weeklyTrendPercent,
   type ExposureEntry,
