@@ -13,6 +13,8 @@ import {
 import { SiteNav } from "@/components/SiteNav";
 import { ExampleProfile } from "@/components/ExampleProfile";
 import { HowItWorks } from "@/components/HowItWorks";
+import { SoundwaveGlow } from "@/components/SoundwaveGlow";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,7 +39,15 @@ export const Route = createFileRoute("/")({
 });
 
 const pillars = [
+const heroCards = [
+  { key: "profile.dim.speech", value: 72 },
+  { key: "profile.dim.attention", value: 91 },
+  { key: "profile.dim.sensitivity", value: 84 },
+] as const;
+
+const pillars = [
   { icon: Brain, title: "pillar.adaptive.title", body: "pillar.adaptive.body" },
+
   { icon: Volume2, title: "pillar.prefs.title", body: "pillar.prefs.body" },
   { icon: Activity, title: "pillar.env.title", body: "pillar.env.body" },
   { icon: Globe2, title: "pillar.access.title", body: "pillar.access.body" },
