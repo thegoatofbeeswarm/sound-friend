@@ -10,6 +10,6 @@
 - [x] Speech-in-noise (digits-in-noise) test at /speech: SNR threshold + listening score, saved to history
 - [x] Listening Profile at /profile (5 dimensions, weakest-skill focus, homepage CTA)
 - [x] Reliability: silent catch trials + repeat-tone consistency folded into the screening quality score
-- [ ] Wording cleanup: "train listening skills", "estimated headphone profiles", drop dB HL claims, fix clinic-comparison sentence
-- [ ] Clinic audiogram -> personalized training plan
+- [x] Wording cleanup: "train listening skills", "estimated headphone profiles", drop dB HL claims, fix clinic-comparison sentence
+- [x] Clinic audiogram -> personalized training plan (plan card on /train)
 - [ ] Transfer testing on unseen material
