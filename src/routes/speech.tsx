@@ -56,6 +56,7 @@ const NOISE_IDS = Object.keys(NOISE_TRACKS) as NoiseId[];
 
 function SpeechPage() {
   const { user, loading } = useAuth();
+  const queryClient = useQueryClient();
   const { t } = useI18n();
   const navigate = useNavigate();
 

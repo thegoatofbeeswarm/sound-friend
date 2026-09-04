@@ -57,6 +57,7 @@ type Phase = "intro" | "running" | "done";
 
 function TestPage() {
   const { user, loading } = useAuth();
+  const queryClient = useQueryClient();
   const { t } = useI18n();
   const navigate = useNavigate();
   const [phase, setPhase] = useState<Phase>("intro");
