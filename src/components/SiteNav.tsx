@@ -28,6 +28,7 @@ export function SiteNav() {
     { to: "/report" as const, label: t("nav.report") },
     { to: "/science" as const, label: t("nav.science") },
     { to: "/history" as const, label: t("nav.history") },
+    { to: "/validation" as const, label: t("nav.validation") },
     { to: "/team" as const, label: t("nav.team") },
   ];
 
