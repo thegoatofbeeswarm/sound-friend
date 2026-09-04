@@ -94,11 +94,83 @@ export function presentationGain(levelDb: number): number {
   return Math.max(0.0008, MAX_GAIN * Math.pow(10, (clamped - 90) / 22));
 }
 
+/* ------------------------------------------------------------------ */
+/* Real recordings (public-domain / CC0, bundled in /public/sounds)     */
+/* ------------------------------------------------------------------ */
+
+const SAMPLE_URLS: Partial<Record<SoundId, string>> = {
+  conversation: "/sounds/conversation.ogg",
+  motorcycle: "/sounds/motorcycle.ogg",
+  traffic: "/sounds/traffic.ogg",
+  chainsaw: "/sounds/chainsaw.ogg",
+  rain: "/sounds/rain.ogg",
+};
+
+const sampleCache = new Map<string, Promise<AudioBuffer | null>>();
+
+/** Fetch + decode a bundled recording once, cached for the session. */
+export async function loadSample(url: string): Promise<AudioBuffer | null> {
+  const hit = sampleCache.get(url);
+  if (hit) return hit;
+  const p = (async () => {
+    try {
+      const ctx = await getAudioContext();
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      return await ctx.decodeAudioData(await res.arrayBuffer());
+    } catch {
+      return null;
+    }
+  })();
+  sampleCache.set(url, p);
+  return p;
+}
+
 let activeStop: (() => void) | null = null;
 
 export function stopSoundscape() {
   activeStop?.();
   activeStop = null;
+}
+
+/** Play a chunk of a real recording at a presentation level. */
+async function playSample(
+  url: string,
+  levelDb: number,
+  durationMs: number,
+): Promise<boolean> {
+  const buffer = await loadSample(url);
+  if (!buffer) return false;
+  const ctx = await getAudioContext();
+  const dur = durationMs / 1000;
+  const now = ctx.currentTime + 0.03;
+  const peak = presentationGain(levelDb);
+
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  src.loopStart = 0;
+  src.loopEnd = buffer.duration;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(peak, now + 0.12);
+  g.gain.setValueAtTime(peak, now + Math.max(0.2, dur - 0.2));
+  g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+  src.connect(g).connect(ctx.destination);
+  const offset = Math.random() * Math.max(0, buffer.duration - dur - 0.2);
+  src.start(now, offset);
+  src.stop(now + dur + 0.05);
+
+  activeStop = () => {
+    try {
+      src.stop();
+    } catch {
+      /* already stopped */
+    }
+  };
+  await new Promise((r) => setTimeout(r, durationMs + 80));
+  activeStop = null;
+  return true;
 }
 
 /** Play a soundscape at a presentation level. Resolves when it finishes. */
@@ -108,6 +180,8 @@ export async function playSoundscape(
   durationMs = 2200,
 ): Promise<void> {
   stopSoundscape();
+  const sampleUrl = SAMPLE_URLS[id];
+  if (sampleUrl && (await playSample(sampleUrl, levelDb, durationMs))) return;
   const ctx = await getAudioContext();
   const recipe = RECIPES[id];
   const dur = durationMs / 1000;
@@ -120,6 +194,7 @@ export async function playSoundscape(
   out.gain.setValueAtTime(peak, now + dur - 0.2);
   out.gain.exponentialRampToValueAtTime(0.0001, now + dur);
   out.connect(ctx.destination);
+
 
   const nodes: Array<AudioScheduledSourceNode> = [];
 

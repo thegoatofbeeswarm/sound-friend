@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const PASSWORD_RULE = /^(?=.*[^A-Za-z0-9]).{8,}$/;
+
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -49,6 +51,10 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
+        if (!PASSWORD_RULE.test(password)) {
+          toast.error(t("auth.passwordRule"));
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -56,6 +62,7 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success(t("auth.created"));
+
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -115,10 +122,16 @@ function AuthPage() {
               id="password"
               type="password"
               required
-              minLength={6}
+              minLength={mode === "signup" ? 8 : 6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              aria-describedby={mode === "signup" ? "password-rule" : undefined}
             />
+            {mode === "signup" ? (
+              <p id="password-rule" className="text-xs text-muted-foreground">
+                {t("auth.passwordRule")}
+              </p>
+            ) : null}
           </div>
           <Button type="submit" className="w-full" disabled={busy}>
             {mode === "signin" ? t("auth.signIn") : t("auth.signUp")}

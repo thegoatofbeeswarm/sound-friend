@@ -69,6 +69,14 @@ export function SiteNav() {
             >
               {t("nav.history")}
             </Link>
+            <Link
+              to="/team"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
+              {t("nav.team")}
+            </Link>
+
           </nav>
           <AppSettings />
           {user ? (
