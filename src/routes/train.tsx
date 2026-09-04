@@ -45,6 +45,7 @@ import {
   modeById,
   type ModeId,
   type ModeRound,
+  warmUpSpeech,
 } from "@/lib/training-modes";
 import {
   bestsByMode,
@@ -157,6 +158,8 @@ function TrainPage() {
 
   async function begin(nextMode: ModeId = modeId) {
     await unlockAudio();
+    const mode0 = modeById(nextMode);
+    if (mode0.needsSpeech) await warmUpSpeech();
     saved.current = false;
     setModeId(nextMode);
     const fresh = createTrainer();
