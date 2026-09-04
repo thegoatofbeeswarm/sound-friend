@@ -46,6 +46,10 @@ export const charts: {
     "quality.strength.calibrated": "{device} has a calibration profile applied.",
     "quality.strength.trials": "{n} trials answered.",
     "quality.strength.confidence": "Average estimate confidence {pct}%.",
+    "quality.issue.catchFail": "Reported hearing a tone on {failed} of {total} silent catch trials.",
+    "quality.issue.inconsistent": "Repeated tones got the same answer only {pct}% of the time.",
+    "quality.strength.catchPass": "Passed all {n} silent catch trials.",
+    "quality.strength.consistent": "Answers agreed on {pct}% of repeated tones.",
   },
   zh: {
     "chart.frequencyHz": "频率（Hz）",
@@ -84,6 +88,10 @@ export const charts: {
     "quality.strength.calibrated": "{device} 已应用校准配置。",
     "quality.strength.trials": "已完成 {n} 次测试。",
     "quality.strength.confidence": "平均估计置信度为 {pct}%。",
+    "quality.issue.catchFail": "在 {total} 次静音测验中，有 {failed} 次报告听到了声音。",
+    "quality.issue.inconsistent": "重复播放的音调只有 {pct}% 得到相同回答。",
+    "quality.strength.catchPass": "通过了全部 {n} 次静音测验。",
+    "quality.strength.consistent": "重复音调有 {pct}% 的回答一致。",
   },
   es: {
     "chart.frequencyHz": "Frecuencia (Hz)",
@@ -129,5 +137,9 @@ export const charts: {
     "quality.strength.calibrated": "{device} tiene un perfil de calibración aplicado.",
     "quality.strength.trials": "{n} ensayos respondidos.",
     "quality.strength.confidence": "Confianza media de la estimación {pct}%.",
+    "quality.issue.catchFail": "Dijiste oír un tono en {failed} de {total} ensayos silenciosos de control.",
+    "quality.issue.inconsistent": "Los tonos repetidos recibieron la misma respuesta solo el {pct}% de las veces.",
+    "quality.strength.catchPass": "Superaste los {n} ensayos silenciosos de control.",
+    "quality.strength.consistent": "Las respuestas coincidieron en el {pct}% de los tonos repetidos.",
   },
 };
