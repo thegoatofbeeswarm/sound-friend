@@ -325,6 +325,7 @@ export type Database = {
           duration_sec: number
           end_level: number
           id: string
+          kind: string
           mode: string
           quietest_db: number | null
           rounds: number
@@ -339,6 +340,7 @@ export type Database = {
           duration_sec?: number
           end_level?: number
           id?: string
+          kind?: string
           mode?: string
           quietest_db?: number | null
           rounds?: number
@@ -353,6 +355,7 @@ export type Database = {
           duration_sec?: number
           end_level?: number
           id?: string
+          kind?: string
           mode?: string
           quietest_db?: number | null
           rounds?: number

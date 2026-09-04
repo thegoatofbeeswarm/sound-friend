@@ -12,4 +12,4 @@
 - [x] Reliability: silent catch trials + repeat-tone consistency folded into the screening quality score
 - [x] Wording cleanup: "train listening skills", "estimated headphone profiles", drop dB HL claims, fix clinic-comparison sentence
 - [x] Clinic audiogram -> personalized training plan (plan card on /train)
-- [ ] Transfer testing on unseen material
+- [x] Transfer testing on unseen material

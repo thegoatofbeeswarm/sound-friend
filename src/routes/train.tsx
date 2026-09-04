@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import {
   Award,
   Bell,
+  Car,
+  FlaskConical,
   BellRing,
   Brain,
   Check,
@@ -22,6 +24,8 @@ import {
   Target,
   Trophy,
   Users,
+  Utensils,
+  Phone,
   Volume2,
   Waves,
 } from "lucide-react";
@@ -45,10 +49,17 @@ import {
 import {
   TRAINING_MODES,
   modeById,
+  setBankVariant,
   type ModeId,
   type ModeRound,
   warmUpSpeech,
 } from "@/lib/training-modes";
+import {
+  transferByMode,
+  verdictOf,
+  TRANSFER_ROUNDS,
+  type TransferStat,
+} from "@/lib/transfer";
 import {
   bestsByMode,
   dayStreak,
@@ -103,6 +114,9 @@ const MODE_ICONS = {
   music: Music2,
   users: Users,
   gauge: Gauge,
+  utensils: Utensils,
+  car: Car,
+  phone: Phone,
 } as const;
 
 function TrainPage() {
@@ -115,6 +129,8 @@ function TrainPage() {
   const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
   const [modeId, setModeId] = useState<ModeId>("soundscape");
   const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [kind, setKind] = useState<"train" | "transfer">("train");
+  const [fixedLevel, setFixedLevel] = useState<number | null>(null);
   const saved = useRef(false);
 
   const { data: ceiling } = useQuery({
@@ -198,7 +214,7 @@ function TrainPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("training_sessions")
-        .select("id, created_at, accuracy, end_level, quietest_db, rounds, correct, mode, xp, duration_sec")
+        .select("id, created_at, accuracy, end_level, quietest_db, rounds, correct, mode, xp, duration_sec, kind")
         .order("created_at", { ascending: true });
       if (error) throw error;
       return (data ?? []) as StoredSession[];
@@ -211,6 +227,16 @@ function TrainPage() {
   const week = thisWeek(allSessions);
   const bests = bestsByMode(allSessions);
   const currentMode = modeById(modeId);
+  const roundsTotal = kind === "transfer" ? TRANSFER_ROUNDS : ROUNDS;
+  const transferStats = transferByMode(
+    allSessions.map((row) => ({
+      mode: row.mode,
+      kind: (row as unknown as { kind?: string }).kind ?? "train",
+      accuracy: Number(row.accuracy),
+      end_level: Number(row.end_level),
+      created_at: row.created_at,
+    })),
+  );
   const focus = focusMode(allSessions, TRAINING_MODES.map((mode) => mode.id));
 
   const play = useCallback(async (nextRound: ModeRound) => {
@@ -220,13 +246,17 @@ function TrainPage() {
     setPhase("answer");
   }, []);
 
-  async function begin(nextMode: ModeId = modeId) {
+  async function begin(nextMode: ModeId = modeId, nextKind: "train" | "transfer" = "train", level?: number) {
     await unlockAudio();
     const mode0 = modeById(nextMode);
     if (mode0.needsSpeech) await warmUpSpeech();
     saved.current = false;
+    setKind(nextKind);
+    setFixedLevel(nextKind === "transfer" ? (level ?? 3) : null);
+    // Transfer checks draw only from material training never uses.
+    setBankVariant(nextKind === "transfer" ? "transfer" : "train");
     setModeId(nextMode);
-    const fresh = createTrainer();
+    const fresh = nextKind === "transfer" ? { ...createTrainer(), level: level ?? 3 } : createTrainer();
     const mode = modeById(nextMode);
     setTrainer(fresh);
     setLastCorrect(null);
@@ -245,12 +275,16 @@ function TrainPage() {
       rounds: trainer.rounds + 1,
       correct: trainer.correct + (correct ? 1 : 0),
       streak: correct ? trainer.streak + 1 : 0,
-      level: Math.max(1, Math.min(10, trainer.level + (correct ? (trainer.streak + 1 >= 3 ? 0.9 : 0.5) : -0.8))),
+      // A transfer check stays at one difficulty so the score is comparable.
+      level:
+        kind === "transfer"
+          ? trainer.level
+          : Math.max(1, Math.min(10, trainer.level + (correct ? (trainer.streak + 1 >= 3 ? 0.9 : 0.5) : -0.8))),
       history: [...trainer.history, { round: trainer.rounds + 1, level: trainer.level, correct, levelDb: 0 }],
     };
     setTrainer(next);
     await new Promise((resolve) => setTimeout(resolve, 750));
-    if (next.rounds >= ROUNDS) {
+    if (next.rounds >= roundsTotal) {
       setRound(null);
       setPhase("done");
       return;
@@ -275,6 +309,7 @@ function TrainPage() {
       const { error } = await supabase.from("training_sessions").insert({
         user_id: user.id,
         mode: modeId,
+        kind,
         rounds: trainer.rounds,
         correct: trainer.correct,
         accuracy,
@@ -290,7 +325,7 @@ function TrainPage() {
         void qc.invalidateQueries({ queryKey: ["training-sessions", user.id] });
       }
     })();
-  }, [phase, user, trainer, qc, modeId, startedAt]);
+  }, [phase, user, trainer, qc, modeId, startedAt, kind]);
 
   const points: ProgressPoint[] = allSessions.map((session) => ({
     date: session.created_at,
@@ -333,6 +368,13 @@ function TrainPage() {
             ) : (
               <p className="mt-8 text-sm text-muted-foreground">{t("plan.signedOut")}</p>
             )}
+
+            {user ? (
+              <TransferCard
+                stats={transferStats}
+                onRun={(mode, level) => void begin(mode, "transfer", level)}
+              />
+            ) : null}
 
             <section className="mt-10">
               <div className="flex flex-wrap items-end justify-between gap-3">
@@ -404,10 +446,13 @@ function TrainPage() {
         {(phase === "playing" || phase === "answer") && round ? (
           <section className="mx-auto max-w-2xl text-center">
             <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
-              <span>{t(`train.mode.${currentMode.id}.label`)}</span>
-              <span>{t("train.roundOf").replace("{n}", String(trainer.rounds + 1)).replace("{max}", String(ROUNDS))}</span>
+              <span>
+                {t(`train.mode.${currentMode.id}.label`)}
+                {kind === "transfer" ? ` · ${t("transfer.badge")}` : ""}
+              </span>
+              <span>{t("train.roundOf").replace("{n}", String(trainer.rounds + 1)).replace("{max}", String(roundsTotal))}</span>
             </div>
-            <Progress value={(trainer.rounds / ROUNDS) * 100} className="mt-3" />
+            <Progress value={(trainer.rounds / roundsTotal) * 100} className="mt-3" />
             <div className={`mx-auto mt-16 flex h-36 w-36 items-center justify-center rounded-full border border-border bg-card ${phase === "playing" ? "pulse-ring" : ""}`}>
               {currentMode.icon === "compass" ? <Compass className="h-9 w-9 text-signal" /> : <Volume2 className="h-9 w-9 text-signal" />}
             </div>
@@ -439,8 +484,17 @@ function TrainPage() {
         {phase === "done" ? (
           <section className="mx-auto max-w-3xl">
             <p className="text-sm font-medium text-signal">{t(`train.mode.${currentMode.id}.label`)}</p>
-            <h1 className="mt-2 text-4xl font-semibold">{t("train.sessionComplete")}</h1>
-            <p className="mt-3 text-muted-foreground">{t("train.sessionBody")}</p>
+            <h1 className="mt-2 text-4xl font-semibold">
+              {kind === "transfer" ? t("transfer.doneTitle") : t("train.sessionComplete")}
+            </h1>
+            <p className="mt-3 text-muted-foreground">
+              {kind === "transfer" ? t("transfer.doneBody") : t("train.sessionBody")}
+            </p>
+            {kind === "transfer" && fixedLevel != null ? (
+              <p className="mt-2 text-sm text-signal">
+                {t("transfer.fixedLevel").replace("{level}", fixedLevel.toFixed(1))}
+              </p>
+            ) : null}
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <Stat label={t("train.accuracy")} value={`${Math.round((trainer.correct / Math.max(1, trainer.rounds)) * 100)}%`} highlight />
               <Stat label={t("train.difficultyReached")} value={`${trainer.level.toFixed(1)}/10`} />
@@ -480,6 +534,70 @@ function TrainPage() {
         ) : null}
       </main>
     </div>
+  );
+}
+
+function TransferCard({
+  stats,
+  onRun,
+}: {
+  stats: TransferStat[];
+  onRun: (mode: ModeId, level: number) => void;
+}) {
+  const { t } = useI18n();
+  const ready = stats.filter((stat) => stat.ready);
+
+  return (
+    <section className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
+      <div className="flex items-center gap-2">
+        <FlaskConical className="h-5 w-5 text-signal" />
+        <h2 className="text-xl font-semibold">{t("transfer.title")}</h2>
+      </div>
+      <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("transfer.body")}</p>
+
+      {ready.length === 0 ? (
+        <p className="mt-4 text-sm text-muted-foreground">{t("transfer.needMore")}</p>
+      ) : (
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {ready.map((stat) => {
+            const verdict = verdictOf(stat);
+            return (
+              <article key={stat.mode} className="rounded-xl border border-border/70 bg-background/50 p-4">
+                <h3 className="font-semibold">{t(`train.mode.${stat.mode}.label`)}</h3>
+                <dl className="mt-3 space-y-1 text-sm">
+                  <div className="flex justify-between gap-2">
+                    <dt className="text-muted-foreground">{t("transfer.trained")}</dt>
+                    <dd>{stat.trainAccuracy ?? "—"}%</dd>
+                  </div>
+                  <div className="flex justify-between gap-2">
+                    <dt className="text-muted-foreground">{t("transfer.unseen")}</dt>
+                    <dd>{stat.transferAccuracy == null ? t("transfer.notRun") : `${stat.transferAccuracy}%`}</dd>
+                  </div>
+                  {stat.gap == null ? null : (
+                    <div className="flex justify-between gap-2">
+                      <dt className="text-muted-foreground">{t("transfer.gap")}</dt>
+                      <dd className={stat.gap >= -8 ? "text-signal" : "text-caution"}>
+                        {stat.gap > 0 ? "+" : ""}
+                        {stat.gap} pts
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+                <p className="mt-2 text-xs text-muted-foreground">{t(`transfer.verdict.${verdict}`)}</p>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="mt-4"
+                  onClick={() => onRun(stat.mode as ModeId, stat.trainLevel)}
+                >
+                  <FlaskConical className="mr-2 h-4 w-4" /> {t("transfer.run")}
+                </Button>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </section>
   );
 }
 

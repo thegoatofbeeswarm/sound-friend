@@ -28,6 +28,7 @@ export function SiteNav() {
     { to: "/report" as const, label: t("nav.report") },
     { to: "/science" as const, label: t("nav.science") },
     { to: "/history" as const, label: t("nav.history") },
+    { to: "/validation" as const, label: t("nav.validation") },
     { to: "/team" as const, label: t("nav.team") },
   ];
 
@@ -105,6 +106,13 @@ export function SiteNav() {
               activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
             >
               {t("nav.history")}
+            </Link>
+            <Link
+              to="/validation"
+              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+            >
+              {t("nav.validation")}
             </Link>
             <Link
               to="/team"

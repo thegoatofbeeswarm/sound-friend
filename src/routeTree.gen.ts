@@ -27,6 +27,7 @@ import { Route as SpeechRouteImport } from './routes/speech'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as TrainRouteImport } from './routes/train'
+import { Route as ValidationRouteImport } from './routes/validation'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CoachIndexRouteImport } from './routes/coach.index'
 import { Route as CoachThreadIdRouteImport } from './routes/coach.$threadId'
@@ -123,6 +124,11 @@ const TrainRoute = TrainRouteImport.update({
   path: '/train',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ValidationRoute = ValidationRouteImport.update({
+  id: '/validation',
+  path: '/validation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/team': typeof TeamRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
+  '/validation': typeof ValidationRoute
   '/api/chat': typeof ApiChatRoute
   '/coach/$threadId': typeof CoachThreadIdRoute
   '/coach/': typeof CoachIndexRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/team': typeof TeamRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
+  '/validation': typeof ValidationRoute
   '/api/chat': typeof ApiChatRoute
   '/coach/$threadId': typeof CoachThreadIdRoute
   '/coach': typeof CoachIndexRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/team': typeof TeamRoute
   '/test': typeof TestRoute
   '/train': typeof TrainRoute
+  '/validation': typeof ValidationRoute
   '/api/chat': typeof ApiChatRoute
   '/coach/$threadId': typeof CoachThreadIdRoute
   '/coach/': typeof CoachIndexRoute
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/test'
     | '/train'
+    | '/validation'
     | '/api/chat'
     | '/coach/$threadId'
     | '/coach/'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/test'
     | '/train'
+    | '/validation'
     | '/api/chat'
     | '/coach/$threadId'
     | '/coach'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/test'
     | '/train'
+    | '/validation'
     | '/api/chat'
     | '/coach/$threadId'
     | '/coach/'
@@ -300,6 +312,7 @@ export interface RootRouteChildren {
   TeamRoute: typeof TeamRoute
   TestRoute: typeof TestRoute
   TrainRoute: typeof TrainRoute
+  ValidationRoute: typeof ValidationRoute
   ApiChatRoute: typeof ApiChatRoute
   CoachThreadIdRoute: typeof CoachThreadIdRoute
   CoachIndexRoute: typeof CoachIndexRoute
@@ -433,6 +446,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/validation': {
+      id: '/validation'
+      path: '/validation'
+      fullPath: '/validation'
+      preLoaderRoute: typeof ValidationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -476,6 +496,7 @@ const rootRouteChildren: RootRouteChildren = {
   TeamRoute: TeamRoute,
   TestRoute: TestRoute,
   TrainRoute: TrainRoute,
+  ValidationRoute: ValidationRoute,
   ApiChatRoute: ApiChatRoute,
   CoachThreadIdRoute: CoachThreadIdRoute,
   CoachIndexRoute: CoachIndexRoute,

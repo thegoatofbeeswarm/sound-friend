@@ -38,9 +38,9 @@ export interface ProfileInput {
 
 /** Modes that feed each trained dimension. */
 const MODE_MAP: Record<Exclude<DimensionId, "sensitivity" | "speech">, string[]> = {
-  discrimination: ["frequency-discrimination", "high-frequency"],
-  attention: ["soundscape", "localization"],
-  memory: ["rapid-speech", "conversation"],
+  discrimination: ["frequency-discrimination", "high-frequency", "phone-call"],
+  attention: ["soundscape", "localization", "street"],
+  memory: ["rapid-speech", "conversation", "restaurant"],
 };
 
 const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
@@ -126,3 +126,68 @@ export const DIMENSION_ACTION: Record<DimensionId, { to: "/test" | "/speech" | "
   attention: { to: "/train", labelKey: "profile.act.train" },
   memory: { to: "/train", labelKey: "profile.act.train" },
 };
+
+/* ------------------------------------------------------------------ */
+/* Longitudinal listening score                                        */
+/* ------------------------------------------------------------------ */
+
+export interface TimelineInput {
+  tone: { created_at: string; avg_threshold_db: number | null }[];
+  speech: { created_at: string; score: number }[];
+  sessions: { created_at: string; mode: string; accuracy: number; end_level: number }[];
+}
+
+export interface TimelinePoint {
+  /** ISO date of the week bucket. */
+  date: string;
+  score: number;
+}
+
+/**
+ * Recompute the overall listening score at each week that has new data, using
+ * only what had been measured by that point. That makes the line a real
+ * history rather than a redraw of today's numbers.
+ */
+export function listeningTimeline(input: TimelineInput, maxPoints = 16): TimelinePoint[] {
+  const stamps = [
+    ...input.tone.map((r) => r.created_at),
+    ...input.speech.map((r) => r.created_at),
+    ...input.sessions.map((r) => r.created_at),
+  ].filter(Boolean);
+  if (!stamps.length) return [];
+
+  const weekEnd = (iso: string) => {
+    const d = new Date(iso);
+    const day = d.getUTCDay();
+    const add = (7 - day) % 7;
+    const end = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + add));
+    return end.toISOString().slice(0, 10);
+  };
+
+  const weeks = [...new Set(stamps.map(weekEnd))].sort();
+
+  const points = weeks
+    .map<TimelinePoint | null>((week) => {
+      const cutoff = `${week}T23:59:59.999Z`;
+      const tone = input.tone.filter((r) => r.created_at <= cutoff);
+      const speech = input.speech.filter((r) => r.created_at <= cutoff);
+      const sessions = input.sessions.filter((r) => r.created_at <= cutoff);
+      const newestTone = tone.sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
+      const newestSpeech = speech.sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
+      const score = listeningScore(
+        buildProfile({
+          avgThresholdDb: newestTone?.avg_threshold_db ?? null,
+          toneTests: tone.length,
+          speechScore: newestSpeech?.score ?? null,
+          speechTests: speech.length,
+          sessions: [...sessions]
+            .sort((a, b) => b.created_at.localeCompare(a.created_at))
+            .map((s) => ({ mode: s.mode, accuracy: s.accuracy, end_level: s.end_level })),
+        }),
+      );
+      return score == null ? null : { date: week, score };
+    })
+    .filter(Boolean) as TimelinePoint[];
+
+  return points.slice(-maxPoints);
+}

@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Activity, Compass, Ear, Loader2, MessagesSquare, Music, Target } from "lucide-react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { SiteNav } from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -10,6 +19,7 @@ import { useI18n } from "@/lib/i18n";
 import {
   bandOf,
   buildProfile,
+  listeningTimeline,
   DIMENSION_ACTION,
   listeningScore,
   weakestDimension,
@@ -114,17 +124,27 @@ function ProfilePage() {
       if (speech.error) throw speech.error;
       if (sessions.error) throw sessions.error;
 
-      return buildProfile({
-        avgThresholdDb: tests.data?.[0]?.avg_threshold_db ?? null,
-        toneTests: tests.data?.length ?? 0,
-        speechScore: speech.data?.[0]?.score ?? null,
-        speechTests: speech.data?.length ?? 0,
-        sessions: sessions.data ?? [],
-      });
+      return {
+        dims: buildProfile({
+          avgThresholdDb: tests.data?.[0]?.avg_threshold_db ?? null,
+          toneTests: tests.data?.length ?? 0,
+          speechScore: speech.data?.[0]?.score ?? null,
+          speechTests: speech.data?.length ?? 0,
+          sessions: sessions.data ?? [],
+        }),
+        timeline: listeningTimeline({
+          tone: tests.data ?? [],
+          speech: speech.data ?? [],
+          sessions: sessions.data ?? [],
+        }),
+      };
     },
   });
 
-  const dims = data ?? [];
+  const dims = data?.dims ?? [];
+  const timeline = data?.timeline ?? [];
+  const trendChange =
+    timeline.length >= 2 ? timeline[timeline.length - 1]!.score - timeline[0]!.score : null;
   const overall = listeningScore(dims);
   const weakest = weakestDimension(dims);
 
@@ -148,7 +168,42 @@ function ProfilePage() {
           </div>
         ) : (
           <>
-            <section className="mt-10 grid gap-5 md:grid-cols-2">
+            <section className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
+              <h2 className="text-xl font-semibold">{t("trend.title")}</h2>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("trend.body")}</p>
+              {timeline.length < 2 ? (
+                <p className="mt-4 text-sm text-muted-foreground">{t("trend.empty")}</p>
+              ) : (
+                <>
+                  <p className="mt-3 text-sm text-signal">
+                    {trendChange == null || Math.abs(trendChange) < 2
+                      ? t("trend.changeFlat")
+                      : trendChange > 0
+                        ? t("trend.changeUp").replace("{n}", String(trendChange))
+                        : t("trend.changeDown").replace("{n}", String(Math.abs(trendChange)))}
+                  </p>
+                  <div className="mt-4 h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={timeline} margin={{ top: 8, right: 12, bottom: 8, left: -12 }}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                        <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                        <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+                        <Tooltip formatter={(v) => [`${v}`, t("trend.score")]} />
+                        <Line
+                          type="monotone"
+                          dataKey="score"
+                          stroke="hsl(var(--signal))"
+                          strokeWidth={2}
+                          dot={{ r: 3 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </>
+              )}
+            </section>
+
+            <section className="mt-6 grid gap-5 md:grid-cols-2">
               <div className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   {t("profile.overall")}
