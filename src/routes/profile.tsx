@@ -11,8 +11,10 @@ import {
   YAxis,
 } from "recharts";
 import { SiteNav } from "@/components/SiteNav";
+import { ScoreRing } from "@/components/ScoreRing";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
@@ -65,6 +67,15 @@ function bandClass(score: number | null) {
   if (band === "watch") return "text-caution";
   return "text-danger";
 }
+
+function toneOf(score: number | null): "accent" | "caution" | "danger" | "muted" {
+  if (score == null) return "muted";
+  const band = bandOf(score);
+  if (band === "watch") return "caution";
+  if (band === "low") return "danger";
+  return "accent";
+}
+
 
 function DimensionCard({ dim }: { dim: Dimension }) {
   const { t } = useI18n();
