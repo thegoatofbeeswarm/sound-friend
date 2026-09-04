@@ -57,7 +57,27 @@ function pick<T>(arr: readonly T[]): T {
  */
 const recent = new Map<string, unknown[]>();
 
-function pickFresh<T>(key: string, arr: readonly T[]): T {
+/**
+ * Every bank is split in two halves: the "train" half is the only material
+ * normal sessions ever use, the "transfer" half is held out so a transfer
+ * check measures generalisation on items you have never practised.
+ */
+export type BankVariant = "train" | "transfer";
+let bankVariant: BankVariant = "train";
+
+export function setBankVariant(variant: BankVariant) {
+  bankVariant = variant;
+  recent.clear();
+}
+
+function bankFor<T>(arr: readonly T[]): readonly T[] {
+  if (arr.length < 4) return arr;
+  const half = arr.filter((_, i) => (i % 2 === 0) === (bankVariant === "train"));
+  return half.length ? half : arr;
+}
+
+function pickFresh<T>(key: string, all: readonly T[]): T {
+  const arr = bankFor(all);
   if (arr.length <= 1) return arr[0] as T;
   const seen = (recent.get(key) ?? []) as T[];
   const fresh = arr.filter((x) => !seen.includes(x));

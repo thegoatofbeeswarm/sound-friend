@@ -57,6 +57,13 @@
       "when": 1788521619998,
       "tag": "0007_create_speech_in_noise_tests",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788522876004,
+      "tag": "0008_add_training_session_kind",
+      "breakpoints": true
     }
   ]
 }
