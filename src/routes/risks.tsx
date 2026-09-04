@@ -127,7 +127,7 @@ function RisksPage() {
               <Stat label={t("risks.loudestSession")} value={today ? `~${today.peakDb} dB` : "-"} sub={t("risks.estimatedPeak")} />
               <Stat
                 label={t("risks.exposureStatus")}
-                value={today ? statusLabel[statusForDose(dosePercent(today.avgDb, today.minutes / 60))] : t("risks.notSet")}
+                value={today ? (statusLabel[statusForDose(dosePercent(today.avgDb, today.minutes / 60))] ?? "-") : t("risks.notSet")}
                 sub={t("risks.basedOnToday")}
                 highlight={today != null}
               />
@@ -176,7 +176,7 @@ function RisksPage() {
 
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 <Stat label={t("risks.estimatedDailyDose")} value={`${model.dose}%`} sub={t("risks.whoComparison")} />
-                <Stat label={t("risks.exposureStatus")} value={statusLabel[model.status]} sub={t("risks.forThisPattern")} highlight />
+                <Stat label={t("risks.exposureStatus")} value={statusLabel[model.status] ?? "-"} sub={t("risks.forThisPattern")} highlight />
                 <Stat label={t("risks.estimatedLoudest")} value={`~${model.levelDb} dB`} sub={preset.label} />
               </div>
 
