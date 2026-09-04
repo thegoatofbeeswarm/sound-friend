@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Ear, Gauge, Headphones, Loader2, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -218,9 +219,10 @@ function TestPage() {
       toast.error(t("test.toastSavePointsFail"));
       return;
     }
+    void queryClient.invalidateQueries();
     toast.success(t("test.toastSaveSuccess"));
     void navigate({ to: "/history" });
-  }, [final, user, noise, state.trialCount, navigate, device]);
+  }, [final, user, noise, state.trialCount, navigate, device, queryClient]);
 
   useEffect(() => {
     if (phase === "done" && final && user) void saveResults();
