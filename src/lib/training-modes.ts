@@ -51,9 +51,26 @@ function pick<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)] as T;
 }
 
+/**
+ * Recently used items per bank, so a round rarely repeats what you just heard.
+ * Remembers roughly half a bank (capped) before allowing a repeat.
+ */
+const recent = new Map<string, unknown[]>();
+
+function pickFresh<T>(key: string, arr: readonly T[]): T {
+  if (arr.length <= 1) return arr[0] as T;
+  const seen = (recent.get(key) ?? []) as T[];
+  const fresh = arr.filter((x) => !seen.includes(x));
+  const chosen = pick(fresh.length ? fresh : arr);
+  const memory = Math.min(12, Math.max(1, Math.floor(arr.length / 2)));
+  recent.set(key, [chosen, ...seen.filter((x) => x !== chosen)].slice(0, memory));
+  return chosen;
+}
+
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
 }
+
 
 function gainFor(levelDb: number): number {
   const clamped = Math.max(0, Math.min(90, levelDb));
