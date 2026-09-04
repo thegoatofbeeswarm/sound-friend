@@ -26,7 +26,7 @@ export type PlanStep = {
   /** i18n key for the reason line. */
   reasonKey: string;
   /** Interpolation values for the reason line. */
-  vals?: Record<string, string | number>;
+  vals?: Record<string, string | number> | undefined;
 };
 
 export type TrainingPlan = {
