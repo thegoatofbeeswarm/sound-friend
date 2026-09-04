@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AudioLines, Menu } from "lucide-react";
+import { AudioLines, ChevronDown, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { AppSettings } from "@/components/AppSettings";
 import { useI18n } from "@/lib/i18n";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -13,25 +19,48 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+type NavPath = "/test" | "/speech" | "/profile" | "/train" | "/history" | "/report" | "/data" | "/science" | "/risks" | "/validation" | "/team";
+
 export function SiteNav() {
   const { user, signOut } = useAuth();
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
-  const links = [
-    { to: "/test" as const, label: t("nav.test") },
-    { to: "/speech" as const, label: t("nav.speech") },
-    { to: "/profile" as const, label: t("nav.profile") },
-    { to: "/train" as const, label: t("nav.train") },
-    { to: "/risks" as const, label: t("nav.risks") },
-    { to: "/data" as const, label: t("nav.data") },
-    { to: "/report" as const, label: t("nav.report") },
-    { to: "/science" as const, label: t("nav.science") },
-    { to: "/history" as const, label: t("nav.history") },
-    { to: "/validation" as const, label: t("nav.validation") },
-    { to: "/team" as const, label: t("nav.team") },
+  const groups: { label: string; to: NavPath; items: { to: NavPath; label: string }[] }[] = [
+    {
+      label: t("nav.testGroup"),
+      to: "/test",
+      items: [
+        { to: "/test", label: t("nav.tone") },
+        { to: "/speech", label: t("nav.speech") },
+      ],
+    },
+    {
+      label: t("nav.profile"),
+      to: "/profile",
+      items: [
+        { to: "/profile", label: t("nav.profileMain") },
+        { to: "/history", label: t("nav.history") },
+        { to: "/report", label: t("nav.report") },
+        { to: "/data", label: t("nav.data") },
+      ],
+    },
+    {
+      label: t("nav.train"),
+      to: "/train",
+      items: [],
+    },
+    {
+      label: t("nav.learn"),
+      to: "/science",
+      items: [
+        { to: "/science", label: t("nav.science") },
+        { to: "/risks", label: t("nav.risks") },
+        { to: "/validation", label: t("nav.validation") },
+        { to: "/team", label: t("nav.team") },
+      ],
+    },
   ];
-
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
@@ -44,84 +73,32 @@ export function SiteNav() {
         </Link>
         <div className="flex min-w-0 items-center gap-2">
           <nav className="flex items-center gap-0.5 text-sm max-[760px]:hidden">
-            <Link
-              to="/test"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.test")}
-            </Link>
-            <Link
-              to="/speech"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.speech")}
-            </Link>
-            <Link
-              to="/profile"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.profile")}
-            </Link>
-            <Link
-              to="/train"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.train")}
-            </Link>
-            <Link
-              to="/risks"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.risks")}
-            </Link>
-            <Link
-              to="/data"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              Data
-            </Link>
-            <Link
-              to="/report"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              Report
-            </Link>
-            <Link
-              to="/science"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              Science
-            </Link>
-            <Link
-              to="/history"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.history")}
-            </Link>
-            <Link
-              to="/validation"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.validation")}
-            </Link>
-            <Link
-              to="/team"
-              className="nav-link rounded-md px-3 py-2 text-muted-foreground"
-              activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
-            >
-              {t("nav.team")}
-            </Link>
-
+            {groups.map((g) =>
+              g.items.length === 0 ? (
+                <Link
+                  key={g.label}
+                  to={g.to}
+                  className="nav-link rounded-md px-3 py-2 text-muted-foreground"
+                  activeProps={{ className: "nav-link rounded-md px-3 py-2 text-foreground" }}
+                >
+                  {g.label}
+                </Link>
+              ) : (
+                <DropdownMenu key={g.label}>
+                  <DropdownMenuTrigger className="nav-link inline-flex items-center gap-1 rounded-md px-3 py-2 text-muted-foreground outline-none transition-colors hover:text-foreground data-[state=open]:text-foreground">
+                    {g.label}
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="min-w-48">
+                    {g.items.map((i) => (
+                      <DropdownMenuItem key={i.to} asChild>
+                        <Link to={i.to}>{i.label}</Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ),
+            )}
           </nav>
           <AppSettings />
           {user ? (
@@ -154,21 +131,41 @@ export function SiteNav() {
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
+            <SheetContent side="right" className="w-72 overflow-y-auto">
               <SheetHeader>
                 <SheetTitle>{t("nav.menu")}</SheetTitle>
               </SheetHeader>
               <nav className="mt-2 flex flex-col gap-1 px-4 pb-6">
-                {links.map((l) => (
-                  <Link
-                    key={l.to}
-                    to={l.to}
-                    onClick={() => setOpen(false)}
-                    className="rounded-md px-3 py-3 text-base text-muted-foreground"
-                    activeProps={{ className: "rounded-md px-3 py-3 text-base font-semibold text-foreground" }}
-                  >
-                    {l.label}
-                  </Link>
+                {groups.map((g) => (
+                  <div key={g.label} className="mb-2">
+                    {g.items.length === 0 ? (
+                      <Link
+                        to={g.to}
+                        onClick={() => setOpen(false)}
+                        className="block rounded-md px-3 py-3 text-base text-muted-foreground"
+                        activeProps={{ className: "block rounded-md px-3 py-3 text-base font-semibold text-foreground" }}
+                      >
+                        {g.label}
+                      </Link>
+                    ) : (
+                      <>
+                        <p className="px-3 pt-2 text-xs uppercase tracking-wide text-muted-foreground/70">
+                          {g.label}
+                        </p>
+                        {g.items.map((i) => (
+                          <Link
+                            key={i.to}
+                            to={i.to}
+                            onClick={() => setOpen(false)}
+                            className="block rounded-md px-3 py-2.5 text-base text-muted-foreground"
+                            activeProps={{ className: "block rounded-md px-3 py-2.5 text-base font-semibold text-foreground" }}
+                          >
+                            {i.label}
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                  </div>
                 ))}
                 <div className="mt-4">
                   {user ? (
