@@ -6,6 +6,10 @@
  * thresholds are less trustworthy. This module turns those conditions into a
  * transparent 0-100 quality score with plain-language reasons, so results are
  * never presented as more precise than the conditions allow.
+ *
+ * Every message is emitted twice: as an English string (used for AI prompts and
+ * any non-localized surface) and as a translation key plus values, so the UI can
+ * render it in the user's language.
  */
 
 import { getDevice, type DeviceId } from "@/lib/devices";
@@ -23,16 +27,26 @@ export interface QualityInput {
 
 export type QualityTier = "excellent" | "good" | "fair" | "low";
 
+/** A localizable message: translation key plus interpolation values. */
+export interface QualityMessage {
+  key: string;
+  vals?: Record<string, string | number>;
+}
+
 export interface QualityResult {
   score: number;
   tier: QualityTier;
   label: string;
+  labelKey: string;
   /** Things that held the score back, most important first. */
   issues: string[];
+  issueItems: QualityMessage[];
   /** Things that went well. */
   strengths: string[];
+  strengthItems: QualityMessage[];
   /** One-line summary of how to read the numbers. */
   interpretation: string;
+  interpretationKey: string;
 }
 
 export const QUALITY_LABEL: Record<QualityTier, string> = {
@@ -51,51 +65,84 @@ function tierFor(score: number): QualityTier {
 
 export function scoreScreening(input: QualityInput): QualityResult {
   const issues: string[] = [];
+  const issueItems: QualityMessage[] = [];
   const strengths: string[] = [];
+  const strengthItems: QualityMessage[] = [];
   let score = 100;
+
+  const issue = (text: string, key: string, vals?: Record<string, string | number>) => {
+    issues.push(text);
+    issueItems.push({ key, vals });
+  };
+  const strength = (text: string, key: string, vals?: Record<string, string | number>) => {
+    strengths.push(text);
+    strengthItems.push({ key, vals });
+  };
 
   // Room noise: quiet rooms sit near 30 dB; above ~45 dB low-frequency
   // thresholds start being masked.
   const env = input.environmentDb;
   if (env == null) {
     score -= 12;
-    issues.push("Room noise was not measured before the screening.");
+    issue("Room noise was not measured before the screening.", "quality.issue.noNoiseScan");
   } else if (env <= 35) {
-    strengths.push(`Very quiet room (~${Math.round(env)} dB).`);
+    strength(`Very quiet room (~${Math.round(env)} dB).`, "quality.strength.veryQuiet", {
+      db: Math.round(env),
+    });
   } else if (env <= 45) {
     score -= 8;
-    strengths.push(`Reasonably quiet room (~${Math.round(env)} dB).`);
+    strength(`Reasonably quiet room (~${Math.round(env)} dB).`, "quality.strength.quiet", {
+      db: Math.round(env),
+    });
   } else if (env <= 55) {
     score -= 20;
-    issues.push(`Background noise was ~${Math.round(env)} dB, which can mask the quietest tones.`);
+    issue(
+      `Background noise was ~${Math.round(env)} dB, which can mask the quietest tones.`,
+      "quality.issue.noisy",
+      { db: Math.round(env) },
+    );
   } else {
     score -= 34;
-    issues.push(`Background noise was ~${Math.round(env)} dB — too loud for reliable low-level tones.`);
+    issue(
+      `Background noise was ~${Math.round(env)} dB — too loud for reliable low-level tones.`,
+      "quality.issue.veryNoisy",
+      { db: Math.round(env) },
+    );
   }
 
   // Device calibration.
   const device = input.device ? getDevice(input.device as DeviceId) : null;
   if (!device) {
     score -= 12;
-    issues.push("No listening device was recorded for this screening.");
+    issue("No listening device was recorded for this screening.", "quality.issue.noDevice");
   } else if (device.calibrated) {
-    strengths.push(`${device.label} has a calibration profile applied.`);
+    strength(`${device.label} has a calibration profile applied.`, "quality.strength.calibrated", {
+      device: device.label,
+    });
   } else {
     score -= 18;
-    issues.push(`${device.label} is uncalibrated, so absolute levels may be off by several dB.`);
+    issue(
+      `${device.label} is uncalibrated, so absolute levels may be off by several dB.`,
+      "quality.issue.uncalibrated",
+      { device: device.label },
+    );
   }
 
   // Trial count: the adaptive engine needs enough answers per track.
   if (input.trials >= 30) {
-    strengths.push(`${input.trials} trials answered.`);
+    strength(`${input.trials} trials answered.`, "quality.strength.trials", { n: input.trials });
   } else if (input.trials >= 20) {
     score -= 6;
   } else if (input.trials > 0) {
     score -= 18;
-    issues.push(`Only ${input.trials} trials were answered, so estimates stayed coarse.`);
+    issue(
+      `Only ${input.trials} trials were answered, so estimates stayed coarse.`,
+      "quality.issue.fewTrials",
+      { n: input.trials },
+    );
   } else {
     score -= 25;
-    issues.push("No trials recorded.");
+    issue("No trials recorded.", "quality.issue.noTrials");
   }
 
   // Posterior confidence across frequency/ear tracks.
@@ -104,16 +151,27 @@ export function scoreScreening(input: QualityInput): QualityResult {
     const avg = conf.reduce((a, b) => a + b, 0) / conf.length;
     const weakest = Math.min(...conf);
     if (avg >= 0.8) {
-      strengths.push(`Average estimate confidence ${Math.round(avg * 100)}%.`);
+      strength(
+        `Average estimate confidence ${Math.round(avg * 100)}%.`,
+        "quality.strength.confidence",
+        { pct: Math.round(avg * 100) },
+      );
     } else if (avg >= 0.65) {
       score -= 8;
     } else {
       score -= 18;
-      issues.push(`Average estimate confidence was only ${Math.round(avg * 100)}%.`);
+      issue(
+        `Average estimate confidence was only ${Math.round(avg * 100)}%.`,
+        "quality.issue.lowConfidence",
+        { pct: Math.round(avg * 100) },
+      );
     }
     if (weakest < 0.5) {
       score -= 6;
-      issues.push("At least one frequency never settled — answers there may have been inconsistent.");
+      issue(
+        "At least one frequency never settled — answers there may have been inconsistent.",
+        "quality.issue.unsettled",
+      );
     }
   }
 
@@ -129,7 +187,18 @@ export function scoreScreening(input: QualityInput): QualityResult {
           ? "Use this run for relative tracking; absolute thresholds may be shifted by conditions."
           : "Treat these numbers as indicative only and repeat the screening in better conditions.";
 
-  return { score, tier, label: QUALITY_LABEL[tier], issues, strengths, interpretation };
+  return {
+    score,
+    tier,
+    label: QUALITY_LABEL[tier],
+    labelKey: `quality.label.${tier}`,
+    issues,
+    issueItems,
+    strengths,
+    strengthItems,
+    interpretation,
+    interpretationKey: `quality.interpretation.${tier}`,
+  };
 }
 
 export function qualityTone(tier: QualityTier): "ok" | "watch" | "risk" {
