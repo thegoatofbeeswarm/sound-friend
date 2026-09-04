@@ -23,6 +23,14 @@ export interface QualityInput {
   confidences: number[];
   /** Listening device used for the screening. */
   device: DeviceId | string | null;
+  /** Silent catch trials presented (no tone played). */
+  catchTrials?: number;
+  /** Catch trials the user correctly reported as silent. */
+  catchPassed?: number;
+  /** Repeated trials used to check answer consistency. */
+  repeatTrials?: number;
+  /** Repeated trials answered the same way as the first time. */
+  repeatAgreed?: number;
 }
 
 export type QualityTier = "excellent" | "good" | "fair" | "low";
@@ -171,6 +179,47 @@ export function scoreScreening(input: QualityInput): QualityResult {
       issue(
         "At least one frequency never settled — answers there may have been inconsistent.",
         "quality.issue.unsettled",
+      );
+    }
+  }
+
+  // Silent catch trials: saying "I heard it" when nothing played means the
+  // run picked up guesses or imagined tones.
+  const catchTotal = input.catchTrials ?? 0;
+  if (catchTotal > 0) {
+    const passed = input.catchPassed ?? 0;
+    const failed = catchTotal - passed;
+    if (failed === 0) {
+      strength(`Passed all ${catchTotal} silent catch trials.`, "quality.strength.catchPass", {
+        n: catchTotal,
+      });
+    } else {
+      score -= Math.min(30, failed * 12);
+      issue(
+        `Reported hearing a tone on ${failed} of ${catchTotal} silent catch trials.`,
+        "quality.issue.catchFail",
+        { failed, total: catchTotal },
+      );
+    }
+  }
+
+  // Repeat trials: the same tone asked twice should get the same answer.
+  const repeatTotal = input.repeatTrials ?? 0;
+  if (repeatTotal > 0) {
+    const agreed = input.repeatAgreed ?? 0;
+    const pct = Math.round((agreed / repeatTotal) * 100);
+    if (pct >= 80) {
+      strength(`Answers agreed on ${pct}% of repeated tones.`, "quality.strength.consistent", {
+        pct,
+      });
+    } else if (pct >= 60) {
+      score -= 8;
+    } else {
+      score -= 18;
+      issue(
+        `Repeated tones got the same answer only ${pct}% of the time.`,
+        "quality.issue.inconsistent",
+        { pct },
       );
     }
   }
