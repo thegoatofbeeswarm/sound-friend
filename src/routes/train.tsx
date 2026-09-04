@@ -410,47 +410,50 @@ function TrainPage() {
 }
 
 function LevelSummary({ level, streak }: { level: ReturnType<typeof levelFromXp>; streak: number }) {
+  const { t } = useI18n();
   return (
     <div className="min-w-64 rounded-2xl border border-border/70 bg-card/70 p-4 shadow-card">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2"><Award className="h-4 w-4 text-signal" /><span className="text-sm font-semibold">Level {level.level}</span></div>
+        <div className="flex items-center gap-2"><Award className="h-4 w-4 text-signal" /><span className="text-sm font-semibold">{t("train.levelTemplate").replace("{level}", String(level.level))}</span></div>
         <span className="text-xs text-muted-foreground">{level.into}/{level.needed} XP</span>
       </div>
       <Progress value={level.pct} className="mt-3" />
       <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-        <span>{level.pct}% to next level</span>
-        <span className="flex items-center gap-1 text-caution"><Trophy className="h-3.5 w-3.5" /> {streak} day streak</span>
+        <span>{t("train.pctToNextTemplate").replace("{pct}", String(level.pct))}</span>
+        <span className="flex items-center gap-1 text-caution"><Trophy className="h-3.5 w-3.5" /> {t("train.dayStreakTemplate").replace("{streak}", String(streak))}</span>
       </div>
     </div>
   );
 }
 
 function WeeklyProgress({ sessions, total }: { sessions: SessionRow[]; total: number }) {
+  const { t } = useI18n();
   const count = sessions.length;
   const pct = Math.min(100, Math.round((count / WEEKLY_GOAL_SESSIONS) * 100));
   return (
     <section className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
       <div className="flex items-start justify-between gap-4">
-        <div><p className="text-sm font-medium text-signal">This week</p><h2 className="mt-1 text-xl font-semibold">Keep the loop moving</h2></div>
+        <div><p className="text-sm font-medium text-signal">{t("train.thisWeek")}</p><h2 className="mt-1 text-xl font-semibold">{t("train.keepMoving")}</h2></div>
         <span className="flex items-center gap-1 text-sm text-caution"><Trophy className="h-4 w-4" /> {count}/{WEEKLY_GOAL_SESSIONS}</span>
       </div>
       <Progress value={pct} className="mt-5" />
       <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
-        <MiniStat label="Sessions" value={`${count}`} />
-        <MiniStat label="Minutes" value={`${Math.round(sessions.reduce((sum, s) => sum + (Number(s.duration_sec) || s.rounds * 0.55), 0))}`} />
-        <MiniStat label="All time" value={`${total}`} />
+        <MiniStat label={t("train.sessions")} value={`${count}`} />
+        <MiniStat label={t("train.minutes")} value={`${Math.round(sessions.reduce((sum, s) => sum + (Number(s.duration_sec) || s.rounds * 0.55), 0))}`} />
+        <MiniStat label={t("train.allTime")} value={`${total}`} />
       </div>
-      <p className="mt-5 text-xs text-muted-foreground">{count >= WEEKLY_GOAL_SESSIONS ? "Weekly goal complete. Your next session can deepen the skill." : `${WEEKLY_GOAL_SESSIONS - count} more ${WEEKLY_GOAL_SESSIONS - count === 1 ? "session" : "sessions"} to reach your weekly goal.`}</p>
+      <p className="mt-5 text-xs text-muted-foreground">{count >= WEEKLY_GOAL_SESSIONS ? t("train.weeklyGoalComplete") : (WEEKLY_GOAL_SESSIONS - count === 1 ? t("train.moreSessionsOne") : t("train.moreSessionsMany")).replace("{n}", String(WEEKLY_GOAL_SESSIONS - count))}</p>
     </section>
   );
 }
 
 function ModeBests({ bests }: { bests: ReturnType<typeof bestsByMode> }) {
+  const { t } = useI18n();
   const visible = TRAINING_MODES.filter((mode) => bests[mode.id]).slice(0, 4);
   return (
     <section className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-      <div className="flex items-center gap-2"><Brain className="h-4 w-4 text-signal" /><h2 className="text-xl font-semibold">Personal bests</h2></div>
-      {visible.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">Your best scores will appear here as you explore tracks.</p> : <div className="mt-4 space-y-3">{visible.map((mode) => { const best = bests[mode.id]; if (!best) return null; return <div key={mode.id} className="flex items-center justify-between gap-4 border-t border-border/60 pt-3"><span className="min-w-0 truncate text-sm">{mode.label}</span><span className="shrink-0 font-display text-sm text-signal">{best.bestAccuracy}% <span className="font-sans text-xs text-muted-foreground">· L{best.bestLevel.toFixed(1)}</span></span></div>; })}</div>}
+      <div className="flex items-center gap-2"><Brain className="h-4 w-4 text-signal" /><h2 className="text-xl font-semibold">{t("train.personalBests")}</h2></div>
+      {visible.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">{t("train.bestsEmpty")}</p> : <div className="mt-4 space-y-3">{visible.map((mode) => { const best = bests[mode.id]; if (!best) return null; return <div key={mode.id} className="flex items-center justify-between gap-4 border-t border-border/60 pt-3"><span className="min-w-0 truncate text-sm">{t(`train.mode.${mode.id}.label`)}</span><span className="shrink-0 font-display text-sm text-signal">{best.bestAccuracy}% <span className="font-sans text-xs text-muted-foreground">· L{best.bestLevel.toFixed(1)}</span></span></div>; })}</div>}
     </section>
   );
 }
@@ -461,6 +464,7 @@ function MiniStat({ label, value }: { label: string; value: string }) {
 
 function ScheduleCard() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const qc = useQueryClient();
   const [perm, setPerm] = useState<string>("default");
 
@@ -484,17 +488,17 @@ function ScheduleCard() {
     if (!user) return;
     qc.setQueryData(["training-schedule", user.id], next);
     const { error } = await supabase.from("training_schedules").upsert({ user_id: user.id, enabled: next.enabled, days: next.days, time_of_day: next.timeOfDay, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
-    if (error) toast.error("Could not save your schedule.");
+    if (error) toast.error(t("train.toastScheduleFail"));
   }
 
   if (!schedule) return null;
 
   return (
     <section className="mt-14 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-      <div className="flex items-start justify-between gap-4"><div><h2 className="flex items-center gap-2 text-xl font-semibold"><Bell className="h-4 w-4 text-signal" /> Training reminders</h2><p className="mt-1 text-sm text-muted-foreground">{formatNextRun(schedule)}</p></div><Switch checked={schedule.enabled} onCheckedChange={async (value) => { if (value && permission() !== "granted") { const nextPermission = await requestNotificationPermission(); setPerm(nextPermission); if (nextPermission !== "granted") { toast.error("Allow notifications in your browser to get reminders."); return; } } void save({ ...schedule, enabled: value }); }} /></div>
+      <div className="flex items-start justify-between gap-4"><div><h2 className="flex items-center gap-2 text-xl font-semibold"><Bell className="h-4 w-4 text-signal" /> {t("train.remindersTitle")}</h2><p className="mt-1 text-sm text-muted-foreground">{formatNextRun(schedule)}</p></div><Switch checked={schedule.enabled} onCheckedChange={async (value) => { if (value && permission() !== "granted") { const nextPermission = await requestNotificationPermission(); setPerm(nextPermission); if (nextPermission !== "granted") { toast.error(t("train.toastNotifFail")); return; } } void save({ ...schedule, enabled: value }); }} /></div>
       <div className="mt-5 flex flex-wrap gap-2">{DAY_LABELS.map((day, index) => { const on = schedule.days.includes(index); return <button key={day} type="button" onClick={() => void save({ ...schedule, days: on ? schedule.days.filter((x) => x !== index) : [...schedule.days, index].sort() })} className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${on ? "border-signal/50 bg-signal/10 text-signal" : "border-border/70 text-muted-foreground hover:text-foreground"}`}>{day}</button>; })}</div>
-      <div className="mt-5 flex items-center gap-3"><Input type="time" value={schedule.timeOfDay} className="w-36" onChange={(event) => void save({ ...schedule, timeOfDay: event.target.value })} />{perm === "granted" ? <span className="flex items-center gap-1 text-xs text-signal"><BellRing className="h-3.5 w-3.5" /> Notifications on</span> : <span className="text-xs text-muted-foreground">{perm === "unsupported" ? "This browser cannot show notifications." : "Notifications not enabled yet."}</span>}</div>
-      <p className="mt-4 text-xs text-muted-foreground">Reminders are delivered by your device from notifications. Add Audiomaxxer to your home screen so they arrive like any other app notification.</p>
+      <div className="mt-5 flex items-center gap-3"><Input type="time" value={schedule.timeOfDay} className="w-36" onChange={(event) => void save({ ...schedule, timeOfDay: event.target.value })} />{perm === "granted" ? <span className="flex items-center gap-1 text-xs text-signal"><BellRing className="h-3.5 w-3.5" /> {t("train.notifOn")}</span> : <span className="text-xs text-muted-foreground">{perm === "unsupported" ? t("train.notifUnsupported") : t("train.notifNotEnabled")}</span>}</div>
+      <p className="mt-4 text-xs text-muted-foreground">{t("train.remindersFooter")}</p>
     </section>
   );
 }

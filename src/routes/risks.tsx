@@ -8,6 +8,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { DevicePicker } from "@/components/DevicePicker";
+import { useI18n } from "@/lib/i18n";
 import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
 import {
   dosePercent,
@@ -50,6 +51,7 @@ function volumeToDb(percent: number, maxOutputDb: number): number {
 }
 
 function RisksPage() {
+  const { t } = useI18n();
   const { user, loading } = useAuth();
   const [volume, setVolume] = useState(70);
   const [hours, setHours] = useState(3);
@@ -93,6 +95,11 @@ function RisksPage() {
   const logEstimate = () => setExposure(logListening(Math.round(hours * 60), model.levelDb));
   const toneClass =
     model.status === "low" ? "text-signal" : model.status === "moderate" ? "text-caution" : "text-danger";
+  const statusLabel: Record<string, string> = {
+    low: t("risks.status.low"),
+    moderate: t("risks.status.moderate"),
+    high: t("risks.status.high"),
+  };
 
   return (
     <div className="min-h-screen">
@@ -100,13 +107,11 @@ function RisksPage() {
       <main className="mx-auto max-w-3xl px-5 py-12">
         <div className="max-w-2xl">
           <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-            <Activity className="h-4 w-4 text-signal" /> Listening habits
+            <Activity className="h-4 w-4 text-signal" /> {t("risks.tagline")}
           </p>
-          <h1 className="mt-2 text-3xl font-semibold">Personalized Listening Risk</h1>
+          <h1 className="mt-2 text-3xl font-semibold">{t("risks.title")}</h1>
           <p className="mt-3 text-muted-foreground">
-            Audiomaxxer combines your reported listening habits, estimated sound exposure and
-            screening context to help you understand your behaviour. These estimates are not a
-            diagnosis or a medically validated personal safety limit.
+            {t("risks.lead")}
           </p>
         </div>
 
@@ -117,24 +122,23 @@ function RisksPage() {
         ) : (
           <>
             <section className="mt-8 grid gap-4 sm:grid-cols-4">
-              <Stat label="Today" value={today ? formatMinutes(today.minutes) : "Nothing logged"} sub="estimated listening" />
-              <Stat label="Average level" value={today ? `~${today.avgDb} dB` : "-"} sub="reported estimate" />
-              <Stat label="Loudest session" value={today ? `~${today.peakDb} dB` : "-"} sub="estimated peak" />
+              <Stat label={t("risks.today")} value={today ? formatMinutes(today.minutes) : t("risks.nothingLogged")} sub={t("risks.estimatedListening")} />
+              <Stat label={t("risks.averageLevel")} value={today ? `~${today.avgDb} dB` : "-"} sub={t("risks.reportedEstimate")} />
+              <Stat label={t("risks.loudestSession")} value={today ? `~${today.peakDb} dB` : "-"} sub={t("risks.estimatedPeak")} />
               <Stat
-                label="Exposure status"
-                value={today ? STATUS_LABEL[statusForDose(dosePercent(today.avgDb, today.minutes / 60))] : "Not set"}
-                sub="based on today’s estimate"
+                label={t("risks.exposureStatus")}
+                value={today ? statusLabel[statusForDose(dosePercent(today.avgDb, today.minutes / 60))] : t("risks.notSet")}
+                sub={t("risks.basedOnToday")}
                 highlight={today != null}
               />
             </section>
 
             <section className="mt-8 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
               <h2 className="flex items-center gap-2 text-xl font-semibold">
-                <Headphones className="h-4 w-4 text-signal" /> Estimate a listening session
+                <Headphones className="h-4 w-4 text-signal" /> {t("risks.estimateTitle")}
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Pick the device and pattern that best match how you listen. Device output varies by
-                model, fit, seal and volume setting, so treat the dB estimate as directional.
+                {t("risks.estimateLead")}
               </p>
 
               <DevicePicker value={device} onChange={setDevice} className="mt-6" />
@@ -142,7 +146,7 @@ function RisksPage() {
               <div className="mt-7 space-y-7">
                 <div>
                   <div className="flex justify-between gap-4 text-sm">
-                    <span className="text-muted-foreground">Typical headphone volume</span>
+                    <span className="text-muted-foreground">{t("risks.typicalVolume")}</span>
                     <span className="shrink-0 font-medium">{volume}% · ~{model.levelDb} dB</span>
                   </div>
                   <Slider
@@ -156,8 +160,8 @@ function RisksPage() {
                 </div>
                 <div>
                   <div className="flex justify-between gap-4 text-sm">
-                    <span className="text-muted-foreground">Listening time</span>
-                    <span className="shrink-0 font-medium">{hours} h</span>
+                    <span className="text-muted-foreground">{t("risks.listeningTime")}</span>
+                    <span className="shrink-0 font-medium">{hours} {t("risks.hoursShort")}</span>
                   </div>
                   <Slider
                     className="mt-3"
@@ -171,9 +175,9 @@ function RisksPage() {
               </div>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                <Stat label="Estimated daily dose" value={`${model.dose}%`} sub="WHO-style comparison" />
-                <Stat label="Exposure status" value={STATUS_LABEL[model.status]} sub="for this pattern" highlight />
-                <Stat label="Estimated loudest level" value={`~${model.levelDb} dB`} sub={preset.label} />
+                <Stat label={t("risks.estimatedDailyDose")} value={`${model.dose}%`} sub={t("risks.whoComparison")} />
+                <Stat label={t("risks.exposureStatus")} value={statusLabel[model.status]} sub={t("risks.forThisPattern")} highlight />
+                <Stat label={t("risks.estimatedLoudest")} value={`~${model.levelDb} dB`} sub={preset.label} />
               </div>
 
               <p className={`mt-6 flex items-start gap-2 text-sm ${toneClass}`}>
@@ -184,57 +188,54 @@ function RisksPage() {
                 )}
                 <span>
                   {model.status === "low"
-                    ? "This pattern is within a lower estimated exposure range. Breaks and a comfortable volume still matter."
+                    ? t("risks.lowMsg")
                     : model.status === "moderate"
-                      ? "This pattern is worth watching. Lowering volume or taking longer quiet breaks will reduce the estimated dose."
-                      : "This pattern is high by the comparison model. Reduce volume and duration, especially if you notice ringing or muffling."}
+                      ? t("risks.moderateMsg")
+                      : t("risks.highMsg")}
                 </span>
               </p>
               <Button className="mt-6" onClick={logEstimate}>
-                Log this listening pattern
+                {t("risks.logPattern")}
               </Button>
             </section>
 
             <section className="mt-8 grid gap-4 sm:grid-cols-3">
-              <Stat label="7-day listening" value={formatMinutes(week.totalMinutes)} sub={week.avgDb == null ? "nothing logged yet" : `avg ~${week.avgDb} dB`} />
-              <Stat label="7-day loudest" value={week.peakDb == null ? "-" : `~${week.peakDb} dB`} sub="estimated peak" />
+              <Stat label={t("risks.sevenDayListening")} value={formatMinutes(week.totalMinutes)} sub={week.avgDb == null ? t("risks.nothingLoggedYet") : t("risks.avgAbbrev").replace("{n}", String(week.avgDb))} />
+              <Stat label={t("risks.sevenDayLoudest")} value={week.peakDb == null ? "-" : `~${week.peakDb} dB`} sub={t("risks.estimatedPeak")} />
               <Stat
-                label="7-day trend"
+                label={t("risks.sevenDayTrend")}
                 value={trend == null ? "-" : `${trend > 0 ? "↑" : trend < 0 ? "↓" : ""}${Math.abs(trend)}%`}
-                sub={trend == null ? "log a second week to compare" : "listening time vs prior week"}
+                sub={trend == null ? t("risks.logSecondWeek") : t("risks.vsWeekPrior")}
                 highlight={trend != null && trend < 0}
               />
             </section>
 
             <section className="mt-8 rounded-2xl border border-border/70 bg-card/60 p-6">
               <h2 className="flex items-center gap-2 text-xl font-semibold">
-                <Info className="h-4 w-4 text-signal" /> What this does — and does not — mean
+                <Info className="h-4 w-4 text-signal" /> {t("risks.meaningTitle")}
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                The comparison uses the WHO 85 dB reference and a 3 dB exchange rate to make time
-                and level easier to compare. It does not infer a personal safe limit from a hearing
-                threshold. A screening can show patterns worth monitoring, but only a qualified
-                hearing professional can diagnose hearing loss or advise on individual exposure.
+                {t("risks.meaningBody")}
               </p>
               <div className="mt-5 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
-                <p className="flex gap-2"><TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-signal" />Use noise-cancelling headphones to avoid turning up the volume in noisy places.</p>
-                <p className="flex gap-2"><TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-caution" />Ringing, muffling or discomfort is a reason to stop and take a quiet break.</p>
+                <p className="flex gap-2"><TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-signal" />{t("risks.tipNoiseCancelling")}</p>
+                <p className="flex gap-2"><TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-caution" />{t("risks.tipRinging")}</p>
               </div>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild><Link to="/report">View weekly report</Link></Button>
-                <Button asChild variant="secondary"><Link to="/test">Run a screening</Link></Button>
+                <Button asChild><Link to="/report">{t("risks.viewWeeklyReport")}</Link></Button>
+                <Button asChild variant="secondary"><Link to="/test">{t("risks.runScreening")}</Link></Button>
               </div>
             </section>
 
             {latest ? (
               <p className="mt-6 text-xs text-muted-foreground">
-                Latest screening context: average threshold {Number(latest.avg_threshold_db ?? 0).toFixed(1)} dB,
-                worst point {Number(latest.worst_threshold_db ?? 0).toFixed(1)} dB. This context is shown
-                for tracking, not used as a safety cutoff.
+                {t("risks.latestContext")
+                  .replace("{avg}", Number(latest.avg_threshold_db ?? 0).toFixed(1))
+                  .replace("{worst}", Number(latest.worst_threshold_db ?? 0).toFixed(1))}
               </p>
             ) : user ? (
               <p className="mt-6 text-xs text-muted-foreground">
-                No screening yet. <Link className="text-signal underline-offset-4 hover:underline" to="/test">Run one</Link> to add context to your history.
+                {t("risks.noScreeningYet")} <Link className="text-signal underline-offset-4 hover:underline" to="/test">{t("risks.runOne")}</Link> {t("risks.toAddContext")}
               </p>
             ) : null}
           </>
