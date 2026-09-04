@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Audiogram } from "@/components/Audiogram";
+import { Audiogram } from "@/components/charts/lazy";
 import { Button } from "@/components/ui/button";
 import type { ThresholdResult } from "@/lib/audiometry";
 import { useI18n } from "@/lib/i18n";

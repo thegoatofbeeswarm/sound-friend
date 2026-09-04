@@ -13,7 +13,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
-import { Audiogram } from "@/components/Audiogram";
+import { Audiogram } from "@/components/charts/lazy";
 import { ScreeningQuality } from "@/components/ScreeningQuality";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
