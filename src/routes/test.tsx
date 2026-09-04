@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Ear, Headphones, Loader2, Play, Volume2 } from "lucide-react";
+import { Ear, Gauge, Headphones, Loader2, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SiteNav } from "@/components/SiteNav";
@@ -250,6 +250,7 @@ function TestPage() {
                   { Icon: Headphones, text: t("test.step1") },
                   { Icon: Volume2, text: t("test.step2") },
                   { Icon: Ear, text: t("test.step3") },
+                  { Icon: Gauge, text: t("test.stepCatch") },
                 ] as const
               ).map(({ Icon, text }) => (
                 <li key={text} className="flex items-start gap-3">
@@ -325,6 +326,7 @@ function TestPage() {
             environmentDb={noise}
             trials={state.trialCount}
             device={device}
+            reliability={rel}
           />
         ) : null}
       </main>
@@ -338,12 +340,19 @@ function ResultsView({
   environmentDb,
   trials,
   device,
+  reliability,
 }: {
   points: ThresholdResult[];
   saving: boolean;
   environmentDb: number | null;
   trials: number;
   device: DeviceId;
+  reliability: {
+    catchTrials: number;
+    catchPassed: number;
+    repeatTrials: number;
+    repeatAgreed: number;
+  };
 }) {
   const summary = safeListening(points);
   const { user } = useAuth();
@@ -364,6 +373,7 @@ function ResultsView({
            trials,
            confidences: points.map((point) => point.confidence),
            device,
+           ...reliability,
          })}
          className="mt-6"
        />
