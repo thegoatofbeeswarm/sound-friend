@@ -474,7 +474,7 @@ export const TRAINING_MODES: TrainingMode[] = [
     icon: "waves",
     needsSpeech: false,
     makeRound: (level, ceiling) => {
-      const target = pick(SOUNDSCAPES);
+      const target = pickFresh("soundscape", SOUNDSCAPES);
       const choices = level >= 8 ? 5 : level >= 5 ? 4 : 3;
       const spread = level >= 6 ? 25 : 60;
       const near = SOUNDSCAPES.filter(
@@ -499,8 +499,9 @@ export const TRAINING_MODES: TrainingMode[] = [
     icon: "messages",
     needsSpeech: true,
     makeRound: (level) => {
-      const answer = pick(WORDS);
-      const distractors = shuffle(WORDS.filter((w) => w !== answer)).slice(0, level >= 6 ? 3 : 2);
+      const set = pickFresh("word-set", WORD_SETS);
+      const answer = pickFresh("word", set);
+      const distractors = shuffle(set.filter((w) => w !== answer)).slice(0, level >= 6 ? 3 : 2);
       // Higher level = louder babble relative to speech.
       const babble = 0.02 + (level / 10) * 0.12;
       return {
@@ -525,7 +526,7 @@ export const TRAINING_MODES: TrainingMode[] = [
     icon: "sparkles",
     needsSpeech: false,
     makeRound: (level) => {
-      const target = pick(FRICATIVES);
+      const target = pickFresh("fricative", FRICATIVES);
       const gain = gainFor(70 - level * 4);
       return {
         prompt: "Which sound was that?",
@@ -585,10 +586,10 @@ export const TRAINING_MODES: TrainingMode[] = [
     icon: "music",
     needsSpeech: false,
     makeRound: (level) => {
-      const base = pick([500, 1000, 2000, 4000]);
+      const base = pickFresh("freq-base", [500, 750, 1000, 1500, 2000, 3000, 4000, 6000]);
       // Higher level = smaller pitch difference (down to ~0.5%).
       const pct = Math.max(0.005, 0.09 - level * 0.0085);
-      const direction = pick(["higher", "lower", "same"] as const);
+      const direction = pickFresh("freq-dir", ["higher", "lower", "same"] as const);
       const second =
         direction === "same" ? base : direction === "higher" ? base * (1 + pct) : base * (1 - pct);
       const gain = gainFor(62);
@@ -616,7 +617,7 @@ export const TRAINING_MODES: TrainingMode[] = [
     icon: "users",
     needsSpeech: true,
     makeRound: (level) => {
-      const item = pick(SENTENCES);
+      const item = pickFresh("sentence-conversation", SENTENCES);
       const babble = 0.02 + (level / 10) * 0.1;
       return {
         prompt: item.question,
@@ -640,7 +641,7 @@ export const TRAINING_MODES: TrainingMode[] = [
     icon: "gauge",
     needsSpeech: true,
     makeRound: (level) => {
-      const item = pick(SENTENCES);
+      const item = pickFresh("sentence-rapid", SENTENCES);
       const rate = 1.2 + level * 0.13; // up to ~2.5x
       return {
         prompt: item.question,
