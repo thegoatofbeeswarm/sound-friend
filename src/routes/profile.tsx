@@ -174,7 +174,7 @@ function ProfilePage() {
                   <>
                     <p className="mt-2 text-2xl font-semibold">{t(`profile.dim.${weakest.id}`)}</p>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      {t("profile.focusBody", { name: t(`profile.dim.${weakest.id}`) })}
+                      {t("profile.focusBody").replace("{name}", t(`profile.dim.${weakest.id}`))}
                     </p>
                     <Button asChild size="sm" className="mt-4">
                       <Link to={DIMENSION_ACTION[weakest.id].to}>
