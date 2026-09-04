@@ -269,6 +269,28 @@ async function tone(freq: number, ms: number, gain: number, pan = 0): Promise<vo
  * of people talking in a busy public space. Returns a stop function.
  * Falls back to synthesized babble if the recording cannot be decoded.
  */
+/** Loop a bundled recording at a gain until the returned function is called. */
+async function startLoop(url: string, gain: number): Promise<() => void> {
+  const ctx = await getAudioContext();
+  await unlockAudio();
+  const buffer = await loadSample(url);
+  if (!buffer) return () => undefined;
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  const g = ctx.createGain();
+  g.gain.value = Math.max(0.0005, gain * 2.2);
+  src.connect(g).connect(ctx.destination);
+  src.start(ctx.currentTime + 0.02, Math.random() * Math.max(0, buffer.duration - 6));
+  return () => {
+    try {
+      src.stop();
+    } catch {
+      /* already stopped */
+    }
+  };
+}
+
 async function startBabble(gain: number): Promise<() => void> {
   const ctx = await getAudioContext();
   await unlockAudio();
