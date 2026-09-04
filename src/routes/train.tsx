@@ -322,6 +322,18 @@ function TrainPage() {
               {user ? <LevelSummary level={level} streak={dayStreak(allSessions)} /> : null}
             </section>
 
+            {user ? (
+              <PlanCard
+                plan={plan ?? null}
+                onStart={(mode) => {
+                  setModeId(mode);
+                  void begin(mode);
+                }}
+              />
+            ) : (
+              <p className="mt-8 text-sm text-muted-foreground">{t("plan.signedOut")}</p>
+            )}
+
             <section className="mt-10">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
@@ -468,6 +480,95 @@ function TrainPage() {
         ) : null}
       </main>
     </div>
+  );
+}
+
+function PlanCard({
+  plan,
+  onStart,
+}: {
+  plan: TrainingPlan | null;
+  onStart: (mode: ModeId) => void;
+}) {
+  const { t } = useI18n();
+  if (!plan) return null;
+
+  const fill = (key: string, vals?: Record<string, string | number>) => {
+    let text = t(key);
+    for (const [name, value] of Object.entries(vals ?? {})) {
+      text = text.replace(`{${name}}`, String(value));
+    }
+    return text;
+  };
+
+  const sourceLine =
+    plan.source === "clinic"
+      ? t("plan.fromClinic").replace("{source}", plan.sourceLabel ?? "")
+      : plan.source === "screening"
+        ? t("plan.fromScreening")
+        : t("plan.fromNone");
+
+  const facts = [
+    plan.highDb == null ? null : t("plan.summaryHigh").replace("{db}", String(plan.highDb)),
+    plan.lowDb == null ? null : t("plan.summaryLow").replace("{db}", String(plan.lowDb)),
+    plan.asymmetryDb == null || plan.asymmetryDb < 10
+      ? null
+      : t("plan.summaryAsym").replace("{db}", String(plan.asymmetryDb)),
+  ].filter(Boolean) as string[];
+
+  return (
+    <section className="mt-10 rounded-2xl border border-signal/40 bg-signal/5 p-6 shadow-card">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-2xl font-semibold">
+            <Target className="h-5 w-5 text-signal" /> {t("plan.title")}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">{sourceLine}</p>
+        </div>
+        {plan.source !== "clinic" ? (
+          <Button asChild variant="secondary" size="sm">
+            <Link to="/data">{t("plan.upload")}</Link>
+          </Button>
+        ) : null}
+      </div>
+
+      {facts.length ? (
+        <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
+          {facts.map((fact) => (
+            <li key={fact}>{fact}</li>
+          ))}
+        </ul>
+      ) : null}
+
+      <ol className="mt-5 grid gap-3 lg:grid-cols-3">
+        {plan.steps.map((step, index) => (
+          <li
+            key={`${step.mode}-${index}`}
+            className="rounded-xl border border-border/70 bg-card/80 p-4"
+          >
+            <p className="text-xs uppercase tracking-wide text-signal">
+              {t("plan.step").replace("{n}", String(index + 1))}
+            </p>
+            <h3 className="mt-2 font-semibold">{t(`train.mode.${step.mode}.label`)}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {fill(step.reasonKey, step.vals)}
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-3 px-0 text-signal"
+              onClick={() => onStart(step.mode)}
+            >
+              {t("plan.start")} <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </li>
+        ))}
+      </ol>
+
+      {plan.source !== "clinic" ? (
+        <p className="mt-4 text-xs text-muted-foreground">{t("plan.uploadHint")}</p>
+      ) : null}
+    </section>
   );
 }
 
