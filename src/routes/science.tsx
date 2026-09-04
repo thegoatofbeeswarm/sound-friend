@@ -88,26 +88,24 @@ const references = [
 ];
 
 function SciencePage() {
+  const { t } = useI18n();
   return (
     <div className="min-h-screen">
       <SiteNav />
       <section className="hero-surface border-b border-border/60">
         <div className="mx-auto max-w-4xl px-5 py-16">
           <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs text-muted-foreground">
-            <BookOpen className="h-3.5 w-3.5 text-signal" /> Methods & evidence
+            <BookOpen className="h-3.5 w-3.5 text-signal" /> {t("sci.badge")}
           </span>
-          <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">The science behind Audiomaxxer</h1>
-          <p className="mt-5 max-w-2xl text-base text-muted-foreground">
-            What we measure, why the methods are chosen, where the evidence comes from, and — just as important —
-            what this app cannot tell you.
-          </p>
+          <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">{t("sci.h1")}</h1>
+          <p className="mt-5 max-w-2xl text-base text-muted-foreground">{t("sci.lead")}</p>
         </div>
       </section>
 
       <main className="mx-auto max-w-4xl space-y-8 px-5 py-14">
         {topicGroups.map((group) => (
-          <section key={group.label}>
-            <h2 className="text-xl font-semibold">{group.label}</h2>
+          <section key={group.labelKey}>
+            <h2 className="text-xl font-semibold">{t(group.labelKey)}</h2>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               {group.links.map((topic) => (
                 <Link
@@ -115,33 +113,28 @@ function SciencePage() {
                   to={topic.to}
                   className="rounded-2xl border border-border/70 bg-card/70 p-5 shadow-card transition-colors hover:border-signal/60"
                 >
-                  <h3 className="text-base font-semibold">{topic.label}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{topic.blurb}</p>
-                  <span className="mt-4 inline-flex text-xs font-medium text-signal">Read the guide →</span>
+                  <h3 className="text-base font-semibold">{t(`sci.link.${topic.key}.label`)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {t(`sci.link.${topic.key}.blurb`)}
+                  </p>
+                  <span className="mt-4 inline-flex text-xs font-medium text-signal">{t("sci.read")}</span>
                 </Link>
               ))}
             </div>
           </section>
         ))}
+        <p className="text-xs text-muted-foreground">{t("sci.note")}</p>
 
         <section className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
           <h2 className="flex items-center gap-2 text-xl font-semibold">
-            <FlaskConical className="h-5 w-5 text-signal" /> Our position on evidence
+            <FlaskConical className="h-5 w-5 text-signal" /> {t("sci.position.title")}
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Audiomaxxer is a hearing screening and listening-training tool, not a diagnostic device. Adaptive and
-            task-specific training may improve learning efficiency and transfer, although the magnitude of benefit
-            varies across studies and populations. Training improves listening performance; it does not repair damaged
-            cochlear hair cells.
-          </p>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Consumer headphones, browser volume, room noise and behaviour limit the precision of an online test. Our
-            results are best used to follow your own patterns over time, not as a substitute for a clinical assessment.
-          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t("sci.position.p1")}</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t("sci.position.p2")}</p>
         </section>
 
         <section className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-          <h2 className="text-xl font-semibold">References</h2>
+          <h2 className="text-xl font-semibold">{t("sci.references")}</h2>
           <ul className="mt-4 space-y-4">
             {references.map((reference) => (
               <li key={reference.url}>
