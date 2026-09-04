@@ -580,6 +580,7 @@ export const TRAINING_MODES: TrainingMode[] = [
         options: shuffle([answer, ...distractors]).map((w) => ({ id: w, label: w })),
         answerId: answer,
         play: async () => {
+          await warmUpSpeech();
           const stop = await startBabble(babble);
           await wait(500);
           await speak(answer, 0.95, Math.max(0.25, 1 - level * 0.05));
@@ -695,6 +696,7 @@ export const TRAINING_MODES: TrainingMode[] = [
         options: shuffle(item.options).map((o) => ({ id: o, label: o })),
         answerId: item.answer,
         play: async () => {
+          await warmUpSpeech();
           const stop = await startBabble(babble);
           await wait(500);
           await speak(item.text, 1, Math.max(0.3, 1 - level * 0.045));
@@ -719,6 +721,7 @@ export const TRAINING_MODES: TrainingMode[] = [
         options: shuffle(item.options).map((o) => ({ id: o, label: o })),
         answerId: item.answer,
         play: async () => {
+          await warmUpSpeech();
           await speak(item.text, rate, 1);
         },
       };
