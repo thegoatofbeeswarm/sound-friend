@@ -16,7 +16,14 @@ Rules:
 - Compare only exact ear + frequency matches. Do not convert or imply the Audiomaxxer relative/estimated level is clinical dB HL.
 - Do not diagnose or claim either test is medically accurate. Explain that differences can arise from calibration, transducer fit, room noise, test method, or response variability.
 - If the document is not a hearing test, return points: [] and explain that in summary.
-- No markdown, no code fences.`;
+- No markdown, no code fences.
+- Write summary, comparisonSummary and nextSteps in the requested output language. Keep testDate, sourceLabel and the points array unchanged in format.`;
+
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: "English",
+  zh: "Simplified Chinese (简体中文)",
+  es: "Spanish (Español)",
+};
 
 function toBase64(bytes: Uint8Array): string {
   let binary = "";
@@ -50,7 +57,11 @@ function parseJson(text: string): Extracted {
 
 export const analyzeClinicalReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ reportId: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) =>
+    z
+      .object({ reportId: z.string().uuid(), language: z.enum(["en", "zh", "es"]).default("en") })
+      .parse(input),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: report, error: reportError } = await supabase
@@ -111,7 +122,7 @@ export const analyzeClinicalReport = createServerFn({ method: "POST" })
             content: [
               {
                 type: "text",
-                text: `${EXTRACTION_PROMPT}\n\nLATEST AUDIOMAXXER POINTS:\n${comparisonData || "No Audiomaxxer screening is saved yet."}`,
+                text: `${EXTRACTION_PROMPT}\n\nOUTPUT LANGUAGE: ${LANGUAGE_NAMES[data.language] ?? "English"}\n\nLATEST AUDIOMAXXER POINTS:\n${comparisonData || "No Audiomaxxer screening is saved yet."}`,
               },
               contentBlock,
             ],
