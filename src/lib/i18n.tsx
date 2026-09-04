@@ -168,6 +168,7 @@ import { sciencePack } from "@/lib/i18n-dicts/science";
 import { teamPage } from "@/lib/i18n-dicts/team";
 import { profilePage } from "@/lib/i18n-dicts/profile";
 import { speechPage } from "@/lib/i18n-dicts/speech";
+import { planPack } from "@/lib/i18n-dicts/plan";
 
 export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
 
@@ -185,6 +186,7 @@ const packs: Dict[] = [
   teamPage,
   speechPage,
   profilePage,
+  planPack,
 ];
 
 
