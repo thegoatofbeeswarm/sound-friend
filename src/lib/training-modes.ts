@@ -41,7 +41,17 @@ export interface TrainingMode {
   blurb: string;
   skill: string;
   /** lucide icon name used by the UI. */
-  icon: "waves" | "messages" | "sparkles" | "compass" | "music" | "users" | "gauge";
+  icon:
+    | "waves"
+    | "messages"
+    | "sparkles"
+    | "compass"
+    | "music"
+    | "users"
+    | "gauge"
+    | "utensils"
+    | "car"
+    | "phone";
   needsSpeech: boolean;
   makeRound: (level: number, ceilingDb: number) => ModeRound;
 }
