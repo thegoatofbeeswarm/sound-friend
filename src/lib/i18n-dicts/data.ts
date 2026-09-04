@@ -125,7 +125,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "只有在两个数据集中都可见的频率与耳别组合才会被比较。正负号表示哪个结果更高；绝对值表示两者相差多少。",
     "data.eq1.title": "单个匹配点的差值",
     "data.eq1.detail":
-      "正值表示 Audiomaxxer 阈值更高（Audiomaxxer 筛查中需要更安静的音调才能听到）。负值表示诊所阈值更高。",
+      "正值表示 Audiomaxxer 阈值更高——在 Audiomaxxer 筛查中，音调必须比诊所测试时更响你才有反应。负值表示诊所阈值更高。",
     "data.eq2.title": "平均绝对误差（MAE）",
     "data.eq2.detail":
       "MAE 汇总了 n 个匹配的耳别-频率点之间的平均绝对差异。它并不能证明任一结果在临床上是准确的。",
@@ -231,7 +231,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "Solo se comparan los pares de frecuencia y oído visibles en ambos conjuntos de datos. El signo indica cuál resultado es más alto; el valor absoluto indica cuán distintos son.",
     "data.eq1.title": "Diferencia en un punto coincidente",
     "data.eq1.detail":
-      "Un valor positivo significa que el umbral de Audiomaxxer es más alto (se necesitó un tono más suave en el cribado de Audiomaxxer). Un valor negativo significa que el umbral de la clínica es más alto.",
+      "Un valor positivo significa que el umbral de Audiomaxxer es más alto: el tono tuvo que sonar más fuerte para que respondieras en el cribado de Audiomaxxer que en la clínica. Un valor negativo significa que el umbral de la clínica es más alto.",
     "data.eq2.title": "Error absoluto medio (MAE)",
     "data.eq2.detail":
       "El MAE resume la separación absoluta promedio en n puntos de oído-frecuencia coincidentes. No prueba que alguno de los resultados sea clínicamente exacto.",
