@@ -38,9 +38,9 @@ export interface ProfileInput {
 
 /** Modes that feed each trained dimension. */
 const MODE_MAP: Record<Exclude<DimensionId, "sensitivity" | "speech">, string[]> = {
-  discrimination: ["frequency-discrimination", "high-frequency"],
-  attention: ["soundscape", "localization"],
-  memory: ["rapid-speech", "conversation"],
+  discrimination: ["frequency-discrimination", "high-frequency", "phone-call"],
+  attention: ["soundscape", "localization", "street"],
+  memory: ["rapid-speech", "conversation", "restaurant"],
 };
 
 const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
