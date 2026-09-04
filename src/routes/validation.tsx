@@ -40,7 +40,7 @@ export const Route = createFileRoute("/validation")({
   component: ValidationPage,
 });
 
-function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+function Stat({ label, value, hint }: { label: string; value: string; hint?: string | undefined }) {
   return (
     <div className="rounded-2xl border border-border/70 bg-card/70 p-5 shadow-card">
       <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
