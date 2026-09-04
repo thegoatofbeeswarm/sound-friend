@@ -97,16 +97,13 @@ function Index() {
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">{t("home.lead")}</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <Link to="/test">{t("home.ctaTest")}</Link>
-            </Button>
-            <Button asChild size="lg" variant="secondary">
               <Link to="/profile">{t("home.ctaProfile")}</Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
-              <Link to="/speech">{t("home.ctaSpeech")}</Link>
+              <Link to="/test">{t("home.ctaTest")}</Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
-              <Link to="/history">{t("home.ctaHistory")}</Link>
+              <Link to="/train">{t("nav.train")}</Link>
             </Button>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">{t("home.disclaimer")}</p>
