@@ -178,6 +178,7 @@ const packs: Dict[] = [
   reportPage,
   dataPage,
   coachPage,
+  sciencePack,
 ];
 
 function merge(lang: Language, base: Record<string, string>): Record<string, string> {
