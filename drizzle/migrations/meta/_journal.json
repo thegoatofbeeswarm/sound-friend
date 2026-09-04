@@ -50,6 +50,13 @@
       "when": 1788413642371,
       "tag": "0006_clinical_report_ai_comparison",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788521619998,
+      "tag": "0007_create_speech_in_noise_tests",
+      "breakpoints": true
     }
   ]
 }

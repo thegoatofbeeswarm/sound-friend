@@ -213,6 +213,45 @@ export type Database = {
         }
         Relationships: []
       }
+      speech_tests: {
+        Row: {
+          created_at: string
+          device_type: string | null
+          id: string
+          noise_type: string
+          reversals: number
+          score: number
+          spread_db: number | null
+          srt_db: number
+          trials: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          noise_type: string
+          reversals: number
+          score: number
+          spread_db?: number | null
+          srt_db: number
+          trials: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          noise_type?: string
+          reversals?: number
+          score?: number
+          spread_db?: number | null
+          srt_db?: number
+          trials?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       threshold_points: {
         Row: {
           confidence: number
