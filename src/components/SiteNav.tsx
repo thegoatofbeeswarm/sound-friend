@@ -1,13 +1,34 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AudioLines } from "lucide-react";
+import { AudioLines, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { AppSettings } from "@/components/AppSettings";
 import { useI18n } from "@/lib/i18n";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export function SiteNav() {
   const { user, signOut } = useAuth();
   const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+
+  const links = [
+    { to: "/test" as const, label: t("nav.test") },
+    { to: "/train" as const, label: t("nav.train") },
+    { to: "/risks" as const, label: t("nav.risks") },
+    { to: "/data" as const, label: t("nav.data") },
+    { to: "/report" as const, label: t("nav.report") },
+    { to: "/science" as const, label: t("nav.science") },
+    { to: "/history" as const, label: t("nav.history") },
+    { to: "/team" as const, label: t("nav.team") },
+  ];
+
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
