@@ -29,6 +29,7 @@ import {
   trainingStreak,
 } from "@/lib/hearing-summary";
 import { scoreScreening } from "@/lib/test-quality";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/history")({
   head: () => ({
@@ -107,6 +108,7 @@ function Metric({
 }
 
 function HistoryPage() {
+  const { t } = useI18n();
   const { user, loading } = useAuth();
   const { data, isLoading } = useQuery({
     enabled: !!user,
@@ -164,24 +166,24 @@ function HistoryPage() {
       <main className="mx-auto max-w-6xl px-5 py-12">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-signal">Your personal hearing dashboard</p>
-            <h1 className="mt-2 text-4xl font-semibold">Your Hearing</h1>
+            <p className="text-sm font-medium text-signal">{t("history.tagline")}</p>
+            <h1 className="mt-2 text-4xl font-semibold">{t("history.title")}</h1>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              A clear view of your screening profile, listening risk, and training momentum.
+              {t("history.lead")}
             </p>
           </div>
           {user ? (
             <Button asChild>
-              <Link to="/test">Run a new screening</Link>
+              <Link to="/test">{t("history.runScreening")}</Link>
             </Button>
           ) : null}
         </div>
 
         {!user ? (
           <div className="mt-10 rounded-2xl border border-border/70 bg-card/60 p-8">
-            <p className="text-muted-foreground">Sign in to see your saved screenings and personalized dashboard.</p>
+            <p className="text-muted-foreground">{t("history.signInPrompt")}</p>
             <Button asChild className="mt-5">
-              <Link to="/auth">Sign in</Link>
+              <Link to="/auth">{t("history.signIn")}</Link>
             </Button>
           </div>
         ) : isLoading ? (
@@ -192,24 +194,24 @@ function HistoryPage() {
           <div className="mt-10 rounded-2xl border border-border/70 bg-card/60 p-8">
             <div className="flex items-center gap-3">
               <Target className="h-5 w-5 text-signal" />
-              <h2 className="text-xl font-semibold">Your profile starts with a screening</h2>
+              <h2 className="text-xl font-semibold">{t("history.profileStartTitle")}</h2>
             </div>
             <p className="mt-3 max-w-xl text-muted-foreground">
-              Complete your first adaptive screening to see per-ear results, listening guidance, and a baseline for future change.
+              {t("history.profileStartBody")}
             </p>
             <Button asChild className="mt-5">
-              <Link to="/test">Start your first screening</Link>
+              <Link to="/test">{t("history.startFirst")}</Link>
             </Button>
           </div>
         ) : (
-          <Dashboard data={data} />
+          <Dashboard data={data} t={t} />
         )}
       </main>
     </div>
   );
 }
 
-function Dashboard({ data }: { data: { tests: SavedTest[]; sessions: DashboardSession[] } }) {
+function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: DashboardSession[] }; t: (key: string) => string }) {
   const current = data.tests[0];
   const previous = data.tests[1];
   if (!current) return null;
@@ -224,6 +226,19 @@ function Dashboard({ data }: { data: { tests: SavedTest[]; sessions: DashboardSe
   );
    const ceiling = 85 + Number(current.safe_volume_offset_db ?? 0);
    const risk = listeningRisk(Number(current.worst_threshold_db), ceiling);
+   const riskLabelKey: Record<string, string> = {
+     Unknown: "history.risk.unknown",
+     High: "history.risk.high",
+     Moderate: "history.risk.moderate",
+     Low: "history.risk.low",
+   };
+   const earLabelKey: Record<string, string> = {
+     Normal: "history.ear.normal",
+     "Moderate reduction": "history.ear.moderateReduction",
+     "Mild reduction": "history.ear.mildReduction",
+     "Slight reduction at 4–8 kHz": "history.ear.slightHighFreq",
+     "Slight reduction": "history.ear.slightReduction",
+   };
    const screeningDue = nextScreening(current.created_at);
    const streak = trainingStreak(data.sessions.map((session) => session.created_at));
    const totalSessions = data.sessions.length;

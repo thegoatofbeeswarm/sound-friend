@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { AudioLines } from "lucide-react";
+import { AudioLines, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
+import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,13 +55,13 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/test` },
         });
         if (error) throw error;
-        toast.success("Account created. You can start testing.");
+        toast.success(t("auth.created"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Authentication failed");
+      toast.error(err instanceof Error ? err.message : t("auth.failed"));
     } finally {
       setBusy(false);
     }
@@ -70,7 +72,7 @@ function AuthPage() {
       redirect_uri: window.location.origin,
     });
     if (result.error) {
-      toast.error("Google sign-in failed.");
+      toast.error(t("auth.googleFailed"));
       return;
     }
     if (result.redirected) return;
@@ -79,18 +81,26 @@ function AuthPage() {
 
   return (
     <div className="hero-surface flex min-h-screen items-center justify-center px-5 py-16">
-      <div className="w-full max-w-md rounded-2xl border border-border/70 bg-card/80 p-8 shadow-glow">
+      <div className="relative w-full max-w-md rounded-2xl border border-border/70 bg-card/80 p-8 shadow-glow">
+        <Link
+          to="/"
+          aria-label={t("auth.close")}
+          title={t("auth.close")}
+          className="absolute right-4 top-4 rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <X className="h-4 w-4" />
+        </Link>
         <AudioLines className="h-6 w-6 text-signal" />
         <h1 className="mt-4 text-2xl font-semibold">
-          {mode === "signin" ? "Welcome back" : "Create your account"}
+          {mode === "signin" ? t("auth.welcomeBack") : t("auth.createAccount")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Saved screenings let Audiomaxxer track how your hearing shifts over time.
+          {t("auth.lead")}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -100,7 +110,7 @@ function AuthPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <Input
               id="password"
               type="password"
@@ -111,16 +121,16 @@ function AuthPage() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={busy}>
-            {mode === "signin" ? "Sign in" : "Sign up"}
+            {mode === "signin" ? t("auth.signIn") : t("auth.signUp")}
           </Button>
         </form>
 
         <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
+          <span className="h-px flex-1 bg-border" /> {t("auth.or")} <span className="h-px flex-1 bg-border" />
         </div>
 
         <Button variant="secondary" className="w-full" onClick={() => void google()}>
-          Continue with Google
+          {t("auth.google")}
         </Button>
 
         <button
@@ -128,8 +138,15 @@ function AuthPage() {
           className="mt-6 w-full text-center text-sm text-muted-foreground hover:text-foreground"
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
         >
-          {mode === "signin" ? "No account yet? Sign up" : "Already registered? Sign in"}
+          {mode === "signin" ? t("auth.toSignUp") : t("auth.toSignIn")}
         </button>
+
+        <Link
+          to="/"
+          className="mt-3 block w-full text-center text-sm text-muted-foreground hover:text-foreground"
+        >
+          {t("auth.continueWithout")}
+        </Link>
       </div>
     </div>
   );
