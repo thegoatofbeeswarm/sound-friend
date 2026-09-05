@@ -14,7 +14,7 @@ export function HowItWorks() {
   const { t } = useI18n();
 
   return (
-    <section className="hairline bg-background">
+    <section className="hairline ">
       <div className="mx-auto max-w-5xl px-5 py-24">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -53,7 +53,7 @@ export function HowItWorks() {
           ))}
         </ol>
 
-        <div className="mt-10 flex items-center gap-3 rounded-2xl border border-border/60 bg-card/60 p-6 text-sm text-muted-foreground backdrop-blur">
+        <div className="mt-10 flex items-center gap-3 rounded-2xl border border-border/60 bg-white/[0.04] p-6 text-sm text-muted-foreground backdrop-blur">
           <RefreshCw className="h-4 w-4 shrink-0 text-signal" />
           <p>{t("how.loop")}</p>
         </div>

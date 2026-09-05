@@ -478,7 +478,7 @@
   );
 }
 
-.dark .sky-hero {
+[data-theme="dark"] .sky-hero {
   background: linear-gradient(
     180deg,
     oklch(0.1 0.03 285) 0%,
@@ -504,7 +504,7 @@
   animation: haze-drift 26s ease-in-out infinite alternate;
 }
 
-.dark .sky-hero-haze {
+[data-theme="dark"] .sky-hero-haze {
   background:
     radial-gradient(45% 26% at 18% 22%, oklch(0.62 0.2 300 / 0.4), transparent 70%),
     radial-gradient(50% 30% at 82% 16%, oklch(0.55 0.19 265 / 0.38), transparent 72%),
@@ -534,7 +534,7 @@
   animation: star-twinkle 6s ease-in-out infinite alternate;
 }
 
-.dark .sky-stars {
+[data-theme="dark"] .sky-stars {
   opacity: 1;
 }
 
@@ -552,4 +552,49 @@
   .sky-stars {
     animation: none !important;
   }
+}
+
+
+/* Whole-page sky: the same gradient, resolved in viewport units so the dawn /
+   night band sits over the first screen and the deep tone carries the rest. */
+.sky-page {
+  position: relative;
+  isolation: isolate;
+  color: var(--night-foreground);
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.84 0.045 250) 0vh,
+      oklch(0.76 0.05 255) 13vh,
+      oklch(0.68 0.06 60 / 0.9) 25vh,
+      oklch(0.46 0.05 40) 42vh,
+      oklch(0.24 0.04 255) 64vh,
+      oklch(0.15 0.03 258) 86vh,
+      oklch(0.12 0.028 258) 100vh
+    ),
+    oklch(0.12 0.028 258);
+  background-repeat: no-repeat;
+}
+
+[data-theme="dark"] .sky-page {
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.1 0.03 285) 0vh,
+      oklch(0.16 0.07 285) 16vh,
+      oklch(0.22 0.1 280) 34vh,
+      oklch(0.24 0.1 262) 48vh,
+      oklch(0.2 0.09 250) 64vh,
+      oklch(0.13 0.05 255) 86vh,
+      oklch(0.09 0.025 258) 100vh
+    ),
+    oklch(0.09 0.025 258);
+  background-repeat: no-repeat;
+}
+
+/* Atmosphere layers sit over the first screen only. */
+.sky-page > .sky-hero-haze,
+.sky-page > .sky-stars {
+  height: 100vh;
+  inset: 0 0 auto 0;
 }
