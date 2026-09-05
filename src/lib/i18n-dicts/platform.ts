@@ -12,11 +12,10 @@ export const platformPack: {
     "five.startTraining": "Start 5-minute training",
     "five.dimsTitle": "Hearing is more than sensitivity",
     "five.dimsLead":
-      "A tone test answers one question: how quiet a sound can you detect. These five measures describe how you actually listen.",
-    "five.dim.sensitivity.body":
-      "The softest tone you can detect at each pitch — the classic screening, and only one of five inputs here.",
+      "A tone test shows you how quiet a sound you can detect. These five measures describe how you listen:",
+    "five.dim.sensitivity.body": "The softest tone you can detect at each pitch. ",
     "five.dim.speech.body":
-      "How much background noise you can tolerate and still understand spoken digits and sentences.",
+      "How much background noise you can tolerate and still understand spoken digits/sentences.",
     "five.dim.discrimination.body":
       "Telling apart pitches, timbres and fine spectral detail that sit close together.",
     "five.dim.attention.body":
