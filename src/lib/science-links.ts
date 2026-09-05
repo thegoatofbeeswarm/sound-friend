@@ -41,4 +41,28 @@ export const scienceLinks = {
     label: "Headphone accuracy in hearing tests",
     blurb: "Why your headphones matter, which models we correct for, and by how much.",
   },
+  speechInNoise: {
+    key: "speechInNoise",
+    to: "/speech-in-noise-test",
+    label: "Speech in noise",
+    blurb: "The listening test that matches real life, and how to read its score.",
+  },
+  hearingVsListening: {
+    key: "hearingVsListening",
+    to: "/hearing-vs-listening",
+    label: "Hearing vs listening",
+    blurb: "Why a normal tone test can sit alongside a genuinely hard classroom.",
+  },
+  reliability: {
+    key: "reliability",
+    to: "/test-retest-reliability",
+    label: "Test-retest reliability",
+    blurb: "Measurement spread, catch trials, and telling real change from noise.",
+  },
+  headphoneGeneration: {
+    key: "headphoneGeneration",
+    to: "/headphone-generation-hearing",
+    label: "The headphone generation",
+    blurb: "Hearing risk for teens and young adults, and habits worth changing now.",
+  },
 } as const;
