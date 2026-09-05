@@ -26,7 +26,7 @@ const en = {
   "home.title1": "You grew up in headphones.",
   "home.title2": "Find out how you actually listen.",
   "home.lead":
-    "Made for teenagers and young adults. Build a five-part listening profile - sensitivity, speech in noise, sound discrimination, auditory attention and auditory memory - then train the weakest one and watch it change.",
+    "Audiomaxxer is made for teenagers and young adults. Build a five-part listening profile that includes sensitivity, speech in noise, sound discrimination, auditory attention, and auditory memory. Then, train the weakest one and watch it change.",
   "home.ctaTest": "Start a screening",
   "home.ctaHistory": "See saved results",
   "home.disclaimer":
