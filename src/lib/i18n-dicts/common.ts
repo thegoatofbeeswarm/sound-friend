@@ -7,7 +7,7 @@ export const common: {
     "nav.data": "Data",
     "nav.report": "Report",
     "nav.science": "Science",
-    "nav.coach": "Coach",
+    "nav.coach": "Listening coach",
     "nav.home": "Home",
     "nav.menu": "Menu",
 
@@ -33,7 +33,7 @@ export const common: {
     "nav.data": "数据",
     "nav.report": "报告",
     "nav.science": "科学依据",
-    "nav.coach": "AI 教练",
+    "nav.coach": "聆听教练",
     "nav.home": "首页",
     "nav.menu": "菜单",
 
@@ -59,7 +59,7 @@ export const common: {
     "nav.data": "Datos",
     "nav.report": "Informe",
     "nav.science": "Ciencia",
-    "nav.coach": "Entrenador",
+    "nav.coach": "Entrenador de escucha",
     "nav.home": "Inicio",
     "nav.menu": "Menú",
 
