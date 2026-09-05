@@ -45,7 +45,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "nav.validation": "Clinic vs app",
     "valid.title": "Clinic vs Audiomaxxer",
     "valid.lead":
-      "Every clinic report you upload is matched against your own screenings, ear by ear and pitch by pitch. This is how we check the app against the real thing.",
+      "This is how we match your uploaded clinic report and the Audiomaxxer screenings.",
     "valid.needClinic": "Upload a clinic hearing report to start comparing.",
     "valid.needTest": "Take a screening so there is something to compare your report against.",
     "valid.upload": "Upload a clinic report",
