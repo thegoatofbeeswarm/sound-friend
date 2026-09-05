@@ -18,7 +18,7 @@ export function HowItWorks() {
       <div className="mx-auto max-w-5xl px-5 py-24">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="editorial text-[clamp(2rem,4.6vw,3.25rem)] font-light leading-[1.05] text-white">{t("how.title")}</h2>
+            <h2 className="font-display text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-white">{t("how.title")}</h2>
             <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/60">
               {t("how.lead")}
             </p>
@@ -42,7 +42,7 @@ export function HowItWorks() {
                   <p className="text-[11px] tracking-[0.32em] text-white/35">
                     {t("how.step")} {s.n}
                   </p>
-                  <h3 className="editorial mt-2 text-2xl text-white">{t(`how.${s.key}.title`)}</h3>
+                  <h3 className="font-display mt-2 text-2xl text-white">{t(`how.${s.key}.title`)}</h3>
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/60">
                     {t(`how.${s.key}.body`)}
                   </p>
