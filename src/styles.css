@@ -370,3 +370,88 @@
     animation: none !important;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Cinematic homepage: editorial serif + atmospheric dawn-to-night sky */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --font-editorial: "Cormorant Garamond", ui-serif, Georgia, serif;
+}
+
+@theme inline {
+  --font-editorial: var(--font-editorial);
+}
+
+@utility editorial {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+/* Soft dawn haze fading into deep night, used as a full-bleed backdrop. */
+@utility sky-surface {
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.82 0.045 250) 0%,
+      oklch(0.74 0.05 255) 14%,
+      oklch(0.66 0.055 60 / 0.85) 26%,
+      oklch(0.45 0.045 40) 40%,
+      oklch(0.22 0.035 250) 60%,
+      oklch(0.14 0.03 258) 78%,
+      oklch(0.12 0.028 258) 100%
+    );
+  color: var(--night-foreground);
+}
+
+@utility sky-haze {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 30% at 20% 26%, oklch(0.92 0.05 60 / 0.28), transparent 70%),
+    radial-gradient(50% 26% at 78% 20%, oklch(0.9 0.05 250 / 0.3), transparent 72%),
+    radial-gradient(70% 40% at 50% 46%, oklch(0.8 0.04 40 / 0.16), transparent 75%);
+  animation: haze-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes haze-drift {
+  from {
+    transform: translate3d(-2%, 0, 0) scale(1.02);
+    opacity: 0.85;
+  }
+  to {
+    transform: translate3d(2%, -1.5%, 0) scale(1.08);
+    opacity: 1;
+  }
+}
+
+@utility rise-in {
+  animation: rise-in 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility hairline {
+  border-top: 1px solid oklch(1 0 0 / 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-haze,
+  .rise-in {
+    animation: none !important;
+  }
+}
