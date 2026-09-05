@@ -176,6 +176,7 @@ import { planPack } from "@/lib/i18n-dicts/plan";
 import { loopPack } from "@/lib/i18n-dicts/loop";
 import { navPack } from "@/lib/i18n-dicts/nav";
 import { platformPack } from "@/lib/i18n-dicts/platform";
+import { researchPack } from "@/lib/i18n-dicts/research";
 
 export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
 
@@ -197,6 +198,7 @@ const packs: Dict[] = [
   loopPack,
   navPack,
   platformPack,
+  researchPack,
 ];
 
 

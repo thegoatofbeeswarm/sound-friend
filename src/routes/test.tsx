@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Ear, Gauge, Headphones, Loader2, Play, Volume2 } from "lucide-react";
+import { Ear, FlaskConical, Gauge, Headphones, Loader2, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SiteNav } from "@/components/SiteNav";
@@ -30,6 +30,14 @@ import {
 import { DevicePicker } from "@/components/DevicePicker";
 import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
 import { scoreScreening } from "@/lib/test-quality";
+import {
+  encodeNotes,
+  isArmed,
+  loadProtocol,
+  setArmed,
+  NOISE_TOLERANCE_DB,
+  type ResearchProtocol,
+} from "@/lib/research";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/test")({
@@ -69,7 +77,21 @@ function TestPage() {
   const [saving, setSaving] = useState(false);
   const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
 
-  useEffect(() => setDeviceState(loadDevice()), []);
+  /** Research mode: a locked protocol armed from /research. */
+  const [protocol, setProtocol] = useState<ResearchProtocol | null>(null);
+
+  useEffect(() => {
+    if (!isArmed()) return;
+    const p = loadProtocol();
+    if (!p) return;
+    setProtocol(p);
+    setDeviceState(p.device);
+  }, []);
+
+  useEffect(() => {
+    if (protocol) return;
+    setDeviceState(loadDevice());
+  }, [protocol]);
   const setDevice = (id: DeviceId) => {
     setDeviceState(id);
     saveDevice(id);
@@ -195,6 +217,7 @@ function TestPage() {
         avg_threshold_db: summary.avg,
         safe_volume_offset_db: summary.offsetDb,
         device_type: device,
+        notes: protocol ? encodeNotes(protocol) : null,
       })
       .select("id")
       .single();
@@ -223,9 +246,10 @@ function TestPage() {
     void queryClient.invalidateQueries();
     toast.success(t("test.toastSaveSuccess"));
     void navigate({ to: "/history" });
-  }, [final, user, noise, state.trialCount, navigate, device, queryClient]);
+  }, [final, user, noise, state.trialCount, navigate, device, queryClient, protocol]);
 
   useEffect(() => {
+    if (phase === "done" && final) setArmed(false);
     if (phase === "done" && final && user) void saveResults();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, final, user]);
@@ -264,7 +288,31 @@ function TestPage() {
             </ul>
 
 
-            <DevicePicker value={device} onChange={setDevice} className="mt-8" />
+            {protocol ? (
+              <div className="mt-8 rounded-2xl border border-signal/40 bg-signal/5 p-4 text-sm">
+                <p className="flex items-center gap-2 font-semibold text-signal">
+                  <FlaskConical className="h-4 w-4" /> {t("res.banner")}
+                </p>
+                <p className="mt-1 text-muted-foreground">{t("res.bannerBody")}</p>
+                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  <li>{t("res.device")}: {getDevice(protocol.device).label}</li>
+                  <li>{t("res.volume")}: {protocol.volumeNote || "—"}</li>
+                  <li>{t("res.place")}: {protocol.place || "—"}</li>
+                  {protocol.environmentDb == null ? null : (
+                    <li>
+                      {t("res.noise")}: {Math.round(protocol.environmentDb)} dB
+                    </li>
+                  )}
+                </ul>
+                {protocol.environmentDb != null &&
+                noise != null &&
+                Math.abs(noise - protocol.environmentDb) > NOISE_TOLERANCE_DB ? (
+                  <p className="mt-2 text-xs text-destructive">{t("res.bannerNoise")}</p>
+                ) : null}
+              </div>
+            ) : (
+              <DevicePicker value={device} onChange={setDevice} className="mt-8" />
+            )}
 
             <div className="mt-6">
               <NoiseMeter onLevel={setNoise} />
