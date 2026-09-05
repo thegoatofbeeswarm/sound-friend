@@ -25,7 +25,7 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.safeExposure": "Safe daily exposure",
     "test.warningTemplate":
       "The standard phone warning triggers at 85 dB. Based on your thresholds your personal ceiling is {ceiling} dB ({offset} dB versus the generic rule), which allows about {hours} hours of continuous listening per day.",
-    "test.confidenceTemplate": "{pct}% confidence",
+    "test.confidenceTemplate": "Estimate stability {pct}%",
     "test.seeRisk": "See my overuse risk",
     "test.trainHearing": "Train my hearing",
     "test.saving": "Saving...",
@@ -60,7 +60,7 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.safeExposure": "每日安全暴露时长",
     "test.warningTemplate":
       "标准手机警告在 85 dB 时触发。根据你的听阈，你的个人音量上限为 {ceiling} dB（相较通用规则相差 {offset} dB），这意味着每天可安全连续收听约 {hours} 小时。",
-    "test.confidenceTemplate": "置信度 {pct}%",
+    "test.confidenceTemplate": "估计稳定度 {pct}%",
     "test.seeRisk": "查看我的过度使用风险",
     "test.trainHearing": "训练我的听力",
     "test.saving": "保存中...",
@@ -96,7 +96,7 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.safeExposure": "Exposición diaria segura",
     "test.warningTemplate":
       "La advertencia estándar del teléfono se activa a 85 dB. Según tus umbrales, tu límite personal es de {ceiling} dB ({offset} dB respecto a la regla genérica), lo que permite unas {hours} horas de escucha continua al día.",
-    "test.confidenceTemplate": "{pct}% de confianza",
+    "test.confidenceTemplate": "Estabilidad de la estimación {pct}%",
     "test.seeRisk": "Ver mi riesgo por uso excesivo",
     "test.trainHearing": "Entrenar mi oído",
     "test.saving": "Guardando...",
