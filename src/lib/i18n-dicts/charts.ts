@@ -48,7 +48,7 @@ export const charts: {
     "quality.strength.confidence": "Average estimate confidence {pct}%.",
     "quality.issue.catchFail": "Reported hearing a tone on {failed} of {total} silent catch trials.",
     "quality.issue.inconsistent": "Repeated tones got the same answer only {pct}% of the time.",
-    "test.stepCatch": "Some trials are silent on purpose — if you hear nothing, say so. It keeps your result honest.",
+    "test.stepCatch": "Some trials are silent on purpose. If you don't hear anything, then don't pick any options. Be honest.",
     "quality.strength.catchPass": "Passed all {n} silent catch trials.",
     "quality.strength.consistent": "Answers agreed on {pct}% of repeated tones.",
   },
