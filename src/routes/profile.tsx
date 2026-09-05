@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { Activity, Compass, Ear, Loader2, MessagesSquare, Music, Target } from "lucide-react";
 import { ScoreTrend } from "@/components/charts/lazy";
 import { SiteNav } from "@/components/SiteNav";
