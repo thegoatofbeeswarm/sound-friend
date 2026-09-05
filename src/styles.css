@@ -207,10 +207,25 @@
   --color-danger: var(--danger);
   --color-left-ear: var(--left-ear);
   --color-right-ear: var(--right-ear);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary-container: var(--secondary-container);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
   --font-display: var(--font-display);
   --font-sans: var(--font-body);
   --shadow-glow: var(--shadow-glow);
   --shadow-card: var(--shadow-card);
+  --shadow-elev3: var(--shadow-elev3);
 }
 
 @layer base {
@@ -222,16 +237,28 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);
+    font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Material 3 type scale: display/headline are tighter and heavier. */
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: 0;
   }
 }
+
 
 @utility hero-surface {
   background-image: var(--gradient-hero);
