@@ -34,6 +34,25 @@ export interface ProfileInput {
   speechTests: number;
   /** Training sessions, newest first. */
   sessions: { mode: string; accuracy: number; end_level: number }[];
+  /** Average pure-tone threshold from an uploaded clinical audiogram, in dB HL. */
+  clinicalAvgThresholdDb?: number | null;
+  /** Number of uploaded clinical reports with thresholds. */
+  clinicalReports?: number;
+  /** Which source the sensitivity dimension should use. */
+  sensitivitySource?: SensitivitySource;
+}
+
+export type SensitivitySource = "app" | "clinical";
+
+/** Average of every threshold point on an audiogram, ignoring blanks. */
+export function averageThreshold(
+  points: { threshold_db: number | string | null }[],
+): number | null {
+  const values = points
+    .map((p) => Number(p.threshold_db))
+    .filter((n) => Number.isFinite(n));
+  if (!values.length) return null;
+  return values.reduce((s, n) => s + n, 0) / values.length;
 }
 
 /** Modes that feed each trained dimension. */
