@@ -685,7 +685,6 @@
   --border: oklch(0.24 0.02 160 / 0.16);
   --input: oklch(0.24 0.02 160 / 0.22);
   --outline-variant: oklch(0.24 0.02 160 / 0.16);
-  --primary: oklch(0.six);
   --primary: oklch(0.608 0.184 34);
   --primary-foreground: oklch(0.975 0.01 92);
   --secondary: oklch(0.905 0.014 92);
