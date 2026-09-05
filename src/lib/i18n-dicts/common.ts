@@ -4,7 +4,7 @@ export const common: {
   es: Record<string, string>;
 } = {
   en: {
-    "nav.data": "Data",
+    "nav.data": "Import Clinical Data",
     "nav.report": "Report",
     "nav.science": "Science",
     "nav.coach": "Listening coach",
