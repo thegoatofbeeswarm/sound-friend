@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Activity, Brain, ExternalLink, Globe2, Headphones, MessagesSquare, ShieldCheck, Volume2, Waves } from "lucide-react";
+import { Activity, ArrowRight, Brain, ExternalLink, Globe2, Headphones, MessagesSquare, ShieldCheck, Volume2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,10 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SiteNav } from "@/components/SiteNav";
-import { ExampleProfile } from "@/components/ExampleProfile";
 import { HowItWorks } from "@/components/HowItWorks";
-import { SoundwaveGlow } from "@/components/SoundwaveGlow";
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,11 +45,8 @@ const FIVE = [
 
 const OVERALL = 78;
 
-
 const pillars = [
   { icon: Brain, title: "pillar.adaptive.title", body: "pillar.adaptive.body" },
-
-
   { icon: Volume2, title: "pillar.prefs.title", body: "pillar.prefs.body" },
   { icon: Activity, title: "pillar.env.title", body: "pillar.env.body" },
   { icon: Globe2, title: "pillar.access.title", body: "pillar.access.body" },
@@ -92,113 +85,136 @@ const adolescentStudies = [
   },
 ];
 
-
-
 function Index() {
   const { t } = useI18n();
 
   return (
-    <div className="min-h-screen">
-      <SiteNav />
+    <div className="dark min-h-screen bg-night-deep text-night-foreground">
+      {/* Hero: dawn haze dissolving into deep night. */}
+      <section className="sky-surface">
+        <span aria-hidden className="sky-haze" />
+        <SiteNav />
 
-      <section className="night-surface border-b border-border/60">
-        <SoundwaveGlow />
-        <div className="mx-auto max-w-6xl px-5 py-24 md:py-32">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-night-border bg-white/5 px-3 py-1 text-xs text-night-muted backdrop-blur">
-              <Waves className="h-3.5 w-3.5 text-night-accent" /> {t("home.badge")}
-            </span>
-            <h1 className="mt-7 text-balance text-5xl font-semibold leading-[1.03] tracking-tight md:text-6xl">
-              {t("home.title1")}{" "}
-              <span className="bg-gradient-to-r from-[oklch(0.86_0.1_200)] via-[oklch(0.8_0.13_230)] to-[oklch(0.75_0.14_290)] bg-clip-text text-transparent">
-                {t("home.title2")}
-              </span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-night-muted">{t("home.lead")}</p>
-            <div className="mt-9 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg">
-                <Link to="/profile">{t("home.ctaProfile")}</Link>
-              </Button>
-              <Link
-                to="/test"
-                className="glass-panel inline-flex h-11 items-center rounded-xl px-6 text-sm font-medium text-night-foreground transition-colors hover:bg-white/10"
-              >
-                {t("home.ctaTest")}
-              </Link>
-              <Link
-                to="/train"
-                className="glass-panel inline-flex h-11 items-center rounded-xl px-6 text-sm font-medium text-night-foreground transition-colors hover:bg-white/10"
-              >
-                {t("nav.train")}
-              </Link>
-            </div>
+        <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
+          <p className="rise-in text-[11px] uppercase tracking-[0.42em] text-white/70">
+            {t("home.badge")}
+          </p>
+
+          <h1
+            className="rise-in editorial mt-8 text-balance text-[clamp(2.9rem,9vw,5.75rem)] font-light leading-[0.98] text-white"
+            style={{ animationDelay: "80ms" }}
+          >
+            {t("home.title1")}{" "}
+            <span className="italic text-[oklch(0.88_0.07_215)]">{t("home.title2")}</span>
+          </h1>
+
+          <p
+            className="rise-in mx-auto mt-7 max-w-xl text-base leading-relaxed text-white/70 md:text-lg"
+            style={{ animationDelay: "160ms" }}
+          >
+            {t("home.lead")}
+          </p>
+
+          <div
+            className="rise-in mt-11 flex flex-wrap items-center justify-center gap-3"
+            style={{ animationDelay: "240ms" }}
+          >
+            <Link
+              to="/test"
+              className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-medium text-[oklch(0.16_0.03_258)] transition-transform hover:-translate-y-0.5"
+            >
+              {t("home.ctaTest")} <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/profile"
+              className="inline-flex h-12 items-center rounded-full border border-white/20 px-7 text-sm text-white/85 backdrop-blur transition-colors hover:border-white/45 hover:text-white"
+            >
+              {t("home.ctaProfile")}
+            </Link>
+            <Link
+              to="/train"
+              className="inline-flex h-12 items-center rounded-full border border-white/20 px-7 text-sm text-white/85 backdrop-blur transition-colors hover:border-white/45 hover:text-white"
+            >
+              {t("nav.train")}
+            </Link>
           </div>
 
-          <div className="mx-auto mt-14 max-w-3xl">
-            <div className="glass-panel rounded-3xl p-6 md:p-8">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-widest text-night-muted">
-                  {t("five.exampleTitle")}
-                </p>
-                <span className="rounded-full border border-night-border px-2.5 py-1 text-[11px] text-night-muted">
-                  {t("five.exampleBadge")}
-                </span>
-              </div>
-
-              <div className="mt-5 flex items-baseline gap-3">
-                <p className="font-display text-6xl font-semibold text-night-foreground">{OVERALL}</p>
-                <p className="text-sm text-night-muted">{t("five.overall")}</p>
-              </div>
-
-              <ul className="mt-6 space-y-3">
-                {FIVE.map((d) => (
-                  <li key={d.key} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1">
-                    <p className="text-sm text-night-foreground">{t(d.key)}</p>
-                    <p className="font-display text-sm font-semibold text-night-foreground">{d.value}</p>
-                    <div className="col-span-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-[oklch(0.8_0.13_200)] to-[oklch(0.72_0.15_285)]"
-                        style={{ width: `${d.value}%` }}
-                      />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-night-border bg-white/5 p-4">
-                <div>
-                  <p className="text-xs uppercase tracking-widest text-night-muted">
-                    {t("five.focus")}
-                  </p>
-                  <p className="mt-1 text-base font-semibold text-night-foreground">
-                    {t("profile.dim.speech")}
-                  </p>
-                </div>
-                <Button asChild>
-                  <Link to="/train">{t("five.startTraining")}</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <p className="mt-10 text-center text-xs text-night-muted">{t("home.disclaimer")}</p>
+          <p className="mt-14 text-[11px] uppercase tracking-[0.32em] text-white/40">
+            {t("home.disclaimer")}
+          </p>
         </div>
       </section>
 
-      <ExampleProfile />
+      {/* Example listening profile, floating in the dark. */}
+      <section className="bg-night-deep">
+        <div className="mx-auto max-w-3xl px-5 py-24">
+          <div className="rounded-[28px] border border-white/10 bg-white/[0.035] p-7 backdrop-blur-xl md:p-10">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-[11px] uppercase tracking-[0.32em] text-white/50">
+                {t("five.exampleTitle")}
+              </p>
+              <span className="rounded-full border border-white/12 px-3 py-1 text-[11px] text-white/50">
+                {t("five.exampleBadge")}
+              </span>
+            </div>
 
-      <section className="border-b border-border/60">
-        <div className="mx-auto max-w-6xl px-5 py-20">
-          <h2 className="text-3xl font-semibold">{t("five.dimsTitle")}</h2>
-          <p className="mt-3 max-w-2xl text-muted-foreground">{t("five.dimsLead")}</p>
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {FIVE.map((d) => (
+            <div className="mt-7 flex items-baseline gap-4">
+              <p className="editorial text-7xl font-light leading-none text-white">{OVERALL}</p>
+              <p className="text-sm text-white/60">{t("five.overall")}</p>
+            </div>
+
+            <ul className="mt-9 space-y-5">
+              {FIVE.map((d) => (
+                <li key={d.key} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2">
+                  <p className="text-sm text-white/85">{t(d.key)}</p>
+                  <p className="editorial text-base text-white">{d.value}</p>
+                  <div className="col-span-2 h-px w-full bg-white/10">
+                    <div
+                      className="h-px bg-[oklch(0.88_0.08_215)]"
+                      style={{ width: `${d.value}%` }}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-7">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.32em] text-white/50">
+                  {t("five.focus")}
+                </p>
+                <p className="editorial mt-1 text-2xl text-white">{t("profile.dim.speech")}</p>
+              </div>
+              <Link
+                to="/train"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 px-6 text-sm text-white/85 transition-colors hover:border-white/45 hover:text-white"
+              >
+                {t("five.startTraining")} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hearing is more than sensitivity: the five dimensions. */}
+      <section className="hairline bg-night-deep">
+        <div className="mx-auto max-w-5xl px-5 py-24">
+          <h2 className="editorial max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-light leading-[1.05] text-white">
+            {t("five.dimsTitle")}
+          </h2>
+          <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/60">{t("five.dimsLead")}</p>
+
+          <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-2">
+            {FIVE.map((d, i) => (
               <article
                 key={d.key}
-                className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card"
+                className={`bg-[oklch(0.13_0.03_258)] p-8 ${i === FIVE.length - 1 ? "md:col-span-2" : ""}`}
               >
-                <h3 className="text-lg font-semibold">{t(d.key)}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(d.body)}</p>
+                <p className="text-[11px] tracking-[0.32em] text-white/35">
+                  {String(i + 1).padStart(2, "0")}
+                </p>
+                <h3 className="editorial mt-4 text-2xl text-white">{t(d.key)}</h3>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/60">{t(d.body)}</p>
               </article>
             ))}
           </div>
@@ -207,61 +223,72 @@ function Index() {
 
       <HowItWorks />
 
-      <section className="border-y border-border/60 bg-card/30">
-        <div className="mx-auto max-w-6xl px-5 py-20">
-          <h2 className="text-3xl font-semibold">{t("youth.title")}</h2>
-          <p className="mt-3 max-w-2xl text-muted-foreground">{t("youth.lead")}</p>
+      {/* Built for the headphone generation. */}
+      <section className="hairline bg-night-deep">
+        <div className="mx-auto max-w-5xl px-5 py-24">
+          <h2 className="editorial max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-light leading-[1.05] text-white">
+            {t("youth.title")}
+          </h2>
+          <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/60">{t("youth.lead")}</p>
 
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-14 grid gap-10 md:grid-cols-3">
             {[
-              { icon: Waves, title: "youth.c1.title", body: "youth.c1.body" },
-              { icon: MessagesSquare, title: "youth.c2.title", body: "youth.c2.body" },
-              { icon: ShieldCheck, title: "youth.c3.title", body: "youth.c3.body" },
+              { title: "youth.c1.title", body: "youth.c1.body" },
+              { title: "youth.c2.title", body: "youth.c2.body" },
+              { title: "youth.c3.title", body: "youth.c3.body" },
             ].map((c) => (
-              <article key={c.title} className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-                <c.icon className="h-5 w-5 text-signal" />
-                <h3 className="mt-4 text-lg font-semibold">{t(c.title)}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(c.body)}</p>
+              <article key={c.title} className="border-t border-white/10 pt-6">
+                <h3 className="editorial text-xl text-white">{t(c.title)}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/60">{t(c.body)}</p>
               </article>
             ))}
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-border/70 bg-card/70 p-6">
-            <div className="flex items-baseline gap-4">
-              <p className="font-display text-5xl font-semibold text-signal">24%</p>
+          <div className="mt-16 flex flex-wrap items-end justify-between gap-8 rounded-3xl border border-white/10 bg-white/[0.035] p-8 backdrop-blur">
+            <div className="flex items-baseline gap-5">
+              <p className="editorial text-6xl font-light leading-none text-[oklch(0.88_0.08_215)]">24%</p>
               <div>
-                <p className="max-w-md text-sm text-muted-foreground">{t("youth.statLabel")}</p>
-                <p className="mt-1 text-xs text-muted-foreground/80">{t("youth.statSource")}</p>
+                <p className="max-w-md text-sm text-white/70">{t("youth.statLabel")}</p>
+                <p className="mt-1 text-xs text-white/40">{t("youth.statSource")}</p>
               </div>
             </div>
-            <Button asChild size="lg">
-              <Link to="/test">{t("youth.cta")}</Link>
-            </Button>
+            <Link
+              to="/test"
+              className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-medium text-[oklch(0.16_0.03_258)] transition-transform hover:-translate-y-0.5"
+            >
+              {t("youth.cta")} <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-
-      <section className="mx-auto max-w-6xl px-5 py-20">
-        <h2 className="text-3xl font-semibold">{t("home.pillarsTitle")}</h2>
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
-          {pillars.map((p) => (
-            <article key={p.title} className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-              <p.icon className="h-5 w-5 text-signal" />
-              <h3 className="mt-4 text-lg font-semibold">{t(p.title)}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(p.body)}</p>
-            </article>
-          ))}
+      {/* What's inside. */}
+      <section className="hairline bg-night-deep">
+        <div className="mx-auto max-w-5xl px-5 py-24">
+          <h2 className="editorial text-[clamp(2rem,4.6vw,3.25rem)] font-light leading-[1.05] text-white">
+            {t("home.pillarsTitle")}
+          </h2>
+          <div className="mt-14 grid gap-10 md:grid-cols-2">
+            {pillars.map((p) => (
+              <article key={p.title} className="flex gap-5 border-t border-white/10 pt-6">
+                <p.icon className="mt-1 h-5 w-5 shrink-0 text-[oklch(0.88_0.08_215)]" />
+                <div>
+                  <h3 className="editorial text-xl text-white">{t(p.title)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/60">{t(p.body)}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="border-t border-border/60 bg-card/30">
-        <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 md:grid-cols-3">
+      <section className="hairline bg-night-deep">
+        <div className="mx-auto grid max-w-5xl gap-10 px-5 py-20 md:grid-cols-3">
           <Dialog>
             <DialogTrigger asChild>
               <button className="group text-left">
-                <p className="font-display text-4xl font-semibold text-signal">1.5B</p>
-                <p className="mt-2 inline-flex items-center gap-1 text-sm text-muted-foreground underline decoration-dotted underline-offset-4 group-hover:text-foreground">
+                <p className="editorial text-5xl font-light text-white">1.5B</p>
+                <p className="mt-3 inline-flex items-center gap-1 text-sm text-white/55 underline decoration-dotted underline-offset-4 group-hover:text-white">
                   {t("stats.people")}
                   <ExternalLink className="h-3.5 w-3.5" />
                 </p>
@@ -290,16 +317,17 @@ function Index() {
             ["~4 min", "stats.time"],
           ].map(([stat, labelKey]) => (
             <div key={labelKey}>
-              <p className="font-display text-4xl font-semibold text-signal">{stat === "~4 min" ? t("stats.timeValue") : stat}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{t(labelKey as "stats.tracks" | "stats.time")}</p>
+              <p className="editorial text-5xl font-light text-white">
+                {stat === "~4 min" ? t("stats.timeValue") : stat}
+              </p>
+              <p className="mt-3 text-sm text-white/55">{t(labelKey as "stats.tracks" | "stats.time")}</p>
             </div>
           ))}
         </div>
       </section>
 
-
-      <footer className="border-t border-border/60">
-        <div className="mx-auto flex max-w-6xl items-center gap-2 px-5 py-8 text-xs text-muted-foreground">
+      <footer className="hairline bg-night-deep">
+        <div className="mx-auto flex max-w-5xl items-center gap-2 px-5 py-10 text-xs text-white/40">
           <ShieldCheck className="h-4 w-4" />
           {t("footer.note")}
         </div>
