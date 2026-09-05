@@ -275,7 +275,7 @@ function ProfilePage() {
 
             <section className="mt-8 grid gap-5 md:grid-cols-2">
               {dims.map((d) => (
-                <DimensionCard key={d.id} dim={d} />
+                <DimensionCard key={d.id} dim={d} average={overall} />
               ))}
             </section>
 
