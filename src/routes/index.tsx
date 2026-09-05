@@ -19,17 +19,17 @@ import { SoundwaveGlow } from "@/components/SoundwaveGlow";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Audiomaxxer - Personal Listening Profile & Auditory Training" },
+      { title: "Audiomaxxer - Listening Profile & Training for Young People" },
       {
         name: "description",
         content:
-          "Measure hearing sensitivity, speech in noise, sound discrimination, auditory attention and memory. Train listening skills and track how your profile changes over time.",
+          "Built for teens and young adults who live in headphones: measure sensitivity, speech in noise, discrimination, attention and memory, then train your weakest listening skill.",
       },
-      { property: "og:title", content: "Audiomaxxer - Personal Listening Profile & Auditory Training" },
+      { property: "og:title", content: "Audiomaxxer - Listening Profile & Training for Young People" },
       {
         property: "og:description",
         content:
-          "Measure hearing sensitivity, speech in noise, sound discrimination, auditory attention and memory. Train listening skills and track how your profile changes over time.",
+          "Built for teens and young adults who live in headphones: measure sensitivity, speech in noise, discrimination, attention and memory, then train your weakest listening skill.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -206,6 +206,40 @@ function Index() {
       </section>
 
       <HowItWorks />
+
+      <section className="border-y border-border/60 bg-card/30">
+        <div className="mx-auto max-w-6xl px-5 py-20">
+          <h2 className="text-3xl font-semibold">{t("youth.title")}</h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">{t("youth.lead")}</p>
+
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {[
+              { icon: Waves, title: "youth.c1.title", body: "youth.c1.body" },
+              { icon: MessagesSquare, title: "youth.c2.title", body: "youth.c2.body" },
+              { icon: ShieldCheck, title: "youth.c3.title", body: "youth.c3.body" },
+            ].map((c) => (
+              <article key={c.title} className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
+                <c.icon className="h-5 w-5 text-signal" />
+                <h3 className="mt-4 text-lg font-semibold">{t(c.title)}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(c.body)}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-border/70 bg-card/70 p-6">
+            <div className="flex items-baseline gap-4">
+              <p className="font-display text-5xl font-semibold text-signal">24%</p>
+              <div>
+                <p className="max-w-md text-sm text-muted-foreground">{t("youth.statLabel")}</p>
+                <p className="mt-1 text-xs text-muted-foreground/80">{t("youth.statSource")}</p>
+              </div>
+            </div>
+            <Button asChild size="lg">
+              <Link to="/test">{t("youth.cta")}</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
 
 
       <section className="mx-auto max-w-6xl px-5 py-20">
