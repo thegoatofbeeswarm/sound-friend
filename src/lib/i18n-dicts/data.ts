@@ -33,7 +33,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "Sign in to upload a clinic or hearing-center report and compare it with your Audiomaxxer screening.",
     "data.report.addTitle": "Add a past hearing report",
     "data.report.addDesc":
-      "Upload an audiogram or hearing screening from a clinic, hearing center, or another app. Lovable AI will read the report, extract visible air-conduction thresholds, and compare them with your latest Audiomaxxer screening.",
+      "Upload an audiogram or hearing screening from a clinic or a hearing center. An integrated AI system will then read the report and extract visible air-conduction thresholds. Then, it will compare the data with your available Audiomaxxer screening data.",
     "data.report.fileLabel": "Report file",
     "data.report.helperDefault": "PDF, PNG or JPG · up to 15 MB",
     "data.report.sourceLabel": "Source (optional)",
