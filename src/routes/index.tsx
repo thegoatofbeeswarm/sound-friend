@@ -90,11 +90,11 @@ function Index() {
   const { t } = useI18n();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Hero sky: dawn in light mode, purple/blue night sky in dark mode. */}
-      <section className="sky-hero">
-        <span aria-hidden className="sky-hero-haze" />
-        <span aria-hidden className="sky-stars" />
+    <div className="dark sky-page min-h-screen text-night-foreground">
+      {/* Sky spans the whole page: dawn in light mode, night sky in dark mode. */}
+      <span aria-hidden className="sky-hero-haze" />
+      <span aria-hidden className="sky-stars" />
+      <section className="relative">
         <SiteNav transparent />
 
         <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
@@ -148,9 +148,9 @@ function Index() {
       </section>
 
       {/* Example listening profile, floating in the dark. */}
-      <section className="bg-background">
+      <section>
         <div className="mx-auto max-w-3xl px-5 py-24">
-          <div className="rounded-[28px] border border-border/60 bg-card/60 p-7 backdrop-blur-xl md:p-10">
+          <div className="rounded-[28px] border border-border/60 bg-white/[0.04] p-7 backdrop-blur-xl md:p-10">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-[11px] uppercase tracking-[0.32em] text-muted-foreground">
                 {t("five.exampleTitle")}
@@ -199,7 +199,7 @@ function Index() {
       </section>
 
       {/* Hearing is more than sensitivity: the five dimensions. */}
-      <section className="hairline bg-background">
+      <section className="hairline">
         <div className="mx-auto max-w-5xl px-5 py-24">
           <h2 className="font-display max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-foreground">
             {t("five.dimsTitle")}
@@ -210,7 +210,7 @@ function Index() {
             {FIVE.map((d, i) => (
               <article
                 key={d.key}
-                className={`bg-card p-8 ${i === FIVE.length - 1 ? "md:col-span-2" : ""}`}
+                className={`bg-white/[0.04] p-8 ${i === FIVE.length - 1 ? "md:col-span-2" : ""}`}
               >
                 <p className="text-[11px] tracking-[0.32em] text-muted-foreground">
                   {String(i + 1).padStart(2, "0")}
@@ -228,7 +228,7 @@ function Index() {
       <HowItWorks />
 
       {/* Built for the headphone generation. */}
-      <section className="hairline bg-background">
+      <section className="hairline">
         <div className="mx-auto max-w-5xl px-5 py-24">
           <h2 className="font-display max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-foreground">
             {t("youth.title")}
@@ -248,7 +248,7 @@ function Index() {
             ))}
           </div>
 
-          <div className="mt-16 flex flex-wrap items-end justify-between gap-8 rounded-3xl border border-border/60 bg-card/60 p-8 backdrop-blur">
+          <div className="mt-16 flex flex-wrap items-end justify-between gap-8 rounded-3xl border border-border/60 bg-white/[0.04] p-8 backdrop-blur">
             <div className="flex items-baseline gap-5">
               <p className="font-display text-6xl font-semibold leading-none text-signal">24%</p>
               <div>
@@ -267,7 +267,7 @@ function Index() {
       </section>
 
       {/* What's inside. */}
-      <section className="hairline bg-background">
+      <section className="hairline">
         <div className="mx-auto max-w-5xl px-5 py-24">
           <h2 className="font-display text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-foreground">
             {t("home.pillarsTitle")}
@@ -286,7 +286,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="hairline bg-background">
+      <section className="hairline">
         <div className="mx-auto grid max-w-5xl gap-10 px-5 py-20 md:grid-cols-3">
           <Dialog>
             <DialogTrigger asChild>
@@ -305,7 +305,7 @@ function Index() {
               </DialogHeader>
               <ul className="space-y-4">
                 {adolescentStudies.map((s) => (
-                  <li key={s.url} className="rounded-xl border border-border/70 bg-card/60 p-4">
+                  <li key={s.url} className="rounded-xl border border-border/70 bg-white/[0.04] p-4">
                     <a href={s.url} target="_blank" rel="noreferrer" className="text-sm font-semibold underline-offset-4 hover:underline">
                       {s.title}
                     </a>
@@ -330,7 +330,7 @@ function Index() {
         </div>
       </section>
 
-      <footer className="hairline bg-background">
+      <footer className="hairline">
         <div className="mx-auto flex max-w-5xl items-center gap-2 px-5 py-10 text-xs text-muted-foreground">
           <ShieldCheck className="h-4 w-4" />
           {t("footer.note")}
