@@ -62,6 +62,17 @@ export const sciencePack: {
     "sci.link.headphones.label": "Headphone accuracy in hearing tests",
     "sci.link.headphones.blurb":
       "Why your headphones matter, which models we correct for, and by how much.",
+    "sci.link.speechInNoise.label": "Speech in noise",
+    "sci.link.speechInNoise.blurb": "The listening test that matches real life, and how to read its score.",
+    "sci.link.hearingVsListening.label": "Hearing vs listening",
+    "sci.link.hearingVsListening.blurb":
+      "Why a normal tone test can sit alongside a genuinely hard classroom.",
+    "sci.link.reliability.label": "Test-retest reliability",
+    "sci.link.reliability.blurb":
+      "Measurement spread, catch trials, and telling real change from noise.",
+    "sci.link.headphoneGeneration.label": "The headphone generation",
+    "sci.link.headphoneGeneration.blurb":
+      "Hearing risk for teens and young adults, and habits worth changing now.",
   },
   zh: {
     "how.title": "Audiomaxxer 的运作方式",
@@ -111,6 +122,14 @@ export const sciencePack: {
     "sci.link.prevention.blurb": "世卫组织的安全聆听建议，以及如何降低每周的声音剂量。",
     "sci.link.headphones.label": "耳机对听力测试准确度的影响",
     "sci.link.headphones.blurb": "为什么耳机很重要、我们校正了哪些型号，以及校正幅度多大。",
+    "sci.link.speechInNoise.label": "噪声中的言语",
+    "sci.link.speechInNoise.blurb": "更贴近真实生活的聆听测试，以及如何解读得分。",
+    "sci.link.hearingVsListening.label": "听见与听懂",
+    "sci.link.hearingVsListening.blurb": "为什么纯音测试正常，教室里却依然很吃力。",
+    "sci.link.reliability.label": "重测信度",
+    "sci.link.reliability.blurb": "测量波动、静音陷阱试次，以及如何分辨真实变化与噪声。",
+    "sci.link.headphoneGeneration.label": "耳机世代",
+    "sci.link.headphoneGeneration.blurb": "青少年与年轻成人的听力风险，以及现在就值得改变的习惯。",
   },
   es: {
     "how.title": "Cómo funciona Audiomaxxer",
@@ -172,5 +191,17 @@ export const sciencePack: {
     "sci.link.headphones.label": "Precisión de los auriculares en pruebas auditivas",
     "sci.link.headphones.blurb":
       "Por qué importan tus auriculares, qué modelos corregimos y en qué medida.",
+    "sci.link.speechInNoise.label": "Habla en ruido",
+    "sci.link.speechInNoise.blurb":
+      "La prueba de escucha que se parece a la vida real y cómo leer su puntuación.",
+    "sci.link.hearingVsListening.label": "Oír frente a escuchar",
+    "sci.link.hearingVsListening.blurb":
+      "Por qué una prueba de tonos normal convive con un aula realmente difícil.",
+    "sci.link.reliability.label": "Fiabilidad test-retest",
+    "sci.link.reliability.blurb":
+      "Dispersión de la medida, ensayos trampa y cómo distinguir un cambio real del ruido.",
+    "sci.link.headphoneGeneration.label": "La generación de los auriculares",
+    "sci.link.headphoneGeneration.blurb":
+      "Riesgo auditivo en adolescentes y jóvenes, y hábitos que conviene cambiar ya.",
   },
 };
