@@ -563,15 +563,17 @@
   background:
     linear-gradient(
       180deg,
-      oklch(0.84 0.045 250) 0vh,
-      oklch(0.79 0.05 252) 14vh,
-      oklch(0.85 0.055 60) 30vh,
-      oklch(0.92 0.04 55) 48vh,
-      oklch(0.96 0.02 250) 70vh,
-      var(--background) 92vh
-    ),
-    var(--background);
+      oklch(0.84 0.045 250) 0%,
+      oklch(0.79 0.05 252) 6%,
+      oklch(0.85 0.055 60) 13%,
+      oklch(0.92 0.04 55) 22%,
+      oklch(0.96 0.025 250) 38%,
+      oklch(0.97 0.02 250) 60%,
+      oklch(0.95 0.03 60) 82%,
+      oklch(0.9 0.045 45) 100%
+    );
   background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 [data-theme="dark"] .sky-page {
@@ -579,17 +581,19 @@
   background:
     linear-gradient(
       180deg,
-      oklch(0.1 0.03 285) 0vh,
-      oklch(0.16 0.07 285) 16vh,
-      oklch(0.22 0.1 280) 34vh,
-      oklch(0.24 0.1 262) 48vh,
-      oklch(0.2 0.09 250) 64vh,
-      oklch(0.13 0.05 255) 86vh,
-      var(--background) 100vh
-    ),
-    var(--background);
+      oklch(0.1 0.03 285) 0%,
+      oklch(0.16 0.07 285) 7%,
+      oklch(0.22 0.1 280) 15%,
+      oklch(0.24 0.1 262) 24%,
+      oklch(0.2 0.09 250) 36%,
+      oklch(0.15 0.06 255) 55%,
+      oklch(0.13 0.05 262) 75%,
+      oklch(0.16 0.07 280) 100%
+    );
   background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
+
 
 /* Atmosphere layers sit over the first screen only. */
 .sky-page > .sky-hero-haze,
