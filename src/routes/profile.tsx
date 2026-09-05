@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { Activity, Compass, Ear, Loader2, MessagesSquare, Music, Target } from "lucide-react";
 import { ScoreTrend } from "@/components/charts/lazy";
 import { SiteNav } from "@/components/SiteNav";
@@ -11,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import {
+  averageThreshold,
   bandOf,
   buildProfile,
   listeningTimeline,
@@ -19,7 +21,11 @@ import {
   weakestDimension,
   type Dimension,
   type DimensionId,
+  type SensitivitySource,
 } from "@/lib/listening-profile";
+
+/** Remembers which audiogram source the user prefers. */
+const SOURCE_KEY = "audiomaxxer.profile-source";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -125,11 +131,23 @@ function ProfilePage() {
   const { t } = useI18n();
   const { user, loading } = useAuth();
 
-  const { data, isLoading } = useQuery({
+  const [source, setSource] = useState<SensitivitySource>("app");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem(SOURCE_KEY);
+    if (saved === "clinical" || saved === "app") setSource(saved);
+  }, []);
+
+  const chooseSource = (next: SensitivitySource) => {
+    setSource(next);
+    window.localStorage.setItem(SOURCE_KEY, next);
+  };
+
+  const { data: raw, isLoading } = useQuery({
     enabled: !!user,
     queryKey: ["listening-profile", user?.id],
     queryFn: async () => {
-      const [tests, speech, sessions] = await Promise.all([
+      const [tests, speech, sessions, reports] = await Promise.all([
         supabase
           .from("hearing_tests")
           .select("created_at, avg_threshold_db")
@@ -142,27 +160,75 @@ function ProfilePage() {
           .from("training_sessions")
           .select("mode, accuracy, end_level, created_at")
           .order("created_at", { ascending: false }),
+        supabase
+          .from("clinical_reports")
+          .select("id, created_at, source_label, file_name")
+          .eq("status", "ready")
+          .order("created_at", { ascending: false }),
       ]);
       if (tests.error) throw tests.error;
       if (speech.error) throw speech.error;
       if (sessions.error) throw sessions.error;
 
+      const reportRows = reports.data ?? [];
+      const points = reportRows.length
+        ? ((
+            await supabase
+              .from("clinical_threshold_points")
+              .select("report_id, threshold_db")
+              .in(
+                "report_id",
+                reportRows.map((r) => r.id),
+              )
+          ).data ?? [])
+        : [];
+
+      // One average per audiogram, newest first — blank reports drop out.
+      const clinical = reportRows
+        .map((r) => ({
+          created_at: r.created_at,
+          label: r.source_label || r.file_name,
+          avg_threshold_db: averageThreshold(points.filter((p) => p.report_id === r.id)),
+        }))
+        .filter((r) => r.avg_threshold_db != null);
+
       return {
-        dims: buildProfile({
-          avgThresholdDb: tests.data?.[0]?.avg_threshold_db ?? null,
-          toneTests: tests.data?.length ?? 0,
-          speechScore: speech.data?.[0]?.score ?? null,
-          speechTests: speech.data?.length ?? 0,
-          sessions: sessions.data ?? [],
-        }),
-        timeline: listeningTimeline({
-          tone: tests.data ?? [],
-          speech: speech.data ?? [],
-          sessions: sessions.data ?? [],
-        }),
+        tone: tests.data ?? [],
+        speech: speech.data ?? [],
+        sessions: sessions.data ?? [],
+        clinical,
       };
     },
   });
+
+  const hasClinical = (raw?.clinical.length ?? 0) > 0;
+  const activeSource: SensitivitySource = hasClinical ? source : "app";
+
+  const data = useMemo(() => {
+    if (!raw) return null;
+    const dims = buildProfile({
+      avgThresholdDb: raw.tone[0]?.avg_threshold_db ?? null,
+      toneTests: raw.tone.length,
+      speechScore: raw.speech[0]?.score ?? null,
+      speechTests: raw.speech.length,
+      sessions: raw.sessions,
+      clinicalAvgThresholdDb: raw.clinical[0]?.avg_threshold_db ?? null,
+      clinicalReports: raw.clinical.length,
+      sensitivitySource: activeSource,
+    });
+    const timeline = listeningTimeline({
+      tone:
+        activeSource === "clinical"
+          ? raw.clinical.map((c) => ({
+              created_at: c.created_at,
+              avg_threshold_db: c.avg_threshold_db,
+            }))
+          : raw.tone,
+      speech: raw.speech,
+      sessions: raw.sessions,
+    });
+    return { dims, timeline };
+  }, [raw, activeSource]);
 
   const dims = data?.dims ?? [];
   const timeline = data?.timeline ?? [];
@@ -192,6 +258,45 @@ function ProfilePage() {
         ) : (
           <>
             <section className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold">{t("profile.src.title")}</h2>
+                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                    {hasClinical
+                      ? t(
+                          activeSource === "clinical"
+                            ? "profile.src.usingClinic"
+                            : "profile.src.usingApp",
+                        )
+                      : t("profile.src.none")}
+                  </p>
+                </div>
+                {hasClinical ? (
+                  <div className="inline-flex rounded-full border border-border/70 p-1">
+                    {(["app", "clinical"] as const).map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => chooseSource(option)}
+                        className={`rounded-full px-4 py-2 text-sm transition-colors ${
+                          activeSource === option
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {t(option === "app" ? "profile.src.app" : "profile.src.clinic")}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <Button asChild variant="secondary">
+                    <Link to="/data">{t("profile.src.upload")}</Link>
+                  </Button>
+                )}
+              </div>
+            </section>
+
+            <section className="mt-6 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
               <h2 className="text-xl font-semibold">{t("trend.title")}</h2>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("trend.body")}</p>
               {timeline.length < 2 ? (

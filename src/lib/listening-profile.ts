@@ -34,6 +34,25 @@ export interface ProfileInput {
   speechTests: number;
   /** Training sessions, newest first. */
   sessions: { mode: string; accuracy: number; end_level: number }[];
+  /** Average pure-tone threshold from an uploaded clinical audiogram, in dB HL. */
+  clinicalAvgThresholdDb?: number | null;
+  /** Number of uploaded clinical reports with thresholds. */
+  clinicalReports?: number;
+  /** Which source the sensitivity dimension should use. */
+  sensitivitySource?: SensitivitySource;
+}
+
+export type SensitivitySource = "app" | "clinical";
+
+/** Average of every threshold point on an audiogram, ignoring blanks. */
+export function averageThreshold(
+  points: { threshold_db: number | string | null }[],
+): number | null {
+  const values = points
+    .map((p) => Number(p.threshold_db))
+    .filter((n) => Number.isFinite(n));
+  if (!values.length) return null;
+  return values.reduce((s, n) => s + n, 0) / values.length;
 }
 
 /** Modes that feed each trained dimension. */
@@ -66,13 +85,21 @@ function evidenceOf(samples: number): Dimension["evidence"] {
 }
 
 export function buildProfile(input: ProfileInput): Dimension[] {
+  const clinicalReports = input.clinicalReports ?? 0;
+  const useClinical =
+    input.sensitivitySource === "clinical" &&
+    clinicalReports > 0 &&
+    input.clinicalAvgThresholdDb != null;
+
+  const rawDb = useClinical ? input.clinicalAvgThresholdDb! : input.avgThresholdDb;
   const sensitivity: Dimension = {
     id: "sensitivity",
-    score:
-      input.avgThresholdDb == null ? null : clamp(100 - Math.max(0, input.avgThresholdDb) * 1.5),
-    evidence: evidenceOf(input.toneTests),
-    sourceKey: "profile.source.tone",
-    samples: input.toneTests,
+    score: rawDb == null ? null : clamp(100 - Math.max(0, rawDb) * 1.5),
+    // A clinical audiogram is measured under controlled conditions, so one
+    // report already counts as solid evidence.
+    evidence: useClinical ? "solid" : evidenceOf(input.toneTests),
+    sourceKey: useClinical ? "profile.source.clinic" : "profile.source.tone",
+    samples: useClinical ? clinicalReports : input.toneTests,
   };
 
   const speech: Dimension = {
