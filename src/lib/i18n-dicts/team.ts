@@ -8,7 +8,7 @@ export const teamPage: {
     "team.badge": "Who we are",
     "team.title": "The Audiomaxxer team",
     "team.lead":
-      "A small team building an honest, science-backed way to check on and improve your hearing.",
+      "A small team trying to build a massive thing",
     "team.role.founder": "Founder & Developer",
     "team.role.tester": "Lead Tester",
     "team.role.social": "Contributor",
