@@ -61,10 +61,14 @@ export function SiteNav() {
     {
       label: t("nav.about"),
       to: "/team",
+      items: [{ to: "/team", label: t("nav.team") }],
+    },
+    {
+      label: t("nav.researchGroup"),
+      to: "/research",
       items: [
-        { to: "/team", label: t("nav.team") },
-        { to: "/validation", label: t("nav.validation") },
         { to: "/research", label: t("nav.research") },
+        { to: "/validation", label: t("nav.validation") },
       ],
     },
 
