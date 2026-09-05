@@ -446,12 +446,110 @@
 }
 
 @utility hairline {
-  border-top: 1px solid oklch(1 0 0 / 0.08);
+  border-top: 1px solid var(--border);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sky-haze,
   .rise-in {
+    animation: none !important;
+  }
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Homepage sky: dawn in light mode, purple/blue/black night in dark.   */
+/* ------------------------------------------------------------------ */
+
+.sky-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--night-foreground);
+  background: linear-gradient(
+    180deg,
+    oklch(0.84 0.045 250) 0%,
+    oklch(0.76 0.05 255) 13%,
+    oklch(0.68 0.06 60 / 0.9) 25%,
+    oklch(0.46 0.05 40) 40%,
+    oklch(0.24 0.04 255) 60%,
+    oklch(0.15 0.03 258) 80%,
+    oklch(0.12 0.028 258) 100%
+  );
+}
+
+.dark .sky-hero {
+  background: linear-gradient(
+    180deg,
+    oklch(0.1 0.03 285) 0%,
+    oklch(0.16 0.07 285) 16%,
+    oklch(0.22 0.1 280) 32%,
+    oklch(0.24 0.1 262) 46%,
+    oklch(0.2 0.09 250) 60%,
+    oklch(0.13 0.05 255) 82%,
+    oklch(0.09 0.025 258) 100%
+  );
+}
+
+/* Drifting haze: warm dawn clouds by day, nebula glow by night. */
+.sky-hero-haze {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 30% at 20% 26%, oklch(0.92 0.05 60 / 0.28), transparent 70%),
+    radial-gradient(50% 26% at 78% 20%, oklch(0.9 0.05 250 / 0.3), transparent 72%),
+    radial-gradient(70% 40% at 50% 46%, oklch(0.8 0.04 40 / 0.16), transparent 75%);
+  animation: haze-drift 26s ease-in-out infinite alternate;
+}
+
+.dark .sky-hero-haze {
+  background:
+    radial-gradient(45% 26% at 18% 22%, oklch(0.62 0.2 300 / 0.4), transparent 70%),
+    radial-gradient(50% 30% at 82% 16%, oklch(0.55 0.19 265 / 0.38), transparent 72%),
+    radial-gradient(70% 42% at 50% 52%, oklch(0.42 0.16 285 / 0.28), transparent 76%);
+}
+
+/* Starfield: only visible in dark mode. */
+.sky-stars {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 18%, oklch(1 0 0 / 0.9), transparent 60%),
+    radial-gradient(1.2px 1.2px at 27% 9%, oklch(0.9 0.05 280 / 0.8), transparent 60%),
+    radial-gradient(1.4px 1.4px at 41% 24%, oklch(1 0 0 / 0.7), transparent 60%),
+    radial-gradient(1px 1px at 55% 12%, oklch(1 0 0 / 0.75), transparent 60%),
+    radial-gradient(1.8px 1.8px at 68% 30%, oklch(0.92 0.06 290 / 0.85), transparent 60%),
+    radial-gradient(1.1px 1.1px at 79% 15%, oklch(1 0 0 / 0.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 88% 34%, oklch(1 0 0 / 0.65), transparent 60%),
+    radial-gradient(1.2px 1.2px at 8% 42%, oklch(0.9 0.05 265 / 0.7), transparent 60%),
+    radial-gradient(1px 1px at 34% 47%, oklch(1 0 0 / 0.55), transparent 60%),
+    radial-gradient(1.3px 1.3px at 62% 44%, oklch(1 0 0 / 0.5), transparent 60%),
+    radial-gradient(1px 1px at 93% 52%, oklch(1 0 0 / 0.45), transparent 60%);
+  animation: star-twinkle 6s ease-in-out infinite alternate;
+}
+
+.dark .sky-stars {
+  opacity: 1;
+}
+
+@keyframes star-twinkle {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-hero-haze,
+  .sky-stars {
     animation: none !important;
   }
 }
