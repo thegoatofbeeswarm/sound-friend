@@ -125,11 +125,23 @@ function ProfilePage() {
   const { t } = useI18n();
   const { user, loading } = useAuth();
 
-  const { data, isLoading } = useQuery({
+  const [source, setSource] = useState<SensitivitySource>("app");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem(SOURCE_KEY);
+    if (saved === "clinical" || saved === "app") setSource(saved);
+  }, []);
+
+  const chooseSource = (next: SensitivitySource) => {
+    setSource(next);
+    window.localStorage.setItem(SOURCE_KEY, next);
+  };
+
+  const { data: raw, isLoading } = useQuery({
     enabled: !!user,
     queryKey: ["listening-profile", user?.id],
     queryFn: async () => {
-      const [tests, speech, sessions] = await Promise.all([
+      const [tests, speech, sessions, reports] = await Promise.all([
         supabase
           .from("hearing_tests")
           .select("created_at, avg_threshold_db")
@@ -142,27 +154,75 @@ function ProfilePage() {
           .from("training_sessions")
           .select("mode, accuracy, end_level, created_at")
           .order("created_at", { ascending: false }),
+        supabase
+          .from("clinical_reports")
+          .select("id, created_at, source_label, file_name")
+          .eq("status", "ready")
+          .order("created_at", { ascending: false }),
       ]);
       if (tests.error) throw tests.error;
       if (speech.error) throw speech.error;
       if (sessions.error) throw sessions.error;
 
+      const reportRows = reports.data ?? [];
+      const points = reportRows.length
+        ? ((
+            await supabase
+              .from("clinical_threshold_points")
+              .select("report_id, threshold_db")
+              .in(
+                "report_id",
+                reportRows.map((r) => r.id),
+              )
+          ).data ?? [])
+        : [];
+
+      // One average per audiogram, newest first — blank reports drop out.
+      const clinical = reportRows
+        .map((r) => ({
+          created_at: r.created_at,
+          label: r.source_label || r.file_name,
+          avg_threshold_db: averageThreshold(points.filter((p) => p.report_id === r.id)),
+        }))
+        .filter((r) => r.avg_threshold_db != null);
+
       return {
-        dims: buildProfile({
-          avgThresholdDb: tests.data?.[0]?.avg_threshold_db ?? null,
-          toneTests: tests.data?.length ?? 0,
-          speechScore: speech.data?.[0]?.score ?? null,
-          speechTests: speech.data?.length ?? 0,
-          sessions: sessions.data ?? [],
-        }),
-        timeline: listeningTimeline({
-          tone: tests.data ?? [],
-          speech: speech.data ?? [],
-          sessions: sessions.data ?? [],
-        }),
+        tone: tests.data ?? [],
+        speech: speech.data ?? [],
+        sessions: sessions.data ?? [],
+        clinical,
       };
     },
   });
+
+  const hasClinical = (raw?.clinical.length ?? 0) > 0;
+  const activeSource: SensitivitySource = hasClinical ? source : "app";
+
+  const data = useMemo(() => {
+    if (!raw) return null;
+    const dims = buildProfile({
+      avgThresholdDb: raw.tone[0]?.avg_threshold_db ?? null,
+      toneTests: raw.tone.length,
+      speechScore: raw.speech[0]?.score ?? null,
+      speechTests: raw.speech.length,
+      sessions: raw.sessions,
+      clinicalAvgThresholdDb: raw.clinical[0]?.avg_threshold_db ?? null,
+      clinicalReports: raw.clinical.length,
+      sensitivitySource: activeSource,
+    });
+    const timeline = listeningTimeline({
+      tone:
+        activeSource === "clinical"
+          ? raw.clinical.map((c) => ({
+              created_at: c.created_at,
+              avg_threshold_db: c.avg_threshold_db,
+            }))
+          : raw.tone,
+      speech: raw.speech,
+      sessions: raw.sessions,
+    });
+    return { dims, timeline };
+  }, [raw, activeSource]);
 
   const dims = data?.dims ?? [];
   const timeline = data?.timeline ?? [];
