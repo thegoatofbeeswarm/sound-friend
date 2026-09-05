@@ -3,7 +3,7 @@ export const trainPage: { en: Record<string, string>; zh: Record<string, string>
     "train.tagline": "Closed-loop hearing training",
     "train.heroTitle": "Train the skills you use in real life.",
     "train.heroBody":
-      "Choose a focus. Each session adjusts to your performance, so you practice at the edge of your current ability — not on a one-size-fits-all playlist.",
+      "Choose a listening skill focus. Each session adjusts to your performance, so you practice to improve the limits of your current ability.",
     "train.chooseTrack": "Choose a training track",
     "train.nextFocusPrefix": "Your next focus:",
     "train.calibrated": "Calibrated to your latest screening",
