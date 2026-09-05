@@ -668,3 +668,123 @@
   height: 100vh;
   inset: 0 0 auto 0;
 }
+
+/* ------------------------------------------------------------------ */
+/* Press: editorial print-shop homepage skin (paper, ink, crop marks)  */
+/* ------------------------------------------------------------------ */
+
+.press-theme {
+  --background: oklch(0.941 0.013 92);
+  --foreground: oklch(0.24 0.02 160);
+  --card: oklch(0.972 0.009 92);
+  --card-foreground: oklch(0.24 0.02 160);
+  --popover: oklch(0.972 0.009 92);
+  --popover-foreground: oklch(0.24 0.02 160);
+  --muted: oklch(0.905 0.014 92);
+  --muted-foreground: oklch(0.46 0.018 150);
+  --border: oklch(0.24 0.02 160 / 0.16);
+  --input: oklch(0.24 0.02 160 / 0.22);
+  --outline-variant: oklch(0.24 0.02 160 / 0.16);
+  --primary: oklch(0.608 0.184 34);
+  --primary-foreground: oklch(0.975 0.01 92);
+  --secondary: oklch(0.905 0.014 92);
+  --secondary-foreground: oklch(0.24 0.02 160);
+  --accent: oklch(0.905 0.014 92);
+  --accent-foreground: oklch(0.24 0.02 160);
+  --signal: oklch(0.64 0.128 243);
+  --ring: oklch(0.608 0.184 34);
+  background-color: var(--background);
+  color: var(--foreground);
+  color-scheme: light;
+}
+
+/* Newsprint tooth over the paper. */
+.press-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(oklch(0.24 0.02 160 / 0.055) 1px, transparent 1.1px),
+    radial-gradient(oklch(0.24 0.02 160 / 0.035) 1px, transparent 1.1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 2px 3px;
+}
+
+.press-display {
+  font-family: "Archivo", "Roboto Flex", ui-sans-serif, sans-serif;
+  font-variation-settings: "wdth" 88;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.press-label {
+  font-family: "Archivo", "Roboto Flex", ui-sans-serif, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+
+/* Thin printer frame with crop marks at the corners. */
+.press-frame {
+  position: relative;
+  border: 1px solid oklch(0.64 0.128 243 / 0.45);
+}
+.press-frame::before,
+.press-frame::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  border-color: oklch(0.64 0.128 243 / 0.7);
+  border-style: solid;
+}
+.press-frame::before {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+}
+.press-frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 1px 1px 0;
+}
+
+.press-side {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Solid ink block behind a headline word. */
+.press-block {
+  display: inline-block;
+  background: var(--foreground);
+  color: var(--background);
+  padding: 0 0.18em 0.06em;
+}
+
+.press-card {
+  background: var(--card);
+  border: 1px solid oklch(0.24 0.02 160 / 0.18);
+  box-shadow: 10px 14px 0 -2px oklch(0.24 0.02 160 / 0.08);
+}
+
+.press-tilt-1 { transform: rotate(-6deg); }
+.press-tilt-2 { transform: rotate(4.5deg); }
+.press-tilt-3 { transform: rotate(-2deg); }
+
+.press-theme .press-tilt-1,
+.press-theme .press-tilt-2,
+.press-theme .press-tilt-3 {
+  transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.press-theme .press-tilt-1:hover,
+.press-theme .press-tilt-2:hover,
+.press-theme .press-tilt-3:hover {
+  transform: rotate(0deg) translateY(-6px);
+}
