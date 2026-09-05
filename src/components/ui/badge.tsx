@@ -3,17 +3,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
+// Material 3 chips/labels: pill shape, tonal containers, medium weight.
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium tracking-[0.02em] transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
+        default:
+          "border-transparent bg-primary-container text-on-primary-container hover:bg-primary-container/85",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-transparent bg-secondary-container text-secondary-foreground hover:bg-secondary-container/85",
+        tertiary:
+          "border-transparent bg-tertiary-container text-on-tertiary-container hover:bg-tertiary-container/85",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
-        outline: "text-foreground",
+          "border-transparent bg-error-container text-on-error-container hover:bg-error-container/85",
+        outline: "border-outline text-foreground",
       },
     },
     defaultVariants: {
@@ -21,6 +25,7 @@ const badgeVariants = cva(
     },
   },
 );
+
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
