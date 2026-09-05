@@ -5,6 +5,7 @@ export const researchPack: {
 } = {
   en: {
     "nav.research": "Research mode",
+    "nav.researchGroup": "Research",
     "res.title": "Research mode",
     "res.lead":
       "A normal screening lets you change headphones, volume and room between sittings, so two results can differ for reasons that have nothing to do with your hearing. Research mode writes those conditions down, locks them, and marks a repeat as comparable only when you reproduce them.",
@@ -51,6 +52,7 @@ export const researchPack: {
   },
   zh: {
     "nav.research": "研究模式",
+    "nav.researchGroup": "研究",
     "res.title": "研究模式",
     "res.lead":
       "普通筛查允许你在两次之间更换耳机、音量和房间，因此结果的差异可能与听力无关。研究模式会记录并锁定这些条件，只有在你完全复现它们时，重测才被视为可比较。",
@@ -96,6 +98,7 @@ export const researchPack: {
   },
   es: {
     "nav.research": "Modo investigación",
+    "nav.researchGroup": "Investigación",
     "res.title": "Modo investigación",
     "res.lead":
       "Una prueba normal permite cambiar auriculares, volumen y sala entre sesiones, así que dos resultados pueden diferir por motivos ajenos a tu audición. El modo investigación anota esas condiciones, las bloquea y solo marca una repetición como comparable cuando las reproduces.",
