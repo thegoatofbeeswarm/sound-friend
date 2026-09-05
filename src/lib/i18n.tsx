@@ -35,18 +35,20 @@ const en = {
 
   "pillar.adaptive.title": "Adaptive",
   "pillar.adaptive.body": "A Bayesian staircase updates its belief after every response.",
-  "pillar.prefs.title": "Your preferences matter",
-  "pillar.prefs.body": "This app is custom-tailored to your needs and preferences",
+  "pillar.prefs.title": "Personalized training",
+  "pillar.prefs.body":
+    "Your lowest-performing listening dimension decides which exercises Audiomaxxer prioritizes next.",
   "pillar.env.title": "Environmental awareness",
   "pillar.env.body":
     "The microphone estimates room noise so a screening is only trusted when the space is quiet enough.",
-  "pillar.access.title": "Accessibility",
-  "pillar.access.body": "Runs on any phone with headphones",
+  "pillar.access.title": "Browser-based",
+  "pillar.access.body":
+    "Works on modern phones and computers with headphones - no dedicated equipment required.",
   "pillar.coach.title": "Listening coach",
   "pillar.coach.body": "A guided chat that reads your own results and explains what they mean and what to practise next.",
-  "pillar.training.title": "Closed-loop training",
+  "pillar.training.title": "Real-world listening exercises",
   "pillar.training.body":
-    "Custom hearing training based off of real life sounds to stimulate and train your hearing",
+    "Practise speech in noise, sound discrimination, attention and auditory memory with increasingly difficult listening tasks.",
 
   "stats.people": "people live with hearing loss worldwide",
   "stats.tracks": "frequency-and-ear tracks measured per screening",
@@ -86,16 +88,16 @@ const zh: Record<TranslationKey, string> = {
 
   "pillar.adaptive.title": "自适应",
   "pillar.adaptive.body": "贝叶斯阶梯法会在每次回答后更新对你听阈的判断。",
-  "pillar.prefs.title": "你的偏好很重要",
-  "pillar.prefs.body": "这款应用会根据你的需求和偏好量身定制。",
+  "pillar.prefs.title": "个性化训练",
+  "pillar.prefs.body": "你表现最弱的聆听维度决定 Audiomaxxer 接下来优先安排哪些练习。",
   "pillar.env.title": "环境感知",
   "pillar.env.body": "麦克风会估算房间噪音，只有在足够安静时筛查结果才被采信。",
-  "pillar.access.title": "无障碍可及",
-  "pillar.access.body": "任何一部配有耳机的手机都能使用。",
+  "pillar.access.title": "基于浏览器",
+  "pillar.access.body": "在配有耳机的现代手机和电脑上即可使用，无需专用设备。",
   "pillar.coach.title": "聆听教练",
   "pillar.coach.body": "结合你自己的结果进行对话，解释这些数据的含义以及下一步该练什么。",
-  "pillar.training.title": "闭环训练",
-  "pillar.training.body": "基于真实生活声音的定制听力训练，刺激并锻炼你的听觉。",
+  "pillar.training.title": "真实场景聆听练习",
+  "pillar.training.body": "以难度逐步提升的任务练习噪声中的言语、声音辨别、注意力与听觉记忆。",
 
   "stats.people": "全球有这么多人正与听力损失共处",
   "stats.tracks": "每次筛查测量的频率与耳别组合数",
@@ -131,18 +133,20 @@ const es: Record<TranslationKey, string> = {
 
   "pillar.adaptive.title": "Adaptativo",
   "pillar.adaptive.body": "Una escalera bayesiana actualiza su estimación tras cada respuesta.",
-  "pillar.prefs.title": "Tus preferencias importan",
-  "pillar.prefs.body": "Esta app se adapta a tus necesidades y preferencias.",
+  "pillar.prefs.title": "Entrenamiento personalizado",
+  "pillar.prefs.body":
+    "Tu dimensión de escucha más baja determina qué ejercicios prioriza Audiomaxxer a continuación.",
   "pillar.env.title": "Conciencia del entorno",
   "pillar.env.body":
     "El micrófono estima el ruido de la sala, así que un cribado solo se considera fiable cuando el espacio está lo bastante silencioso.",
-  "pillar.access.title": "Accesibilidad",
-  "pillar.access.body": "Funciona en cualquier teléfono con auriculares.",
+  "pillar.access.title": "Basado en el navegador",
+  "pillar.access.body":
+    "Funciona en teléfonos y ordenadores modernos con auriculares, sin equipo especializado.",
   "pillar.coach.title": "Entrenador de escucha",
   "pillar.coach.body": "Un chat guiado que lee tus resultados y explica qué significan y qué practicar después.",
-  "pillar.training.title": "Entrenamiento de circuito cerrado",
+  "pillar.training.title": "Ejercicios de escucha reales",
   "pillar.training.body":
-    "Entrenamiento auditivo personalizado con sonidos de la vida real para estimular y ejercitar tu oído.",
+    "Practica habla con ruido, discriminación, atención y memoria auditiva con tareas cada vez más difíciles.",
 
   "stats.people": "personas viven con pérdida auditiva en el mundo",
   "stats.tracks": "combinaciones de frecuencia y oído medidas por cribado",
