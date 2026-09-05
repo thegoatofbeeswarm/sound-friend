@@ -4,7 +4,7 @@ export const profilePage: { en: Record<string, string>; zh: Record<string, strin
     "home.ctaProfile": "See my listening profile",
     "profile.title": "Your Listening Profile",
     "profile.lead":
-      "Hearing is more than a tone test. Your profile tracks five listening skills, updates as you test and train, and points at the one worth working on next.",
+      "Your profile tracks five listening skills, updates as you test and train, and points at the one worth working on next.",
     "profile.signedOut": "Sign in to build and keep your listening profile.",
     "profile.signIn": "Sign in",
     "profile.overall": "Listening score",
@@ -50,9 +50,9 @@ export const profilePage: { en: Record<string, string>; zh: Record<string, strin
     "profile.band.watch": "Room to improve",
     "profile.band.low": "Needs work",
     "profile.loopTitle": "How the profile improves",
-    "profile.loop1": "Test — a tone screening and a speech-in-noise run set your baseline.",
-    "profile.loop2": "Train — sessions in your weakest skill move that dimension.",
-    "profile.loop3": "Retest — repeat the tests to see whether training carried over.",
+    "profile.loop1": "Test: a tone and a speech-in-noise screening set your baseline (weaknesses and strengths) ",
+    "profile.loop2": "Train: sessions in your weakest skill aim to improve your listening abilities.",
+    "profile.loop3": "Retest: repeat the tests to see whether training carried over.",
     "profile.disclaimer":
       "This is a self-check, not a diagnosis. Scores are estimates from browser audio and your own responses.",
   },
