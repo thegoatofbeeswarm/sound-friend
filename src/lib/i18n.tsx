@@ -43,7 +43,7 @@ const en = {
     "The microphone estimates room noise so a screening is only trusted when the space is quiet enough.",
   "pillar.access.title": "Browser-based",
   "pillar.access.body":
-    "Works on modern phones and computers with headphones - no dedicated equipment required.",
+    "Works on modern phones and computers with headphones. You don't need any dedicated equipment.",
   "pillar.coach.title": "Listening coach",
   "pillar.coach.body": "A guided chat that reads your own results and explains what they mean and what to practise next.",
   "pillar.training.title": "Real-world listening exercises",

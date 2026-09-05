@@ -6,15 +6,15 @@ export const sciencePack: {
   en: {
     "how.title": "How Audiomaxxer works",
     "how.lead":
-      "A closed loop: every screening changes your training, and every training block feeds the next screening comparison.",
+      "Audiomaxxer is a closed loop. Every screening changes your training, and every training block feeds the next screening comparison.",
     "how.scienceLink": "The science behind it",
     "how.step": "STEP",
     "how.s1.title": "Screen",
     "how.s1.body":
-      "Adaptive tones narrow in on the quietest level you can hear at each frequency, in each ear.",
+      "In each ear, adaptive tones narrow in on the quietest level you can hear at each frequency.",
     "how.s2.title": "Analyze",
     "how.s2.body":
-      "Your responses build an individual hearing profile — where you are strong, and where sensitivity drops.",
+      "Your responses build an individual hearing profile. It emphasizes where you are strong and where sensitivity drops.",
     "how.s3.title": "Train",
     "how.s3.body":
       "Exercises concentrate on the sounds your profile says you have the most difficulty distinguishing.",
@@ -22,9 +22,9 @@ export const sciencePack: {
     "how.s4.body": "How you perform in a session changes the difficulty and content of the next one.",
     "how.s5.title": "Track",
     "how.s5.body":
-      "Repeat screenings show how your profile moves over weeks and months, not just once.",
+      "Repeat screenings show how your profile moves over weeks and months. ",
     "how.loop":
-      "Step 5 feeds back into step 3: an updated profile re-targets your training instead of repeating the same exercises. That feedback arrow is what we mean by a closed loop.",
+      "Step 5 feeds back into step 3: an updated profile retargets your training instead of repeating the same exercises. That feedback arrow is what we mean by a closed loop.",
 
     "sci.badge": "Methods & evidence",
     "sci.h1": "The science behind Audiomaxxer",
