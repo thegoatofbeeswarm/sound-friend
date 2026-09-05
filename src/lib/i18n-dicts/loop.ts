@@ -2,13 +2,13 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
   en: {
     /* real-world modes */
     "train.mode.restaurant.label": "Restaurant table",
-    "train.mode.restaurant.blurb": "Catch an order across a busy table: voices, clatter and all.",
+    "train.mode.restaurant.blurb": "Catch an order across a busy table. Background noise includes voices and chatter, making it hard.",
     "train.mode.restaurant.skill": "Speech in a crowded room",
     "train.mode.street.label": "Street corner",
     "train.mode.street.blurb": "Follow directions over real traffic before the light changes.",
     "train.mode.street.skill": "Speech in low-frequency noise",
     "train.mode.phone-call.label": "Phone call",
-    "train.mode.phone-call.blurb": "A thin, hissy line with no lips to read — pure listening.",
+    "train.mode.phone-call.blurb": "A hissy phone call with no lips to read, just pure skill.",
     "train.mode.phone-call.skill": "Degraded-channel speech",
     "train.realWorld": "Real-world scenes",
 
