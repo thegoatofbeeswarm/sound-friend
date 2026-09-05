@@ -62,7 +62,7 @@ export const trainPage: { en: Record<string, string>; zh: Record<string, string>
     "train.mode.speech-in-noise.blurb": "Understand words spoken over a real recording of people talking.",
     "train.mode.speech-in-noise.skill": "Signal-to-noise ratio",
     "train.mode.high-frequency.label": "High-frequency recognition",
-    "train.mode.high-frequency.blurb": "Place a hiss on the pitch scale. ",
+    "train.mode.high-frequency.blurb": "Identify/match the exact perceived pitch or frequency range of an unpitched noise (such as a hiss)",
     "train.mode.high-frequency.skill": "2-13 kHz resolution",
     "train.mode.localization.label": "Sound localization",
     "train.mode.localization.blurb": "Say which side a sound came from. Stereo headphones are optimal here.",
