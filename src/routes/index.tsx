@@ -19,17 +19,17 @@ import { SoundwaveGlow } from "@/components/SoundwaveGlow";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Listening Profile: Hearing, Speech in Noise & Training | Audiomaxxer" },
+      { title: "Audiomaxxer - Personal Listening Profile & Auditory Training" },
       {
         name: "description",
         content:
-          "Build a five-part listening profile — sensitivity, speech in noise, discrimination, attention and memory — then train your weakest listening skill and track it over time.",
+          "Measure hearing sensitivity, speech in noise, sound discrimination, auditory attention and memory. Train listening skills and track how your profile changes over time.",
       },
-      { property: "og:title", content: "Listening Profile: Hearing, Speech in Noise & Training | Audiomaxxer" },
+      { property: "og:title", content: "Audiomaxxer - Personal Listening Profile & Auditory Training" },
       {
         property: "og:description",
         content:
-          "Build a five-part listening profile — sensitivity, speech in noise, discrimination, attention and memory — then train your weakest listening skill and track it over time.",
+          "Measure hearing sensitivity, speech in noise, sound discrimination, auditory attention and memory. Train listening skills and track how your profile changes over time.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
