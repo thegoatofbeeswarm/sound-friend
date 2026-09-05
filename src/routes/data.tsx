@@ -17,13 +17,13 @@ export const Route = createFileRoute("/data")({
       {
         name: "description",
         content:
-          "Upload a past audiogram, compare it with your Audiomaxxer screening, and inspect the difference and mean absolute error.",
+          "Upload a past audiogram and compare its shape with your Audiomaxxer screening: scale offset, pattern match and point-by-point shape differences.",
       },
       { property: "og:title", content: "Hearing Data Comparison | Audiomaxxer" },
       {
         property: "og:description",
         content:
-          "Compare external hearing reports with your Audiomaxxer screening using transparent threshold-difference calculations.",
+          "Compare external hearing reports with your Audiomaxxer screening by curve shape, with the scale difference stated openly.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -162,9 +162,9 @@ function DataPage() {
               title={t("data.eq1.title")}
               formula={
                 <>
-                  <i>Difference</i> = <i>T</i>
+                  <i>Offset</i> = median( <i>T</i>
                   <sub>Audiomaxxer</sub> − <i>T</i>
-                  <sub>Clinic</sub>
+                  <sub>Clinic</sub> )
                 </>
               }
               detail={t("data.eq1.detail")}
@@ -173,10 +173,9 @@ function DataPage() {
               title={t("data.eq2.title")}
               formula={
                 <>
-                  <i>MAE</i> = <sup>1</sup>⁄<sub>n</sub> ∑<sub>i=1</sub>
-                  <sup>n</sup> |<i>T</i>
+                  <i>Shape</i><sub>i</sub> = ( <i>T</i>
                   <sub>Audiomaxxer,i</sub> − <i>T</i>
-                  <sub>Clinic,i</sub>|
+                  <sub>Clinic,i</sub> ) − <i>Offset</i>
                 </>
               }
               detail={t("data.eq2.detail")}
@@ -212,7 +211,7 @@ function EquationCard({
 function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
   const { t } = useI18n();
   const latestReport = data?.reports.find((report) => report.status === "ready");
-  const matches =
+  const rawMatches =
     data && latestReport
       ? data.audiomaxxerPoints.flatMap((point) => {
           const clinic = data.clinicalPoints.find(
@@ -231,9 +230,21 @@ function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
             : [];
         })
       : [];
-  const mae = matches.length
-    ? matches.reduce((sum, row) => sum + Math.abs(row.difference), 0) / matches.length
+  // The two tests are not on the same scale, so we remove the constant
+  // offset between them and compare the remaining shape instead of quoting
+  // an absolute error against clinical dB HL.
+  const sortedDiffs = rawMatches.map((row) => row.difference).sort((a, b) => a - b);
+  const offset = sortedDiffs.length
+    ? sortedDiffs.length % 2
+      ? (sortedDiffs[(sortedDiffs.length - 1) / 2] as number)
+      : ((sortedDiffs[sortedDiffs.length / 2 - 1] as number) +
+          (sortedDiffs[sortedDiffs.length / 2] as number)) /
+        2
     : null;
+  const matches = rawMatches.map((row) => ({
+    ...row,
+    shape: row.difference - (offset ?? 0),
+  }));
 
   return (
     <div className="mt-8 rounded-xl border border-border/70 bg-card/60 p-6">
@@ -250,7 +261,8 @@ function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
           </p>
         </div>
         <p className="text-sm font-medium text-signal">
-          {t("data.table.mae")} {mae == null ? "—" : `${mae.toFixed(1)} dB`}
+          {t("data.table.mae")}{" "}
+          {offset == null ? "—" : `${offset > 0 ? "+" : ""}${offset.toFixed(1)} dB`}
         </p>
       </div>
       {matches.length ? (
@@ -278,8 +290,8 @@ function ComparisonTable({ data }: { data: ComparisonData | undefined }) {
                   <td className="py-3">{row.audiomaxxer} dB (est.)</td>
                   <td className="py-3">{row.clinic} dB HL</td>
                   <td className="py-3 font-medium">
-                    {row.difference > 0 ? "+" : ""}
-                    {row.difference.toFixed(1)} dB
+                    {row.shape > 0 ? "+" : ""}
+                    {row.shape.toFixed(1)} dB
                   </td>
                 </tr>
               ))}
