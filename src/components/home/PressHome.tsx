@@ -111,11 +111,11 @@ export function PressHome() {
 
   return (
     <div className="press-theme press-grain min-h-screen">
-      <div className="relative z-10">
+      <div className="relative z-10 pt-16">
         <SiteNav transparent />
 
         {/* Masthead ticker */}
-        <div className="mt-[4.75rem] border-y border-foreground/15">
+        <div className="border-y border-foreground/15">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2.5">
             <p className="press-label text-foreground/70">{t("home.badge")}</p>
             <div className="hidden items-center gap-1.5 md:flex">
