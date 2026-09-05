@@ -3,7 +3,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "nav.speech": "Speech test",
     "sin.title": "Speech in noise",
     "sin.lead":
-      "Three spoken digits against background chatter. The speech stays put and the noise closes in, so what we measure is the signal-to-noise ratio where you still get all three right — the listening skill that actually matters in a cafe or classroom.",
+      "Three spoken digits are put against background chatter. The speech stays put and the noise closes in, so what we measure is the signal-to-noise ratio where you still get all three right.",
     "sin.why":
       "Because this is a ratio, it barely depends on how loud your headphones run, so it is comparable between runs and between devices.",
     "sin.step1": "Wear headphones and set your device volume to a comfortable level.",
