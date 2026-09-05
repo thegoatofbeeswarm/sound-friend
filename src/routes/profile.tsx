@@ -69,10 +69,22 @@ function toneOf(score: number | null): "accent" | "caution" | "danger" | "muted"
 }
 
 
-function DimensionCard({ dim }: { dim: Dimension }) {
+function DimensionCard({ dim, average }: { dim: Dimension; average: number | null }) {
   const { t } = useI18n();
   const Icon = ICONS[dim.id];
   const action = DIMENSION_ACTION[dim.id];
+
+  let context: string | null = null;
+  if (dim.score != null && average != null) {
+    const delta = Math.round(dim.score - average);
+    context =
+      Math.abs(delta) <= 3
+        ? t("profile.vsAvg.at")
+        : t(delta > 0 ? "profile.vsAvg.above" : "profile.vsAvg.below").replace(
+            "{n}",
+            String(Math.abs(delta)),
+          );
+  }
 
   return (
     <article className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
@@ -81,19 +93,27 @@ function DimensionCard({ dim }: { dim: Dimension }) {
           <Icon className="h-5 w-5 text-signal" />
           <h3 className="text-lg font-semibold">{t(`profile.dim.${dim.id}`)}</h3>
         </div>
-        <p className={`font-display text-3xl font-semibold ${bandClass(dim.score)}`}>
-          {dim.score ?? "—"}
-        </p>
+        <div className="text-right">
+          <p className={`font-display text-3xl font-semibold ${bandClass(dim.score)}`}>
+            {dim.score == null ? "—" : `${dim.score}`}
+            {dim.score == null ? null : <span className="text-sm text-muted-foreground"> /100</span>}
+          </p>
+          <p className={`text-xs font-medium ${bandClass(dim.score)}`}>
+            {dim.score == null ? t("profile.noData") : t(`profile.band.${bandOf(dim.score)}`)}
+          </p>
+        </div>
       </div>
       <Progress value={dim.score ?? 0} className="mt-4" />
       <p className="mt-3 text-sm text-muted-foreground">{t(`profile.desc.${dim.id}`)}</p>
+      {context ? <p className="mt-2 text-xs text-foreground/80">{context}</p> : null}
       <p className="mt-2 text-xs text-muted-foreground">
         {dim.score == null
           ? t("profile.noData")
-          : `${t(`profile.band.${bandOf(dim.score)}`)} · ${t(`profile.evidence.${dim.evidence}`)}`}
+          : t(`profile.evidence.${dim.evidence}`)}
         {" · "}
         {t(dim.sourceKey)}
       </p>
+
       <Button asChild size="sm" variant="secondary" className="mt-4">
         <Link to={action.to}>{t(action.labelKey)}</Link>
       </Button>
