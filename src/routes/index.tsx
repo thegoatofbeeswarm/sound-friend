@@ -19,17 +19,17 @@ import { SoundwaveGlow } from "@/components/SoundwaveGlow";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Free Online Hearing Test & Hearing Health Tracker | Audiomaxxer" },
+      { title: "Listening Profile: Hearing, Speech in Noise & Training | Audiomaxxer" },
       {
         name: "description",
         content:
-          "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
+          "Build a five-part listening profile — sensitivity, speech in noise, discrimination, attention and memory — then train your weakest listening skill and track it over time.",
       },
-      { property: "og:title", content: "Free Online Hearing Test & Hearing Health Tracker | Audiomaxxer" },
+      { property: "og:title", content: "Listening Profile: Hearing, Speech in Noise & Training | Audiomaxxer" },
       {
         property: "og:description",
         content:
-          "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
+          "Build a five-part listening profile — sensitivity, speech in noise, discrimination, attention and memory — then train your weakest listening skill and track it over time.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
