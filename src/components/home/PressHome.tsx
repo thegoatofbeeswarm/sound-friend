@@ -115,7 +115,7 @@ export function PressHome() {
         <SiteNav transparent />
 
         {/* Masthead ticker */}
-        <div className="border-y border-foreground/15">
+        <div className="mt-16 border-y border-foreground/15">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2.5">
             <p className="press-label text-foreground/70">{t("home.badge")}</p>
             <div className="hidden items-center gap-1.5 md:flex">
@@ -141,7 +141,7 @@ export function PressHome() {
                   <span className="press-label bg-primary px-3 py-1.5 text-primary-foreground">
                     THE LISTENING ARCHIVE
                   </span>
-                  <span className="press-label text-foreground/55">{t("home.disclaimer")}</span>
+                  <span className="press-label text-foreground/55">COMIC-CLEAR LISTENING DATA</span>
                 </div>
 
                 <h1 className="press-display mt-8 text-[clamp(2.8rem,8.5vw,5.6rem)] leading-[0.86] text-foreground">
@@ -151,6 +151,10 @@ export function PressHome() {
 
                 <p className="mt-8 max-w-md text-base leading-relaxed text-foreground/75">
                   {t("home.lead")}
+                </p>
+
+                <p className="press-label mt-6 max-w-md leading-[1.9] text-foreground/45">
+                  {t("home.disclaimer")}
                 </p>
 
                 <div className="mt-9 flex flex-wrap items-center gap-3">
