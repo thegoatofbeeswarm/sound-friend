@@ -107,7 +107,7 @@ function Index() {
             style={{ animationDelay: "80ms" }}
           >
             {t("home.title1")}{" "}
-            <span className="text-[oklch(0.88_0.07_215)]">{t("home.title2")}</span>
+            <span className="text-primary dark:text-[oklch(0.88_0.07_215)]">{t("home.title2")}</span>
           </h1>
 
           <p
