@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import {
+  averageThreshold,
   bandOf,
   buildProfile,
   listeningTimeline,
@@ -20,7 +21,11 @@ import {
   weakestDimension,
   type Dimension,
   type DimensionId,
+  type SensitivitySource,
 } from "@/lib/listening-profile";
+
+/** Remembers which audiogram source the user prefers. */
+const SOURCE_KEY = "audiomaxxer.profile-source";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
