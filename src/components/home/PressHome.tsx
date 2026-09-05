@@ -115,7 +115,7 @@ export function PressHome() {
         <SiteNav transparent />
 
         {/* Masthead ticker */}
-        <div className="mt-16 border-y border-foreground/15">
+        <div className="mt-[4.75rem] border-y border-foreground/15">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2.5">
             <p className="press-label text-foreground/70">{t("home.badge")}</p>
             <div className="hidden items-center gap-1.5 md:flex">
