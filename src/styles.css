@@ -443,7 +443,7 @@
 /* ------------------------------------------------------------------ */
 
 :root {
-  --font-editorial: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-editorial: "Roboto Serif", ui-serif, Georgia, serif;
 }
 
 @theme inline {
