@@ -22,11 +22,11 @@ const en = {
   "nav.light": "Light",
   "nav.dark": "Dark",
 
-  "home.badge": "The personal listening-health platform",
-  "home.title1": "Know how you hear —",
-  "home.title2": "not just whether you hear.",
+  "home.badge": "Listening health for the headphone generation",
+  "home.title1": "You grew up in headphones.",
+  "home.title2": "Find out how you actually listen.",
   "home.lead":
-    "Build a five-part listening profile across hearing sensitivity, speech in noise, sound discrimination, auditory attention and auditory memory. Then train your weakest skill and watch the profile change.",
+    "Made for teenagers and young adults. Build a five-part listening profile - sensitivity, speech in noise, sound discrimination, auditory attention and auditory memory - then train the weakest one and watch it change.",
   "home.ctaTest": "Start a screening",
   "home.ctaHistory": "See saved results",
   "home.disclaimer":
@@ -75,9 +75,9 @@ const zh: Record<TranslationKey, string> = {
   "nav.light": "浅色",
   "nav.dark": "深色",
 
-  "home.badge": "个人聆听健康平台",
-  "home.title1": "了解你如何听，",
-  "home.title2": "而不只是能不能听见。",
+  "home.badge": "为耳机世代打造的聆听健康平台",
+  "home.title1": "你是戴着耳机长大的。",
+  "home.title2": "看看你真正的聆听能力如何。",
   "home.lead":
     "建立由五部分组成的聆听档案：听觉灵敏度、噪声中的言语、声音辨别、听觉注意与听觉记忆。然后训练你最弱的一项，并看着档案发生变化。",
   "home.ctaTest": "开始筛查",
@@ -120,11 +120,11 @@ const es: Record<TranslationKey, string> = {
   "nav.light": "Claro",
   "nav.dark": "Oscuro",
 
-  "home.badge": "La plataforma personal de salud auditiva",
-  "home.title1": "Descubre cómo escuchas,",
-  "home.title2": "no solo si oyes.",
+  "home.badge": "Salud auditiva para la generación de los auriculares",
+  "home.title1": "Creciste con auriculares.",
+  "home.title2": "Descubre cómo escuchas de verdad.",
   "home.lead":
-    "Crea un perfil auditivo de cinco partes: sensibilidad, habla con ruido, discriminación, atención auditiva y memoria auditiva. Después entrena tu punto más débil y observa cómo cambia el perfil.",
+    "Pensado para adolescentes y jóvenes. Crea un perfil auditivo de cinco partes -sensibilidad, habla con ruido, discriminación, atención y memoria auditiva- y entrena después tu punto más débil.",
   "home.ctaTest": "Comenzar un cribado",
   "home.ctaHistory": "Ver resultados guardados",
   "home.disclaimer":
@@ -177,6 +177,7 @@ import { loopPack } from "@/lib/i18n-dicts/loop";
 import { navPack } from "@/lib/i18n-dicts/nav";
 import { platformPack } from "@/lib/i18n-dicts/platform";
 import { researchPack } from "@/lib/i18n-dicts/research";
+import { youthPack } from "@/lib/i18n-dicts/youth";
 
 export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
 
@@ -199,6 +200,7 @@ const packs: Dict[] = [
   navPack,
   platformPack,
   researchPack,
+  youthPack,
 ];
 
 
