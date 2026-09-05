@@ -141,7 +141,7 @@ export function PressHome() {
                   <span className="press-label bg-primary px-3 py-1.5 text-primary-foreground">
                     THE LISTENING ARCHIVE
                   </span>
-                  <span className="press-label text-foreground/55">COMIC-CLEAR LISTENING DATA</span>
+                  <span className="press-label text-foreground/55">MEASURED, NOT GUESSED</span>
                 </div>
 
                 <h1 className="press-display mt-8 text-[clamp(2.8rem,8.5vw,5.6rem)] leading-[0.86] text-foreground">
