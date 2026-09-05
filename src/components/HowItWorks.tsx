@@ -53,7 +53,7 @@ export function HowItWorks() {
           ))}
         </ol>
 
-        <div className="mt-10 flex items-center gap-3 rounded-2xl border border-border/60 bg-white/[0.04] p-6 text-sm text-muted-foreground backdrop-blur">
+        <div className="mt-10 flex items-center gap-3 rounded-2xl border border-border/60 bg-card/70 p-6 text-sm text-muted-foreground backdrop-blur">
           <RefreshCw className="h-4 w-4 shrink-0 text-signal" />
           <p>{t("how.loop")}</p>
         </div>

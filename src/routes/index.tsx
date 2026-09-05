@@ -90,7 +90,7 @@ function Index() {
   const { t } = useI18n();
 
   return (
-    <div className="dark sky-page min-h-screen text-night-foreground">
+    <div className="sky-page min-h-screen text-foreground">
       {/* Sky spans the whole page: dawn in light mode, night sky in dark mode. */}
       <span aria-hidden className="sky-hero-haze" />
       <span aria-hidden className="sky-stars" />
@@ -98,12 +98,12 @@ function Index() {
         <SiteNav transparent />
 
         <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
-          <p className="rise-in text-[11px] uppercase tracking-[0.42em] text-white/70">
+          <p className="rise-in text-[11px] uppercase tracking-[0.42em] text-foreground/70">
             {t("home.badge")}
           </p>
 
           <h1
-            className="rise-in font-display mt-8 text-balance text-[clamp(2.9rem,9vw,5.75rem)] font-semibold leading-[0.98] text-white"
+            className="rise-in font-display mt-8 text-balance text-[clamp(2.9rem,9vw,5.75rem)] font-semibold leading-[0.98] text-foreground"
             style={{ animationDelay: "80ms" }}
           >
             {t("home.title1")}{" "}
@@ -111,7 +111,7 @@ function Index() {
           </h1>
 
           <p
-            className="rise-in mx-auto mt-7 max-w-xl text-base leading-relaxed text-white/70 md:text-lg"
+            className="rise-in mx-auto mt-7 max-w-xl text-base leading-relaxed text-foreground/70 md:text-lg"
             style={{ animationDelay: "160ms" }}
           >
             {t("home.lead")}
@@ -123,25 +123,25 @@ function Index() {
           >
             <Link
               to="/test"
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-medium text-[oklch(0.16_0.03_258)] transition-transform hover:-translate-y-0.5"
+              className="inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
             >
               {t("home.ctaTest")} <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/profile"
-              className="inline-flex h-12 items-center rounded-full border border-white/20 px-7 text-sm text-white/85 backdrop-blur transition-colors hover:border-white/45 hover:text-white"
+              className="inline-flex h-12 items-center rounded-full border border-foreground/25 px-7 text-sm text-foreground/80 backdrop-blur transition-colors hover:border-foreground/50 hover:text-foreground"
             >
               {t("home.ctaProfile")}
             </Link>
             <Link
               to="/train"
-              className="inline-flex h-12 items-center rounded-full border border-white/20 px-7 text-sm text-white/85 backdrop-blur transition-colors hover:border-white/45 hover:text-white"
+              className="inline-flex h-12 items-center rounded-full border border-foreground/25 px-7 text-sm text-foreground/80 backdrop-blur transition-colors hover:border-foreground/50 hover:text-foreground"
             >
               {t("nav.train")}
             </Link>
           </div>
 
-          <p className="mt-14 text-[11px] uppercase tracking-[0.32em] text-white/40">
+          <p className="mt-14 text-[11px] uppercase tracking-[0.32em] text-foreground/45">
             {t("home.disclaimer")}
           </p>
         </div>
@@ -150,7 +150,7 @@ function Index() {
       {/* Example listening profile, floating in the dark. */}
       <section>
         <div className="mx-auto max-w-3xl px-5 py-24">
-          <div className="rounded-[28px] border border-border/60 bg-white/[0.04] p-7 backdrop-blur-xl md:p-10">
+          <div className="rounded-[28px] border border-border/60 bg-card/70 p-7 backdrop-blur-xl md:p-10">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-[11px] uppercase tracking-[0.32em] text-muted-foreground">
                 {t("five.exampleTitle")}
@@ -210,7 +210,7 @@ function Index() {
             {FIVE.map((d, i) => (
               <article
                 key={d.key}
-                className={`bg-white/[0.04] p-8 ${i === FIVE.length - 1 ? "md:col-span-2" : ""}`}
+                className={`bg-card/70 p-8 ${i === FIVE.length - 1 ? "md:col-span-2" : ""}`}
               >
                 <p className="text-[11px] tracking-[0.32em] text-muted-foreground">
                   {String(i + 1).padStart(2, "0")}
@@ -248,7 +248,7 @@ function Index() {
             ))}
           </div>
 
-          <div className="mt-16 flex flex-wrap items-end justify-between gap-8 rounded-3xl border border-border/60 bg-white/[0.04] p-8 backdrop-blur">
+          <div className="mt-16 flex flex-wrap items-end justify-between gap-8 rounded-3xl border border-border/60 bg-card/70 p-8 backdrop-blur">
             <div className="flex items-baseline gap-5">
               <p className="font-display text-6xl font-semibold leading-none text-signal">24%</p>
               <div>
@@ -305,7 +305,7 @@ function Index() {
               </DialogHeader>
               <ul className="space-y-4">
                 {adolescentStudies.map((s) => (
-                  <li key={s.url} className="rounded-xl border border-border/70 bg-white/[0.04] p-4">
+                  <li key={s.url} className="rounded-xl border border-border/70 bg-card/70 p-4">
                     <a href={s.url} target="_blank" rel="noreferrer" className="text-sm font-semibold underline-offset-4 hover:underline">
                       {s.title}
                     </a>

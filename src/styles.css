@@ -560,23 +560,22 @@
 .sky-page {
   position: relative;
   isolation: isolate;
-  color: var(--night-foreground);
   background:
     linear-gradient(
       180deg,
       oklch(0.84 0.045 250) 0vh,
-      oklch(0.76 0.05 255) 13vh,
-      oklch(0.68 0.06 60 / 0.9) 25vh,
-      oklch(0.46 0.05 40) 42vh,
-      oklch(0.24 0.04 255) 64vh,
-      oklch(0.15 0.03 258) 86vh,
-      oklch(0.12 0.028 258) 100vh
+      oklch(0.79 0.05 252) 14vh,
+      oklch(0.85 0.055 60) 30vh,
+      oklch(0.92 0.04 55) 48vh,
+      oklch(0.96 0.02 250) 70vh,
+      var(--background) 92vh
     ),
-    oklch(0.12 0.028 258);
+    var(--background);
   background-repeat: no-repeat;
 }
 
 [data-theme="dark"] .sky-page {
+  color: var(--night-foreground);
   background:
     linear-gradient(
       180deg,
@@ -586,9 +585,9 @@
       oklch(0.24 0.1 262) 48vh,
       oklch(0.2 0.09 250) 64vh,
       oklch(0.13 0.05 255) 86vh,
-      oklch(0.09 0.025 258) 100vh
+      var(--background) 100vh
     ),
-    oklch(0.09 0.025 258);
+    var(--background);
   background-repeat: no-repeat;
 }
 
