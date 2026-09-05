@@ -17,9 +17,9 @@ export const platformPack: {
     "five.dim.speech.body":
       "How much background noise you can tolerate and still understand spoken digits/sentences.",
     "five.dim.discrimination.body":
-      "Telling apart pitches, timbres and fine spectral detail that sit close together.",
+      "Telling apart pitches and fine spectral detail that sit close together.",
     "five.dim.attention.body":
-      "Holding on to one sound source while other sounds compete for your attention.",
+      "Holding on to one sound source while other sounds distract you.",
     "five.dim.memory.body":
       "Keeping what you just heard in mind long enough to make sense of a whole sentence.",
 

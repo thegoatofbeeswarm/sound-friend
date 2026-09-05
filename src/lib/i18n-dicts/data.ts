@@ -83,15 +83,15 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "how.title": "How Audiomaxxer works",
     "how.desc":
-      "A closed loop: every screening changes your training, and every training block feeds the next screening comparison.",
+      "Audiomaxxer is a closed loop. Every screening changes your training, and every training block feeds the next screening comparison.",
     "how.scienceLink": "The science behind it",
     "how.step": "STEP",
     "how.step.screen.title": "Screen",
     "how.step.screen.body":
-      "Adaptive tones narrow in on the quietest level you can hear at each frequency, in each ear.",
+      "In each ear, adaptive tones narrow in on the quietest level you can hear at each frequency.",
     "how.step.analyze.title": "Analyze",
     "how.step.analyze.body":
-      "Your responses build an individual hearing profile — where you are strong, and where sensitivity drops.",
+      "Your responses build an individual hearing profile. It emphasizes where you are strong and where sensitivity drops.",
     "how.step.train.title": "Train",
     "how.step.train.body":
       "Exercises concentrate on the sounds your profile says you have the most difficulty distinguishing.",
@@ -99,7 +99,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "how.step.adapt.body": "How you perform in a session changes the difficulty and content of the next one.",
     "how.step.track.title": "Track",
     "how.step.track.body":
-      "Repeat screenings show how your profile moves over weeks and months, not just once.",
+      "Repeat screenings show how your profile moves over weeks and months. ",
     "how.feedbackPre":
       "Step 5 feeds back into step 3: an updated profile re-targets your training instead of repeating the same exercises. That feedback arrow is what we mean by {loop}.",
     "how.closedLoop": "closed loop",
@@ -111,7 +111,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.finding2": "Slightly reduced sensitivity at 4–8 kHz",
     "example.finding3": "Recommended training: speech-in-noise + high-frequency recognition",
     "example.cta": "See what your hearing looks like",
-    "example.footnote": "Illustrative data — your own screening takes about four minutes.",
+    "example.footnote": "This is illustrative data. You can try your own screening. It only takes about four minutes.",
   },
   zh: {
     "data.badge": "你的听力数据",
