@@ -93,7 +93,7 @@ function Index() {
       {/* Hero: dawn haze dissolving into deep night. */}
       <section className="sky-surface">
         <span aria-hidden className="sky-haze" />
-        <SiteNav />
+        <SiteNav transparent />
 
         <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
           <p className="rise-in text-[11px] uppercase tracking-[0.42em] text-white/70">

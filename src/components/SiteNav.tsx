@@ -21,7 +21,7 @@ import {
 
 type NavPath = "/test" | "/speech" | "/profile" | "/train" | "/history" | "/report" | "/data" | "/science" | "/risks" | "/validation" | "/team" | "/research";
 
-export function SiteNav() {
+export function SiteNav({ transparent = false }: { transparent?: boolean } = {}) {
   const { user, signOut } = useAuth();
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
@@ -75,7 +75,13 @@ export function SiteNav() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
+    <header
+      className={
+        transparent
+          ? "sticky top-0 z-40 border-b border-white/10 bg-transparent"
+          : "sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur"
+      }
+    >
       <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-3 px-5 py-2">
         <Link to="/" className="group flex shrink-0 items-center gap-2">
           <AudioLines className="icon-bubble h-5 w-5 text-signal" />
