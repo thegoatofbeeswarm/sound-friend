@@ -38,11 +38,17 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const heroCards = [
-  { key: "profile.dim.speech", value: 72 },
-  { key: "profile.dim.attention", value: 91 },
-  { key: "profile.dim.sensitivity", value: 84 },
+/** Example five-part listening profile shown in the hero. */
+const FIVE = [
+  { key: "profile.dim.sensitivity", body: "five.dim.sensitivity.body", value: 82 },
+  { key: "profile.dim.speech", body: "five.dim.speech.body", value: 61 },
+  { key: "profile.dim.discrimination", body: "five.dim.discrimination.body", value: 76 },
+  { key: "profile.dim.attention", body: "five.dim.attention.body", value: 88 },
+  { key: "profile.dim.memory", body: "five.dim.memory.body", value: 71 },
 ] as const;
+
+const OVERALL = 78;
+
 
 const pillars = [
   { icon: Brain, title: "pillar.adaptive.title", body: "pillar.adaptive.body" },
@@ -128,33 +134,79 @@ function Index() {
             </div>
           </div>
 
-          <div className="mt-16 grid gap-4 sm:grid-cols-3">
-            {heroCards.map((card, i) => (
-              <div
-                key={card.key}
-                className="float-card glass-panel rounded-2xl p-5 text-left"
-                style={{ animationDelay: `${i * 1.1}s` }}
-              >
-                <p className="text-xs uppercase tracking-wide text-night-muted">{t(card.key)}</p>
-                <p className="mt-3 font-display text-4xl font-semibold text-night-foreground">{card.value}</p>
-                <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-white/10">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-[oklch(0.8_0.13_200)] to-[oklch(0.72_0.15_285)]"
-                    style={{ width: `${card.value}%` }}
-                  />
-                </div>
+          <div className="mx-auto mt-14 max-w-3xl">
+            <div className="glass-panel rounded-3xl p-6 md:p-8">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs uppercase tracking-widest text-night-muted">
+                  {t("five.exampleTitle")}
+                </p>
+                <span className="rounded-full border border-night-border px-2.5 py-1 text-[11px] text-night-muted">
+                  {t("five.exampleBadge")}
+                </span>
               </div>
-            ))}
+
+              <div className="mt-5 flex items-baseline gap-3">
+                <p className="font-display text-6xl font-semibold text-night-foreground">{OVERALL}</p>
+                <p className="text-sm text-night-muted">{t("five.overall")}</p>
+              </div>
+
+              <ul className="mt-6 space-y-3">
+                {FIVE.map((d) => (
+                  <li key={d.key} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1">
+                    <p className="text-sm text-night-foreground">{t(d.key)}</p>
+                    <p className="font-display text-sm font-semibold text-night-foreground">{d.value}</p>
+                    <div className="col-span-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-[oklch(0.8_0.13_200)] to-[oklch(0.72_0.15_285)]"
+                        style={{ width: `${d.value}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-night-border bg-white/5 p-4">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-night-muted">
+                    {t("five.focus")}
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-night-foreground">
+                    {t("profile.dim.speech")}
+                  </p>
+                </div>
+                <Button asChild>
+                  <Link to="/train">{t("five.startTraining")}</Link>
+                </Button>
+              </div>
+            </div>
           </div>
 
           <p className="mt-10 text-center text-xs text-night-muted">{t("home.disclaimer")}</p>
         </div>
       </section>
 
-
       <ExampleProfile />
 
+      <section className="border-b border-border/60">
+        <div className="mx-auto max-w-6xl px-5 py-20">
+          <h2 className="text-3xl font-semibold">{t("five.dimsTitle")}</h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">{t("five.dimsLead")}</p>
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {FIVE.map((d) => (
+              <article
+                key={d.key}
+                className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card"
+              >
+                <h3 className="text-lg font-semibold">{t(d.key)}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(d.body)}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <HowItWorks />
+
 
       <section className="mx-auto max-w-6xl px-5 py-20">
         <h2 className="text-3xl font-semibold">{t("home.pillarsTitle")}</h2>
