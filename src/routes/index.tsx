@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PressHome } from "@/components/home/PressHome";
-// Previous design kept for an easy revert:
-// import { ClassicHome } from "@/components/home/ClassicHome";
+import { ClassicHome } from "@/components/home/ClassicHome";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,5 +24,5 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return <PressHome />;
+  return <ClassicHome />;
 }
