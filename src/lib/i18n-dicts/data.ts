@@ -8,22 +8,22 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "data.signIn": "Sign in",
     "data.howCalcTitle": "How the comparison is calculated",
     "data.howCalcDesc":
-      "Only frequency-and-ear pairs visible in both datasets are compared. The sign tells you which result is higher; the absolute value tells you how far apart they are.",
-    "data.eq1.title": "Difference at one matched point",
+      "Only frequency-and-ear pairs visible in both datasets are compared, and they are compared by shape rather than by absolute level, because the two tests are not on the same scale.",
+    "data.eq1.title": "Scale offset between the two tests",
     "data.eq1.detail":
-      "A positive value means the Audiomaxxer threshold is higher — the tone had to be louder before you responded in the Audiomaxxer screening than in the clinic. A negative value means the clinic threshold is higher.",
-    "data.eq2.title": "Mean absolute error (MAE)",
+      "The median gap between the two sets of numbers. Because a clinic reports calibrated dB HL and Audiomaxxer reports a relative estimated level, this gap is mostly a difference of scale, not a measurement error. We remove it before comparing anything.",
+    "data.eq2.title": "Shape difference at one matched point",
     "data.eq2.detail":
-      "MAE summarizes the average absolute separation across n matched ear-frequency points. It does not prove that either result is clinically accurate.",
+      "What is left at each ear-and-frequency point once the scale offset is removed: how differently the two curves rise and fall. Small values mean both tests describe the same hearing pattern. We deliberately do not publish an average error against clinical dB HL, because that needs a measured calibration between the scales that we do not have yet.",
     "data.table.title": "Matched threshold data",
     "data.table.subtitle": "{source} vs latest Audiomaxxer screening",
     "data.table.uploadPrompt": "Upload and analyze a report to populate this table.",
-    "data.table.mae": "MAE",
+    "data.table.mae": "Scale offset",
     "data.table.header.ear": "Ear",
     "data.table.header.frequency": "Frequency",
     "data.table.header.audiomaxxer": "Audiomaxxer",
     "data.table.header.clinic": "Clinic",
-    "data.table.header.difference": "Difference",
+    "data.table.header.difference": "Shape difference",
     "data.table.empty":
       "There are no matched ear-frequency points yet. Audiomaxxer currently tests {freqs} Hz; a clinic report needs a readable value at the same frequency for the calculation to include it.",
     "data.table.footnote":
@@ -122,22 +122,22 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "data.signIn": "登录",
     "data.howCalcTitle": "对比是如何计算的",
     "data.howCalcDesc":
-      "只有在两个数据集中都可见的频率与耳别组合才会被比较。正负号表示哪个结果更高；绝对值表示两者相差多少。",
-    "data.eq1.title": "单个匹配点的差值",
+      "只有在两个数据集中都可见的频率与耳别组合才会被比较；而且比较的是曲线形态，而不是绝对数值，因为两项测试并不在同一量纲上。",
+    "data.eq1.title": "两项测试之间的量纲偏移",
     "data.eq1.detail":
-      "正值表示 Audiomaxxer 阈值更高——在 Audiomaxxer 筛查中，音调必须比诊所测试时更响你才有反应。负值表示诊所阈值更高。",
-    "data.eq2.title": "平均绝对误差（MAE）",
+      "两组数值之间的中位差距。诊所给出的是校准过的 dB HL，Audiomaxxer 给出的是相对估算值，因此这个差距主要反映量纲不同，而不是测量误差。我们会先扣除它再做比较。",
+    "data.eq2.title": "单个匹配点的形态差异",
     "data.eq2.detail":
-      "MAE 汇总了 n 个匹配的耳别-频率点之间的平均绝对差异。它并不能证明任一结果在临床上是准确的。",
+      "扣除量纲偏移后，每个耳别-频率点上剩下的差异，也就是两条曲线起伏的不同之处。数值越小，说明两项测试描述的是同一种听力形态。我们刻意不公布相对临床 dB HL 的平均误差，因为那需要两种量纲之间实测的校准关系，而我们还没有。",
     "data.table.title": "匹配的阈值数据",
     "data.table.subtitle": "{source} 与最新的 Audiomaxxer 筛查对比",
     "data.table.uploadPrompt": "上传并分析一份报告以填充此表格。",
-    "data.table.mae": "MAE",
+    "data.table.mae": "量纲偏移",
     "data.table.header.ear": "耳别",
     "data.table.header.frequency": "频率",
     "data.table.header.audiomaxxer": "Audiomaxxer",
     "data.table.header.clinic": "诊所",
-    "data.table.header.difference": "差值",
+    "data.table.header.difference": "形态差异",
     "data.table.empty":
       "目前还没有匹配的耳别-频率点。Audiomaxxer 目前测试 {freqs} Hz；诊所报告需要在相同频率上有可读数值才能计入计算。",
     "data.table.footnote":
@@ -228,22 +228,22 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "data.signIn": "Iniciar sesión",
     "data.howCalcTitle": "Cómo se calcula la comparación",
     "data.howCalcDesc":
-      "Solo se comparan los pares de frecuencia y oído visibles en ambos conjuntos de datos. El signo indica cuál resultado es más alto; el valor absoluto indica cuán distintos son.",
-    "data.eq1.title": "Diferencia en un punto coincidente",
+      "Solo se comparan los pares de frecuencia y oído visibles en ambos conjuntos, y se comparan por forma y no por nivel absoluto, porque las dos pruebas no están en la misma escala.",
+    "data.eq1.title": "Desfase de escala entre las dos pruebas",
     "data.eq1.detail":
-      "Un valor positivo significa que el umbral de Audiomaxxer es más alto: el tono tuvo que sonar más fuerte para que respondieras en el cribado de Audiomaxxer que en la clínica. Un valor negativo significa que el umbral de la clínica es más alto.",
-    "data.eq2.title": "Error absoluto medio (MAE)",
+      "La diferencia mediana entre ambos conjuntos de números. Como la clínica informa dB HL calibrados y Audiomaxxer un nivel estimado relativo, ese hueco refleja sobre todo un cambio de escala, no un error de medida. Lo eliminamos antes de comparar nada.",
+    "data.eq2.title": "Diferencia de forma en un punto coincidente",
     "data.eq2.detail":
-      "El MAE resume la separación absoluta promedio en n puntos de oído-frecuencia coincidentes. No prueba que alguno de los resultados sea clínicamente exacto.",
+      "Lo que queda en cada punto de oído y frecuencia una vez eliminado el desfase de escala: en qué medida suben y bajan de forma distinta las dos curvas. Valores pequeños indican el mismo patrón auditivo. No publicamos a propósito un error medio frente a dB HL clínicos, porque exige una calibración medida entre escalas que aún no tenemos.",
     "data.table.title": "Datos de umbral coincidentes",
     "data.table.subtitle": "{source} frente al último cribado de Audiomaxxer",
     "data.table.uploadPrompt": "Sube y analiza un informe para completar esta tabla.",
-    "data.table.mae": "MAE",
+    "data.table.mae": "Desfase de escala",
     "data.table.header.ear": "Oído",
     "data.table.header.frequency": "Frecuencia",
     "data.table.header.audiomaxxer": "Audiomaxxer",
     "data.table.header.clinic": "Clínica",
-    "data.table.header.difference": "Diferencia",
+    "data.table.header.difference": "Diferencia de forma",
     "data.table.empty":
       "Todavía no hay puntos de oído-frecuencia coincidentes. Audiomaxxer actualmente prueba {freqs} Hz; un informe clínico necesita un valor legible en la misma frecuencia para que se incluya en el cálculo.",
     "data.table.footnote":

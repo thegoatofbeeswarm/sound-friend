@@ -22,11 +22,11 @@ const en = {
   "nav.light": "Light",
   "nav.dark": "Dark",
 
-  "home.badge": "A listening profile, not just a hearing test",
-  "home.title1": "Protect your hearing.",
-  "home.title2": "Hear smarter, not louder.",
+  "home.badge": "The personal listening-health platform",
+  "home.title1": "Know how you hear —",
+  "home.title2": "not just whether you hear.",
   "home.lead":
-    "Studies show that 12~17% of teens are affected by hearing-related problems. Audiomaxxer builds a five-part listening profile — sensitivity, speech in noise, discrimination, attention and memory — then trains your weakest skill and retests it.",
+    "Build a five-part listening profile across hearing sensitivity, speech in noise, sound discrimination, auditory attention and auditory memory. Then train your weakest skill and watch the profile change.",
   "home.ctaTest": "Start a screening",
   "home.ctaHistory": "See saved results",
   "home.disclaimer":
@@ -42,8 +42,8 @@ const en = {
     "The microphone estimates room noise so a screening is only trusted when the space is quiet enough.",
   "pillar.access.title": "Accessibility",
   "pillar.access.body": "Runs on any phone with headphones",
-  "pillar.coach.title": "AI coach",
-  "pillar.coach.body": "AI conversations to help you understand your current problems",
+  "pillar.coach.title": "Listening coach",
+  "pillar.coach.body": "A guided chat that reads your own results and explains what they mean and what to practise next.",
   "pillar.training.title": "Closed-loop training",
   "pillar.training.body":
     "Custom hearing training based off of real life sounds to stimulate and train your hearing",
@@ -73,11 +73,11 @@ const zh: Record<TranslationKey, string> = {
   "nav.light": "浅色",
   "nav.dark": "深色",
 
-  "home.badge": "不只是听力测试，而是一份聆听档案",
-  "home.title1": "保护你的听力。",
-  "home.title2": "听得更聪明，而不是更大声。",
+  "home.badge": "个人聆听健康平台",
+  "home.title1": "了解你如何听，",
+  "home.title2": "而不只是能不能听见。",
   "home.lead":
-    "研究显示，12%~17% 的青少年受到听力相关问题的影响。Audiomaxxer 会建立由五部分组成的聆听档案——敏感度、噪声中的言语、辨别力、注意力与记忆——然后训练你最弱的技能并重新测量。",
+    "建立由五部分组成的聆听档案：听觉灵敏度、噪声中的言语、声音辨别、听觉注意与听觉记忆。然后训练你最弱的一项，并看着档案发生变化。",
   "home.ctaTest": "开始筛查",
   "home.ctaHistory": "查看已保存结果",
   "home.disclaimer":
@@ -92,8 +92,8 @@ const zh: Record<TranslationKey, string> = {
   "pillar.env.body": "麦克风会估算房间噪音，只有在足够安静时筛查结果才被采信。",
   "pillar.access.title": "无障碍可及",
   "pillar.access.body": "任何一部配有耳机的手机都能使用。",
-  "pillar.coach.title": "AI 教练",
-  "pillar.coach.body": "通过 AI 对话，帮助你理解当前的听力问题。",
+  "pillar.coach.title": "聆听教练",
+  "pillar.coach.body": "结合你自己的结果进行对话，解释这些数据的含义以及下一步该练什么。",
   "pillar.training.title": "闭环训练",
   "pillar.training.body": "基于真实生活声音的定制听力训练，刺激并锻炼你的听觉。",
 
@@ -118,11 +118,11 @@ const es: Record<TranslationKey, string> = {
   "nav.light": "Claro",
   "nav.dark": "Oscuro",
 
-  "home.badge": "Un perfil auditivo, no solo una prueba de oído",
-  "home.title1": "Protege tu audición.",
-  "home.title2": "Oye mejor, no más fuerte.",
+  "home.badge": "La plataforma personal de salud auditiva",
+  "home.title1": "Descubre cómo escuchas,",
+  "home.title2": "no solo si oyes.",
   "home.lead":
-    "Los estudios muestran que entre el 12 % y el 17 % de los adolescentes tienen problemas relacionados con la audición. Audiomaxxer crea un perfil auditivo de cinco partes —sensibilidad, habla con ruido, discriminación, atención y memoria—, entrena tu punto más débil y lo vuelve a medir.",
+    "Crea un perfil auditivo de cinco partes: sensibilidad, habla con ruido, discriminación, atención auditiva y memoria auditiva. Después entrena tu punto más débil y observa cómo cambia el perfil.",
   "home.ctaTest": "Comenzar un cribado",
   "home.ctaHistory": "Ver resultados guardados",
   "home.disclaimer":
@@ -138,8 +138,8 @@ const es: Record<TranslationKey, string> = {
     "El micrófono estima el ruido de la sala, así que un cribado solo se considera fiable cuando el espacio está lo bastante silencioso.",
   "pillar.access.title": "Accesibilidad",
   "pillar.access.body": "Funciona en cualquier teléfono con auriculares.",
-  "pillar.coach.title": "Entrenador con IA",
-  "pillar.coach.body": "Conversaciones con IA para ayudarte a entender tus problemas actuales.",
+  "pillar.coach.title": "Entrenador de escucha",
+  "pillar.coach.body": "Un chat guiado que lee tus resultados y explica qué significan y qué practicar después.",
   "pillar.training.title": "Entrenamiento de circuito cerrado",
   "pillar.training.body":
     "Entrenamiento auditivo personalizado con sonidos de la vida real para estimular y ejercitar tu oído.",
@@ -171,6 +171,7 @@ import { speechPage } from "@/lib/i18n-dicts/speech";
 import { planPack } from "@/lib/i18n-dicts/plan";
 import { loopPack } from "@/lib/i18n-dicts/loop";
 import { navPack } from "@/lib/i18n-dicts/nav";
+import { platformPack } from "@/lib/i18n-dicts/platform";
 
 export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
 
@@ -191,6 +192,7 @@ const packs: Dict[] = [
   planPack,
   loopPack,
   navPack,
+  platformPack,
 ];
 
 

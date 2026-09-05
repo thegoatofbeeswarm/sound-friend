@@ -1,6 +1,6 @@
 export const coachPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
-    "coach.title": "Your hearing coach",
+    "coach.title": "Your listening coach",
     "coach.desc":
       "Ask anything about your screenings, audiogram, training curve, device choice or overuse risk. The coach answers from your own saved data.",
     "coach.signInStart": "Sign in to start",
