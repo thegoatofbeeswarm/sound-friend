@@ -258,6 +258,45 @@ function ProfilePage() {
         ) : (
           <>
             <section className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold">{t("profile.src.title")}</h2>
+                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                    {hasClinical
+                      ? t(
+                          activeSource === "clinical"
+                            ? "profile.src.usingClinic"
+                            : "profile.src.usingApp",
+                        )
+                      : t("profile.src.none")}
+                  </p>
+                </div>
+                {hasClinical ? (
+                  <div className="inline-flex rounded-full border border-border/70 p-1">
+                    {(["app", "clinical"] as const).map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => chooseSource(option)}
+                        className={`rounded-full px-4 py-2 text-sm transition-colors ${
+                          activeSource === option
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {t(option === "app" ? "profile.src.app" : "profile.src.clinic")}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <Button asChild variant="secondary">
+                    <Link to="/data">{t("profile.src.upload")}</Link>
+                  </Button>
+                )}
+              </div>
+            </section>
+
+            <section className="mt-6 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
               <h2 className="text-xl font-semibold">{t("trend.title")}</h2>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("trend.body")}</p>
               {timeline.length < 2 ? (
