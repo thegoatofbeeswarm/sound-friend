@@ -90,9 +90,11 @@ function Index() {
   const { t } = useI18n();
 
   return (
-    <div className="dark min-h-screen bg-night-deep text-night-foreground">
-      {/* Hero: dawn haze dissolving into deep night. */}
-      <section className="night-surface">
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Hero sky: dawn in light mode, purple/blue night sky in dark mode. */}
+      <section className="sky-hero">
+        <span aria-hidden className="sky-hero-haze" />
+        <span aria-hidden className="sky-stars" />
         <SiteNav transparent />
 
         <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
@@ -146,31 +148,31 @@ function Index() {
       </section>
 
       {/* Example listening profile, floating in the dark. */}
-      <section className="bg-night-deep">
+      <section className="bg-background">
         <div className="mx-auto max-w-3xl px-5 py-24">
-          <div className="rounded-[28px] border border-white/10 bg-white/[0.035] p-7 backdrop-blur-xl md:p-10">
+          <div className="rounded-[28px] border border-border/60 bg-card/60 p-7 backdrop-blur-xl md:p-10">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-[11px] uppercase tracking-[0.32em] text-white/50">
+              <p className="text-[11px] uppercase tracking-[0.32em] text-muted-foreground">
                 {t("five.exampleTitle")}
               </p>
-              <span className="rounded-full border border-white/12 px-3 py-1 text-[11px] text-white/50">
+              <span className="rounded-full border border-border/60 px-3 py-1 text-[11px] text-muted-foreground">
                 {t("five.exampleBadge")}
               </span>
             </div>
 
             <div className="mt-7 flex items-baseline gap-4">
-              <p className="font-display text-7xl font-semibold leading-none text-white">{OVERALL}</p>
-              <p className="text-sm text-white/60">{t("five.overall")}</p>
+              <p className="font-display text-7xl font-semibold leading-none text-foreground">{OVERALL}</p>
+              <p className="text-sm text-muted-foreground">{t("five.overall")}</p>
             </div>
 
             <ul className="mt-9 space-y-5">
               {FIVE.map((d) => (
                 <li key={d.key} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2">
-                  <p className="text-sm text-white/85">{t(d.key)}</p>
-                  <p className="font-display text-base text-white">{d.value}</p>
-                  <div className="col-span-2 h-px w-full bg-white/10">
+                  <p className="text-sm text-foreground">{t(d.key)}</p>
+                  <p className="font-display text-base text-foreground">{d.value}</p>
+                  <div className="col-span-2 h-px w-full bg-border/60">
                     <div
-                      className="h-px bg-[oklch(0.88_0.08_215)]"
+                      className="h-px bg-signal"
                       style={{ width: `${d.value}%` }}
                     />
                   </div>
@@ -178,16 +180,16 @@ function Index() {
               ))}
             </ul>
 
-            <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-7">
+            <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border/60 pt-7">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.32em] text-white/50">
+                <p className="text-[11px] uppercase tracking-[0.32em] text-muted-foreground">
                   {t("five.focus")}
                 </p>
-                <p className="font-display mt-1 text-2xl text-white">{t("profile.dim.speech")}</p>
+                <p className="font-display mt-1 text-2xl text-foreground">{t("profile.dim.speech")}</p>
               </div>
               <Link
                 to="/train"
-                className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 px-6 text-sm text-white/85 transition-colors hover:border-white/45 hover:text-white"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-border/60 px-6 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
               >
                 {t("five.startTraining")} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -197,24 +199,24 @@ function Index() {
       </section>
 
       {/* Hearing is more than sensitivity: the five dimensions. */}
-      <section className="hairline bg-night-deep">
+      <section className="hairline bg-background">
         <div className="mx-auto max-w-5xl px-5 py-24">
-          <h2 className="font-display max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-white">
+          <h2 className="font-display max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-foreground">
             {t("five.dimsTitle")}
           </h2>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/60">{t("five.dimsLead")}</p>
+          <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">{t("five.dimsLead")}</p>
 
-          <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-2">
+          <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-border/60 bg-border/60 md:grid-cols-2">
             {FIVE.map((d, i) => (
               <article
                 key={d.key}
-                className={`bg-[oklch(0.13_0.03_258)] p-8 ${i === FIVE.length - 1 ? "md:col-span-2" : ""}`}
+                className={`bg-card p-8 ${i === FIVE.length - 1 ? "md:col-span-2" : ""}`}
               >
-                <p className="text-[11px] tracking-[0.32em] text-white/35">
+                <p className="text-[11px] tracking-[0.32em] text-muted-foreground">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h3 className="font-display mt-4 text-2xl text-white">{t(d.key)}</h3>
-                <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/60">{t(d.body)}</p>
+                <h3 className="font-display mt-4 text-2xl text-foreground">{t(d.key)}</h3>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{t(d.body)}</p>
               </article>
             ))}
           </div>
@@ -226,12 +228,12 @@ function Index() {
       <HowItWorks />
 
       {/* Built for the headphone generation. */}
-      <section className="hairline bg-night-deep">
+      <section className="hairline bg-background">
         <div className="mx-auto max-w-5xl px-5 py-24">
-          <h2 className="font-display max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-white">
+          <h2 className="font-display max-w-2xl text-balance text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-foreground">
             {t("youth.title")}
           </h2>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/60">{t("youth.lead")}</p>
+          <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">{t("youth.lead")}</p>
 
           <div className="mt-14 grid gap-10 md:grid-cols-3">
             {[
@@ -239,24 +241,24 @@ function Index() {
               { title: "youth.c2.title", body: "youth.c2.body" },
               { title: "youth.c3.title", body: "youth.c3.body" },
             ].map((c) => (
-              <article key={c.title} className="border-t border-white/10 pt-6">
-                <h3 className="font-display text-xl text-white">{t(c.title)}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/60">{t(c.body)}</p>
+              <article key={c.title} className="border-t border-border/60 pt-6">
+                <h3 className="font-display text-xl text-foreground">{t(c.title)}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t(c.body)}</p>
               </article>
             ))}
           </div>
 
-          <div className="mt-16 flex flex-wrap items-end justify-between gap-8 rounded-3xl border border-white/10 bg-white/[0.035] p-8 backdrop-blur">
+          <div className="mt-16 flex flex-wrap items-end justify-between gap-8 rounded-3xl border border-border/60 bg-card/60 p-8 backdrop-blur">
             <div className="flex items-baseline gap-5">
-              <p className="font-display text-6xl font-semibold leading-none text-[oklch(0.88_0.08_215)]">24%</p>
+              <p className="font-display text-6xl font-semibold leading-none text-signal">24%</p>
               <div>
-                <p className="max-w-md text-sm text-white/70">{t("youth.statLabel")}</p>
-                <p className="mt-1 text-xs text-white/40">{t("youth.statSource")}</p>
+                <p className="max-w-md text-sm text-muted-foreground">{t("youth.statLabel")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("youth.statSource")}</p>
               </div>
             </div>
             <Link
               to="/test"
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-medium text-[oklch(0.16_0.03_258)] transition-transform hover:-translate-y-0.5"
+              className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-sm font-medium text-primary-foreground transition-transform hover:-translate-y-0.5"
             >
               {t("youth.cta")} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -265,18 +267,18 @@ function Index() {
       </section>
 
       {/* What's inside. */}
-      <section className="hairline bg-night-deep">
+      <section className="hairline bg-background">
         <div className="mx-auto max-w-5xl px-5 py-24">
-          <h2 className="font-display text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-white">
+          <h2 className="font-display text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.05] text-foreground">
             {t("home.pillarsTitle")}
           </h2>
           <div className="mt-14 grid gap-10 md:grid-cols-2">
             {pillars.map((p) => (
-              <article key={p.title} className="flex gap-5 border-t border-white/10 pt-6">
-                <p.icon className="mt-1 h-5 w-5 shrink-0 text-[oklch(0.88_0.08_215)]" />
+              <article key={p.title} className="flex gap-5 border-t border-border/60 pt-6">
+                <p.icon className="mt-1 h-5 w-5 shrink-0 text-signal" />
                 <div>
-                  <h3 className="font-display text-xl text-white">{t(p.title)}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/60">{t(p.body)}</p>
+                  <h3 className="font-display text-xl text-foreground">{t(p.title)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(p.body)}</p>
                 </div>
               </article>
             ))}
@@ -284,13 +286,13 @@ function Index() {
         </div>
       </section>
 
-      <section className="hairline bg-night-deep">
+      <section className="hairline bg-background">
         <div className="mx-auto grid max-w-5xl gap-10 px-5 py-20 md:grid-cols-3">
           <Dialog>
             <DialogTrigger asChild>
               <button className="group text-left">
-                <p className="font-display text-5xl font-semibold text-white">1.5B</p>
-                <p className="mt-3 inline-flex items-center gap-1 text-sm text-white/55 underline decoration-dotted underline-offset-4 group-hover:text-white">
+                <p className="font-display text-5xl font-semibold text-foreground">1.5B</p>
+                <p className="mt-3 inline-flex items-center gap-1 text-sm text-muted-foreground underline decoration-dotted underline-offset-4 group-hover:text-foreground">
                   {t("stats.people")}
                   <ExternalLink className="h-3.5 w-3.5" />
                 </p>
@@ -319,17 +321,17 @@ function Index() {
             ["~4 min", "stats.time"],
           ].map(([stat, labelKey]) => (
             <div key={labelKey}>
-              <p className="font-display text-5xl font-semibold text-white">
+              <p className="font-display text-5xl font-semibold text-foreground">
                 {stat === "~4 min" ? t("stats.timeValue") : stat}
               </p>
-              <p className="mt-3 text-sm text-white/55">{t(labelKey as "stats.tracks" | "stats.time")}</p>
+              <p className="mt-3 text-sm text-muted-foreground">{t(labelKey as "stats.tracks" | "stats.time")}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <footer className="hairline bg-night-deep">
-        <div className="mx-auto flex max-w-5xl items-center gap-2 px-5 py-10 text-xs text-white/40">
+      <footer className="hairline bg-background">
+        <div className="mx-auto flex max-w-5xl items-center gap-2 px-5 py-10 text-xs text-muted-foreground">
           <ShieldCheck className="h-4 w-4" />
           {t("footer.note")}
         </div>
