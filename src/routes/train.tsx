@@ -405,7 +405,7 @@ function TrainPage() {
                 </div>
                 {ceiling ? <p className="text-xs text-signal">{t("train.calibrated")}</p> : null}
               </div>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div role="radiogroup" aria-label={t("train.chooseTrack")} className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {TRAINING_MODES.map((mode) => {
                   const Icon = MODE_ICONS[mode.icon];
                   const best = bests[mode.id];
@@ -414,6 +414,9 @@ function TrainPage() {
                     <button
                       key={mode.id}
                       type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      aria-label={t(`train.mode.${mode.id}.label`)}
                       onClick={() => setModeId(mode.id)}
                       className={`group rounded-2xl border p-5 text-left transition-all hover:-translate-y-0.5 ${
                         selected
