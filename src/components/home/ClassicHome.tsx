@@ -107,8 +107,9 @@ export function ClassicHome() {
           >
             <Link
               to="/test"
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
+              className="cta-ripple inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
             >
+
               {t("home.ctaTest")} <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
