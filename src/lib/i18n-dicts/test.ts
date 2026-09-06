@@ -1,5 +1,9 @@
 export const testPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
+    "test.resumeTitle": "Unfinished screening",
+    "test.resumeBody": "You stopped at question {n}. You can pick up where you left off, as long as you use the same headphones and volume.",
+    "test.resumeBtn": "Resume screening",
+    "test.resumeDiscard": "Start over",
     "test.introTitle": "Adaptive hearing screening",
     "test.disclaimer": "This is a self-check, not a diagnosis. Results are estimates from your browser audio and your answers.",
     "test.introBody":
@@ -37,6 +41,10 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.toastSaveSuccess": "Screening saved to your history.",
   },
   zh: {
+    "test.resumeTitle": "未完成的筛查",
+    "test.resumeBody": "你在第 {n} 题停下了。只要使用相同的耳机和音量，就可以从中断处继续。",
+    "test.resumeBtn": "继续筛查",
+    "test.resumeDiscard": "重新开始",
     "test.introTitle": "自适应听力筛查",
     "test.disclaimer": "这是自我检查，不是诊断。结果来自浏览器音频与你的回答，仅为估计。",
     "test.introBody":
@@ -73,6 +81,10 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.toastSaveSuccess": "筛查已保存到你的历史记录。",
   },
   es: {
+    "test.resumeTitle": "Evaluación sin terminar",
+    "test.resumeBody": "Te detuviste en la pregunta {n}. Puedes continuar donde lo dejaste, siempre que uses los mismos auriculares y volumen.",
+    "test.resumeBtn": "Continuar evaluación",
+    "test.resumeDiscard": "Empezar de nuevo",
     "test.introTitle": "Cribado auditivo adaptativo",
     "test.disclaimer": "Esto es una autoevaluación, no un diagnóstico. Los resultados son estimaciones a partir del audio de tu navegador y tus respuestas.",
     "test.introBody":
