@@ -1,6 +1,7 @@
 export const testPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
     "test.introTitle": "Adaptive hearing screening",
+    "test.disclaimer": "This is a self-check, not a diagnosis. Results are estimates from your browser audio and your answers.",
     "test.introBody":
       "After every answer, the model updates its estimate and probes only where it is still unsure, so as soon as the picture is clear, the test ends.",
     "test.step1": "Wear headphones and set your device volume to about 50%.",
@@ -37,6 +38,7 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
   },
   zh: {
     "test.introTitle": "自适应听力筛查",
+    "test.disclaimer": "这是自我检查，不是诊断。结果来自浏览器音频与你的回答，仅为估计。",
     "test.introBody":
       "每次回答后，模型都会更新其判断，并只在仍不确定的地方继续测试，因此一旦结果足够清晰，测试就会结束。",
     "test.step1": "戴上耳机，将设备音量调至约 50%。",
@@ -72,6 +74,7 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
   },
   es: {
     "test.introTitle": "Cribado auditivo adaptativo",
+    "test.disclaimer": "Esto es una autoevaluación, no un diagnóstico. Los resultados son estimaciones a partir del audio de tu navegador y tus respuestas.",
     "test.introBody":
       "Después de cada respuesta, el modelo actualiza su estimación y solo indaga donde aún hay incertidumbre, así que la prueba termina en cuanto el panorama está claro.",
     "test.step1": "Usa auriculares y ajusta el volumen de tu dispositivo a un 50 % aproximadamente.",

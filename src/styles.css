@@ -663,6 +663,10 @@
 
 
 /* Atmosphere layers sit over the first screen only. */
+.sky-page {
+  overflow-x: clip;
+}
+
 .sky-page > .sky-hero-haze,
 .sky-page > .sky-stars {
   height: 100vh;

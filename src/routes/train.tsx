@@ -128,7 +128,7 @@ function TrainPage() {
   const [round, setRound] = useState<ModeRound | null>(null);
   const [phase, setPhase] = useState<Phase>("intro");
   const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
-  const [modeId, setModeId] = useState<ModeId>("soundscape");
+  const [modeId, setModeId] = useState<ModeId>("speech-in-noise");
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [kind, setKind] = useState<"train" | "transfer">("train");
   const [fixedLevel, setFixedLevel] = useState<number | null>(null);
@@ -382,12 +382,30 @@ function TrainPage() {
                 <div>
                   <h2 className="text-2xl font-semibold">{t("train.chooseTrack")}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {t("train.nextFocusPrefix")} <span className="text-foreground">{t(`train.mode.${modeById(focus).id}.label`)}</span>
+                    {user && allSessions.length > 0 ? (
+                      <>
+                        {t("train.nextFocusPrefix")}{" "}
+                        <span className="text-foreground">{t(`train.mode.${modeById(focus).id}.label`)}</span>
+                        {focus !== modeId ? (
+                          <>
+                            {" · "}
+                            {t("train.selectedPrefix")}{" "}
+                            <span className="text-foreground">{t(`train.mode.${currentMode.id}.label`)}</span>
+                          </>
+                        ) : null}
+                      </>
+                    ) : (
+                      <>
+                        {t("train.noDataFocus")}{" "}
+                        {t("train.selectedPrefix")}{" "}
+                        <span className="text-foreground">{t(`train.mode.${currentMode.id}.label`)}</span>
+                      </>
+                    )}
                   </p>
                 </div>
                 {ceiling ? <p className="text-xs text-signal">{t("train.calibrated")}</p> : null}
               </div>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div role="radiogroup" aria-label={t("train.chooseTrack")} className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {TRAINING_MODES.map((mode) => {
                   const Icon = MODE_ICONS[mode.icon];
                   const best = bests[mode.id];
@@ -396,6 +414,9 @@ function TrainPage() {
                     <button
                       key={mode.id}
                       type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      aria-label={t(`train.mode.${mode.id}.label`)}
                       onClick={() => setModeId(mode.id)}
                       className={`group rounded-2xl border p-5 text-left transition-all hover:-translate-y-0.5 ${
                         selected
