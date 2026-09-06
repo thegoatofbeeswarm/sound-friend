@@ -63,6 +63,35 @@ export const Route = createFileRoute("/test")({
 
 type Phase = "intro" | "running" | "done";
 
+/** Locally stored half-finished screening so a closed tab is not lost. */
+const RESUME_KEY = "audiomaxxer.test.progress.v1";
+
+type Saved = {
+  state: TestState;
+  device: DeviceId;
+  rel: { catchTrials: number; catchPassed: number; repeatTrials: number; repeatAgreed: number };
+};
+
+function loadSaved(): Saved | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(RESUME_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Saved;
+    if (!parsed?.state?.tracks?.length) return null;
+    if (parsed.state.trialCount < 1) return null;
+    if (isComplete(parsed.state)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function clearSaved() {
+  if (typeof window !== "undefined") window.localStorage.removeItem(RESUME_KEY);
+}
+
+
 function TestPage() {
   const { user, loading } = useAuth();
   const queryClient = useQueryClient();
