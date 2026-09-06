@@ -128,7 +128,7 @@ function TrainPage() {
   const [round, setRound] = useState<ModeRound | null>(null);
   const [phase, setPhase] = useState<Phase>("intro");
   const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
-  const [modeId, setModeId] = useState<ModeId>("soundscape");
+  const [modeId, setModeId] = useState<ModeId>("speech-in-noise");
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [kind, setKind] = useState<"train" | "transfer">("train");
   const [fixedLevel, setFixedLevel] = useState<number | null>(null);
