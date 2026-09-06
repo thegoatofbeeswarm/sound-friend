@@ -26,7 +26,7 @@ const en = {
   "home.title1": "You can hear fine,",
   "home.title2": "but can you follow a conversation in a loud bar?",
   "home.lead":
-    "Studies show that 12~17% of teens are affected by hearing-related problems. Audiomaxxer builds a five-part listening profile — sensitivity, speech in noise, discrimination, attention and memory — then trains your weakest skill and retests it.",
+    "Studies show that 12~17% of teens are affected by unnoticed hearing-related problems. Not being able to follow a conversation in a noisy area is a sign of this. To combat rapid hearing loss, Audiomaxxer uses a screening test to build a five-part listening profile — sensitivity, speech in noise, discrimination, attention, and memory — then trains your weakest skill and retests it.",
   "home.ctaTest": "Start a screening",
   "home.ctaHistory": "See saved results",
   "home.disclaimer":
