@@ -405,9 +405,34 @@ function TestPage() {
               </p>
             ) : null}
 
-            <Button size="lg" className="mt-8" onClick={() => void start()}>
-              <Play className="mr-2 h-4 w-4" /> {t("test.begin")}
-            </Button>
+            {saved ? (
+              <div className="mt-8 rounded-2xl border border-signal/40 bg-signal/5 p-4">
+                <p className="font-semibold text-signal">{t("test.resumeTitle")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("test.resumeBody").replace("{n}", String(saved.state.trialCount + 1))}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Button size="lg" onClick={() => void resume()}>
+                    <Play className="mr-2 h-4 w-4" /> {t("test.resumeBtn")}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    onClick={() => {
+                      clearSaved();
+                      setSaved(null);
+                    }}
+                  >
+                    {t("test.resumeDiscard")}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button size="lg" className="mt-8" onClick={() => void start()}>
+                <Play className="mr-2 h-4 w-4" /> {t("test.begin")}
+              </Button>
+            )}
+
           </section>
         ) : null}
 
