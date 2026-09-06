@@ -63,6 +63,35 @@ export const Route = createFileRoute("/test")({
 
 type Phase = "intro" | "running" | "done";
 
+/** Locally stored half-finished screening so a closed tab is not lost. */
+const RESUME_KEY = "audiomaxxer.test.progress.v1";
+
+type Saved = {
+  state: TestState;
+  device: DeviceId;
+  rel: { catchTrials: number; catchPassed: number; repeatTrials: number; repeatAgreed: number };
+};
+
+function loadSaved(): Saved | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(RESUME_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Saved;
+    if (!parsed?.state?.tracks?.length) return null;
+    if (parsed.state.trialCount < 1) return null;
+    if (isComplete(parsed.state)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function clearSaved() {
+  if (typeof window !== "undefined") window.localStorage.removeItem(RESUME_KEY);
+}
+
+
 function TestPage() {
   const { user, loading } = useAuth();
   const queryClient = useQueryClient();
@@ -76,6 +105,13 @@ function TestPage() {
   const [final, setFinal] = useState<ThresholdResult[] | null>(null);
   const [saving, setSaving] = useState(false);
   const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
+  const [saved, setSaved] = useState<Saved | null>(null);
+
+  useEffect(() => {
+    setSaved(loadSaved());
+  }, []);
+
+
 
   /** Research mode: a locked protocol armed from /research. */
   const [protocol, setProtocol] = useState<ResearchProtocol | null>(null);
@@ -195,12 +231,45 @@ function TestPage() {
     answered.current = [];
     kind.current = "real";
     expected.current = null;
+    clearSaved();
+    setSaved(null);
     setRel({ catchTrials: 0, catchPassed: 0, repeatTrials: 0, repeatAgreed: 0 });
     setState(fresh);
     setFinal(null);
     setPhase("running");
     await runTrial(fresh);
   }
+
+  /** Continue a screening that was closed part-way through. */
+  async function resume() {
+    const s = saved;
+    if (!s) return;
+    setDeviceCalibration(getDevice(s.device).calibrationOffsetDb);
+    await unlockAudio();
+    answered.current = [];
+    kind.current = "real";
+    expected.current = null;
+    setDeviceState(s.device);
+    setRel(s.rel);
+    relRef.current = s.rel;
+    setState(s.state);
+    setFinal(null);
+    setPhase("running");
+    await runTrial(s.state);
+  }
+
+  // Keep a local snapshot so closing the tab mid-run is recoverable.
+  useEffect(() => {
+    if (phase !== "running") return;
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(RESUME_KEY, JSON.stringify({ state, device, rel }));
+    } catch {
+      /* storage unavailable: resume is a bonus, never a blocker */
+    }
+  }, [phase, state, device, rel]);
+
+
 
 
   const saveResults = useCallback(async () => {
@@ -250,9 +319,14 @@ function TestPage() {
 
   useEffect(() => {
     if (phase === "done" && final) setArmed(false);
+    if (phase === "done" && final) {
+      clearSaved();
+      setSaved(null);
+    }
     if (phase === "done" && final && user) void saveResults();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, final, user]);
+
 
   if (loading) {
     return (
@@ -331,9 +405,34 @@ function TestPage() {
               </p>
             ) : null}
 
-            <Button size="lg" className="mt-8" onClick={() => void start()}>
-              <Play className="mr-2 h-4 w-4" /> {t("test.begin")}
-            </Button>
+            {saved ? (
+              <div className="mt-8 rounded-2xl border border-signal/40 bg-signal/5 p-4">
+                <p className="font-semibold text-signal">{t("test.resumeTitle")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("test.resumeBody").replace("{n}", String(saved.state.trialCount + 1))}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Button size="lg" onClick={() => void resume()}>
+                    <Play className="mr-2 h-4 w-4" /> {t("test.resumeBtn")}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    onClick={() => {
+                      clearSaved();
+                      setSaved(null);
+                    }}
+                  >
+                    {t("test.resumeDiscard")}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button size="lg" className="mt-8" onClick={() => void start()}>
+                <Play className="mr-2 h-4 w-4" /> {t("test.begin")}
+              </Button>
+            )}
+
           </section>
         ) : null}
 
