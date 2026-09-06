@@ -12,6 +12,8 @@ import {
 import { SiteNav } from "@/components/SiteNav";
 import { HowItWorks } from "@/components/HowItWorks";
 import { ExampleProfile } from "@/components/ExampleProfile";
+import { HeroSoundField } from "@/components/home/HeroSoundField";
+
 
 
 /** Example five-part listening profile shown in the hero. */
