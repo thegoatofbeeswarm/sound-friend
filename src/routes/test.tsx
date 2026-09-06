@@ -319,9 +319,14 @@ function TestPage() {
 
   useEffect(() => {
     if (phase === "done" && final) setArmed(false);
+    if (phase === "done" && final) {
+      clearSaved();
+      setSaved(null);
+    }
     if (phase === "done" && final && user) void saveResults();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, final, user]);
+
 
   if (loading) {
     return (
