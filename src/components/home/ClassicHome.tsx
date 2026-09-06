@@ -126,7 +126,7 @@ export function ClassicHome() {
             </Link>
           </div>
 
-          <p className="mt-14 text-[11px] uppercase tracking-[0.32em] text-foreground/45">
+          <p className="mt-28 text-[11px] uppercase tracking-[0.32em] text-foreground/45 md:mt-32">
             {t("home.disclaimer")}
           </p>
         </div>
