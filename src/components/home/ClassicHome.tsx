@@ -73,8 +73,11 @@ export function ClassicHome() {
       {/* Sky spans the whole page: dawn in light mode, night sky in dark mode. */}
       <span aria-hidden className="sky-hero-haze" />
       <span aria-hidden className="sky-stars" />
-      <section className="relative">
+      <section className="relative isolate">
         <SiteNav transparent />
+        <HeroSoundField />
+
+
 
         <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
           <p className="rise-in text-[11px] uppercase tracking-[0.42em] text-foreground/70">
