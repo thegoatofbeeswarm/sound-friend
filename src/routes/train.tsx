@@ -382,7 +382,25 @@ function TrainPage() {
                 <div>
                   <h2 className="text-2xl font-semibold">{t("train.chooseTrack")}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {t("train.nextFocusPrefix")} <span className="text-foreground">{t(`train.mode.${modeById(focus).id}.label`)}</span>
+                    {user && allSessions.length > 0 ? (
+                      <>
+                        {t("train.nextFocusPrefix")}{" "}
+                        <span className="text-foreground">{t(`train.mode.${modeById(focus).id}.label`)}</span>
+                        {focus !== modeId ? (
+                          <>
+                            {" · "}
+                            {t("train.selectedPrefix")}{" "}
+                            <span className="text-foreground">{t(`train.mode.${currentMode.id}.label`)}</span>
+                          </>
+                        ) : null}
+                      </>
+                    ) : (
+                      <>
+                        {t("train.noDataFocus")}{" "}
+                        {t("train.selectedPrefix")}{" "}
+                        <span className="text-foreground">{t(`train.mode.${currentMode.id}.label`)}</span>
+                      </>
+                    )}
                   </p>
                 </div>
                 {ceiling ? <p className="text-xs text-signal">{t("train.calibrated")}</p> : null}
