@@ -834,20 +834,20 @@
   position: absolute;
   left: -4%;
   right: -4%;
-  top: 58%;
+  top: 66%;
   width: 108%;
-  height: 34%;
+  height: 30%;
   will-change: transform;
   transform: translate3d(calc(var(--sf-x) * 1.6), calc(var(--sf-y) * 1.2), 0);
 }
 
 .sf-wave-a {
-  stroke: oklch(0.5 0.06 245 / 0.5);
+  stroke: oklch(0.42 0.07 245 / 0.75);
   vector-effect: non-scaling-stroke;
 }
 
 .sf-wave-b {
-  stroke: oklch(0.55 0.07 220 / 0.32);
+  stroke: oklch(0.45 0.08 220 / 0.5);
   vector-effect: non-scaling-stroke;
 }
 
