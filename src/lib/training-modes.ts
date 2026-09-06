@@ -998,34 +998,6 @@ const PHONE_SCENES: Scene[] = [
 
 export const TRAINING_MODES: TrainingMode[] = [
   {
-    id: "soundscape",
-    label: "Everyday sounds",
-    blurb: "Identify real recordings — traffic, a motorbike, people talking — as they get quieter.",
-    skill: "Detection threshold",
-    icon: "waves",
-    needsSpeech: false,
-    makeRound: (level, ceiling) => {
-      const target = pickFresh("soundscape", SOUNDSCAPES);
-      const choices = level >= 8 ? 5 : level >= 5 ? 4 : 3;
-      // Distractors close in real-world loudness as the level rises.
-      const spread = Math.max(12, 70 - level * 6);
-      const near = SOUNDSCAPES.filter(
-        (s) => s.id !== target.id && Math.abs(s.realDb - target.realDb) <= spread,
-      );
-      const pool = near.length >= choices - 1 ? near : SOUNDSCAPES.filter((s) => s.id !== target.id);
-      const distractors = shuffle(pool).slice(0, choices - 1);
-      const levelDb = levelToDb(level, ceiling);
-      // Shorter exposure at higher levels leaves less time to work it out.
-      const durationMs = Math.round(Math.max(750, 2400 - level * 150));
-      return {
-        prompt: "What did you hear?",
-        options: shuffle([target, ...distractors]).map((s) => ({ id: s.id, label: s.label })),
-        answerId: target.id,
-        play: () => playSoundscape(target.id, levelDb, durationMs),
-      };
-    },
-  },
-  {
     id: "speech-in-noise",
     label: "Speech in conversation noise",
     blurb: "Understand single words spoken over a real recording of people talking.",
@@ -1052,6 +1024,34 @@ export const TRAINING_MODES: TrainingMode[] = [
           await wait(300);
           stop();
         },
+      };
+    },
+  },
+  {
+    id: "soundscape",
+    label: "Everyday sounds",
+    blurb: "Identify real recordings — traffic, a motorbike, people talking — as they get quieter.",
+    skill: "Detection threshold",
+    icon: "waves",
+    needsSpeech: false,
+    makeRound: (level, ceiling) => {
+      const target = pickFresh("soundscape", SOUNDSCAPES);
+      const choices = level >= 8 ? 5 : level >= 5 ? 4 : 3;
+      // Distractors close in real-world loudness as the level rises.
+      const spread = Math.max(12, 70 - level * 6);
+      const near = SOUNDSCAPES.filter(
+        (s) => s.id !== target.id && Math.abs(s.realDb - target.realDb) <= spread,
+      );
+      const pool = near.length >= choices - 1 ? near : SOUNDSCAPES.filter((s) => s.id !== target.id);
+      const distractors = shuffle(pool).slice(0, choices - 1);
+      const levelDb = levelToDb(level, ceiling);
+      // Shorter exposure at higher levels leaves less time to work it out.
+      const durationMs = Math.round(Math.max(750, 2400 - level * 150));
+      return {
+        prompt: "What did you hear?",
+        options: shuffle([target, ...distractors]).map((s) => ({ id: s.id, label: s.label })),
+        answerId: target.id,
+        play: () => playSoundscape(target.id, levelDb, durationMs),
       };
     },
   },
