@@ -231,12 +231,45 @@ function TestPage() {
     answered.current = [];
     kind.current = "real";
     expected.current = null;
+    clearSaved();
+    setSaved(null);
     setRel({ catchTrials: 0, catchPassed: 0, repeatTrials: 0, repeatAgreed: 0 });
     setState(fresh);
     setFinal(null);
     setPhase("running");
     await runTrial(fresh);
   }
+
+  /** Continue a screening that was closed part-way through. */
+  async function resume() {
+    const s = saved;
+    if (!s) return;
+    setDeviceCalibration(getDevice(s.device).calibrationOffsetDb);
+    await unlockAudio();
+    answered.current = [];
+    kind.current = "real";
+    expected.current = null;
+    setDeviceState(s.device);
+    setRel(s.rel);
+    relRef.current = s.rel;
+    setState(s.state);
+    setFinal(null);
+    setPhase("running");
+    await runTrial(s.state);
+  }
+
+  // Keep a local snapshot so closing the tab mid-run is recoverable.
+  useEffect(() => {
+    if (phase !== "running") return;
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(RESUME_KEY, JSON.stringify({ state, device, rel }));
+    } catch {
+      /* storage unavailable: resume is a bonus, never a blocker */
+    }
+  }, [phase, state, device, rel]);
+
+
 
 
   const saveResults = useCallback(async () => {
