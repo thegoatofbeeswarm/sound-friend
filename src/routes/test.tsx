@@ -105,6 +105,13 @@ function TestPage() {
   const [final, setFinal] = useState<ThresholdResult[] | null>(null);
   const [saving, setSaving] = useState(false);
   const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
+  const [saved, setSaved] = useState<Saved | null>(null);
+
+  useEffect(() => {
+    setSaved(loadSaved());
+  }, []);
+
+
 
   /** Research mode: a locked protocol armed from /research. */
   const [protocol, setProtocol] = useState<ResearchProtocol | null>(null);
