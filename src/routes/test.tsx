@@ -270,6 +270,9 @@ function TestPage() {
           <section>
             <h1 className="text-3xl font-semibold">{t("test.introTitle")}</h1>
             <p className="mt-3 text-muted-foreground">{t("test.introBody")}</p>
+            <p className="mt-4 rounded-xl border border-border/70 bg-card/60 p-3 text-sm text-muted-foreground">
+              {t("test.disclaimer")}
+            </p>
 
             <ul className="mt-8 space-y-3 text-sm">
               {(
