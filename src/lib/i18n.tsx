@@ -23,10 +23,10 @@ const en = {
   "nav.dark": "Dark",
 
   "home.badge": "Listening health for the headphone generation",
-  "home.title1": "You grew up in headphones.",
-  "home.title2": "Find out how you actually listen.",
+  "home.title1": "You can hear fine,",
+  "home.title2": "but can you follow a conversation in a loud bar?",
   "home.lead":
-    "Audiomaxxer is made for teenagers and young adults. Build a five-part listening profile that includes sensitivity, speech in noise, sound discrimination, auditory attention, and auditory memory. Then, train the weakest one and watch it change.",
+    "Audiomaxxer measures the thing people actually struggle with: understanding speech when there is noise around it. A short screening scores your speech-in-noise ability alongside sensitivity, sound discrimination, attention and memory, then trains the weakest one.",
   "home.ctaTest": "Start a screening",
   "home.ctaHistory": "See saved results",
   "home.disclaimer":
@@ -76,10 +76,10 @@ const zh: Record<TranslationKey, string> = {
   "nav.dark": "深色",
 
   "home.badge": "为耳机世代打造的聆听健康平台",
-  "home.title1": "你是戴着耳机长大的。",
-  "home.title2": "看看你真正的聆听能力如何。",
+  "home.title1": "你的听力没问题，",
+  "home.title2": "但在嘈杂的酒吧里你还听得清对话吗？",
   "home.lead":
-    "建立由五部分组成的聆听档案：听觉灵敏度、噪声中的言语、声音辨别、听觉注意与听觉记忆。然后训练你最弱的一项，并看着档案发生变化。",
+    "Audiomaxxer 关注的是人们真正困扰的问题：在噪声环境中听清别人说话。一次简短的筛查会评估你的噪声中言语能力，以及灵敏度、声音辨别、注意力与记忆，然后训练最弱的一项。",
   "home.ctaTest": "开始筛查",
   "home.ctaHistory": "查看已保存结果",
   "home.disclaimer":
@@ -121,10 +121,10 @@ const es: Record<TranslationKey, string> = {
   "nav.dark": "Oscuro",
 
   "home.badge": "Salud auditiva para la generación de los auriculares",
-  "home.title1": "Creciste con auriculares.",
-  "home.title2": "Descubre cómo escuchas de verdad.",
+  "home.title1": "Oyes bien,",
+  "home.title2": "¿pero puedes seguir una conversación en un bar ruidoso?",
   "home.lead":
-    "Pensado para adolescentes y jóvenes. Crea un perfil auditivo de cinco partes -sensibilidad, habla con ruido, discriminación, atención y memoria auditiva- y entrena después tu punto más débil.",
+    "Audiomaxxer mide lo que de verdad cuesta: entender el habla cuando hay ruido alrededor. Un cribado corto puntúa tu habla con ruido junto a sensibilidad, discriminación, atención y memoria, y luego entrena tu punto más débil.",
   "home.ctaTest": "Comenzar un cribado",
   "home.ctaHistory": "Ver resultados guardados",
   "home.disclaimer":
