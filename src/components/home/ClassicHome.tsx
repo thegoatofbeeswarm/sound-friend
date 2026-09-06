@@ -12,6 +12,8 @@ import {
 import { SiteNav } from "@/components/SiteNav";
 import { HowItWorks } from "@/components/HowItWorks";
 import { ExampleProfile } from "@/components/ExampleProfile";
+import { HeroSoundField } from "@/components/home/HeroSoundField";
+
 
 
 /** Example five-part listening profile shown in the hero. */
@@ -73,8 +75,11 @@ export function ClassicHome() {
       {/* Sky spans the whole page: dawn in light mode, night sky in dark mode. */}
       <span aria-hidden className="sky-hero-haze" />
       <span aria-hidden className="sky-stars" />
-      <section className="relative">
+      <section className="relative isolate">
         <SiteNav transparent />
+        <HeroSoundField />
+
+
 
         <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
           <p className="rise-in text-[11px] uppercase tracking-[0.42em] text-foreground/70">
@@ -102,8 +107,9 @@ export function ClassicHome() {
           >
             <Link
               to="/test"
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
+              className="cta-ripple inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
             >
+
               {t("home.ctaTest")} <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
