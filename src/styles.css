@@ -905,7 +905,7 @@
   z-index: 0;
   margin: 0 auto;
   width: 100%;
-  max-width: 78rem;
+  max-width: 72rem;
   min-height: 100vh;
   border-left: 1px solid color-mix(in oklch, var(--border) 55%, transparent);
   border-right: 1px solid color-mix(in oklch, var(--border) 55%, transparent);
