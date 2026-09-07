@@ -69,8 +69,8 @@
 
 :root {
   --radius: 0.75rem;
-  --font-display: "Source Sans 3", "Source Sans Pro", Helvetica, sans-serif;
-  --font-body: "Merriweather", Georgia, serif;
+  --font-display: "Roboto Flex", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Roboto Flex", "Roboto", ui-sans-serif, system-ui, sans-serif;
 
   --background: oklch(0.982 0.005 211);
   --foreground: oklch(0.19 0.009 209);
@@ -622,13 +622,43 @@
 }
 
 
-/* The photographic backdrop now carries the page, so the old painted sky
-   gradients step aside and let it show through. */
-.sky-page,
-[data-theme="dark"] .sky-page {
+/* Whole-page sky: the same gradient, resolved in viewport units so the dawn /
+   night band sits over the first screen and the deep tone carries the rest. */
+.sky-page {
   position: relative;
   isolation: isolate;
-  background: transparent;
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.84 0.045 250) 0%,
+      oklch(0.79 0.05 252) 6%,
+      oklch(0.85 0.055 60) 13%,
+      oklch(0.92 0.04 55) 22%,
+      oklch(0.96 0.025 250) 38%,
+      oklch(0.97 0.02 250) 60%,
+      oklch(0.95 0.03 60) 82%,
+      oklch(0.9 0.045 45) 100%
+    );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+[data-theme="dark"] .sky-page {
+  color: var(--night-foreground);
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.1 0.03 285) 0%,
+      oklch(0.16 0.07 285) 7%,
+      oklch(0.22 0.1 280) 15%,
+      oklch(0.24 0.1 262) 24%,
+      oklch(0.2 0.09 250) 36%,
+      oklch(0.15 0.06 255) 55%,
+      oklch(0.13 0.05 262) 75%,
+      oklch(0.16 0.07 280) 100%
+    );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 
@@ -868,71 +898,4 @@
   .cta-ripple:hover::before {
     animation: none !important;
   }
-}
-
-
-/* ------------------------------------------------------------------ */
-/* Massively-style shell: one fixed photographic backdrop, with all     */
-/* page content flowing down a single centred column on top of it.      */
-/* ------------------------------------------------------------------ */
-
-.site-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background-image: url("/__l5e/assets-v1/ef392c66-1a73-4970-ad01-c93163f333f5/night-backdrop.jpg");
-  background-size: cover;
-  background-position: center top;
-  background-attachment: scroll;
-  background-color: oklch(0.09 0.03 285);
-}
-
-.site-backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    oklch(0.09 0.03 285 / 0.25) 0%,
-    oklch(0.08 0.03 280 / 0.55) 55%,
-    oklch(0.06 0.02 280 / 0.85) 100%
-  );
-}
-
-.site-shell {
-  position: relative;
-  z-index: 0;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 72rem;
-  min-height: 100vh;
-  border-left: 1px solid color-mix(in oklch, var(--border) 55%, transparent);
-  border-right: 1px solid color-mix(in oklch, var(--border) 55%, transparent);
-  background-color: color-mix(in oklch, var(--background) 88%, transparent);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 0 80px oklch(0 0 0 / 0.45);
-}
-
-@media (max-width: 48rem) {
-  .site-shell {
-    border-left: 0;
-    border-right: 0;
-    background-color: color-mix(in oklch, var(--background) 93%, transparent);
-  }
-}
-
-/* Editorial typography: heavy sans headings over a serif reading face. */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 900 !important;
-  letter-spacing: -0.005em;
-}
-
-.font-display {
-  font-family: var(--font-display);
 }
