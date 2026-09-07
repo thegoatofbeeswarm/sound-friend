@@ -4,13 +4,13 @@ import { ClassicHome } from "@/components/home/ClassicHome";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Audiomaxxer - Listening Profile & Training for Young People" },
+      { title: "Audiomaxxer" },
       {
         name: "description",
         content:
           "Built for teens and young adults who live in headphones: measure sensitivity, speech in noise, discrimination, attention and memory, then train your weakest listening skill.",
       },
-      { property: "og:title", content: "Audiomaxxer - Listening Profile & Training for Young People" },
+      { property: "og:title", content: "Audiomaxxer" },
       {
         property: "og:description",
         content:
