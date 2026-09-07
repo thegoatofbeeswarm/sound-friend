@@ -84,13 +84,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Audiomaxxer- Train your listening skills" },
+      { title: "Audiomaxxer" },
       {
         name: "description",
         content:
           "Take a quick hearing screening and know your results. Train your listening skills with adaptive drills that adapt to your results.",
       },
-      { property: "og:title", content: "Audiomaxxer- Train your listening skills" },
+      { property: "og:title", content: "Audiomaxxer" },
       {
         property: "og:description",
         content:
