@@ -25,7 +25,7 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 /** Runs before hydration so the saved theme is applied without a flash. */
-export const themeBootstrapScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.classList.toggle("dark",t==="dark");document.documentElement.dataset['theme']=t;}catch(e){}})();`;
+export const themeBootstrapScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");if(t!=="light"&&t!=="dark"){t="dark";}document.documentElement.classList.toggle("dark",t==="dark");document.documentElement.dataset['theme']=t;}catch(e){}})();`;
 
 function applyTheme(theme: Theme) {
   if (typeof document === "undefined") return;
@@ -34,7 +34,7 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>("dark");
 
   useEffect(() => {
     let stored: string | null = null;
@@ -44,11 +44,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       stored = null;
     }
     const initial: Theme =
-      stored === "dark" || stored === "light"
-        ? stored
-        : window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
+      stored === "dark" || stored === "light" ? stored : "dark";
     setThemeState(initial);
     applyTheme(initial);
   }, []);
