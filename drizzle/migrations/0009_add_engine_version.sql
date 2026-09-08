@@ -1,0 +1,2 @@
+ALTER TABLE public.hearing_tests ADD COLUMN IF NOT EXISTS engine_version smallint NOT NULL DEFAULT 1;
+ALTER TABLE public.speech_tests ADD COLUMN IF NOT EXISTS engine_version smallint NOT NULL DEFAULT 1;
