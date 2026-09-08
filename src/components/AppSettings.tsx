@@ -1,5 +1,4 @@
-import { Languages, Moon, Sun } from "lucide-react";
-import { useTheme } from "@/lib/theme";
+import { Languages } from "lucide-react";
 import { LANGUAGES, useI18n, type Language } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +9,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function AppSettings() {
-  const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useI18n();
   const current = LANGUAGES.find((l) => l.value === language) ?? { value: "en" as Language, label: "English", short: "EN" };
 
