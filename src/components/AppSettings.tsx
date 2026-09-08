@@ -1,5 +1,4 @@
-import { Languages, Moon, Sun } from "lucide-react";
-import { useTheme } from "@/lib/theme";
+import { Languages } from "lucide-react";
 import { LANGUAGES, useI18n, type Language } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,22 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function AppSettings() {
-  const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useI18n();
   const current = LANGUAGES.find((l) => l.value === language) ?? { value: "en" as Language, label: "English", short: "EN" };
 
   return (
     <div className="flex items-center gap-1">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={toggleTheme}
-        aria-label={`${t("nav.theme")}: ${theme === "dark" ? t("nav.dark") : t("nav.light")}`}
-        title={theme === "dark" ? t("nav.light") : t("nav.dark")}
-        className="icon-bubble rounded-full bg-card/60 text-muted-foreground hover:text-signal"
-      >
-        {theme === "dark" ? <Sun /> : <Moon />}
-      </Button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
