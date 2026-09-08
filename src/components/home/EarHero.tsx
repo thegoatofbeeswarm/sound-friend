@@ -63,9 +63,9 @@ const PARTS: Part[] = [
     title: "Eardrum",
     short: "Eardrum",
     what:
-      "A membrane the width of a pencil eraser. At the quietest sound you can hear, it moves less than the width of a single atom.",
+      "A membrane the width of a pencil eraser. It moves less than the width of a single atom at the quietest sound you can hear.",
     wrong:
-      "A blast or a sharp pressure change can tear it, and it usually heals within weeks. Muscles behind it brace against loud sound, but they take tens of milliseconds — too slow for a gunshot, too slow for a snare drum.",
+      "A blast or a sharp pressure change can tear it, but it usually heals within weeks. Muscles behind it take tens of milliseconds to brace against loud sound.",
     profile: "Hearing sensitivity",
     kind: "Conductive, usually heals",
     focus: { x: 400, y: 268, w: 160, h: 160 },
