@@ -77,7 +77,7 @@ const PARTS: Part[] = [
     what:
       "The three smallest bones in your body, levering the eardrum onto a window seventeen times smaller so the vibration is strong enough to move fluid.",
     wrong:
-      "Bone can stiffen, or the chain can come apart. Either way sound arrives quieter but undistorted — and a test can see it, because sound conducted through the skull skips these bones entirely and a gap opens between the two routes.",
+      "Bone can stiffen or the chain can come apart. Either way, sound arrives quieter but undistorted. Luckily, a test can see it, because sound conducted through the skull skips these bones entirely and a gap opens between the two routes.",
     profile: "Hearing sensitivity",
     kind: "Conductive, often treatable",
     focus: { x: 440, y: 258, w: 175, h: 132 },
