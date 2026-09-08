@@ -25,6 +25,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as RisksRouteImport } from './routes/risks'
+import { Route as SampleProfileRouteImport } from './routes/sample-profile'
 import { Route as ScienceRouteImport } from './routes/science'
 import { Route as SpeechRouteImport } from './routes/speech'
 import { Route as SpeechInNoiseTestRouteImport } from './routes/speech-in-noise-test'
@@ -121,6 +122,11 @@ const RisksRoute = RisksRouteImport.update({
   path: '/risks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SampleProfileRoute = SampleProfileRouteImport.update({
+  id: '/sample-profile',
+  path: '/sample-profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ScienceRoute = ScienceRouteImport.update({
   id: '/science',
   path: '/science',
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/report': typeof ReportRoute
   '/research': typeof ResearchRoute
   '/risks': typeof RisksRoute
+  '/sample-profile': typeof SampleProfileRoute
   '/science': typeof ScienceRoute
   '/speech': typeof SpeechRoute
   '/speech-in-noise-test': typeof SpeechInNoiseTestRoute
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/report': typeof ReportRoute
   '/research': typeof ResearchRoute
   '/risks': typeof RisksRoute
+  '/sample-profile': typeof SampleProfileRoute
   '/science': typeof ScienceRoute
   '/speech': typeof SpeechRoute
   '/speech-in-noise-test': typeof SpeechInNoiseTestRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/report': typeof ReportRoute
   '/research': typeof ResearchRoute
   '/risks': typeof RisksRoute
+  '/sample-profile': typeof SampleProfileRoute
   '/science': typeof ScienceRoute
   '/speech': typeof SpeechRoute
   '/speech-in-noise-test': typeof SpeechInNoiseTestRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/research'
     | '/risks'
+    | '/sample-profile'
     | '/science'
     | '/speech'
     | '/speech-in-noise-test'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/research'
     | '/risks'
+    | '/sample-profile'
     | '/science'
     | '/speech'
     | '/speech-in-noise-test'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
     | '/report'
     | '/research'
     | '/risks'
+    | '/sample-profile'
     | '/science'
     | '/speech'
     | '/speech-in-noise-test'
@@ -384,6 +396,7 @@ export interface RootRouteChildren {
   ReportRoute: typeof ReportRoute
   ResearchRoute: typeof ResearchRoute
   RisksRoute: typeof RisksRoute
+  SampleProfileRoute: typeof SampleProfileRoute
   ScienceRoute: typeof ScienceRoute
   SpeechRoute: typeof SpeechRoute
   SpeechInNoiseTestRoute: typeof SpeechInNoiseTestRoute
@@ -512,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RisksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sample-profile': {
+      id: '/sample-profile'
+      path: '/sample-profile'
+      fullPath: '/sample-profile'
+      preLoaderRoute: typeof SampleProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/science': {
       id: '/science'
       path: '/science'
@@ -616,6 +636,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportRoute: ReportRoute,
   ResearchRoute: ResearchRoute,
   RisksRoute: RisksRoute,
+  SampleProfileRoute: SampleProfileRoute,
   ScienceRoute: ScienceRoute,
   SpeechRoute: SpeechRoute,
   SpeechInNoiseTestRoute: SpeechInNoiseTestRoute,
