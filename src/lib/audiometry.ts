@@ -245,10 +245,21 @@ export async function unlockAudio(): Promise<void> {
 
 /**
  * Map a dB-HL-like level to a linear gain.
- * The loudest presentable level (90 dB) maps to the safety ceiling, and each
- * 20 dB below that divides amplitude by ten, with an audible floor.
+ *
+ * The loudest presentable level (MAX_DB) maps to the safety ceiling and every
+ * 20 dB below that divides amplitude by ten, which is the exact dB-to-amplitude
+ * relationship the psychometric model assumes.
+ *
+ * There is deliberately no audible floor here. An earlier floor of 6e-4 meant
+ * every level below ~36 dB was presented at an identical physical loudness, so
+ * the estimator was told the tone got quieter while the ear heard no change.
+ * That collapsed every threshold under ~30 dB HL onto the bottom of the grid,
+ * i.e. it reported near-perfect hearing for everyone. The only floor now is the
+ * one exponential ramps require: a strictly positive but inaudible value.
  */
 const MAX_GAIN = 0.3;
+/** Strictly positive so exponentialRampToValueAtTime stays legal; inaudible. */
+export const SILENT_GAIN = 1e-7;
 
 /**
  * Correction (dB) for the listening device in use. Sealed in-ear tips deliver
@@ -260,9 +271,23 @@ export function setDeviceCalibration(offsetDb: number) {
 }
 
 function levelToGain(levelDb: number): number {
-  const clamped = Math.max(MIN_DB, Math.min(MAX_DB, levelDb - deviceOffsetDb));
+  // The device correction is applied before clamping so a calibrated offset is
+  // not silently thrown away at the bottom of the range.
+  const corrected = levelDb - deviceOffsetDb;
+  const clamped = Math.max(MIN_DB - 10, Math.min(MAX_DB, corrected));
   const g = MAX_GAIN * Math.pow(10, (clamped - MAX_DB) / 20);
-  return Math.max(0.0006, Math.min(MAX_GAIN, g));
+  return Math.max(SILENT_GAIN, Math.min(MAX_GAIN, g));
+}
+
+/**
+ * Shared dB-to-gain conversion for every other stimulus in the app (training
+ * soundscapes, noise bursts, tones). Keeping one implementation means a level
+ * of 40 dB means the same loudness everywhere, which is what makes the trainer's
+ * "quietest level heard" comparable between sessions.
+ */
+export function dbToGain(levelDb: number, maxGain = MAX_GAIN, ceilingDb = 90): number {
+  const g = maxGain * Math.pow(10, (Math.min(ceilingDb, levelDb) - ceilingDb) / 20);
+  return Math.max(SILENT_GAIN, Math.min(maxGain, g));
 }
 
 export async function playTone(

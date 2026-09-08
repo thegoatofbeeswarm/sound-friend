@@ -13,8 +13,8 @@
  * reported SRT is the mean SNR across the settled reversals.
  */
 
-import { getAudioContext, unlockAudio } from "@/lib/audiometry";
-import { loadSample } from "@/lib/soundscapes";
+import { unlockAudio } from "@/lib/audiometry";
+import { startSampleLoop } from "@/lib/soundscapes";
 import { warmUpSpeech } from "@/lib/training-modes";
 
 export type NoiseId = "babble" | "conversation" | "traffic";
@@ -51,11 +51,16 @@ export function createSinState(): SinState {
   return { snrDb: START_SNR, step: 4, trials: [], reversals: [], lastCorrect: null };
 }
 
+/**
+ * Three distinct digits. The previous version only blocked a digit repeating
+ * immediately, so a triplet like 4-7-4 could appear; a repeated digit is easier
+ * to recover from a partial hearing, which makes trials unequal in difficulty.
+ */
 function randomDigits(): number[] {
+  const pool = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   const out: number[] = [];
-  while (out.length < 3) {
-    const d = Math.floor(Math.random() * 10);
-    if (out[out.length - 1] !== d) out.push(d);
+  while (out.length < 3 && pool.length) {
+    out.push(...pool.splice(Math.floor(Math.random() * pool.length), 1));
   }
   return out;
 }
@@ -129,6 +134,16 @@ export function sinResult(state: SinState): SinResult | null {
 
 export type SinBand = "strong" | "typical" | "watch" | "difficult";
 
+/**
+ * Where the current SNR sits on the deliverable range, 0 (easiest) to 100.
+ * The staircase drives this up every time a triplet is answered correctly, so
+ * it is the honest readout of "how hard is this getting".
+ */
+export function sinDifficulty(state: SinState): number {
+  const pct = ((MAX_SNR - state.snrDb) / (MAX_SNR - MIN_SNR)) * 100;
+  return Math.max(0, Math.min(100, Math.round(pct)));
+}
+
 export function sinBand(srtDb: number): SinBand {
   if (srtDb <= -6) return "strong";
   if (srtDb <= 0) return "typical";
@@ -142,7 +157,32 @@ export function sinBand(srtDb: number): SinBand {
 
 /** Speech gain is fixed; the babble moves around it. */
 const SPEECH_LEVEL = 1;
-const NOISE_REF_GAIN = 0.16; // gain that sits at roughly 0 dB SNR
+
+/**
+ * Gain that sits at roughly 0 dB SNR against the reference-normalized masker.
+ *
+ * This used to be 0.16 with the delivered gain clamped to 0.5, which meant the
+ * clamp bound at about -10 dB SNR: every trial from -10 down to the staircase's
+ * -14 floor played identical noise while being recorded as a different SNR, so
+ * the staircase could not converge below -10 and the reported SRT was biased.
+ * The reference is now low enough that the whole MIN_SNR..MAX_SNR range fits
+ * under the safety ceiling with headroom to spare.
+ */
+const NOISE_REF_GAIN = 0.1;
+/** Hard safety limit. With the reference above, MIN_SNR lands well beneath it. */
+const NOISE_MAX_GAIN = 0.56;
+
+/**
+ * Maskers are high-passed before they are levelled.
+ *
+ * The bundled recordings are heavily weighted to rumble below 125 Hz - the
+ * traffic clip has about 95% of its energy down there. Rumble masks almost
+ * nothing in the 300-3400 Hz speech band but it dominates the loudness measure,
+ * so without this the nominal SNR bore little relation to how hard the digits
+ * actually were, and the three noise conditions were not comparable to each
+ * other.
+ */
+const MASKER_HIGHPASS_HZ = 110;
 
 let stopNoise: (() => void) | null = null;
 
@@ -154,33 +194,21 @@ export function stopSinAudio() {
   }
 }
 
+/** True when the requested SNR can actually be delivered rather than clipped. */
+export function snrIsDeliverable(snrDb: number): boolean {
+  return NOISE_REF_GAIN * Math.pow(10, -snrDb / 20) <= NOISE_MAX_GAIN;
+}
+
 async function startNoise(noise: NoiseId, snrDb: number): Promise<void> {
-  const buffer = await loadSample(NOISE_TRACKS[noise]);
-  if (!buffer) return;
-  const ctx = await getAudioContext();
-  const gain = Math.min(0.5, NOISE_REF_GAIN * Math.pow(10, -snrDb / 20));
-  const now = ctx.currentTime + 0.05;
-
-  const src = ctx.createBufferSource();
-  src.buffer = buffer;
-  src.loop = true;
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, now);
-  g.gain.exponentialRampToValueAtTime(Math.max(0.0005, gain), now + 0.35);
-  src.connect(g).connect(ctx.destination);
-  src.start(now, Math.random() * Math.max(0, buffer.duration - 4));
-
-  stopNoise = () => {
-    try {
-      const t = ctx.currentTime;
-      g.gain.cancelScheduledValues(t);
-      g.gain.setValueAtTime(Math.max(0.0005, g.gain.value), t);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
-      src.stop(t + 0.4);
-    } catch {
-      /* already stopped */
-    }
-  };
+  const target = NOISE_REF_GAIN * Math.pow(10, -snrDb / 20);
+  const gain = Math.min(NOISE_MAX_GAIN, target);
+  // startSampleLoop pins the loop to the measured content region, so the bed no
+  // longer falls silent for the two seconds of padding at the end of each clip.
+  stopNoise = await startSampleLoop(NOISE_TRACKS[noise], {
+    gain,
+    highPassHz: MASKER_HIGHPASS_HZ,
+    fadeMs: 350,
+  });
 }
 
 function wait(ms: number) {

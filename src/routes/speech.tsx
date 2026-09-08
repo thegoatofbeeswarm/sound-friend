@@ -20,6 +20,7 @@ import {
   NOISE_TRACKS,
   playSinTrial,
   sinBand,
+  sinDifficulty,
   sinResult,
   stopSinAudio,
   type NoiseId,
@@ -208,11 +209,30 @@ function SpeechPage() {
         {phase === "running" && trial ? (
           <section>
             <Progress value={(state.trials.length / MAX_TRIALS) * 100} className="h-1.5" />
-            <p className="mt-4 text-xs text-muted-foreground">
-              {t("sin.trialOf")
-                .replace("{n}", String(trial.index))
-                .replace("{max}", String(MAX_TRIALS))}
-            </p>
+            <div className="mt-4 flex items-center justify-between gap-4 text-xs text-muted-foreground">
+              <span>
+                {t("sin.trialOf")
+                  .replace("{n}", String(trial.index))
+                  .replace("{max}", String(MAX_TRIALS))}
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="uppercase tracking-widest">
+                  {`${sinDifficulty(state)}%`}
+                </span>
+                <span
+                  className="h-1.5 w-24 overflow-hidden rounded-full bg-muted"
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={sinDifficulty(state)}
+                >
+                  <span
+                    className="block h-full rounded-full bg-signal transition-[width] duration-500"
+                    style={{ width: `${sinDifficulty(state)}%` }}
+                  />
+                </span>
+              </span>
+            </div>
 
             <div className="mt-10 rounded-2xl border border-border/70 bg-card/60 p-8 text-center shadow-card">
               <p className="text-sm text-muted-foreground">

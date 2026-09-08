@@ -45,6 +45,7 @@ import {
   createTrainer,
   quietestHeard,
   stopSoundscape,
+  FLOOR_STEP,
   type TrainerState,
 } from "@/lib/soundscapes";
 import {
@@ -257,7 +258,10 @@ function TrainPage() {
     // Transfer checks draw only from material training never uses.
     setBankVariant(nextKind === "transfer" ? "transfer" : "train");
     setModeId(nextMode);
-    const fresh = nextKind === "transfer" ? { ...createTrainer(), level: level ?? 3 } : createTrainer();
+    const fresh =
+      nextKind === "transfer"
+        ? { ...createTrainer(), level: level ?? 3, floor: level ?? 3 }
+        : createTrainer();
     const mode = modeById(nextMode);
     setTrainer(fresh);
     setLastCorrect(null);
@@ -271,17 +275,29 @@ function TrainPage() {
     if (!round || phase !== "answer") return;
     const correct = id === round.answerId;
     setLastCorrect(correct);
-    const next = {
+    const rounds = trainer.rounds + 1;
+    // A transfer check stays at one difficulty so the score is comparable;
+    // a training session ratchets, so it never ends where it started.
+    const floor =
+      kind === "transfer" ? trainer.floor : Math.min(10, trainer.floor + FLOOR_STEP);
+    const next: TrainerState = {
       ...trainer,
-      rounds: trainer.rounds + 1,
+      rounds,
       correct: trainer.correct + (correct ? 1 : 0),
       streak: correct ? trainer.streak + 1 : 0,
-      // A transfer check stays at one difficulty so the score is comparable.
+      floor,
       level:
         kind === "transfer"
           ? trainer.level
-          : Math.max(1, Math.min(10, trainer.level + (correct ? (trainer.streak + 1 >= 3 ? 0.9 : 0.5) : -0.8))),
-      history: [...trainer.history, { round: trainer.rounds + 1, level: trainer.level, correct, levelDb: 0 }],
+          : Math.max(
+              1,
+              floor,
+              Math.min(10, trainer.level + (correct ? (trainer.streak + 1 >= 3 ? 0.9 : 0.5) : -0.8)),
+            ),
+      history: [
+        ...trainer.history,
+        { round: rounds, level: trainer.level, correct, levelDb: round.levelDb ?? 0 },
+      ],
     };
     setTrainer(next);
     await new Promise((resolve) => setTimeout(resolve, 750));
@@ -478,7 +494,23 @@ function TrainPage() {
             <div className={`mx-auto mt-16 flex h-36 w-36 items-center justify-center rounded-full border border-border bg-card ${phase === "playing" ? "pulse-ring" : ""}`}>
               {currentMode.icon === "compass" ? <Compass className="h-9 w-9 text-signal" /> : <Volume2 className="h-9 w-9 text-signal" />}
             </div>
-            <p className="mt-7 text-sm uppercase tracking-widest text-muted-foreground">{t("train.difficultyTemplate").replace("{level}", trainer.level.toFixed(1))}</p>
+            <div className="mt-7">
+              <p className="text-sm uppercase tracking-widest text-muted-foreground">
+                {t("train.difficultyTemplate").replace("{level}", trainer.level.toFixed(1))}
+              </p>
+              <div
+                className="mx-auto mt-3 h-1.5 w-48 overflow-hidden rounded-full bg-muted"
+                role="progressbar"
+                aria-valuemin={1}
+                aria-valuemax={10}
+                aria-valuenow={Math.round(trainer.level * 10) / 10}
+              >
+                <div
+                  className="h-full rounded-full bg-signal transition-[width] duration-500"
+                  style={{ width: `${((trainer.level - 1) / 9) * 100}%` }}
+                />
+              </div>
+            </div>
             <h2 className="mt-2 text-2xl font-semibold">{phase === "playing" ? t("train.listening") : round.prompt}</h2>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {round.options.map((option) => (

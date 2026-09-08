@@ -6,8 +6,13 @@
  * A mode's difficulty argument is the shared 1..10 trainer level.
  */
 
-import { getAudioContext, unlockAudio } from "@/lib/audiometry";
-import { playSoundscape, SOUNDSCAPES, levelToDb, loadSample } from "@/lib/soundscapes";
+import { dbToGain, getAudioContext, SILENT_GAIN, unlockAudio } from "@/lib/audiometry";
+import {
+  playSoundscape,
+  SOUNDSCAPES,
+  levelToDb,
+  startSampleLoop,
+} from "@/lib/soundscapes";
 
 export type ModeId =
   | "soundscape"
@@ -30,6 +35,13 @@ export interface ModeOption {
 export interface ModeRound {
   prompt: string;
   options: ModeOption[];
+  /**
+   * Presentation level in dB for modes where difficulty is a loudness. Recorded
+   * per round so a session's "quietest level heard" is real: the trainer used to
+   * write a hard-coded 0 into every history entry, so every stored quietest_db
+   * came out as 0 regardless of how the session went.
+   */
+  levelDb?: number;
   answerId: string;
   /** Plays the stimulus. Resolves when playback finishes. */
   play: () => Promise<void>;
@@ -105,9 +117,15 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 
+/**
+ * Shared with the screening and the soundscape library, so a level of 40 dB is
+ * one loudness everywhere. This used to be a local copy that divided by 22
+ * rather than 20 (so it was not decibels) and floored at 8e-4, which made every
+ * level below ~34 dB play at an identical loudness - exactly the range the
+ * hardest training levels use.
+ */
 function gainFor(levelDb: number): number {
-  const clamped = Math.max(0, Math.min(90, levelDb));
-  return Math.max(0.0008, 0.28 * Math.pow(10, (clamped - 90) / 22));
+  return dbToGain(Math.max(0, Math.min(90, levelDb)), 0.28, 90);
 }
 
 function wait(ms: number) {
@@ -230,10 +248,14 @@ async function noiseBurst(opts: {
   const g = ctx.createGain();
   const now = ctx.currentTime + 0.08;
 
-  g.gain.setValueAtTime(0.0001, now);
-  g.gain.exponentialRampToValueAtTime(Math.max(0.0005, opts.gain), now + 0.02);
-  g.gain.setValueAtTime(Math.max(0.0005, opts.gain), now + dur - 0.05);
-  g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+  // Floors are inaudible rather than 5e-4: a 5e-4 floor silently flattened every
+  // quiet presentation onto one loudness, which is the same defect that broke
+  // the tone screening.
+  const nbPeak = Math.max(SILENT_GAIN, opts.gain);
+  g.gain.setValueAtTime(SILENT_GAIN, now);
+  g.gain.exponentialRampToValueAtTime(nbPeak, now + 0.02);
+  g.gain.setValueAtTime(nbPeak, now + dur - 0.05);
+  g.gain.exponentialRampToValueAtTime(SILENT_GAIN, now + dur);
 
   const pan = ctx.createStereoPanner();
   pan.pan.value = opts.pan ?? 0;
@@ -252,10 +274,11 @@ async function tone(freq: number, ms: number, gain: number, pan = 0): Promise<vo
   const osc = ctx.createOscillator();
   osc.frequency.value = freq;
   const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, now);
-  g.gain.exponentialRampToValueAtTime(Math.max(0.0005, gain), now + 0.03);
-  g.gain.setValueAtTime(Math.max(0.0005, gain), now + dur - 0.05);
-  g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+  const tonePeak = Math.max(SILENT_GAIN, gain);
+  g.gain.setValueAtTime(SILENT_GAIN, now);
+  g.gain.exponentialRampToValueAtTime(tonePeak, now + 0.03);
+  g.gain.setValueAtTime(tonePeak, now + dur - 0.05);
+  g.gain.exponentialRampToValueAtTime(SILENT_GAIN, now + dur);
   const p = ctx.createStereoPanner();
   p.pan.value = pan;
   osc.connect(g).connect(p).connect(ctx.destination);
@@ -269,50 +292,30 @@ async function tone(freq: number, ms: number, gain: number, pan = 0): Promise<vo
  * of people talking in a busy public space. Returns a stop function.
  * Falls back to synthesized babble if the recording cannot be decoded.
  */
-/** Loop a bundled recording at a gain until the returned function is called. */
+/**
+ * Loop a bundled recording as a background bed until the returned function is
+ * called. Loop points sit inside the measured content region, so the bed no
+ * longer falls silent for the two seconds of padding every clip carries, and
+ * the level is normalized so the same `gain` means the same loudness whichever
+ * recording is used.
+ */
 async function startLoop(url: string, gain: number): Promise<() => void> {
-  const ctx = await getAudioContext();
   await unlockAudio();
-  const buffer = await loadSample(url);
-  if (!buffer) return () => undefined;
-  const src = ctx.createBufferSource();
-  src.buffer = buffer;
-  src.loop = true;
-  const g = ctx.createGain();
-  g.gain.value = Math.max(0.0005, gain * 2.2);
-  src.connect(g).connect(ctx.destination);
-  src.start(ctx.currentTime + 0.02, Math.random() * Math.max(0, buffer.duration - 6));
-  return () => {
-    try {
-      src.stop();
-    } catch {
-      /* already stopped */
-    }
-  };
+  const stop = await startSampleLoop(url, { gain, highPassHz: 110, fadeMs: 200 });
+  return stop ?? (() => undefined);
 }
 
 async function startBabble(gain: number): Promise<() => void> {
-  const ctx = await getAudioContext();
   await unlockAudio();
-  const buffer = await loadSample("/sounds/babble.ogg");
-  if (buffer) {
-    const src = ctx.createBufferSource();
-    src.buffer = buffer;
-    src.loop = true;
-    const g = ctx.createGain();
-    // The recording is loudness-normalized, so scale it like the synth bed.
-    g.gain.value = Math.max(0.0005, gain * 2.2);
-    src.connect(g).connect(ctx.destination);
-    src.start(ctx.currentTime + 0.02, Math.random() * Math.max(0, buffer.duration - 6));
-    return () => {
-      try {
-        src.stop();
-      } catch {
-        /* already stopped */
-      }
-    };
-  }
+  const stop = await startSampleLoop("/sounds/babble.ogg", {
+    gain,
+    highPassHz: 110,
+    fadeMs: 200,
+  });
+  if (stop) return stop;
 
+  // Fallback: synthesized babble, if the recording could not be decoded.
+  const ctx = await getAudioContext();
   const len = Math.floor(ctx.sampleRate * 2);
   const buf = ctx.createBuffer(1, len, ctx.sampleRate);
   const d = buf.getChannelData(0);
@@ -330,7 +333,7 @@ async function startBabble(gain: number): Promise<() => void> {
   filter.frequency.value = 900;
   filter.Q.value = 0.8;
   const g = ctx.createGain();
-  g.gain.value = Math.max(0.0005, gain);
+  g.gain.value = Math.max(SILENT_GAIN, gain);
   // Slow modulation makes it sound like a room of voices rather than hiss.
   const lfo = ctx.createOscillator();
   lfo.frequency.value = 3.6;
@@ -1051,6 +1054,7 @@ export const TRAINING_MODES: TrainingMode[] = [
         prompt: "What did you hear?",
         options: shuffle([target, ...distractors]).map((s) => ({ id: s.id, label: s.label })),
         answerId: target.id,
+        levelDb,
         play: () => playSoundscape(target.id, levelDb, durationMs),
       };
     },
