@@ -818,9 +818,10 @@ const CSS = `
 }
 @keyframes am-in{from{opacity:0; transform:translateX(-14px)} to{opacity:1; transform:none}}
 .am-panel:focus{outline:none}
-.am-close{position:absolute; top:1rem; right:1rem; font:inherit; font-size:.82rem;
-  background:none; border:1px solid rgba(143,160,172,.35); color:var(--am-muted);
-  padding:.35rem .8rem; border-radius:2px; cursor:pointer}
+.am-close{position:sticky; top:0; z-index:8; float:right; margin:0 0 .5rem 1rem;
+  font:inherit; font-size:.82rem;
+  background:rgba(6,11,18,.92); border:1px solid rgba(143,160,172,.35); color:var(--am-muted);
+  padding:.45rem .9rem; border-radius:2px; cursor:pointer; -webkit-tap-highlight-color:transparent}
 .am-close:hover{color:var(--am-bone); border-color:var(--am-bone)}
 .am-close:focus-visible{outline:2px solid var(--am-jade); outline-offset:2px}
 .am-kind{margin:0 0 .5rem; font-size:.8rem; color:var(--am-gold)}
