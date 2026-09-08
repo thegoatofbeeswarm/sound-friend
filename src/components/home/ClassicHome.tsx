@@ -12,7 +12,7 @@ import {
 import { SiteNav } from "@/components/SiteNav";
 import { HowItWorks } from "@/components/HowItWorks";
 import { ExampleProfile } from "@/components/ExampleProfile";
-import { HeroSoundField } from "@/components/home/HeroSoundField";
+import EarHero from "@/components/home/EarHero";
 
 
 
@@ -77,59 +77,7 @@ export function ClassicHome() {
       <span aria-hidden className="sky-stars" />
       <section className="relative isolate">
         <SiteNav transparent />
-        <HeroSoundField />
-
-
-
-        <div className="mx-auto flex min-h-[86vh] max-w-4xl flex-col items-center justify-center px-5 py-24 text-center">
-          <p className="rise-in text-[11px] uppercase tracking-[0.42em] text-foreground/70">
-            {t("home.badge")}
-          </p>
-
-          <h1
-            className="rise-in font-display mt-8 text-balance text-[clamp(2.9rem,9vw,5.75rem)] font-semibold leading-[0.98] text-foreground"
-            style={{ animationDelay: "80ms" }}
-          >
-            {t("home.title1")}{" "}
-            <span className="text-primary dark:text-[oklch(0.88_0.07_215)]">{t("home.title2")}</span>
-          </h1>
-
-          <p
-            className="rise-in mx-auto mt-7 max-w-xl text-base leading-relaxed text-foreground/70 md:text-lg"
-            style={{ animationDelay: "160ms" }}
-          >
-            {t("home.lead")}
-          </p>
-
-          <div
-            className="rise-in mt-11 flex flex-wrap items-center justify-center gap-3"
-            style={{ animationDelay: "240ms" }}
-          >
-            <Link
-              to="/test"
-              className="cta-ripple inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
-            >
-
-              {t("home.ctaTest")} <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/profile"
-              className="inline-flex h-12 items-center rounded-full border border-foreground/25 px-7 text-sm text-foreground/80 backdrop-blur transition-colors hover:border-foreground/50 hover:text-foreground"
-            >
-              {t("home.ctaProfile")}
-            </Link>
-            <Link
-              to="/train"
-              className="inline-flex h-12 items-center rounded-full border border-foreground/25 px-7 text-sm text-foreground/80 backdrop-blur transition-colors hover:border-foreground/50 hover:text-foreground"
-            >
-              {t("nav.train")}
-            </Link>
-          </div>
-
-          <p className="mt-28 text-[11px] uppercase tracking-[0.32em] text-foreground/45 md:mt-32">
-            {t("home.disclaimer")}
-          </p>
-        </div>
+        <EarHero />
       </section>
 
       {/* Example listening profile, floating in the dark. */}
