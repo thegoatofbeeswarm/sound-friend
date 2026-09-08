@@ -172,8 +172,8 @@ const wp = (i: number) => WP[i] as { x: number; y: number };
 function bez(t: number) {
   const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
   return {
-    x: a * WP[0].x + b * WP[1].x + c * WP[2].x + d * WP[3].x,
-    y: a * WP[0].y + b * WP[1].y + c * WP[2].y + d * WP[3].y,
+    x: a * wp(0).x + b * wp(1).x + c * wp(2).x + d * wp(3).x,
+    y: a * wp(0).y + b * wp(1).y + c * wp(2).y + d * wp(3).y,
   };
 }
 function bezAngle(t: number) {
