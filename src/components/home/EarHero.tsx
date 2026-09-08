@@ -87,7 +87,7 @@ const PARTS: Part[] = [
     title: "Cochlea",
     short: "Cochlea",
     what:
-      "35 mm of fluid-filled tube, coiled. A note doesn't fill it — it peaks at one place, high notes near the entrance, low notes deep inside.",
+      "The Cochlea is a coiled tube filled with 35 mm of fluid. The Cochlea sorts high notes near the entrance and low notes deep inside.",
     wrong:
       "Around 12,000 outer hair cells amplify quiet sound. Loud noise kills them, they don't grow back, and the ones nearest the entrance go first. That is the 4–6 kHz notch, and it can sit there for years before you notice anything missing.",
     profile: "Hearing sensitivity and sound discrimination",
@@ -435,9 +435,9 @@ export default function EarHero() {
         <h1>You can hear fine. Can you follow a conversation in a loud bar?</h1>
 
         <p className="am-lede">
-          Your cochlea sorts pitch by position along a 35&nbsp;mm spiral — high notes at
-          the near end, low notes deep inside. Noise wears down one end first, and it is
-          the end you would never notice missing.
+          Your cochlea sorts pitch by position along a 35&nbsp;mm spiral: high notes at the
+          near end, low notes deep inside. Noise wears down one end first; you might never
+          notice this missing.
         </p>
 
         <div className="am-meter">
