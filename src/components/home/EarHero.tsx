@@ -39,9 +39,9 @@ const PARTS: Part[] = [
     title: "Outer ear",
     short: "Outer ear",
     what:
-      "The folds aren't decoration. They colour a sound depending on where it came from, which is how you tell a voice above you from one behind you.",
+      "The folds of the outer ear color a sound depending on where it came from, which is how you tell a voice above you from one behind you.",
     wrong:
-      "Rarely the problem, and usually fixable when it is — wax, an infection, water that won't clear. Sound is blocked rather than lost, so it comes back when the blockage does.",
+      "This is rarely the problem, and usually fixable when it is (i.e. wax or water that won't clear). Sound is blocked rather than lost, so it comes back when the blockage does.",
     profile: "Auditory attention",
     kind: "Conductive, usually temporary",
     focus: { x: 60, y: 80, w: 260, h: 470 },
