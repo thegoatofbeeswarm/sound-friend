@@ -69,8 +69,8 @@
 
 :root {
   --radius: 0.75rem;
-  --font-display: "Roboto Flex", "Roboto", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Roboto Flex", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Times New Roman", Times, ui-serif, Georgia, serif;
+  --font-body: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
 
   --background: oklch(0.982 0.005 211);
   --foreground: oklch(0.19 0.009 209);
