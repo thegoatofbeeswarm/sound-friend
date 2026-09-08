@@ -51,9 +51,9 @@ const PARTS: Part[] = [
     title: "Ear canal",
     short: "Canal",
     what:
-      "About 25 mm of tube. Its length makes it resonate near 3 kHz — the band that carries consonants. The ear amplifies clarity for free.",
+      "About 25 mm of tube. Its length makes it resonate near 3 kHz, which is the band that carries consonants. ",
     wrong:
-      "An earbud seals this tube shut. That kills the natural resonance and puts a driver millimetres from the eardrum, so the level arriving there is higher than the number on your phone suggests.",
+      "Wearing an earbud seals this tube shut. This kills the natural resonance and puts a driver millimetres from the eardrum, so the level arriving there is higher than the number on your phone suggests.",
     profile: "Hearing sensitivity",
     kind: "Conductive, usually temporary",
     focus: { x: 250, y: 250, w: 250, h: 160 },
