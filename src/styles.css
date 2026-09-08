@@ -253,8 +253,8 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-display);
-    font-weight: 500;
+    font-family: var(--font-body);
+    font-weight: 600;
     letter-spacing: 0;
   }
 }
