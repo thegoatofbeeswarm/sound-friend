@@ -435,9 +435,11 @@ export default function EarHero() {
         <h1>You can hear fine. Can you follow a conversation in a loud bar?</h1>
 
         <p className="am-lede">
-          Your cochlea sorts pitch by position along a 35&nbsp;mm spiral: high notes at the
-          near end, low notes deep inside. Noise wears down one end first; you might never
-          notice this missing.
+          Studies show that 12~17% of teens are affected by unnoticed hearing-related
+          problems. Not being able to follow a conversation in a noisy area is a sign of
+          this. To combat rapid hearing loss, Audiomaxxer uses a screening test to build a
+          five-part listening profile — sensitivity, speech in noise, discrimination,
+          attention, and memory — then trains your weakest skill and retests it.
         </p>
 
         <div className="am-meter">
