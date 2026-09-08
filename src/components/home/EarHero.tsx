@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * EarHero — interactive cochlear hero for Audiomaxxer.
@@ -195,18 +196,29 @@ function fitBox(r: { x: number; y: number; w: number; h: number }) {
 
 const MAX_WAVES = 13;
 
-const BANDS: { upTo: number; label: string }[] = [
-  { upTo: 200, label: "bass you feel more than hear" },
-  { upTo: 450, label: "the warmth in a voice" },
-  { upTo: 900, label: "vowels — the body of speech" },
-  { upTo: 1800, label: "where a voice is easiest to place" },
-  { upTo: 3200, label: "consonants: t, k, s, f" },
-  { upTo: 3800, label: "the ear canal's own resonance" },
-  { upTo: 6200, label: "where noise damage starts" },
-  { upTo: 9000, label: "air, sibilance, detail" },
+/** render a template containing {mm} with the value emphasised */
+function withMm(template: string, value: string) {
+  const [before = "", after = ""] = template.split("{mm}");
+  return (
+    <>
+      {before}
+      <em>{value}</em>
+      {after}
+    </>
+  );
+}
+
+const BANDS: { upTo: number; key: string }[] = [
+  { upTo: 200, key: "hero.band.1" },
+  { upTo: 450, key: "hero.band.2" },
+  { upTo: 900, key: "hero.band.3" },
+  { upTo: 1800, key: "hero.band.4" },
+  { upTo: 3200, key: "hero.band.5" },
+  { upTo: 3800, key: "hero.band.6" },
+  { upTo: 6200, key: "hero.band.7" },
+  { upTo: 9000, key: "hero.band.8" },
 ];
-const bandLabel = (f: number) =>
-  BANDS.find((b) => f < b.upTo)?.label ?? "air, sibilance, detail";
+const bandKey = (f: number) => BANDS.find((b) => f < b.upTo)?.key ?? "hero.band.8";
 const formatFreq = (f: number) =>
   f < 1000 ? `${Math.round(f)} Hz` : `${(f / 1000).toFixed(1)} kHz`;
 
@@ -215,6 +227,12 @@ const formatFreq = (f: number) =>
  * ------------------------------------------------------------------ */
 
 export default function EarHero() {
+  const { t } = useI18n();
+  const tp = useCallback(
+    (id: string, field: string) => t(`hero.part.${id}.${field}`),
+    [t],
+  );
+  const bandLabel = useCallback((f: number) => t(bandKey(f)), [t]);
   const [pos, setPos] = useState(55);
   const [hovered, setHovered] = useState<Part | null>(null);
   const [selected, setSelected] = useState<Part | null>(null);
@@ -390,7 +408,7 @@ export default function EarHero() {
     return {
       tabIndex: 0,
       role: "button" as const,
-      "aria-label": `${p.title}. Open details.`,
+      "aria-label": `${tp(p.id, "title")}. ${t("hero.peek.more")}`,
       "aria-expanded": selected?.id === id,
       className:
         "am-part" + (on ? " am-on" : "") + (visited.includes(id) ? " am-seen" : ""),
@@ -418,7 +436,7 @@ export default function EarHero() {
         }
         onClick={() => select(p)}
       >
-        {p.short}
+        {tp(p.id, "short")}
       </button>
     );
   };
@@ -429,21 +447,15 @@ export default function EarHero() {
 
       <div className="am-copy">
         <p className="am-mark">
-          <b>Audiomaxxer</b> <span>listening health for the headphone generation</span>
+          <b>Audiomaxxer</b> <span>{t("hero.tagline")}</span>
         </p>
 
-        <h1>You can hear fine. Can you follow a conversation in a loud bar?</h1>
+        <h1>{t("hero.title")}</h1>
 
-        <p className="am-lede">
-          Studies show that 12~17% of teens are affected by unnoticed hearing-related
-          problems. Not being able to follow a conversation in a noisy area is a sign of
-          this. To combat rapid hearing loss, Audiomaxxer uses a screening test to build a
-          five-part listening profile — sensitivity, speech in noise, discrimination,
-          attention, and memory — then trains your weakest skill and retests it.
-        </p>
+        <p className="am-lede">{t("hero.lede")}</p>
 
         <div className="am-meter">
-          <label htmlFor="am-freq">Play a note into the ear</label>
+          <label htmlFor="am-freq">{t("hero.meter.label")}</label>
           <div className="am-readout">
             <span className="am-hz">{formatFreq(freq)}</span>
             <span className="am-band">{bandLabel(freq)}</span>
@@ -460,36 +472,35 @@ export default function EarHero() {
             aria-valuetext={`${formatFreq(freq)}, ${bandLabel(freq)}`}
           />
           <p id="am-place" className={"am-place" + (inDangerBand ? " am-warn" : "")}>
-            {inDangerBand ? (
-              <>
-                Peaks <em>{mmFromBase.toFixed(1)} mm</em> in from the base — the stretch
-                noise damages first, and the one a threshold test can pass straight over.
-              </>
-            ) : (
-              <>Peaks <em>{mmFromBase.toFixed(1)} mm</em> in from the base of the cochlea.</>
+            {withMm(
+              t(inDangerBand ? "hero.place.danger" : "hero.place.normal"),
+              `${mmFromBase.toFixed(1)} mm`,
             )}
           </p>
         </div>
 
         <div className="am-actions">
-          <a className="am-btn am-btn-solid" href="/test">Start a screening</a>
-          <a className="am-btn am-btn-line" href="/profile">See a sample profile</a>
+          <a className="am-btn am-btn-solid" href="/test">{t("hero.cta.test")}</a>
+          <a className="am-btn am-btn-line" href="/profile">{t("hero.cta.profile")}</a>
         </div>
-        <p className="am-fine">
-          About four minutes, headphones required. Screening, not a diagnosis.
-        </p>
+        <p className="am-fine">{t("hero.fine")}</p>
 
         <div className="am-detail">
           <p className={"am-hint" + (shown ? " am-off" : "")}>
-            Hover a part of the ear to name it. Click to open it.
+            {t("hero.hint")}
             {visited.length > 0 && (
-              <span className="am-count"> {visited.length} of {PARTS.length} opened.</span>
+              <span className="am-count">
+                {" "}
+                {t("hero.count")
+                  .replace("{n}", String(visited.length))
+                  .replace("{total}", String(PARTS.length))}
+              </span>
             )}
           </p>
           <div className={"am-peek" + (hovered && !selected ? " am-on" : "")}>
-            <h2>{hovered?.title}</h2>
-            <p>{hovered?.what}</p>
-            <span className="am-more">Click for what goes wrong here</span>
+            <h2>{hovered ? tp(hovered.id, "title") : ""}</h2>
+            <p>{hovered ? tp(hovered.id, "what") : ""}</p>
+            <span className="am-more">{t("hero.peek.more")}</span>
           </div>
         </div>
       </div>
@@ -508,32 +519,32 @@ export default function EarHero() {
             type="button"
             className="am-close"
             onClick={() => setSelected(null)}
-            aria-label="Close details"
+            aria-label={t("hero.close.aria")}
           >
-            Close
+            {t("hero.close")}
           </button>
 
-          <p className="am-kind">{selected.kind}</p>
-          <h2 id="am-panel-title">{selected.title}</h2>
-          <p className="am-what">{selected.what}</p>
+          <p className="am-kind">{tp(selected.id, "kind")}</p>
+          <h2 id="am-panel-title">{tp(selected.id, "title")}</h2>
+          <p className="am-what">{tp(selected.id, "what")}</p>
 
-          <h3>When this goes wrong</h3>
-          <p className="am-wrong">{selected.wrong}</p>
+          <h3>{t("hero.panel.wrong")}</h3>
+          <p className="am-wrong">{tp(selected.id, "wrong")}</p>
 
-          <h3>Shows up in your profile as</h3>
-          <p className="am-prof">{selected.profile}</p>
+          <h3>{t("hero.panel.profile")}</h3>
+          <p className="am-prof">{tp(selected.id, "profile")}</p>
 
           <div className="am-chain">
-            <h3>The signal path</h3>
+            <h3>{t("hero.panel.path")}</h3>
             <div className="am-steps">{PATH.map(chainBtn)}</div>
-            <h3 className="am-chain-sub">Alongside it</h3>
+            <h3 className="am-chain-sub">{t("hero.panel.alongside")}</h3>
             <div className="am-steps">{OFF_PATH.map(chainBtn)}</div>
           </div>
 
           {visited.length === PARTS.length && (
             <p className="am-done">
-              That is the whole path. A screening measures what four of these leave behind.
-              <a href="/test">Start yours</a>
+              {t("hero.done")}
+              <a href="/test">{t("hero.done.cta")}</a>
             </p>
           )}
         </div>
@@ -545,7 +556,7 @@ export default function EarHero() {
           viewBox="0 0 900 620"
           className={shown ? "am-dim" : undefined}
           role="img"
-          aria-label="Cross-section of the human ear. Each part can be focused and opened for detail."
+          aria-label={t("hero.svg.alt")}
         >
           <defs>
             <radialGradient id="amHead" cx="55%" cy="45%" r="62%">
@@ -587,7 +598,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="140" cy="180" r="3.2" />
               <polyline className="am-lead" points="140,180 106,120 100,96" />
-              <text className="am-lbl" x="66" y="82">Outer ear</text>
+              <text className="am-lbl" x="66" y="82">{t("hero.lbl.outer")}</text>
               <path className="am-ring" d="M78 96 h204 v450 h-204 Z" />
               <path className="am-hit" d="M78 96 h204 v450 h-204 Z" />
             </g>
@@ -600,7 +611,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="356" cy="310" r="3.2" />
               <polyline className="am-lead" points="356,310 352,268 348,254" />
-              <text className="am-lbl" x="348" y="242" textAnchor="middle">Ear canal</text>
+              <text className="am-lbl" x="348" y="242" textAnchor="middle">{t("hero.lbl.canal")}</text>
               <path className="am-ring" d="M258 288 h214 v92 h-214 Z" />
               <path className="am-hit" d="M258 288 h214 v92 h-214 Z" />
             </g>
@@ -630,7 +641,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="462" cy="374" r="3.2" />
               <polyline className="am-lead" points="462,374 436,442 430,458" />
-              <text className="am-lbl" x="424" y="478" textAnchor="middle">Eardrum</text>
+              <text className="am-lbl" x="424" y="478" textAnchor="middle">{t("hero.lbl.drum")}</text>
               <ellipse className="am-ring" cx="466" cy="346" rx="20" ry="40" />
               <ellipse className="am-hit" cx="466" cy="346" rx="22" ry="42" />
             </g>
@@ -646,7 +657,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="512" cy="292" r="3.2" />
               <polyline className="am-lead" points="512,292 516,252 518,238" />
-              <text className="am-lbl" x="518" y="226" textAnchor="middle">Three small bones</text>
+              <text className="am-lbl" x="518" y="226" textAnchor="middle">{t("hero.lbl.bones")}</text>
               <path className="am-ring" d="M456 282 h122 v86 h-122 Z" />
               <path className="am-hit" d="M456 282 h122 v86 h-122 Z" />
             </g>
@@ -660,7 +671,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="676" cy="230" r="3.2" />
               <polyline className="am-lead" points="676,230 706,196 718,188" />
-              <text className="am-lbl" x="726" y="182">Balance canals</text>
+              <text className="am-lbl" x="726" y="182">{t("hero.lbl.balance")}</text>
               <path className="am-ring" d="M572 196 h146 v126 h-146 Z" />
               <path className="am-hit" d="M572 196 h146 v126 h-146 Z" />
             </g>
@@ -676,7 +687,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="672" cy="430" r="3.2" />
               <polyline className="am-lead" points="672,430 706,470 716,478" />
-              <text className="am-lbl" x="724" y="484">Cochlea</text>
+              <text className="am-lbl" x="724" y="484">{t("hero.lbl.cochlea")}</text>
               <circle className="am-ring" cx="640" cy="392" r="78" />
               <circle className="am-hit" cx="640" cy="392" r="78" />
             </g>
@@ -684,7 +695,7 @@ export default function EarHero() {
             <g className="am-annot" pointerEvents="none">
               <polyline points="622,444 566,494 556,502" fill="none" />
               <text x="548" y="508" textAnchor="end">4–6 kHz</text>
-              <text x="548" y="526" textAnchor="end" className="am-annot-sub">first to go</text>
+              <text x="548" y="526" textAnchor="end" className="am-annot-sub">{t("hero.annot.first")}</text>
             </g>
 
             <g {...bind("nerve")}>
@@ -695,7 +706,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="796" cy="384" r="3.2" />
               <polyline className="am-lead" points="796,384 792,340 790,328" />
-              <text className="am-lbl" x="790" y="316" textAnchor="middle">Auditory nerve</text>
+              <text className="am-lbl" x="790" y="316" textAnchor="middle">{t("hero.lbl.nerve")}</text>
               <path className="am-ring" d="M650 356 h244 v72 h-244 Z" />
               <path className="am-hit" d="M650 356 h244 v72 h-244 Z" />
             </g>
@@ -707,7 +718,7 @@ export default function EarHero() {
               </g>
               <circle className="am-node" cx="694" cy="516" r="3.2" />
               <polyline className="am-lead" points="694,516 700,566 702,578" />
-              <text className="am-lbl" x="710" y="586">Eustachian tube</text>
+              <text className="am-lbl" x="710" y="586">{t("hero.lbl.eustachian")}</text>
               <path className="am-ring" d="M544 380 L836 584 L822 604 L534 400 Z" />
               <path className="am-hit" d="M540 374 L840 580 L820 610 L526 404 Z" />
             </g>
