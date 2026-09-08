@@ -481,7 +481,7 @@ export default function EarHero() {
 
         <div className="am-actions">
           <a className="am-btn am-btn-solid" href="/test">{t("hero.cta.test")}</a>
-          <a className="am-btn am-btn-line" href="/profile">{t("hero.cta.profile")}</a>
+          <a className="am-btn am-btn-line" href="/sample-profile">{t("hero.cta.profile")}</a>
         </div>
         <p className="am-fine">{t("hero.fine")}</p>
 
