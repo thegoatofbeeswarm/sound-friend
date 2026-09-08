@@ -178,6 +178,7 @@ import { navPack } from "@/lib/i18n-dicts/nav";
 import { platformPack } from "@/lib/i18n-dicts/platform";
 import { researchPack } from "@/lib/i18n-dicts/research";
 import { youthPack } from "@/lib/i18n-dicts/youth";
+import { heroPack } from "@/lib/i18n-dicts/hero";
 
 export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
 
@@ -201,6 +202,7 @@ const packs: Dict[] = [
   platformPack,
   researchPack,
   youthPack,
+  heroPack,
 ];
 
 
