@@ -103,8 +103,10 @@ function SampleProfilePage() {
         <span className="rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground">
           {t("example.badge")}
         </span>
-        <h1 className="mt-4 font-display text-4xl font-semibold">{t("profile.title")}</h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">{t("profile.lead")}</p>
+        <h1 className="mt-4 font-display text-4xl font-semibold">Sample Listening Profile</h1>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          The profile tracks five listening skills, updates as you test and train, and points at the one worth working on next.
+        </p>
 
         <section className="mt-10 grid gap-6 lg:grid-cols-[auto_1fr] lg:items-center">
           <div className="flex justify-center">
@@ -130,7 +132,7 @@ function SampleProfilePage() {
         </section>
 
         <section className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
-          <h2 className="text-lg font-semibold">{t("example.title")}</h2>
+          <h2 className="text-lg font-semibold">Sample Hearing Profile</h2>
           <div className="mt-4">
             <Audiogram points={SAMPLE_POINTS} />
           </div>
