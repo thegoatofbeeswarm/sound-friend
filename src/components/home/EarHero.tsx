@@ -165,9 +165,10 @@ function spiralPath(t0: number, t1: number) {
   return d;
 }
 
-const WP = [
+const WP: { x: number; y: number }[] = [
   { x: 10, y: 222 }, { x: 200, y: 296 }, { x: 344, y: 330 }, { x: 458, y: 346 },
 ];
+const wp = (i: number) => WP[i] as { x: number; y: number };
 function bez(t: number) {
   const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
   return {
