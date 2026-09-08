@@ -99,7 +99,7 @@ const PARTS: Part[] = [
     title: "Auditory nerve",
     short: "Nerve",
     what:
-      "Roughly 30,000 fibres. Which ones fire tells your brain which pitch arrived; how they fire in time tells it where the sound came from.",
+      "The Auditory nerve contains roughly 30,000 fibres. The ones that fire tell your brain which pitch arrived. How they fire in time tells it where the sound came from.",
     wrong:
       "The connections between hair cells and nerve fibres can be lost while the hair cells themselves survive. In animals this happens after noise that leaves thresholds looking normal, and it is one suspected reason a person can pass a hearing test and still lose the thread in a loud bar.",
     profile: "Speech in noise",
