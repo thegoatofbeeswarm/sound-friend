@@ -269,7 +269,7 @@ export default function EarHero() {
   /* move focus into the panel when it opens, and close on Escape */
   useEffect(() => {
     if (!selected) return;
-    panelRef.current?.focus();
+    panelRef.current?.focus({ preventScroll: true });
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSelected(null);
     };
