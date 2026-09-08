@@ -111,9 +111,9 @@ const PARTS: Part[] = [
     title: "Semicircular canals",
     short: "Balance canals",
     what:
-      "Three loops at right angles, filled with fluid that lags behind when you turn your head. Nothing to do with hearing.",
+      "Three loops at right angles, filled with fluid that lags behind when you turn your head. These have nothing to do with hearing.",
     wrong:
-      "They share fluid and bone with the cochlea, so they share its trouble. Very loud sound makes some people briefly dizzy, and inner-ear disorders often take hearing and balance together.",
+      "The semicircular canals share fluid and bone with the cochlea. Very loud sound makes some people briefly dizzy, and inner-ear disorders often take both hearing and balance. ",
     profile: "Not measured — see a clinician about balance symptoms",
     kind: "Off the hearing path",
     focus: { x: 560, y: 190, w: 170, h: 140 },
