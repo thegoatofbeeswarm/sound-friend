@@ -866,10 +866,10 @@ svg.am-dim .am-part:not(.am-on) .am-lbl{opacity:.14}
   .am-detail{min-height:8.4em; max-width:none}
   .am-hero h1{font-size:clamp(1.9rem,6.4vw,2.7rem)}
   .am-hz{font-size:2.4rem}
-  .am-panel{position:fixed; inset:auto 0 0 0; top:auto; width:100%; max-height:76svh;
+  .am-panel{position:static; order:0; width:100%; max-height:none; inset:auto;
     border-right:0; border-top:1px solid rgba(79,209,165,.3);
     background:rgba(6,11,18,.97); animation:am-up .24s ease both}
-  @keyframes am-up{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+  @keyframes am-up{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
 }
 @media (max-width:640px){
   .am-lbl{display:none}
