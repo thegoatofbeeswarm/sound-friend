@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * EarHero — interactive cochlear hero for Audiomaxxer.
@@ -195,18 +196,17 @@ function fitBox(r: { x: number; y: number; w: number; h: number }) {
 
 const MAX_WAVES = 13;
 
-const BANDS: { upTo: number; label: string }[] = [
-  { upTo: 200, label: "bass you feel more than hear" },
-  { upTo: 450, label: "the warmth in a voice" },
-  { upTo: 900, label: "vowels — the body of speech" },
-  { upTo: 1800, label: "where a voice is easiest to place" },
-  { upTo: 3200, label: "consonants: t, k, s, f" },
-  { upTo: 3800, label: "the ear canal's own resonance" },
-  { upTo: 6200, label: "where noise damage starts" },
-  { upTo: 9000, label: "air, sibilance, detail" },
+const BANDS: { upTo: number; key: string }[] = [
+  { upTo: 200, key: "hero.band.1" },
+  { upTo: 450, key: "hero.band.2" },
+  { upTo: 900, key: "hero.band.3" },
+  { upTo: 1800, key: "hero.band.4" },
+  { upTo: 3200, key: "hero.band.5" },
+  { upTo: 3800, key: "hero.band.6" },
+  { upTo: 6200, key: "hero.band.7" },
+  { upTo: 9000, key: "hero.band.8" },
 ];
-const bandLabel = (f: number) =>
-  BANDS.find((b) => f < b.upTo)?.label ?? "air, sibilance, detail";
+const bandKey = (f: number) => BANDS.find((b) => f < b.upTo)?.key ?? "hero.band.8";
 const formatFreq = (f: number) =>
   f < 1000 ? `${Math.round(f)} Hz` : `${(f / 1000).toFixed(1)} kHz`;
 
@@ -215,6 +215,12 @@ const formatFreq = (f: number) =>
  * ------------------------------------------------------------------ */
 
 export default function EarHero() {
+  const { t } = useI18n();
+  const tp = useCallback(
+    (id: string, field: string) => t(`hero.part.${id}.${field}`),
+    [t],
+  );
+  const bandLabel = useCallback((f: number) => t(bandKey(f)), [t]);
   const [pos, setPos] = useState(55);
   const [hovered, setHovered] = useState<Part | null>(null);
   const [selected, setSelected] = useState<Part | null>(null);
