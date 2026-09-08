@@ -14,16 +14,6 @@ export function AppSettings() {
 
   return (
     <div className="flex items-center gap-1">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={toggleTheme}
-        aria-label={`${t("nav.theme")}: ${theme === "dark" ? t("nav.dark") : t("nav.light")}`}
-        title={theme === "dark" ? t("nav.light") : t("nav.dark")}
-        className="icon-bubble rounded-full bg-card/60 text-muted-foreground hover:text-signal"
-      >
-        {theme === "dark" ? <Sun /> : <Moon />}
-      </Button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
