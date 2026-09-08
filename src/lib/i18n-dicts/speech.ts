@@ -17,6 +17,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.listening": "Listening...",
     "sin.prompt": "Which three digits did you hear?",
     "sin.trialOf": "Trial {n} of up to {max}",
+    "sin.difficulty": "Difficulty",
     "sin.submit": "Submit",
     "sin.clear": "Clear",
     "sin.resultsTitle": "Your speech-in-noise result",
@@ -46,7 +47,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.saved": "Speech test saved to your history.",
     "sin.saveFail": "Could not save this speech test.",
     "sin.disclaimer":
-      "This measures listening performance, not a medical diagnosis. Clinical audiometry remains the standard for diagnosing hearing loss.",
+      "This measures listening performance, not a medical diagnosis. The speech is played by your device's built-in voice, so the signal-to-noise number is a nominal value and is best compared with your own past runs on the same device rather than with other people. Clinical audiometry remains the standard for diagnosing hearing loss.",
   },
   zh: {
     "nav.speech": "言语测试",
@@ -65,6 +66,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.listening": "正在播放...",
     "sin.prompt": "你听到了哪三个数字？",
     "sin.trialOf": "第 {n} 次，最多 {max} 次",
+    "sin.difficulty": "难度",
     "sin.submit": "提交",
     "sin.clear": "清除",
     "sin.resultsTitle": "你的噪声中言语结果",
@@ -88,7 +90,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.saving": "保存中...",
     "sin.saved": "言语测试已保存到你的历史记录。",
     "sin.saveFail": "无法保存本次言语测试。",
-    "sin.disclaimer": "本测试衡量的是聆听表现，并非医学诊断。临床听力测试仍是诊断听力损失的标准。",
+    "sin.disclaimer": "本测试衡量的是聆听表现，并非医学诊断。语音由设备内置语音合成播放，因此信噪比数值为名义值，最适合与你在同一设备上的历史结果比较，而非与他人比较。临床听力测试仍是诊断听力损失的标准。",
   },
   es: {
     "nav.speech": "Prueba de habla",
@@ -108,6 +110,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.listening": "Reproduciendo...",
     "sin.prompt": "¿Qué tres dígitos escuchaste?",
     "sin.trialOf": "Ensayo {n} de hasta {max}",
+    "sin.difficulty": "Dificultad",
     "sin.submit": "Enviar",
     "sin.clear": "Borrar",
     "sin.resultsTitle": "Tu resultado de habla con ruido",
@@ -137,6 +140,6 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.saved": "Prueba de habla guardada en tu historial.",
     "sin.saveFail": "No se pudo guardar esta prueba de habla.",
     "sin.disclaimer":
-      "Esto mide el rendimiento auditivo, no es un diagnóstico médico. La audiometría clínica sigue siendo el estándar para diagnosticar pérdida auditiva.",
+      "Esto mide el rendimiento auditivo, no es un diagnóstico médico. El habla se reproduce con la voz integrada de tu dispositivo, así que la relación señal-ruido es un valor nominal: compárala con tus propias pruebas anteriores en el mismo dispositivo, no con otras personas. La audiometría clínica sigue siendo el estándar para diagnosticar pérdida auditiva.",
   },
 };

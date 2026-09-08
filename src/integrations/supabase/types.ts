@@ -161,6 +161,7 @@ export type Database = {
           avg_threshold_db: number | null
           created_at: string
           device_type: string | null
+          engine_version: number
           environment_db: number | null
           id: string
           notes: string | null
@@ -173,6 +174,7 @@ export type Database = {
           avg_threshold_db?: number | null
           created_at?: string
           device_type?: string | null
+          engine_version?: number
           environment_db?: number | null
           id?: string
           notes?: string | null
@@ -185,6 +187,7 @@ export type Database = {
           avg_threshold_db?: number | null
           created_at?: string
           device_type?: string | null
+          engine_version?: number
           environment_db?: number | null
           id?: string
           notes?: string | null
@@ -217,6 +220,7 @@ export type Database = {
         Row: {
           created_at: string
           device_type: string | null
+          engine_version: number
           id: string
           noise_type: string
           reversals: number
@@ -229,6 +233,7 @@ export type Database = {
         Insert: {
           created_at?: string
           device_type?: string | null
+          engine_version?: number
           id?: string
           noise_type: string
           reversals: number
@@ -241,6 +246,7 @@ export type Database = {
         Update: {
           created_at?: string
           device_type?: string | null
+          engine_version?: number
           id?: string
           noise_type?: string
           reversals?: number

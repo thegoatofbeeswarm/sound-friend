@@ -64,6 +64,13 @@
       "when": 1788522876004,
       "tag": "0008_add_training_session_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788906966170,
+      "tag": "0009_add_engine_version",
+      "breakpoints": true
     }
   ]
 }
