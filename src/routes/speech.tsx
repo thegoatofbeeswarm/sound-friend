@@ -123,6 +123,7 @@ function SpeechPage() {
       spread_db: final.spreadDb,
       noise_type: noise,
       device_type: device,
+      engine_version: 2,
     });
     setSaving(false);
     if (error) {
@@ -217,11 +218,12 @@ function SpeechPage() {
               </span>
               <span className="flex items-center gap-2">
                 <span className="uppercase tracking-widest">
-                  {`${sinDifficulty(state)}%`}
+                  {`${t("sin.difficulty")} ${sinDifficulty(state)}%`}
                 </span>
                 <span
                   className="h-1.5 w-24 overflow-hidden rounded-full bg-muted"
                   role="progressbar"
+                  aria-label={t("sin.difficulty")}
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={sinDifficulty(state)}

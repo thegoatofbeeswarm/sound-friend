@@ -286,6 +286,7 @@ function TestPage() {
         avg_threshold_db: summary.avg,
         safe_volume_offset_db: summary.offsetDb,
         device_type: device,
+        engine_version: 2,
         notes: protocol ? encodeNotes(protocol) : null,
       })
       .select("id")
