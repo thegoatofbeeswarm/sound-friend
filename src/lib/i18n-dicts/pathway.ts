@@ -66,11 +66,11 @@ export const pathwayPack: {
     /* stations */
     "path.st.cochlea.name": "Cochlea",
     "path.st.cochlea.does":
-      "Hair cells turn pressure into electrical spikes, sorted by pitch: high notes near the entrance, low notes deep inside. Every stage above inherits that map.",
+      "Hair cells turn pressure into electrical spikes, using the pitch to sort them: high notes go near the entrance and low notes go deep inside. Every stage above inherits that map.",
     "path.st.cochlea.mind":
-      "This is your fidelity ceiling. Nothing further up can recover detail the cochlea never encoded, which is why the 4–6 kHz notch quietly costs you consonants.",
+      "This is your fidelity ceiling - nothing further up can recover detail the cochlea never encoded, which is why the 4–6 kHz notch quietly costs you consonants.",
     "path.st.cochlea.train":
-      "Frequency discrimination asks how small a pitch difference you can still resolve. High-frequency recognition checks the bands noise takes first.",
+      "* Frequency discrimination asks how small a pitch difference you can still resolve.\u00a0\n\n\n* High-frequency recognition checks the bands noise takes first.",
     "path.st.cochlea.profile": "Hearing sensitivity and sound discrimination",
 
     "path.st.cn.name": "Cochlear nucleus",
