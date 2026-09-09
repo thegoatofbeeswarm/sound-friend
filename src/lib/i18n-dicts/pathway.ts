@@ -131,11 +131,11 @@ export const pathwayPack: {
     "path.rg.belt.name": "Belt and planum temporale",
     "path.rg.belt.sub": "Sound patterns",
     "path.rg.belt.role":
-      "A ring of secondary areas that stop treating sound as frequencies and start treating it as objects: this voice, that engine, those footsteps.",
+      "The temporale is a ring of secondary areas that stop treating objects, not frequencies (ex. this voice, that engine, those footsteps)",
     "path.rg.belt.mind":
-      "The cocktail party problem. Your brain has to decide which fragments belong to the same source before it can decode any of them, so grouping comes before understanding.",
+      "This relates to the cocktail party problem: your brain must decide which fragments belong to the same source before it can decode any of them, so in this case, grouping comes before understanding.",
     "path.rg.belt.train":
-      "Speech in conversation noise adapts the signal-to-noise ratio: babble closes in when you get it right and backs off when you miss. Restaurant table adds the clatter.",
+      "Speech in conversation noise adapts the signal-to-noise ratio.",
     "path.rg.belt.profile": "Speech in noise",
 
     "path.rg.wernicke.name": "Wernicke’s area",
