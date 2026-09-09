@@ -141,9 +141,9 @@ export const pathwayPack: {
     "path.rg.wernicke.name": "Wernicke’s area",
     "path.rg.wernicke.sub": "Word meaning",
     "path.rg.wernicke.role":
-      "Posterior superior temporal cortex maps sound patterns onto stored words. Damage here leaves hearing intact and comprehension gone.",
+      "Posterior superior temporal cortex maps in Wernicke's area sound patterns onto stored words. Damage here leaves hearing intact and comprehension gone.",
     "path.rg.wernicke.mind":
-      "Lexical access speed. Fast conversation gives you roughly 200 milliseconds a word — if access lags, you lose the sentence rather than the word.",
+      "Wernicke's area operates in a tight timeframe. In rapid conversation, it has only about 200 milliseconds per word to retrieve meaning from your mental dictionary. If this processing area falls behind by even a fraction of a second, the bottleneck cascades, causing you to lose track of the sentence as a whole, not just the individual word.",
     "path.rg.wernicke.train":
       "Rapid speech forces the decision earlier each round. Phone call strips the top of the band so you have to decide on less.",
     "path.rg.wernicke.profile": "Sound discrimination and memory",
