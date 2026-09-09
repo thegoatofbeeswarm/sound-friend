@@ -102,11 +102,11 @@ export const pathwayPack: {
 
     "path.st.mgn.name": "Medial geniculate nucleus",
     "path.st.mgn.does":
-      "The thalamic gate. Cortex sends more fibres down to it than it receives back up, so attention gets to decide here what is allowed through.",
+      "This is the thalamic gate. The cortex sends more fibers down here than it receives back up, so listening attention decides what gets through.",
     "path.st.mgn.mind":
-      "This is where listening separates from hearing. Selective attention is a gate on the way in, not a filter you apply after the fact — which is why you can miss a sentence spoken clearly at normal volume.",
+      "This is where listening separates from hearing: selective attention is a gate on the way in, not a filter you apply after the fact, which is why you can miss a sentence even if it's spoken clearly at normal volume.",
     "path.st.mgn.train":
-      "Everyday sounds and Street corner both make you hold one stream while a rival one plays.",
+      "Everyday sounds and a street corner both force you hold one stream while another plays.",
     "path.st.mgn.profile": "Auditory attention",
 
     "path.st.a1.name": "Auditory cortex",
