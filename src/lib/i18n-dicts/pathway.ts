@@ -20,7 +20,7 @@ export const pathwayPack: {
     "path.badge": "Where hearing becomes thinking",
     "path.h1": "The signal leaves your ear in about one millisecond. It has sixteen more to go.",
     "path.lead":
-      "The screening measures what arrives at the auditory nerve. Everything you actually understand from a conversation is assembled after that, across six relays and a sheet of cortex. This is that stretch of the path — and the part Audiomaxxer trains.",
+      "The screening measures what arrives at the auditory nerve. Everything you actually understand from a conversation is assembled after that, across six relays and a sheet of cortex. This is that stretch of the path, and the part Audiomaxxer trains.",
     "path.disclaimer":
       "An explainer, not a diagnosis. Timings are typical values from brainstem-response recordings and vary between people.",
 
