@@ -161,11 +161,11 @@ export const pathwayPack: {
     "path.rg.broca.name": "Inferior frontal gyrus",
     "path.rg.broca.sub": "Prediction",
     "path.rg.broca.role":
-      "Frontal speech regions do not only produce speech, they predict it — sending expected sounds back down to temporal cortex before those sounds arrive.",
+      "Frontal speech regions do not only produce speech but also predict it,  sending expected sounds back down to temporal cortex before those sounds arrive.",
     "path.rg.broca.mind":
-      "Half of listening is guessing well. In noise you are not decoding so much as predicting and checking, and a better model of the language means a cleaner signal.",
+      "Hearing well in a loud environment depends on your ability to predict speech; instead of deciphering every muffled word, your brain relies on anticipation and real-time context clues. A stronger familiarity with the language provides a better mental blueprint, making it much easier to isolate a clean signal from the background noise. ",
     "path.rg.broca.train":
-      "Speech in conversation noise and Street corner both leave gaps the signal never fills, so you have to supply them.",
+      "Speech in conversation noise and Street corner both leave the meaning in words unknown, so you have to practice to avoid this.",
     "path.rg.broca.profile": "Speech in noise",
 
     "path.rg.dlpfc.name": "Dorsolateral prefrontal cortex",
