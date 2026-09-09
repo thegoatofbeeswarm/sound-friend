@@ -171,9 +171,9 @@ export const pathwayPack: {
     "path.rg.dlpfc.name": "Dorsolateral prefrontal cortex",
     "path.rg.dlpfc.sub": "Listening effort",
     "path.rg.dlpfc.role":
-      "When the signal is poor, prefrontal cortex is recruited to hold it together. The cost shows up as pupil dilation in the lab and as fatigue in daily life.",
+      "When the signal is poor, the prefrontal cortex is recruited to hold it together. This is shown as pupil dialtion and fatigue in daily life.",
     "path.rg.dlpfc.mind":
-      "Effort is zero-sum. Resources spent decoding a degraded voice are resources not spent remembering what it said, which is why you leave a loud dinner exhausted and unable to recall much of it.",
+      "Mental energy is finite; when you are at a loud dinner, your brain spends so much effort just straining to hear the words that it lacks the power to actually store them in your memory. That is why you leave feeling completely exhausted yet unable to recall what was said.",
     "path.rg.dlpfc.train":
       "Everyday sounds and Street corner run long enough to load sustained attention rather than a single snap judgment.",
     "path.rg.dlpfc.profile": "Auditory attention",
