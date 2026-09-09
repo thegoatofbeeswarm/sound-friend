@@ -121,9 +121,9 @@ export const pathwayPack: {
     "path.rg.a1.name": "Heschl’s gyrus",
     "path.rg.a1.sub": "Primary auditory cortex",
     "path.rg.a1.role":
-      "The frequency map, ported almost intact from the cochlea. It encodes pitch, timing and level before any of it means anything.",
+      "The gyrus is the frequency map, and it is ported almost intact from the cochlea. It encodes pitch, timing and level before any of it means anything.",
     "path.rg.a1.mind":
-      "Resolution. How finely this region separates two nearby sounds sets the ceiling on every judgment made downstream — including which word you think you just heard.",
+      "The gyrus acts as the bridge to cognition. Its acoustic resolution (how it distinguishes similar sounds) dictates the limits of every downstream decision, determining what word you hear.",
     "path.rg.a1.train":
       "Frequency discrimination narrows the gap between two tones until you stop being able to call it. High-frequency recognition does the same across bands.",
     "path.rg.a1.profile": "Sound discrimination",
