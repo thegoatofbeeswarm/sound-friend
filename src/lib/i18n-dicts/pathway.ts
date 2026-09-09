@@ -93,11 +93,11 @@ export const pathwayPack: {
 
     "path.st.ic.name": "Inferior colliculus",
     "path.st.ic.does":
-      "Nearly every ascending fibre synapses here. The midbrain hub tunes to rhythm and amplitude modulation — the envelope of speech, roughly 4 to 16 cycles a second.",
+      "Nearly every ascending fiber synapses here. The midbrain hub tunes to rhythm and amplitude modulation- the envelope of speech- roughly from 4 to 16 cycles per second.",
     "path.st.ic.mind":
-      "Syllable rate lives in that band. Tracking the envelope is how you keep your place in a sentence instead of losing the thread halfway through it.",
+      "Syllable rate lives in this band, so tracking the envelope helps you keep your place in a sentence instead of losing the meaning halfway through.",
     "path.st.ic.train":
-      "Rapid speech compresses the envelope until you have to ride it. Street corner buries it under traffic that modulates at a similar rate.",
+      "Rapid speech compresses word meaning until you have to pretend to know what the other person is saying; for example, a street corner might muffle the meaning of a conversation",
     "path.st.ic.profile": "Auditory memory",
 
     "path.st.mgn.name": "Medial geniculate nucleus",
