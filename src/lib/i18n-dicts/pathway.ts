@@ -75,9 +75,9 @@ export const pathwayPack: {
 
     "path.st.cn.name": "Cochlear nucleus",
     "path.st.cn.does":
-      "The first synapse past the auditory nerve. The signal forks into parallel streams — one tracking onset timing to the microsecond, another tracking sustained texture.",
+      "The Cochlear nucleus is the first synapse past the auditory nerve. The signal forks into parallel streams, with one tracking onset timing to the microsecond and another tracking sustained texture.",
     "path.st.cn.mind":
-      "Onset timing is how you tell “ba” from “pa”. Consonants live in the first 40 milliseconds of a syllable and carry most of the meaning, which is why a muffled phone call costs you words rather than volume.",
+      "Onset timing is how you tell “ba” from “pa” (for example). Consonants live in the first 40 milliseconds of a syllable and carry most of the meaning - this is why a muffled phone call costs you words, rather than volume",
     "path.st.cn.train":
       "Phone call and high-frequency recognition both push you onto onsets, where the band-limited signal leaves you least to work with.",
     "path.st.cn.profile": "Sound discrimination",
