@@ -1,4 +1,4 @@
-import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 
@@ -122,41 +122,175 @@ function progressToMs(p: number) {
  * component
  * ------------------------------------------------------------------ */
 
+const DUR = 4200;
+const LUT_N = 240;
+
+type Lut = { xs: Float32Array; ys: Float32Array };
+
+/** sample a path once so the animation never touches SVG geometry again */
+function buildLut(el: SVGPathElement): Lut | null {
+  try {
+    const L = el.getTotalLength();
+    if (!L) return null;
+    const xs = new Float32Array(LUT_N + 1);
+    const ys = new Float32Array(LUT_N + 1);
+    for (let i = 0; i <= LUT_N; i++) {
+      const pt = el.getPointAtLength((L * i) / LUT_N);
+      xs[i] = pt.x;
+      ys[i] = pt.y;
+    }
+    return { xs, ys };
+  } catch {
+    return null;
+  }
+}
+
+function lutAt(lut: Lut, p: number): [number, number] {
+  const f = Math.max(0, Math.min(1, p)) * LUT_N;
+  const i = Math.min(LUT_N - 1, Math.floor(f));
+  const k = f - i;
+  return [
+    lut.xs[i]! + (lut.xs[i + 1]! - lut.xs[i]!) * k,
+    lut.ys[i]! + (lut.ys[i + 1]! - lut.ys[i]!) * k,
+  ];
+}
+
 export default function AuditoryPathway() {
   const { t } = useI18n();
   const [stage, setStage] = useState<"pathway" | "cortex">("pathway");
   const [station, setStation] = useState<string | null>(null);
   const [region, setRegion] = useState<string | null>(null);
-  const [p, setP] = useState(1);
+  const [reduced, setReduced] = useState(false);
   const [running, setRunning] = useState(false);
+  /* the only per-frame value React is told about, and only when it changes */
+  const [activeIdx, setActiveIdx] = useState(STATIONS.length - 1);
 
+  const rootRef = useRef<HTMLElement | null>(null);
   const aRef = useRef<SVGPathElement | null>(null);
   const bRef = useRef<SVGPathElement | null>(null);
+  const spikeA = useRef<SVGGElement | null>(null);
+  const spikeB = useRef<SVGGElement | null>(null);
+  const fillRef = useRef<HTMLDivElement | null>(null);
+  const readRef = useRef<HTMLElement | null>(null);
   const raf = useRef(0);
 
-  const reduced =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const live = useRef({
+    p: 1, idx: STATIONS.length - 1, running: false,
+    t0: 0, elapsed: 1, visible: true,
+    lutA: null as Lut | null, lutB: null as Lut | null,
+  });
+
+  /* SSR-safe: never read matchMedia during render */
+  useEffect(() => {
+    const m = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const on = () => setReduced(m.matches);
+    on();
+    m.addEventListener("change", on);
+    return () => m.removeEventListener("change", on);
+  }, []);
+
+  /* write straight to the DOM, exactly like EarHero's loop */
+  const paint = useCallback((p: number) => {
+    live.current.p = p;
+    const { lutA, lutB } = live.current;
+    if (lutA && spikeA.current) {
+      const [x, y] = lutAt(lutA, p);
+      spikeA.current.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+    }
+    if (lutB && spikeB.current) {
+      const [x, y] = lutAt(lutB, p);
+      spikeB.current.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+    }
+    if (fillRef.current) fillRef.current.style.width = `${(p * 100).toFixed(2)}%`;
+    if (readRef.current) readRef.current.textContent = progressToMs(p).toFixed(1);
+
+    let idx = -1;
+    for (let i = 0; i < STATIONS.length; i++) if (p >= STATIONS[i]!.at - 0.005) idx = i;
+    if (idx !== live.current.idx) {
+      live.current.idx = idx;
+      setActiveIdx(idx);
+    }
+  }, []);
+
+  const stop = useCallback(() => {
+    cancelAnimationFrame(raf.current);
+    raf.current = 0;
+  }, []);
+
+  /* the loop is a local closure, so it never self-references a hook value */
+  const runFrom = useCallback((elapsed0: number) => {
+    live.current.t0 = performance.now() - elapsed0 * DUR;
+    const loop = (now: number) => {
+      const el = Math.min(1, (now - live.current.t0) / DUR);
+      live.current.elapsed = el;
+      paint(el);
+      if (el < 1) {
+        raf.current = requestAnimationFrame(loop);
+      } else {
+        raf.current = 0;
+        live.current.running = false;
+        setRunning(false);
+      }
+    };
+    raf.current = requestAnimationFrame(loop);
+  }, [paint]);
 
   const fire = useCallback(() => {
-    if (reduced) { setP(1); return; }
-    cancelAnimationFrame(raf.current);
-    const t0 = performance.now();
+    stop();
+    if (reduced) { live.current.elapsed = 1; live.current.running = false; paint(1); return; }
+    live.current.running = true;
+    live.current.elapsed = 0;
+    live.current.t0 = performance.now();
     setRunning(true);
-    setP(0);
-    const tick = (now: number) => {
-      const k = Math.min(1, (now - t0) / 4200);
-      setP(k);
-      if (k < 1) raf.current = requestAnimationFrame(tick);
-      else setRunning(false);
-    };
-    raf.current = requestAnimationFrame(tick);
-  }, [reduced]);
+    paint(0);
+    if (live.current.visible && !document.hidden) runFrom(0);
+  }, [reduced, paint, runFrom, stop]);
 
+  /* measure each path once, then autoplay */
   useEffect(() => {
-    const id = setTimeout(fire, 400);
-    return () => { clearTimeout(id); cancelAnimationFrame(raf.current); };
-  }, [fire]);
+    if (stage !== "pathway") return;
+    let cancelled = false;
+    const id = requestAnimationFrame(() => {
+      if (cancelled) return;
+      if (aRef.current) live.current.lutA = buildLut(aRef.current);
+      if (bRef.current) live.current.lutB = buildLut(bRef.current);
+      paint(live.current.p);
+      if (!reduced) fire();
+    });
+    return () => { cancelled = true; cancelAnimationFrame(id); stop(); };
+  }, [stage, reduced, paint, fire, stop]);
+
+  /* never burn frames offscreen or in a background tab */
+  useEffect(() => {
+    const resume = () => {
+      if (!live.current.running || raf.current) return;
+      if (!live.current.visible || document.hidden) return;
+      runFrom(live.current.elapsed);
+    };
+    const onVis = () => (document.hidden ? stop() : resume());
+    document.addEventListener("visibilitychange", onVis);
+
+    const el = rootRef.current;
+    const io = el
+      ? new IntersectionObserver(
+          (entries) => {
+            live.current.visible = !!entries[0]?.isIntersecting;
+            if (live.current.visible) resume();
+            else stop();
+          },
+          { threshold: 0 },
+        )
+      : null;
+    if (el && io) io.observe(el);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      io?.disconnect();
+      stop();
+    };
+  }, [runFrom, stop]);
+
+  useEffect(() => () => stop(), [stop]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -168,31 +302,19 @@ export default function AuditoryPathway() {
     return () => window.removeEventListener("keydown", onKey);
   }, [stage]);
 
-  const spike = (ref: RefObject<SVGPathElement | null>) => {
-    const el = ref.current;
-    if (!el) return null;
-    try {
-      const pt = el.getPointAtLength(el.getTotalLength() * p);
-      return [pt.x, pt.y] as const;
-    } catch {
-      return null;
-    }
-  };
-  const ptA = spike(aRef);
-  const ptB = spike(bRef);
-
-  const activeIdx = useMemo(() => {
-    let i = -1;
-    STATIONS.forEach((s, k) => { if (p >= s.at - 0.005) i = k; });
-    return i;
-  }, [p]);
-
   const openStation = STATIONS.find((s) => s.id === station);
   const openRegion = REGIONS.find((r) => r.id === region);
-  const ms = progressToMs(p);
+
+  const scrub = useCallback((at: number) => {
+    stop();
+    live.current.running = false;
+    live.current.elapsed = at;
+    setRunning(false);
+    paint(at);
+  }, [paint, stop]);
 
   return (
-    <section className="ap-root">
+    <section className="ap-root" ref={rootRef}>
       <style>{CSS}</style>
 
       <nav className="ap-tabs" aria-label={t("path.stage.pathway")}>
@@ -224,9 +346,6 @@ export default function AuditoryPathway() {
                     <stop offset="45%" stopColor="#4FD1A5" stopOpacity=".4" />
                     <stop offset="100%" stopColor="#4FD1A5" stopOpacity="0" />
                   </radialGradient>
-                  <filter id="apSoft" x="-60%" y="-60%" width="220%" height="220%">
-                    <feGaussianBlur stdDeviation="7" />
-                  </filter>
                 </defs>
 
                 <g className="ap-anat">
@@ -283,18 +402,14 @@ export default function AuditoryPathway() {
                     onPick={() => setStation(STATIONS[i]!.id)} />
                 ))}
 
-                {ptA && (
-                  <g pointerEvents="none">
-                    <circle cx={ptA[0]} cy={ptA[1]} r="26" fill="url(#apGlow)" filter="url(#apSoft)" />
-                    <circle cx={ptA[0]} cy={ptA[1]} r="4.6" fill="#EFFFF8" />
-                  </g>
-                )}
-                {ptB && (
-                  <g pointerEvents="none">
-                    <circle cx={ptB[0]} cy={ptB[1]} r="26" fill="url(#apGlow)" filter="url(#apSoft)" />
-                    <circle cx={ptB[0]} cy={ptB[1]} r="4.6" fill="#EFFFF8" />
-                  </g>
-                )}
+                <g ref={spikeA} className="ap-spike" pointerEvents="none" transform="translate(-999 -999)">
+                  <circle r="26" fill="url(#apGlow)" />
+                  <circle r="4.6" fill="#EFFFF8" />
+                </g>
+                <g ref={spikeB} className="ap-spike" pointerEvents="none" transform="translate(-999 -999)">
+                  <circle r="26" fill="url(#apGlow)" />
+                  <circle r="4.6" fill="#EFFFF8" />
+                </g>
 
                 <g className="ap-lead" aria-hidden="true">
                   <path d="M 130,258 L 190,262" />
@@ -316,14 +431,14 @@ export default function AuditoryPathway() {
                   {running ? t("path.firing") : t("path.fire")}
                 </button>
                 <div className="ap-track">
-                  <div className="ap-fill" style={{ width: `${p * 100}%` }} />
+                  <div className="ap-fill" ref={fillRef} />
                   {STATIONS.map((s, i) => (
                     <button
                       key={s.id}
                       type="button"
                       className={"ap-tick" + (i <= activeIdx ? " ap-lit" : "") + (station === s.id ? " ap-sel" : "")}
                       style={{ left: `${s.at * 100}%` }}
-                      onClick={() => { setStation(s.id); setP(s.at); }}
+                      onClick={() => { setStation(s.id); scrub(s.at); }}
                       aria-label={`${t(`path.st.${s.id}.name`)} — ${s.ms} ms`}
                     >
                       <span>{s.ms.toFixed(1)}</span>
@@ -331,7 +446,7 @@ export default function AuditoryPathway() {
                   ))}
                 </div>
                 <p className="ap-readout">
-                  <em>{ms.toFixed(1)}</em> {t("path.readout")}
+                  <em ref={readRef} suppressHydrationWarning /> {t("path.readout")}
                 </p>
               </div>
             </>
@@ -450,7 +565,7 @@ export default function AuditoryPathway() {
                     key={s.id}
                     type="button"
                     className={"ap-step" + (station === s.id ? " ap-step-now" : "")}
-                    onClick={() => { setStation(s.id); setP(s.at); }}
+                    onClick={() => { setStation(s.id); scrub(s.at); }}
                   >
                     {t(`path.st.${s.id}.name`)}
                   </button>
@@ -567,6 +682,7 @@ const CSS = `
 .ap-a{stroke:var(--ap-jade)}
 .ap-b{stroke:var(--ap-blue)}
 
+.ap-spike{will-change:transform}
 .ap-relay{cursor:pointer}
 .ap-relay:focus{outline:none}
 .ap-hit{fill:transparent}

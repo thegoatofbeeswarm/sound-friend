@@ -260,6 +260,9 @@ export default function EarHero() {
   const ossRef = useRef<SVGGElement | null>(null);
   const travelRef = useRef<SVGPathElement | null>(null);
   const peakRef = useRef<SVGCircleElement | null>(null);
+  const peakHaloRef = useRef<SVGCircleElement | null>(null);
+  const travelGlowRef = useRef<SVGPathElement | null>(null);
+  const nerveGlowRef = useRef<SVGPathElement | null>(null);
   const nerveRef = useRef<SVGPathElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
@@ -313,11 +316,15 @@ export default function EarHero() {
       const len = travelRef.current.getTotalLength();
       live.current.travelLen = len;
       travelRef.current.style.strokeDasharray = `${len * 0.3} ${len * 1.3}`;
+      if (travelGlowRef.current)
+        travelGlowRef.current.style.strokeDasharray = `${len * 0.3} ${len * 1.3}`;
     }
     if (nerveRef.current) {
       const len = nerveRef.current.getTotalLength();
       live.current.nerveLen = len;
       nerveRef.current.style.strokeDasharray = `${len * 0.22} ${len}`;
+      if (nerveGlowRef.current)
+        nerveGlowRef.current.style.strokeDasharray = `${len * 0.22} ${len}`;
     }
   }, [travelPath]);
 
@@ -358,18 +365,35 @@ export default function EarHero() {
       if (travelRef.current) {
         const seg = travelLen * 0.3;
         const prog = (arrival + 0.86) % 1;
-        travelRef.current.style.strokeDashoffset = (seg - prog * (travelLen + seg)).toFixed(1);
-        travelRef.current.style.opacity = (0.85 * Math.min(prog * 5, 1)).toFixed(3);
+        const off = (seg - prog * (travelLen + seg)).toFixed(1);
+        const op = 0.85 * Math.min(prog * 5, 1);
+        travelRef.current.style.strokeDashoffset = off;
+        travelRef.current.style.opacity = op.toFixed(3);
+        if (travelGlowRef.current) {
+          travelGlowRef.current.style.strokeDashoffset = off;
+          travelGlowRef.current.style.opacity = (op * 0.3).toFixed(3);
+        }
       }
       if (peakRef.current) {
         const hit = thump(0.3);
         peakRef.current.setAttribute("r", (5 + 9 * hit).toFixed(2));
         peakRef.current.setAttribute("opacity", (0.25 + 0.7 * hit).toFixed(3));
+        if (peakHaloRef.current) {
+          peakHaloRef.current.style.transformOrigin = `${peak.x}px ${peak.y}px`;
+          peakHaloRef.current.style.transform = `scale(${(0.6 + 0.75 * hit).toFixed(3)})`;
+          peakHaloRef.current.setAttribute("opacity", (0.2 + 0.75 * hit).toFixed(3));
+        }
       }
       if (nerveRef.current) {
         const prog = (arrival + 0.55) % 1;
-        nerveRef.current.style.strokeDashoffset = (nerveLen - prog * nerveLen).toFixed(1);
-        nerveRef.current.style.opacity = (0.1 + 0.7 * thump(0.45)).toFixed(3);
+        const noff = (nerveLen - prog * nerveLen).toFixed(1);
+        const nop = 0.1 + 0.7 * thump(0.45);
+        nerveRef.current.style.strokeDashoffset = noff;
+        nerveRef.current.style.opacity = nop.toFixed(3);
+        if (nerveGlowRef.current) {
+          nerveGlowRef.current.style.strokeDashoffset = noff;
+          nerveGlowRef.current.style.opacity = (nop * 0.28).toFixed(3);
+        }
       }
 
       // ease the viewBox toward whatever is selected
@@ -388,13 +412,54 @@ export default function EarHero() {
     };
 
     if (reduced) { paint(0.4); return; }
+
+    /* an accumulated clock, so pausing never lurches the animation forward */
+    let last = start;
+    let clock = 0;
+    let onScreen = true;
+
     const loop = (now: number) => {
-      paint((now - start) / 1000);
+      clock += Math.min(now - last, 50);
+      last = now;
+      paint(clock / 1000);
       raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [reduced]);
+    const play = () => {
+      if (raf || !onScreen || document.hidden) return;
+      last = performance.now();
+      raf = requestAnimationFrame(loop);
+    };
+    const pause = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
+
+    const onVis = () => {
+      if (document.hidden) pause();
+      else play();
+    };
+    document.addEventListener("visibilitychange", onVis);
+
+    const host = svgRef.current;
+    const io = host
+      ? new IntersectionObserver(
+          (entries) => {
+            onScreen = !!entries[0]?.isIntersecting;
+            if (onScreen) play();
+            else pause();
+          },
+          { threshold: 0 },
+        )
+      : null;
+    if (host && io) io.observe(host);
+
+    play();
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      io?.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [reduced, peak.x, peak.y]);
 
   const parallax = useCallback(
     (e: React.PointerEvent<HTMLElement>) => {
@@ -591,10 +656,11 @@ export default function EarHero() {
             <filter id="amSoft" x="-60%" y="-60%" width="220%" height="220%">
               <feGaussianBlur stdDeviation="7" />
             </filter>
-            <filter id="amGlow" x="-70%" y="-70%" width="240%" height="240%">
-              <feGaussianBlur stdDeviation="3.6" result="b" />
-              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
+            <radialGradient id="amPeakGlow">
+              <stop offset="0%" stopColor="#EFFFF8" stopOpacity=".85" />
+              <stop offset="45%" stopColor="#9FE8CF" stopOpacity=".35" />
+              <stop offset="100%" stopColor="#4FD1A5" stopOpacity="0" />
+            </radialGradient>
           </defs>
 
           <g id="am-far">
@@ -699,8 +765,10 @@ export default function EarHero() {
                 <path d={spiralPath(0.44, 0.76)} fill="none" stroke="#4FD1A5" strokeWidth="9" strokeLinecap="round" opacity=".8" />
                 <path d={spiralPath(0.74, 1)} fill="none" stroke="#4FD1A5" strokeWidth="5" strokeLinecap="round" opacity=".8" />
                 <path d={bandPath} className={"am-danger" + (inDangerBand ? " am-lit" : "")} fill="none" strokeWidth="15" strokeLinecap="butt" />
-                <path ref={travelRef} d={travelPath} className="am-travel" fill="none" strokeWidth="5" strokeLinecap="round" filter="url(#amGlow)" />
-                <circle ref={peakRef} cx={peak.x} cy={peak.y} r="7" fill="#EFFFF8" filter="url(#amGlow)" />
+                <path ref={travelGlowRef} d={travelPath} className="am-travel am-bloom" fill="none" strokeWidth="15" strokeLinecap="round" />
+                <path ref={travelRef} d={travelPath} className="am-travel" fill="none" strokeWidth="5" strokeLinecap="round" />
+                <circle ref={peakHaloRef} className="am-peak-halo" cx={peak.x} cy={peak.y} r="20" fill="url(#amPeakGlow)" />
+                <circle ref={peakRef} cx={peak.x} cy={peak.y} r="7" fill="#EFFFF8" />
               </g>
               <circle className="am-node" cx="672" cy="430" r="3.2" />
               <polyline className="am-lead" points="672,430 706,470 716,478" />
@@ -719,7 +787,8 @@ export default function EarHero() {
               <g className="am-art">
                 <path d="M654 402 C724 400 776 394 884 366" fill="none" stroke="#E8B44C" strokeWidth="15" strokeLinecap="round" opacity=".55" />
                 <path d="M700 402 C760 412 810 420 880 414" fill="none" stroke="#E8B44C" strokeWidth="6" strokeLinecap="round" opacity=".3" />
-                <path ref={nerveRef} d="M654 402 C724 400 776 394 884 366" fill="none" stroke="#FFE3A6" strokeWidth="7" strokeLinecap="round" filter="url(#amGlow)" />
+                <path ref={nerveGlowRef} d="M654 402 C724 400 776 394 884 366" className="am-bloom" fill="none" stroke="#FFE3A6" strokeWidth="17" strokeLinecap="round" />
+                <path ref={nerveRef} d="M654 402 C724 400 776 394 884 366" fill="none" stroke="#FFE3A6" strokeWidth="7" strokeLinecap="round" />
               </g>
               <circle className="am-node" cx="796" cy="384" r="3.2" />
               <polyline className="am-lead" points="796,384 792,340 790,328" />
@@ -885,6 +954,9 @@ const CSS = `
 .am-step:focus-visible{outline:2px solid var(--am-jade); outline-offset:2px}
 .am-done{margin-top:1.6rem !important; font-size:.88rem !important; color:var(--am-bone) !important}
 .am-done a{color:var(--am-jade); margin-left:.4rem}
+
+.am-bloom{filter:none; pointer-events:none}
+.am-travel,.am-bloom,.am-peak-halo{will-change:opacity,stroke-dashoffset}
 
 /* the way on to the auditory pathway */
 .am-gate{cursor:pointer}
