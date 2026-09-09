@@ -37,7 +37,7 @@ export const pathwayPack: {
       "A sound that reached your eardrum a moment ago is already most of the way to the cortex. It has already been split, timed, compared between your two ears, and gated by attention before you have any idea what it was.\u00a0\n\n\nTouch a relay to see what it does to the signal, and what happens to your listening when that relay runs degraded.",
     "path.cortex.intro.title": "Past the thalamus there is no more signal processing",
     "path.cortex.intro.body":
-      "Only interpretation. Each of these regions turns sound into something else — a pattern, a word, a held thought, a memory. Touch one to see what it contributes, which part of your listening profile it lands in, and which exercise loads it.",
+      "This area focuses on word interpretation. Each of these regions works together to turn sound into a word with meaning. Touch one to see what it contributes, which part of your listening profile it lands in, and which exercise loads it.",
 
     /* panel labels */
     "path.label.does": "What it does to the signal",
