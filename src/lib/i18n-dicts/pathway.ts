@@ -151,9 +151,9 @@ export const pathwayPack: {
     "path.rg.arcuate.name": "Arcuate fasciculus",
     "path.rg.arcuate.sub": "The phonological loop",
     "path.rg.arcuate.role":
-      "The white-matter bundle carrying sound forward from temporal to frontal cortex, letting you hold a sound in mind and rehearse it silently.",
+      "The Arcuate fasciculus is a white-matter bundle that carries sound from the temporal to the frontal cortex, allowing you to hold a sound in mind and rehearse it silently.",
     "path.rg.arcuate.mind":
-      "Verbal working memory. Holding a number long enough to dial it, following a long sentence to its verb, keeping a name after one introduction.",
+      "This connects to verbal working memory; without it, you couldn't remember a phone number before dialing it, follow the meaning of a long sentence from start to finish, or recall someone's name immediately after meeting them. ",
     "path.rg.arcuate.train":
       "Conversation simulation asks a question after the exchange, not during it, so the material has to be held rather than reacted to.",
     "path.rg.arcuate.profile": "Auditory memory",
