@@ -84,9 +84,9 @@ export const pathwayPack: {
 
     "path.st.soc.name": "Superior olivary complex",
     "path.st.soc.does":
-      "The first place your two ears meet. It compares arrival time between them — down to about ten millionths of a second — and builds a map of space out of the difference.",
+      "The Superior olivary complex is the first place your two ears meet. It compares the arrival times between them (down to about ten millionths of a second) and builds a map of space out of the difference.",
     "path.st.soc.mind":
-      "Spatial hearing is what lets you aim attention at one talker in a loud room. Without it every voice arrives from the same place at once, and the room turns to mush.",
+      "Spatial hearing is what lets you aim attention at one talker in a loud room; without it, every voice arrives from the same place at once, and the room noise turns to mush.",
     "path.st.soc.train":
       "Sound localization moves a target between left, centre and right and narrows the spread as you get it right.",
     "path.st.soc.profile": "Auditory attention",
