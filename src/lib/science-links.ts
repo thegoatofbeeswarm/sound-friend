@@ -1,4 +1,10 @@
 export const scienceLinks = {
+  pathway: {
+    key: "pathway",
+    to: "/auditory-pathway",
+    label: "The auditory pathway",
+    blurb: "Follow a sound from the cochlea to the cortex, relay by relay.",
+  },
   science: {
     key: "science",
     to: "/science",

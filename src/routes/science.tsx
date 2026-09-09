@@ -27,7 +27,7 @@ export const Route = createFileRoute("/science")({
 const topicGroups = [
   {
     labelKey: "sci.group.test",
-    links: [scienceLinks.hearingVsListening, scienceLinks.speechInNoise, scienceLinks.howTestsWork, scienceLinks.audiogram, scienceLinks.thresholds],
+    links: [scienceLinks.hearingVsListening, scienceLinks.pathway, scienceLinks.speechInNoise, scienceLinks.howTestsWork, scienceLinks.audiogram, scienceLinks.thresholds],
   },
   {
     labelKey: "sci.group.method",
