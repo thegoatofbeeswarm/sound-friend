@@ -181,9 +181,9 @@ export const pathwayPack: {
     "path.rg.hippo.name": "Hippocampus",
     "path.rg.hippo.sub": "Encoding to memory",
     "path.rg.hippo.role":
-      "Medial temporal structures bind what you heard to when and where you heard it, turning a perceived sentence into something you can retrieve later.",
+      "The hippocampus binds what you heard to when and where you heard it, turning a perceived sentence into something you can retrieve later.",
     "path.rg.hippo.mind":
-      "The Lancet Commission on dementia ranks hearing loss as the largest single modifiable midlife risk factor in its model: degraded input, withdrawal from conversation and years of extra effort compound. The link is an association rather than a demonstrated cause, and it is one reason to take an unnoticed loss seriously at twenty rather than sixty.",
+      "The Lancet Commission on dementia ranks hearing loss as the largest single modifiable midlife risk factor in its model. The link is an association rather than a demonstrated cause, and it is one reason to take an unnoticed loss seriously at twenty rather than sixty.",
     "path.rg.hippo.train":
       "Restaurant table and Conversation simulation both ask what was said, minutes later, rather than what you heard just now.",
     "path.rg.hippo.profile": "Auditory memory",
