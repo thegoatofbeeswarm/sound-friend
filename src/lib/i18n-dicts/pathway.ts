@@ -111,9 +111,9 @@ export const pathwayPack: {
 
     "path.st.a1.name": "Auditory cortex",
     "path.st.a1.does":
-      "The spike reaches Heschl’s gyrus still arranged by frequency. The first cortical response lands near 17 milliseconds — but you will not know what you heard for another 100 to 300.",
+      "The spike reaches Heschl’s gyrus still arranged by frequency. The first cortical response lands near 17 milliseconds.",
     "path.st.a1.mind":
-      "Everything past this point is interpretation: pattern, then word, then meaning, then memory.",
+      "Everything past this point is interpretation. Pattern, then word, then meaning, memory, etc.",
     "path.st.a1.train": "This is where most of Audiomaxxer’s training lands.",
     "path.st.a1.profile": "All five dimensions",
 
