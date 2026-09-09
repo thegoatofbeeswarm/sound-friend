@@ -19,7 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-type NavPath = "/test" | "/speech" | "/profile" | "/train" | "/history" | "/report" | "/data" | "/science" | "/risks" | "/validation" | "/team" | "/research";
+type NavPath = "/test" | "/speech" | "/profile" | "/train" | "/history" | "/report" | "/data" | "/science" | "/risks" | "/validation" | "/team" | "/research" | "/auditory-pathway";
 
 export function SiteNav({ transparent = false }: { transparent?: boolean } = {}) {
   const { user, signOut } = useAuth();
@@ -55,6 +55,7 @@ export function SiteNav({ transparent = false }: { transparent?: boolean } = {})
       to: "/science",
       items: [
         { to: "/science", label: t("nav.science") },
+        { to: "/auditory-pathway", label: t("nav.pathway") },
         { to: "/risks", label: t("nav.risks") },
       ],
     },

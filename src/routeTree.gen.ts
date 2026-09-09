@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AudiogramExplainedRouteImport } from './routes/audiogram-explained'
+import { Route as AuditoryPathwayRouteImport } from './routes/auditory-pathway'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BayesianHearingTestRouteImport } from './routes/bayesian-hearing-test'
 import { Route as DataRouteImport } from './routes/data'
@@ -47,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
 const AudiogramExplainedRoute = AudiogramExplainedRouteImport.update({
   id: '/audiogram-explained',
   path: '/audiogram-explained',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditoryPathwayRoute = AuditoryPathwayRouteImport.update({
+  id: '/auditory-pathway',
+  path: '/auditory-pathway',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -192,6 +198,7 @@ const LovableEmailTransactionalPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/audiogram-explained': typeof AudiogramExplainedRoute
+  '/auditory-pathway': typeof AuditoryPathwayRoute
   '/auth': typeof AuthRoute
   '/bayesian-hearing-test': typeof BayesianHearingTestRoute
   '/data': typeof DataRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/audiogram-explained': typeof AudiogramExplainedRoute
+  '/auditory-pathway': typeof AuditoryPathwayRoute
   '/auth': typeof AuthRoute
   '/bayesian-hearing-test': typeof BayesianHearingTestRoute
   '/data': typeof DataRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/audiogram-explained': typeof AudiogramExplainedRoute
+  '/auditory-pathway': typeof AuditoryPathwayRoute
   '/auth': typeof AuthRoute
   '/bayesian-hearing-test': typeof BayesianHearingTestRoute
   '/data': typeof DataRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/audiogram-explained'
+    | '/auditory-pathway'
     | '/auth'
     | '/bayesian-hearing-test'
     | '/data'
@@ -319,6 +329,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/audiogram-explained'
+    | '/auditory-pathway'
     | '/auth'
     | '/bayesian-hearing-test'
     | '/data'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/audiogram-explained'
+    | '/auditory-pathway'
     | '/auth'
     | '/bayesian-hearing-test'
     | '/data'
@@ -382,6 +394,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AudiogramExplainedRoute: typeof AudiogramExplainedRoute
+  AuditoryPathwayRoute: typeof AuditoryPathwayRoute
   AuthRoute: typeof AuthRoute
   BayesianHearingTestRoute: typeof BayesianHearingTestRoute
   DataRoute: typeof DataRoute
@@ -425,6 +438,13 @@ declare module '@tanstack/react-router' {
       path: '/audiogram-explained'
       fullPath: '/audiogram-explained'
       preLoaderRoute: typeof AudiogramExplainedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auditory-pathway': {
+      id: '/auditory-pathway'
+      path: '/auditory-pathway'
+      fullPath: '/auditory-pathway'
+      preLoaderRoute: typeof AuditoryPathwayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -622,6 +642,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AudiogramExplainedRoute: AudiogramExplainedRoute,
+  AuditoryPathwayRoute: AuditoryPathwayRoute,
   AuthRoute: AuthRoute,
   BayesianHearingTestRoute: BayesianHearingTestRoute,
   DataRoute: DataRoute,

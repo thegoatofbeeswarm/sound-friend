@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 
 /**
@@ -228,6 +229,10 @@ const formatFreq = (f: number) =>
 
 export default function EarHero() {
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const toPathway = useCallback(() => {
+    void navigate({ to: "/auditory-pathway" });
+  }, [navigate]);
   const tp = useCallback(
     (id: string, field: string) => t(`hero.part.${id}.${field}`),
     [t],
@@ -536,10 +541,22 @@ export default function EarHero() {
 
           <div className="am-chain">
             <h3>{t("hero.panel.path")}</h3>
-            <div className="am-steps">{PATH.map(chainBtn)}</div>
+            <div className="am-steps">
+              {PATH.map(chainBtn)}
+              <button type="button" className="am-step am-step-gate" onClick={toPathway}>
+                {t("path.hero.step")}
+              </button>
+            </div>
             <h3 className="am-chain-sub">{t("hero.panel.alongside")}</h3>
             <div className="am-steps">{OFF_PATH.map(chainBtn)}</div>
           </div>
+
+          {selected.id === "nerve" && (
+            <p className="am-onward">
+              {t("path.hero.gate.sub")}
+              <Link to="/auditory-pathway">{t("path.hero.cta")}</Link>
+            </p>
+          )}
 
           {visited.length === PARTS.length && (
             <p className="am-done">
@@ -711,6 +728,31 @@ export default function EarHero() {
               <path className="am-hit" d="M650 356 h244 v72 h-244 Z" />
             </g>
 
+            <g
+              className="am-gate"
+              role="button"
+              tabIndex={0}
+              aria-label={t("path.hero.gate")}
+              onClick={toPathway}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toPathway();
+                }
+              }}
+            >
+              <circle className="am-gate-halo" cx="872" cy="368" r="27" />
+              <circle className="am-gate-ring" cx="872" cy="368" r="15" />
+              <path className="am-gate-arrow" d="M864 368 h15 M874 362 l6 6 l-6 6" />
+              <text className="am-gate-lbl" x="896" y="414" textAnchor="end">
+                {t("path.hero.gate")}
+              </text>
+              <text className="am-gate-sub" x="896" y="433" textAnchor="end">
+                {t("path.hero.gate.sub")}
+              </text>
+              <circle className="am-hit" cx="872" cy="368" r="34" />
+            </g>
+
             <g {...bind("eustachian")}>
               <g className="am-art">
                 <path d="M552 388 C628 462 690 512 828 592" fill="none" stroke="#8FA0AC" strokeWidth="13" strokeLinecap="round" opacity=".38" />
@@ -844,6 +886,24 @@ const CSS = `
 .am-done{margin-top:1.6rem !important; font-size:.88rem !important; color:var(--am-bone) !important}
 .am-done a{color:var(--am-jade); margin-left:.4rem}
 
+/* the way on to the auditory pathway */
+.am-gate{cursor:pointer}
+.am-gate:focus{outline:none}
+.am-gate-halo{fill:rgba(232,180,76,.14); stroke:none; transform-box:fill-box; transform-origin:center;
+  animation:am-gate-pulse 2.8s ease-in-out infinite}
+.am-gate-ring{fill:rgba(6,11,18,.78); stroke:var(--am-gold); stroke-width:1.6; transition:fill .2s}
+.am-gate-arrow{fill:none; stroke:var(--am-gold); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .2s}
+.am-gate-lbl{fill:var(--am-gold); font-size:15px; font-weight:600; transition:fill .2s}
+.am-gate-sub{fill:var(--am-muted); font-size:12.5px}
+.am-gate:hover .am-gate-ring,.am-gate:focus-visible .am-gate-ring{fill:var(--am-gold)}
+.am-gate:hover .am-gate-arrow,.am-gate:focus-visible .am-gate-arrow{stroke:#0A121A}
+.am-gate:hover .am-gate-lbl,.am-gate:focus-visible .am-gate-lbl{fill:var(--am-bone)}
+@keyframes am-gate-pulse{0%,100%{opacity:.3; transform:scale(.84)} 50%{opacity:1; transform:scale(1.14)}}
+.am-step-gate{border-color:rgba(232,180,76,.5); color:var(--am-gold)}
+.am-step-gate:hover{border-color:var(--am-gold); color:var(--am-gold)}
+.am-onward{margin-top:1.5rem !important; font-size:.88rem !important; color:var(--am-bone) !important}
+.am-onward a{color:var(--am-gold); margin-left:.4rem}
+
 /* anatomy */
 #am-far{transform:translate(calc(var(--am-px) * 7px),calc(var(--am-py) * 5px))}
 #am-mid{transform:translate(calc(var(--am-px) * 14px),calc(var(--am-py) * 10px))}
@@ -887,6 +947,8 @@ svg.am-dim .am-part:not(.am-on) .am-lbl{opacity:.14}
 }
 @media (max-width:640px){
   .am-lbl{display:none}
+  .am-gate-lbl{font-size:19px}
+  .am-gate-sub{font-size:16px}
   .am-annot text{font-size:19px}
   .am-node{opacity:.8}
 }
