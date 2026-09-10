@@ -15,7 +15,7 @@ export const teamPage: {
     "team.role.contributor": "Contributor",
     "team.bio.steven": "A contributor to Audiomaxxer",
     "team.bio.andrew": "\n",
-    "team.bio.julius": "\n",
+    "team.bio.anson": "\n",
     "team.bio.brandon": "\n",
     "team.contact.title": "Contact us",
     "team.contact.body": "Questions, bug reports or feedback can be sent to",
@@ -34,8 +34,7 @@ export const teamPage: {
     "team.role.contributor": "贡献者",
     "team.bio.steven": "Audiomaxxer 的贡献者",
     "team.bio.andrew": "Audiomaxxer 的所有者和开发者",
-    "team.bio.julius":
-      "Audiomaxxer 的首席测试员，负责发现并报告缺陷，以及评估网站／应用的有效性",
+    "team.bio.anson": "\n",
     "team.bio.brandon": "Audiomaxxer 的社交媒体经理",
     "team.contact.title": "联系我们",
     "team.contact.body": "有问题、缺陷反馈或建议，请发送邮件至",
@@ -55,8 +54,7 @@ export const teamPage: {
     "team.role.contributor": "Colaborador",
     "team.bio.steven": "Colaborador de Audiomaxxer",
     "team.bio.andrew": "El propietario y desarrollador de Audiomaxxer",
-    "team.bio.julius":
-      "El tester principal de Audiomaxxer; se encarga de encontrar y reportar errores y de determinar la eficacia del sitio web y la app",
+    "team.bio.anson": "\n",
     "team.bio.brandon": "El community manager de Audiomaxxer",
     "team.contact.title": "Contáctanos",
     "team.contact.body": "Puedes enviar preguntas, errores o comentarios a",
