@@ -9,14 +9,13 @@ export const teamPage: {
     "team.title": "The Audiomaxxer team",
     "team.lead":
       "A small team trying to build a massive thing",
-    "team.role.founder": "Founder & Developer",
-    "team.role.tester": "Lead Tester",
+    "team.role.founder": "Founder",
+    "team.role.tester": "Tester",
     "team.role.social": "Contributor",
     "team.role.contributor": "Contributor",
     "team.bio.steven": "A contributor to Audiomaxxer",
-    "team.bio.andrew": "The owner and developer of Audiomaxxer",
-    "team.bio.julius":
-      "The lead tester of Audiomaxxer, has the job of finding and reporting bugs and determining the effectiveness of the website/app",
+    "team.bio.andrew": "\n",
+    "team.bio.julius": "\n",
     "team.bio.brandon": "\n",
     "team.contact.title": "Contact us",
     "team.contact.body": "Questions, bug reports or feedback can be sent to",
