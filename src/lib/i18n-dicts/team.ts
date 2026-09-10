@@ -13,7 +13,7 @@ export const teamPage: {
     "team.role.tester": "Tester",
     "team.role.social": "Contributor",
     "team.role.contributor": "Contributor",
-    "team.bio.steven": "A contributor to Audiomaxxer",
+    "team.bio.steven": "\n",
     "team.bio.andrew": "\n",
     "team.bio.anson": "\n",
     "team.bio.brandon": "\n",
