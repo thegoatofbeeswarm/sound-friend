@@ -33,6 +33,7 @@ const MEMBERS = [
   { name: "Andrew Huang", roleKey: "team.role.founder", bioKey: "team.bio.andrew", initials: "AH" },
   { name: "Julius Ohlweiler", roleKey: "team.role.tester", bioKey: "team.bio.julius", initials: "JO" },
   { name: "Brandon Sung", roleKey: "team.role.social", bioKey: "team.bio.brandon", initials: "BS" },
+  { name: "Steven Hsu", roleKey: "team.role.contributor", bioKey: "team.bio.steven", initials: "SH" },
 ];
 
 function TeamPage() {
