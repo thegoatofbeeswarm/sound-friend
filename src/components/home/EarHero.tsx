@@ -1,145 +1,48 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { createPortal } from "react-dom";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, X } from "lucide-react";
+import "@fontsource/barlow/400.css";
+import "@fontsource/barlow/500.css";
+import "@fontsource/barlow/600.css";
+import "@fontsource/barlow-condensed/600.css";
+import "@fontsource/barlow-condensed/700.css";
 import { useI18n } from "@/lib/i18n";
+import type { AnchorId, EarScene, EarState, PartId } from "./earScene";
 
 /**
- * EarHero — interactive cochlear hero for Audiomaxxer.
+ * EarHero: the homepage as a hearing-safety sign you can walk around.
  *
- * Hover a part: it lights up and names itself.
- * Click a part: the ear zooms to it and a panel opens with what goes wrong
- * there, whether that loss is permanent, and which profile dimension it lands
- * in. The panel carries the signal path so you can walk the chain.
+ * A 3D ear (three.js, see ./earScene) turns on a signal-blue field. Drag to
+ * turn it; press a part and the camera flies to it while a panel opens with
+ * what goes wrong there and one experiment that changes the model live.
  *
- * The frequency slider maps a pitch to the place in the cochlea that actually
- * responds to it, using the Greenwood function (Greenwood 1990):
+ * The cochlea experiment maps a pitch to the place that responds to it with
+ * the Greenwood function (Greenwood 1990):
  *
  *     f = A * (10^(a * x) - k)     A = 165.4, a = 0.06, k = 0.88, x in mm from apex
- *
- * No dependencies beyond React. Styles are scoped under `am-` class names, so
- * nothing depends on your Tailwind config or shadcn tokens.
  */
 
 /* ------------------------------------------------------------------ *
  * content
  * ------------------------------------------------------------------ */
 
-type Part = {
-  id: string;
-  title: string;
-  short: string;
-  what: string;
-  wrong: string;
-  profile: string;
-  kind: string;
-  /** region of the 900x620 canvas to zoom to on click */
-  focus: { x: number; y: number; w: number; h: number };
+const PARTS: PartId[] = ["outer", "canal", "drum", "ossicles", "cochlea", "nerve", "vestibular", "eustachian"];
+const PATH: PartId[] = ["outer", "canal", "drum", "ossicles", "cochlea", "nerve"];
+const OFF_PATH: PartId[] = ["vestibular", "eustachian"];
+const LABEL: Record<PartId, string> = {
+  outer: "hero.lbl.outer",
+  canal: "hero.lbl.canal",
+  drum: "hero.lbl.drum",
+  ossicles: "hero.lbl.bones",
+  cochlea: "hero.lbl.cochlea",
+  nerve: "hero.lbl.nerve",
+  vestibular: "hero.lbl.balance",
+  eustachian: "hero.lbl.eustachian",
 };
 
-const PARTS: Part[] = [
-  {
-    id: "outer",
-    title: "Outer ear",
-    short: "Outer ear",
-    what:
-      "The folds of the outer ear color a sound depending on where it came from, which is how you tell a voice above you from one behind you.",
-    wrong:
-      "This is rarely the problem, and usually fixable when it is (i.e. wax or water that won't clear). Sound is blocked rather than lost, so it comes back when the blockage does.",
-    profile: "Auditory attention",
-    kind: "Conductive, usually temporary",
-    focus: { x: 60, y: 80, w: 260, h: 470 },
-  },
-  {
-    id: "canal",
-    title: "Ear canal",
-    short: "Canal",
-    what:
-      "About 25 mm of tube. Its length makes it resonate near 3 kHz, which is the band that carries consonants. ",
-    wrong:
-      "Wearing an earbud seals this tube shut. This kills the natural resonance and puts a driver millimetres from the eardrum, so the level arriving there is higher than the number on your phone suggests.",
-    profile: "Hearing sensitivity",
-    kind: "Conductive, usually temporary",
-    focus: { x: 250, y: 250, w: 250, h: 160 },
-  },
-  {
-    id: "drum",
-    title: "Eardrum",
-    short: "Eardrum",
-    what:
-      "A membrane the width of a pencil eraser. It moves less than the width of a single atom at the quietest sound you can hear.",
-    wrong:
-      "A blast or a sharp pressure change can tear it, but it usually heals within weeks. Muscles behind it take tens of milliseconds to brace against loud sound.",
-    profile: "Hearing sensitivity",
-    kind: "Conductive, usually heals",
-    focus: { x: 400, y: 268, w: 160, h: 160 },
-  },
-  {
-    id: "ossicles",
-    title: "Malleus, incus, stapes",
-    short: "Bones",
-    what:
-      "The three smallest bones in your body, levering the eardrum onto a window seventeen times smaller so the vibration is strong enough to move fluid.",
-    wrong:
-      "Bone can stiffen or the chain can come apart. Either way, sound arrives quieter but undistorted. Luckily, a test can see it, because sound conducted through the skull skips these bones entirely and a gap opens between the two routes.",
-    profile: "Hearing sensitivity",
-    kind: "Conductive, often treatable",
-    focus: { x: 440, y: 258, w: 175, h: 132 },
-  },
-  {
-    id: "cochlea",
-    title: "Cochlea",
-    short: "Cochlea",
-    what:
-      "The Cochlea is a coiled tube filled with 35 mm of fluid. The Cochlea sorts high notes near the entrance and low notes deep inside.",
-    wrong:
-      "Around 12,000 outer hair cells amplify quiet sound. Loud noise kills them, they don't grow back, and the ones nearest the entrance go first. That is the 4–6 kHz notch, and it can sit there for years before you notice anything missing.",
-    profile: "Hearing sensitivity and sound discrimination",
-    kind: "Sensorineural, permanent",
-    focus: { x: 540, y: 300, w: 200, h: 190 },
-  },
-  {
-    id: "nerve",
-    title: "Auditory nerve",
-    short: "Nerve",
-    what:
-      "The Auditory nerve contains roughly 30,000 fibres. The ones that fire tell your brain which pitch arrived. How they fire in time tells it where the sound came from.",
-    wrong:
-      "The connections between hair cells and nerve fibres can be lost while the hair cells themselves survive. In animals this happens after noise that leaves thresholds looking normal, and it is one suspected reason a person can pass a hearing test and still lose the thread in a loud bar.",
-    profile: "Speech in noise",
-    kind: "Sensorineural, and largely invisible to a threshold test",
-    focus: { x: 640, y: 330, w: 250, h: 120 },
-  },
-  {
-    id: "vestibular",
-    title: "Semicircular canals",
-    short: "Balance canals",
-    what:
-      "Three loops at right angles, filled with fluid that lags behind when you turn your head. These have nothing to do with hearing.",
-    wrong:
-      "The semicircular canals share fluid and bone with the cochlea. Very loud sound makes some people briefly dizzy, and inner-ear disorders often take both hearing and balance. ",
-    profile: "Not measured — see a clinician about balance symptoms",
-    kind: "Off the hearing path",
-    focus: { x: 560, y: 190, w: 170, h: 140 },
-  },
-  {
-    id: "eustachian",
-    title: "Eustachian tube",
-    short: "Eustachian tube",
-    what:
-      "A valve down to the back of your throat. It flicks open when you swallow, which is why yawning fixes your ears on a plane.",
-    wrong:
-      "When it stays shut, pressure behind the eardrum drops and fluid collects behind it. In children that is the commonest cause of hearing loss, and it is why a screening taken during a cold can look worse than you are.",
-    profile: "Hearing sensitivity, temporarily",
-    kind: "Conductive, usually temporary",
-    focus: { x: 530, y: 370, w: 330, h: 240 },
-  },
-];
-
-const byId = (id: string) => PARTS.find((p) => p.id === id)!;
-const PATH = ["outer", "canal", "drum", "ossicles", "cochlea", "nerve"];
-const OFF_PATH = ["vestibular", "eustachian"];
-
 /* ------------------------------------------------------------------ *
- * cochlear geometry + physics
+ * cochlear physics
  * ------------------------------------------------------------------ */
 
 const GW_A = 165.4, GW_a = 0.06, GW_k = 0.88, COCHLEA_MM = 35;
@@ -147,67 +50,9 @@ const F_MIN = 125, F_MAX = 8000;
 
 const mmFromApex = (f: number) => Math.log10(f / GW_A + GW_k) / GW_a;
 /** 0 = base (high notes, damaged first), 1 = apex (low notes) */
-const placeFromFreq = (f: number) =>
-  Math.min(1, Math.max(0, 1 - mmFromApex(f) / COCHLEA_MM));
-
-const SP = { cx: 640, cy: 392, turns: 2.7, rOut: 68, rIn: 7, a0: Math.PI, squash: 0.9 };
-
-function spiralPoint(t: number) {
-  const a = SP.a0 + t * SP.turns * Math.PI * 2;
-  const r = SP.rOut + (SP.rIn - SP.rOut) * t;
-  return { x: SP.cx + Math.cos(a) * r, y: SP.cy + Math.sin(a) * r * SP.squash };
-}
-function spiralPath(t0: number, t1: number) {
-  const steps = Math.max(2, Math.round(Math.abs(t1 - t0) * 240));
-  let d = "";
-  for (let i = 0; i <= steps; i++) {
-    const p = spiralPoint(t0 + (t1 - t0) * (i / steps));
-    d += (i ? "L" : "M") + p.x.toFixed(1) + " " + p.y.toFixed(1);
-  }
-  return d;
-}
-
-const WP: { x: number; y: number }[] = [
-  { x: 10, y: 222 }, { x: 200, y: 296 }, { x: 344, y: 330 }, { x: 458, y: 346 },
-];
-const wp = (i: number) => WP[i] as { x: number; y: number };
-function bez(t: number) {
-  const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
-  return {
-    x: a * wp(0).x + b * wp(1).x + c * wp(2).x + d * wp(3).x,
-    y: a * wp(0).y + b * wp(1).y + c * wp(2).y + d * wp(3).y,
-  };
-}
-function bezAngle(t: number) {
-  const p = bez(Math.min(t + 0.01, 1)), q = bez(Math.max(t - 0.01, 0));
-  return (Math.atan2(p.y - q.y, p.x - q.x) * 180) / Math.PI;
-}
-
-const VB_FULL = { x: 0, y: 0, w: 900, h: 620 };
-const ASPECT = VB_FULL.w / VB_FULL.h;
-
-/** grow a focus rect to the canvas aspect ratio, with breathing room */
-function fitBox(r: { x: number; y: number; w: number; h: number }) {
-  const pad = 1.34;
-  let w = r.w * pad, h = r.h * pad;
-  if (w / h < ASPECT) w = h * ASPECT;
-  else h = w / ASPECT;
-  return { x: r.x + r.w / 2 - w / 2, y: r.y + r.h / 2 - h / 2, w, h };
-}
+const placeFromFreq = (f: number) => Math.min(1, Math.max(0, 1 - mmFromApex(f) / COCHLEA_MM));
 
 const MAX_WAVES = 13;
-
-/** render a template containing {mm} with the value emphasised */
-function withMm(template: string, value: string) {
-  const [before = "", after = ""] = template.split("{mm}");
-  return (
-    <>
-      {before}
-      <em>{value}</em>
-      {after}
-    </>
-  );
-}
 
 const BANDS: { upTo: number; key: string }[] = [
   { upTo: 200, key: "hero.band.1" },
@@ -220,8 +65,19 @@ const BANDS: { upTo: number; key: string }[] = [
   { upTo: 9000, key: "hero.band.8" },
 ];
 const bandKey = (f: number) => BANDS.find((b) => f < b.upTo)?.key ?? "hero.band.8";
-const formatFreq = (f: number) =>
-  f < 1000 ? `${Math.round(f)} Hz` : `${(f / 1000).toFixed(1)} kHz`;
+const formatFreq = (f: number) => (f < 1000 ? `${Math.round(f)} Hz` : `${(f / 1000).toFixed(1)} kHz`);
+
+/** render a template containing {mm} with the value emphasised */
+function withMm(template: string, value: string) {
+  const [before = "", after = ""] = template.split("{mm}");
+  return (
+    <>
+      {before}
+      <strong>{value}</strong>
+      {after}
+    </>
+  );
+}
 
 /* ------------------------------------------------------------------ *
  * component
@@ -229,802 +85,690 @@ const formatFreq = (f: number) =>
 
 export default function EarHero() {
   const { t } = useI18n();
-  const navigate = useNavigate();
-  const toPathway = useCallback(() => {
-    void navigate({ to: "/auditory-pathway" });
-  }, [navigate]);
-  const tp = useCallback(
-    (id: string, field: string) => t(`hero.part.${id}.${field}`),
-    [t],
-  );
-  const bandLabel = useCallback((f: number) => t(bandKey(f)), [t]);
-  const [pos, setPos] = useState(55);
-  const [hovered, setHovered] = useState<Part | null>(null);
-  const [selected, setSelected] = useState<Part | null>(null);
-  const [visited, setVisited] = useState<string[]>([]);
+  const tp = useCallback((id: PartId, field: string) => t(`hero.part.${id}.${field}`), [t]);
 
-  const shown = selected ?? hovered;
+  const [hovered, setHovered] = useState<PartId | null>(null);
+  const [selected, setSelected] = useState<PartId | null>(null);
+  const [visited, setVisited] = useState<PartId[]>([]);
+  const [ready, setReady] = useState(false);
+  const [glFailed, setGlFailed] = useState(false);
+  // narrow screens get the panel as a bottom sheet, portalled to <body> because
+  // the page wrapper's enter animation leaves a transform that traps position: fixed
+  const [asSheet, setAsSheet] = useState(false);
+
+  // experiments
+  const [pos, setPos] = useState(78);
+  const [source, setSource] = useState<EarState["source"]>("front");
+  const [bud, setBud] = useState(false);
+  const [pressure, setPressure] = useState(0);
+  const [stiff, setStiff] = useState(false);
+  const [noiseDamage, setNoiseDamage] = useState(false);
+  const [synapseLoss, setSynapseLoss] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   const freq = useMemo(() => F_MIN * Math.pow(F_MAX / F_MIN, pos / 100), [pos]);
-  const tPeak = useMemo(() => placeFromFreq(freq), [freq]);
+  const peak = useMemo(() => placeFromFreq(freq), [freq]);
   const mmFromBase = COCHLEA_MM - mmFromApex(freq);
   const inDangerBand = freq >= 4000 && freq <= 6000;
 
-  const bandPath = useMemo(() => spiralPath(placeFromFreq(6000), placeFromFreq(4000)), []);
-  const travelPath = useMemo(() => spiralPath(0, Math.min(tPeak + 0.04, 1)), [tPeak]);
-  const peak = spiralPoint(tPeak);
-
-  const svgRef = useRef<SVGSVGElement | null>(null);
-  const waveRefs = useRef<(SVGPathElement | null)[]>([]);
-  const drumRef = useRef<SVGGElement | null>(null);
-  const ossRef = useRef<SVGGElement | null>(null);
-  const travelRef = useRef<SVGPathElement | null>(null);
-  const peakRef = useRef<SVGCircleElement | null>(null);
-  const peakHaloRef = useRef<SVGCircleElement | null>(null);
-  const travelGlowRef = useRef<SVGPathElement | null>(null);
-  const nerveGlowRef = useRef<SVGPathElement | null>(null);
-  const nerveRef = useRef<SVGPathElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const hostRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-
-  const live = useRef({ count: 8, amp: 1, travelLen: 1, nerveLen: 1 });
-  const vb = useRef({ ...VB_FULL });
-  const vbTarget = useRef({ ...VB_FULL });
+  const sceneRef = useRef<EarScene | null>(null);
+  const tagRefs = useRef<Partial<Record<AnchorId, HTMLElement | null>>>({});
+  const plateRefs = useRef<Partial<Record<PartId, HTMLButtonElement | null>>>({});
+  const returnFocus = useRef<PartId | null>(null);
+  const audio = useRef<{ ctx: AudioContext; stop: () => void } | null>(null);
 
   const reduced =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const select = useCallback((p: Part) => {
-    setSelected(p);
+  const select = useCallback((id: PartId) => {
+    setSelected(id);
     setHovered(null);
-    setVisited((v) => (v.includes(p.id) ? v : [...v, p.id]));
+    setVisited((v) => (v.includes(id) ? v : [...v, id]));
+  }, []);
+  const close = useCallback(() => {
+    returnFocus.current = selected;
+    setSelected(null);
+  }, [selected]);
+
+  // the scene calls back into whatever the latest render knows
+  const live = useRef({ selected, select });
+  live.current = { selected, select };
+
+  /* build the scene once, on the client */
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    let cancelled = false;
+    let chase = -1;
+    import("./earScene")
+      .then(({ createEarScene }) =>
+        createEarScene(host, {
+          reduced,
+          onHover: (id) => {
+            if (!live.current.selected) setHovered(id);
+          },
+          onSelect: (id) => live.current.select(id),
+          onFrame: (anchors) => {
+            for (const id of Object.keys(anchors) as AnchorId[]) {
+              const el = tagRefs.current[id];
+              const a = anchors[id];
+              if (!el) continue;
+              el.style.transform = `translate3d(${a.x.toFixed(1)}px, ${a.y.toFixed(1)}px, 0)`;
+              el.style.visibility = a.visible ? "visible" : "hidden";
+            }
+            // the chase light walks the signal path, one plate at a time
+            if (reduced) return;
+            const next = Math.floor(performance.now() / 520) % PATH.length;
+            if (next !== chase) {
+              plateRefs.current[PATH[chase] as PartId]?.removeAttribute("data-chase");
+              plateRefs.current[PATH[next] as PartId]?.setAttribute("data-chase", "");
+              chase = next;
+            }
+          },
+        }),
+      )
+      .then((scene) => {
+        if (cancelled) {
+          scene.dispose();
+          return;
+        }
+        scene.setDangerBand(placeFromFreq(6000), placeFromFreq(4000));
+        sceneRef.current = scene;
+        setReady(true);
+      })
+      .catch(() => {
+        if (!cancelled) setGlFailed(true);
+      });
+    return () => {
+      cancelled = true;
+      sceneRef.current?.dispose();
+      sceneRef.current = null;
+    };
+  }, [reduced]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1000px)");
+    const sync = () => setAsSheet(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
-  /* zoom target follows the selection */
+  /* push experiment state into the scene */
   useEffect(() => {
-    vbTarget.current = selected ? fitBox(selected.focus) : { ...VB_FULL };
-    if (reduced) {
-      vb.current = { ...vbTarget.current };
-      svgRef.current?.setAttribute(
-        "viewBox",
-        `${vb.current.x} ${vb.current.y} ${vb.current.w} ${vb.current.h}`
-      );
-    }
-  }, [selected, reduced]);
+    const p = pos / 100;
+    sceneRef.current?.setState({
+      source,
+      bud,
+      pressure,
+      stiff,
+      peak,
+      danger: inDangerBand,
+      waves: Math.round(4 + p * (MAX_WAVES - 4)),
+      amp: 1.2 - 0.55 * p,
+      noiseDamage,
+      synapseLoss,
+    });
+  }, [ready, pos, source, bud, pressure, stiff, peak, inDangerBand, noiseDamage, synapseLoss]);
 
-  /* move focus into the panel when it opens, and close on Escape */
   useEffect(() => {
-    if (!selected) return;
-    panelRef.current?.focus();
+    sceneRef.current?.setShown(hovered, selected);
+  }, [ready, hovered, selected]);
+
+  /* focus into the panel when it opens, back to its plate when it closes; Escape closes */
+  useEffect(() => {
+    if (!selected) {
+      const back = returnFocus.current;
+      if (back) plateRefs.current[back]?.focus({ preventScroll: true });
+      returnFocus.current = null;
+      return;
+    }
+    panelRef.current?.focus({ preventScroll: true });
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelected(null);
+      if (e.key === "Escape") close();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [selected]);
+  }, [selected, close]);
 
-  /* slider-driven values the animation reads without re-rendering */
-  useEffect(() => {
-    const p = pos / 100;
-    live.current.count = Math.round(4 + p * (MAX_WAVES - 4));
-    live.current.amp = 1.2 - 0.55 * p;
-  }, [pos]);
-
-  /* dash patterns depend on measured path lengths */
-  useEffect(() => {
-    if (travelRef.current) {
-      const len = travelRef.current.getTotalLength();
-      live.current.travelLen = len;
-      travelRef.current.style.strokeDasharray = `${len * 0.3} ${len * 1.3}`;
-      if (travelGlowRef.current)
-        travelGlowRef.current.style.strokeDasharray = `${len * 0.3} ${len * 1.3}`;
+  /* a quiet two-second sine at the chosen pitch */
+  const playNote = useCallback(() => {
+    if (audio.current) {
+      audio.current.stop();
+      return;
     }
-    if (nerveRef.current) {
-      const len = nerveRef.current.getTotalLength();
-      live.current.nerveLen = len;
-      nerveRef.current.style.strokeDasharray = `${len * 0.22} ${len}`;
-      if (nerveGlowRef.current)
-        nerveGlowRef.current.style.strokeDasharray = `${len * 0.22} ${len}`;
+    const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = freq;
+    const now = ctx.currentTime;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.06, now + 0.08);
+    gain.gain.setValueAtTime(0.06, now + 1.8);
+    gain.gain.linearRampToValueAtTime(0, now + 2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 2.05);
+    const stop = () => {
+      try { osc.stop(); } catch { /* already stopped */ }
+      void ctx.close();
+      audio.current = null;
+      setPlaying(false);
+    };
+    osc.onended = stop;
+    audio.current = { ctx, stop };
+    setPlaying(true);
+  }, [freq]);
+  useEffect(() => () => audio.current?.stop(), []);
+
+  const shown = selected ?? hovered;
+
+  /* ---------------- experiments, one per part ---------------- */
+
+  const experiment = (id: PartId) => {
+    switch (id) {
+      case "outer":
+        return (
+          <>
+            <p className="am-x-label" id="am-x-outer">{t("hero.x.outer.label")}</p>
+            <div className="am-seg" role="radiogroup" aria-labelledby="am-x-outer">
+              {(["front", "above", "behind"] as const).map((s) => (
+                <button key={s} type="button" role="radio" aria-checked={source === s} className="am-key" onClick={() => setSource(s)}>
+                  {t(`hero.x.outer.${s}`)}
+                </button>
+              ))}
+            </div>
+            <p className="am-read" aria-live="polite">{t(`hero.x.outer.read.${source}`)}</p>
+          </>
+        );
+      case "canal":
+        return (
+          <>
+            <button type="button" className="am-key" aria-pressed={bud} onClick={() => setBud((b) => !b)}>
+              {t(bud ? "hero.x.canal.off" : "hero.x.canal.on")}
+            </button>
+            <p className="am-read" aria-live="polite">{t(bud ? "hero.x.canal.read.sealed" : "hero.x.canal.read.open")}</p>
+          </>
+        );
+      case "drum":
+        return (
+          <>
+            <label className="am-x-label" htmlFor="am-pressure">{t("hero.x.drum.label")}</label>
+            <input
+              id="am-pressure"
+              type="range"
+              min={-100}
+              max={100}
+              step={1}
+              value={Math.round(pressure * 100)}
+              onChange={(e) => setPressure(Number(e.target.value) / 100)}
+            />
+            <p className="am-read" aria-live="polite">
+              {t(Math.abs(pressure) < 0.15 ? "hero.x.drum.read.equal" : "hero.x.drum.read.off")}
+            </p>
+          </>
+        );
+      case "ossicles":
+        return (
+          <>
+            <div className="am-seg">
+              <button type="button" className="am-key" aria-pressed={stiff} onClick={() => setStiff((s) => !s)}>
+                {t(stiff ? "hero.x.oss.off" : "hero.x.oss.on")}
+              </button>
+              <button type="button" className="am-key" onClick={() => sceneRef.current?.pulse("strike")}>
+                {t("hero.x.oss.tap")}
+              </button>
+            </div>
+            <p className="am-read" aria-live="polite">{t(stiff ? "hero.x.oss.read.stiff" : "hero.x.oss.read.free")}</p>
+          </>
+        );
+      case "cochlea":
+        return (
+          <>
+            <label className="am-x-label" htmlFor="am-freq">{t("hero.meter.label")}</label>
+            <p className="am-readout">
+              <span className="am-hz">{formatFreq(freq)}</span>
+              <span className="am-band">{t(bandKey(freq))}</span>
+            </p>
+            <input
+              id="am-freq"
+              type="range"
+              min={0}
+              max={100}
+              step={0.5}
+              value={pos}
+              onChange={(e) => setPos(Number(e.target.value))}
+              aria-describedby="am-place"
+              aria-valuetext={`${formatFreq(freq)}, ${t(bandKey(freq))}`}
+              className={inDangerBand ? "am-hot" : undefined}
+            />
+            <p id="am-place" className="am-read">
+              {withMm(t(inDangerBand ? "hero.place.danger" : "hero.place.normal"), `${mmFromBase.toFixed(1)} mm`)}
+            </p>
+            <div className="am-seg">
+              <button type="button" className="am-key" aria-pressed={playing} onClick={playNote}>
+                {t(playing ? "hero.x.cochlea.stop" : "hero.x.cochlea.play")}
+              </button>
+              <button type="button" className="am-key am-key-hazard" disabled={noiseDamage} onClick={() => setNoiseDamage(true)}>
+                {t("hero.x.cochlea.noise")}
+              </button>
+            </div>
+            <p className="am-note">{t("hero.x.cochlea.volume")}</p>
+            {noiseDamage && <p className="am-scar" role="status">{t("hero.permanent")}</p>}
+          </>
+        );
+      case "nerve":
+        return (
+          <>
+            <button type="button" className="am-key am-key-hazard" disabled={synapseLoss} onClick={() => setSynapseLoss(true)}>
+              {t("hero.x.nerve.on")}
+            </button>
+            <p className="am-read" aria-live="polite">{t(synapseLoss ? "hero.x.nerve.read.after" : "hero.x.nerve.read.before")}</p>
+            {synapseLoss && <p className="am-scar" role="status">{t("hero.permanent")}</p>}
+          </>
+        );
+      case "vestibular":
+        return (
+          <>
+            <button type="button" className="am-key" onClick={() => sceneRef.current?.pulse("turn")}>
+              {t("hero.x.vest.turn")}
+            </button>
+            <p className="am-read">{t("hero.x.vest.read")}</p>
+          </>
+        );
+      case "eustachian":
+        return (
+          <>
+            <button
+              type="button"
+              className="am-key"
+              onClick={() => {
+                sceneRef.current?.pulse("swallow");
+                setPressure(0);
+              }}
+            >
+              {t("hero.x.eus.swallow")}
+            </button>
+            <p className="am-read">{t("hero.x.eus.read")}</p>
+          </>
+        );
     }
-  }, [travelPath]);
+  };
 
-  /* one animation loop drives the waves, the chain, and the zoom */
-  useEffect(() => {
-    let raf = 0;
-    const start = performance.now();
-
-    const paint = (elapsed: number) => {
-      const { count, amp, travelLen, nerveLen } = live.current;
-      const speed = 0.34;
-      const cycle = (elapsed * speed) % 1;
-
-      for (let i = 0; i < MAX_WAVES; i++) {
-        const el = waveRefs.current[i];
-        if (!el) continue;
-        if (i >= count) { el.setAttribute("opacity", "0"); continue; }
-        const t = (cycle + i / count) % 1;
-        const pt = bez(t);
-        const sx = 1 - 0.62 * t;
-        const sy = (1 - 0.66 * t) * amp;
-        el.setAttribute(
-          "transform",
-          `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)}) rotate(${bezAngle(t).toFixed(1)}) scale(${sx.toFixed(3)} ${sy.toFixed(3)})`
-        );
-        el.setAttribute("opacity", (Math.min(t * 4, 1) * (1 - t * 0.5) * 0.8).toFixed(3));
-        el.setAttribute("stroke-width", (1.6 + amp * 1.5).toFixed(2));
-      }
-
-      const arrival = (elapsed * speed * count) % 1;
-      const thump = (delay: number) => Math.exp(-(((arrival - delay + 1) % 1) * 5.5));
-
-      if (drumRef.current)
-        drumRef.current.style.transform = `scaleX(${(1 + 0.2 * amp * thump(0)).toFixed(3)})`;
-      if (ossRef.current)
-        ossRef.current.style.opacity = (0.45 + 0.55 * thump(0.07)).toFixed(3);
-
-      if (travelRef.current) {
-        const seg = travelLen * 0.3;
-        const prog = (arrival + 0.86) % 1;
-        const off = (seg - prog * (travelLen + seg)).toFixed(1);
-        const op = 0.85 * Math.min(prog * 5, 1);
-        travelRef.current.style.strokeDashoffset = off;
-        travelRef.current.style.opacity = op.toFixed(3);
-        if (travelGlowRef.current) {
-          travelGlowRef.current.style.strokeDashoffset = off;
-          travelGlowRef.current.style.opacity = (op * 0.3).toFixed(3);
-        }
-      }
-      if (peakRef.current) {
-        const hit = thump(0.3);
-        peakRef.current.setAttribute("r", (5 + 9 * hit).toFixed(2));
-        peakRef.current.setAttribute("opacity", (0.25 + 0.7 * hit).toFixed(3));
-        if (peakHaloRef.current) {
-          peakHaloRef.current.style.transformOrigin = `${peak.x}px ${peak.y}px`;
-          peakHaloRef.current.style.transform = `scale(${(0.6 + 0.75 * hit).toFixed(3)})`;
-          peakHaloRef.current.setAttribute("opacity", (0.2 + 0.75 * hit).toFixed(3));
-        }
-      }
-      if (nerveRef.current) {
-        const prog = (arrival + 0.55) % 1;
-        const noff = (nerveLen - prog * nerveLen).toFixed(1);
-        const nop = 0.1 + 0.7 * thump(0.45);
-        nerveRef.current.style.strokeDashoffset = noff;
-        nerveRef.current.style.opacity = nop.toFixed(3);
-        if (nerveGlowRef.current) {
-          nerveGlowRef.current.style.strokeDashoffset = noff;
-          nerveGlowRef.current.style.opacity = (nop * 0.28).toFixed(3);
-        }
-      }
-
-      // ease the viewBox toward whatever is selected
-      const c = vb.current, tgt = vbTarget.current;
-      if (Math.abs(c.w - tgt.w) > 0.4 || Math.abs(c.x - tgt.x) > 0.4 || Math.abs(c.y - tgt.y) > 0.4) {
-        const k = 0.11;
-        c.x += (tgt.x - c.x) * k;
-        c.y += (tgt.y - c.y) * k;
-        c.w += (tgt.w - c.w) * k;
-        c.h += (tgt.h - c.h) * k;
-        svgRef.current?.setAttribute(
-          "viewBox",
-          `${c.x.toFixed(1)} ${c.y.toFixed(1)} ${c.w.toFixed(1)} ${c.h.toFixed(1)}`
-        );
-      }
-    };
-
-    if (reduced) { paint(0.4); return; }
-
-    /* an accumulated clock, so pausing never lurches the animation forward */
-    let last = start;
-    let clock = 0;
-    let onScreen = true;
-
-    const loop = (now: number) => {
-      clock += Math.min(now - last, 50);
-      last = now;
-      paint(clock / 1000);
-      raf = requestAnimationFrame(loop);
-    };
-    const play = () => {
-      if (raf || !onScreen || document.hidden) return;
-      last = performance.now();
-      raf = requestAnimationFrame(loop);
-    };
-    const pause = () => {
-      cancelAnimationFrame(raf);
-      raf = 0;
-    };
-
-    const onVis = () => {
-      if (document.hidden) pause();
-      else play();
-    };
-    document.addEventListener("visibilitychange", onVis);
-
-    const host = svgRef.current;
-    const io = host
-      ? new IntersectionObserver(
-          (entries) => {
-            onScreen = !!entries[0]?.isIntersecting;
-            if (onScreen) play();
-            else pause();
-          },
-          { threshold: 0 },
-        )
-      : null;
-    if (host && io) io.observe(host);
-
-    play();
-    return () => {
-      document.removeEventListener("visibilitychange", onVis);
-      io?.disconnect();
-      cancelAnimationFrame(raf);
-    };
-  }, [reduced, peak.x, peak.y]);
-
-  const parallax = useCallback(
-    (e: React.PointerEvent<HTMLElement>) => {
-      if (reduced || e.pointerType !== "mouse" || selected) return;
-      const el = e.currentTarget;
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--am-px", (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
-      el.style.setProperty("--am-py", (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
-    },
-    [reduced, selected]
+  const plate = (id: PartId) => (
+    <button
+      key={id}
+      ref={(el) => {
+        plateRefs.current[id] = el;
+      }}
+      type="button"
+      className="am-plate"
+      aria-pressed={selected === id}
+      data-seen={visited.includes(id) ? "" : undefined}
+      data-hot={shown === id ? "" : undefined}
+      onClick={() => (selected === id ? close() : select(id))}
+      onPointerEnter={(e) => e.pointerType === "mouse" && !selected && setHovered(id)}
+      onPointerLeave={() => !selected && setHovered(null)}
+    >
+      {t(LABEL[id])}
+    </button>
   );
 
-  const bind = (id: string) => {
-    const p = byId(id);
-    const on = shown?.id === id;
-    return {
-      tabIndex: 0,
-      role: "button" as const,
-      "aria-label": `${tp(p.id, "title")}. ${t("hero.peek.more")}`,
-      "aria-expanded": selected?.id === id,
-      className:
-        "am-part" + (on ? " am-on" : "") + (visited.includes(id) ? " am-seen" : ""),
-      onPointerEnter: () => !selected && setHovered(p),
-      onPointerLeave: () => setHovered(null),
-      onFocus: () => !selected && setHovered(p),
-      onBlur: () => setHovered(null),
-      onClick: () => select(p),
-      onKeyDown: (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(p); }
-      },
-    };
-  };
-
-  const chainBtn = (id: string) => {
-    const p = byId(id);
-    return (
-      <button
+  const panel = (id: PartId) => (
+      <div
+        className="am-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="am-panel-title"
+        tabIndex={-1}
+        ref={panelRef}
         key={id}
-        type="button"
-        className={
-          "am-step" +
-          (selected?.id === id ? " am-step-now" : "") +
-          (visited.includes(id) ? " am-step-seen" : "")
-        }
-        onClick={() => select(p)}
       >
-        {tp(p.id, "short")}
-      </button>
-    );
-  };
+        <div className="am-panel-head">
+          <h2 id="am-panel-title">{tp(id, "title")}</h2>
+          <button type="button" className="am-close" onClick={close} aria-label={t("hero.close.aria")}>
+            <X aria-hidden className="am-btn-icon" />
+            {t("hero.close")}
+          </button>
+        </div>
+        <p className="am-kind">{tp(id, "kind")}</p>
+        <p className="am-what">{tp(id, "what")}</p>
+
+        <div className="am-try">
+          <h3>{t("hero.panel.try")}</h3>
+          {experiment(id)}
+        </div>
+
+        <h3>{t("hero.panel.wrong")}</h3>
+        <p>{tp(id, "wrong")}</p>
+
+        <h3>{t("hero.panel.profile")}</h3>
+        <p className="am-prof">{tp(id, "profile")}</p>
+
+        {id === "nerve" && (
+          <p className="am-onward">
+            {t("path.hero.gate.sub")} <Link to="/auditory-pathway">{t("path.hero.cta")}</Link>
+          </p>
+        )}
+        {visited.length === PARTS.length && (
+          <p className="am-onward">
+            {t("hero.done")} <Link to="/test">{t("hero.done.cta")}</Link>
+          </p>
+        )}
+      </div>
+  );
 
   return (
-    <section className="am-hero" onPointerMove={parallax}>
+    <section className="am-hero">
       <style>{CSS}</style>
 
       <div className="am-copy">
-        <p className="am-mark">
-          <b>Audiomaxxer</b> <span>{t("hero.tagline")}</span>
-        </p>
-
         <h1>{t("hero.title")}</h1>
-
+        <p className="am-sub">{t("hero.sub")}</p>
         <p className="am-lede">{t("hero.lede")}</p>
 
-        <div className="am-meter">
-          <label htmlFor="am-freq">{t("hero.meter.label")}</label>
-          <div className="am-readout">
-            <span className="am-hz">{formatFreq(freq)}</span>
-            <span className="am-band">{bandLabel(freq)}</span>
-          </div>
-          <input
-            id="am-freq"
-            type="range"
-            min={0}
-            max={100}
-            step={0.5}
-            value={pos}
-            onChange={(e) => setPos(Number(e.target.value))}
-            aria-describedby="am-place"
-            aria-valuetext={`${formatFreq(freq)}, ${bandLabel(freq)}`}
-          />
-          <p id="am-place" className={"am-place" + (inDangerBand ? " am-warn" : "")}>
-            {withMm(
-              t(inDangerBand ? "hero.place.danger" : "hero.place.normal"),
-              `${mmFromBase.toFixed(1)} mm`,
-            )}
-          </p>
-        </div>
-
         <div className="am-actions">
-          <a className="am-btn am-btn-solid" href="/test">{t("hero.cta.test")}</a>
-          <a className="am-btn am-btn-line" href="/sample-profile">{t("hero.cta.profile")}</a>
+          <Link className="am-btn am-btn-go" to="/test">
+            {t("hero.cta.test")}
+            <ArrowRight aria-hidden className="am-btn-icon" />
+          </Link>
+          <Link className="am-btn am-btn-quiet" to="/sample-profile">
+            {t("hero.cta.profile")}
+          </Link>
         </div>
         <p className="am-fine">{t("hero.fine")}</p>
 
-        <div className="am-detail">
-          <p className={"am-hint" + (shown ? " am-off" : "")}>
-            {t("hero.hint")}
-            {visited.length > 0 && (
-              <span className="am-count">
-                {" "}
-                {t("hero.count")
-                  .replace("{n}", String(visited.length))
-                  .replace("{total}", String(PARTS.length))}
-              </span>
-            )}
-          </p>
-          <div className={"am-peek" + (hovered && !selected ? " am-on" : "")}>
-            <h2>{hovered ? tp(hovered.id, "title") : ""}</h2>
-            <p>{hovered ? tp(hovered.id, "what") : ""}</p>
-            <span className="am-more">{t("hero.peek.more")}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ---------------- detail panel ---------------- */}
-      {selected && (
-        <div
-          className="am-panel"
-          role="dialog"
-          aria-modal="false"
-          aria-labelledby="am-panel-title"
-          tabIndex={-1}
-          ref={panelRef}
-        >
-          <button
-            type="button"
-            className="am-close"
-            onClick={() => setSelected(null)}
-            aria-label={t("hero.close.aria")}
-          >
-            {t("hero.close")}
-          </button>
-
-          <p className="am-kind">{tp(selected.id, "kind")}</p>
-          <h2 id="am-panel-title">{tp(selected.id, "title")}</h2>
-          <p className="am-what">{tp(selected.id, "what")}</p>
-
-          <h3>{t("hero.panel.wrong")}</h3>
-          <p className="am-wrong">{tp(selected.id, "wrong")}</p>
-
-          <h3>{t("hero.panel.profile")}</h3>
-          <p className="am-prof">{tp(selected.id, "profile")}</p>
-
-          <div className="am-chain">
-            <h3>{t("hero.panel.path")}</h3>
-            <div className="am-steps">
-              {PATH.map(chainBtn)}
-              <button type="button" className="am-step am-step-gate" onClick={toPathway}>
-                {t("path.hero.step")}
-              </button>
+        <div className="am-detail" aria-live="polite">
+          {hovered && !selected ? (
+            <div className="am-peek" key={hovered}>
+              <p className="am-peek-title">{tp(hovered, "title")}</p>
+              <p>{tp(hovered, "what")}</p>
             </div>
-            <h3 className="am-chain-sub">{t("hero.panel.alongside")}</h3>
-            <div className="am-steps">{OFF_PATH.map(chainBtn)}</div>
-          </div>
-
-          {selected.id === "nerve" && (
-            <p className="am-onward">
-              {t("path.hero.gate.sub")}
-              <Link to="/auditory-pathway">{t("path.hero.cta")}</Link>
-            </p>
-          )}
-
-          {visited.length === PARTS.length && (
-            <p className="am-done">
-              {t("hero.done")}
-              <a href="/test">{t("hero.done.cta")}</a>
+          ) : (
+            <p className="am-hint">
+              {t("hero.hint")}
+              {visited.length > 0 && (
+                <span className="am-count">
+                  {" "}
+                  {t("hero.count").replace("{n}", String(visited.length)).replace("{total}", String(PARTS.length))}
+                </span>
+              )}
             </p>
           )}
         </div>
-      )}
 
-      <div className="am-stage">
-        <svg
-          ref={svgRef}
-          viewBox="0 0 900 620"
-          className={shown ? "am-dim" : undefined}
-          role="img"
-          aria-label={t("hero.svg.alt")}
-        >
-          <defs>
-            <radialGradient id="amHead" cx="55%" cy="45%" r="62%">
-              <stop offset="0%" stopColor="#16242F" />
-              <stop offset="100%" stopColor="#070E15" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id="amCanal" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#7FB6E8" stopOpacity=".05" />
-              <stop offset="100%" stopColor="#7FB6E8" stopOpacity=".17" />
-            </linearGradient>
-            <linearGradient id="amDrum" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#F0997E" />
-              <stop offset="100%" stopColor="#B4503A" />
-            </linearGradient>
-            <filter id="amSoft" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="7" />
-            </filter>
-            <radialGradient id="amPeakGlow">
-              <stop offset="0%" stopColor="#EFFFF8" stopOpacity=".85" />
-              <stop offset="45%" stopColor="#9FE8CF" stopOpacity=".35" />
-              <stop offset="100%" stopColor="#4FD1A5" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          <g id="am-far">
-            <ellipse cx="520" cy="300" rx="360" ry="290" fill="url(#amHead)" />
-            <path
-              d="M300 40 C520 20 760 120 830 300 C880 430 840 560 760 620 L900 620 L900 0 Z"
-              fill="#0B1620" opacity=".55" filter="url(#amSoft)"
-            />
-          </g>
-
-          <g id="am-mid">
-            <g {...bind("outer")}>
-              <g className="am-art">
-                <path d="M236 116 C166 92 100 130 88 208 C74 296 94 378 128 448 C150 494 182 524 220 528 C252 531 270 510 264 482" fill="none" stroke="#9FB3C0" strokeWidth="9" strokeLinecap="round" opacity=".55" />
-                <path d="M230 168 C188 178 168 224 176 272 C184 320 208 352 224 392" fill="none" stroke="#9FB3C0" strokeWidth="6" strokeLinecap="round" opacity=".38" />
-                <path d="M240 246 C212 258 204 300 222 332 C236 356 258 360 272 344" fill="none" stroke="#9FB3C0" strokeWidth="6" strokeLinecap="round" opacity=".38" />
-                <path d="M188 452 C176 484 192 516 220 522" fill="none" stroke="#9FB3C0" strokeWidth="8" strokeLinecap="round" opacity=".3" />
-              </g>
-              <circle className="am-node" cx="140" cy="180" r="3.2" />
-              <polyline className="am-lead" points="140,180 106,120 100,96" />
-              <text className="am-lbl" x="66" y="82">{t("hero.lbl.outer")}</text>
-              <path className="am-ring" d="M78 96 h204 v450 h-204 Z" />
-              <path className="am-hit" d="M78 96 h204 v450 h-204 Z" />
-            </g>
-
-            <g {...bind("canal")}>
-              <g className="am-art">
-                <path d="M262 294 C322 300 400 312 462 318 L466 374 C404 368 330 358 268 352 Z" fill="url(#amCanal)" />
-                <path d="M262 294 C322 300 400 312 462 318" fill="none" stroke="#9FB3C0" strokeWidth="3" opacity=".4" />
-                <path d="M268 352 C330 358 404 368 466 374" fill="none" stroke="#9FB3C0" strokeWidth="3" opacity=".4" />
-              </g>
-              <circle className="am-node" cx="356" cy="310" r="3.2" />
-              <polyline className="am-lead" points="356,310 352,268 348,254" />
-              <text className="am-lbl" x="348" y="242" textAnchor="middle">{t("hero.lbl.canal")}</text>
-              <path className="am-ring" d="M258 288 h214 v92 h-214 Z" />
-              <path className="am-hit" d="M258 288 h214 v92 h-214 Z" />
-            </g>
-
-            <g>
-              {Array.from({ length: MAX_WAVES }).map((_, i) => (
-                <path
-                  key={i}
-                  ref={(el) => { waveRefs.current[i] = el; }}
-                  className="am-wave"
-                  d="M0 -58 Q 26 0 0 58"
-                  opacity="0"
-                />
-              ))}
-            </g>
-          </g>
-
-          <g id="am-near">
-            <path d="M470 286 C540 272 606 292 612 340 C618 392 566 412 508 404 C472 398 462 340 470 286 Z" fill="#0F1D26" opacity=".85" />
-
-            <g {...bind("drum")}>
-              <g className="am-art">
-                <g ref={drumRef} style={{ transformBox: "fill-box", transformOrigin: "center" }}>
-                  <ellipse cx="466" cy="346" rx="9" ry="31" fill="url(#amDrum)" transform="rotate(-9 466 346)" />
-                  <ellipse cx="466" cy="346" rx="9" ry="31" fill="none" stroke="#F3B49E" strokeWidth="1.2" opacity=".7" transform="rotate(-9 466 346)" />
-                </g>
-              </g>
-              <circle className="am-node" cx="462" cy="374" r="3.2" />
-              <polyline className="am-lead" points="462,374 436,442 430,458" />
-              <text className="am-lbl" x="424" y="478" textAnchor="middle">{t("hero.lbl.drum")}</text>
-              <ellipse className="am-ring" cx="466" cy="346" rx="20" ry="40" />
-              <ellipse className="am-hit" cx="466" cy="346" rx="22" ry="42" />
-            </g>
-
-            <g {...bind("ossicles")}>
-              <g className="am-art" ref={ossRef}>
-                <path d="M466 344 L484 320 L499 302" fill="none" stroke="#E8B44C" strokeWidth="6" strokeLinecap="round" />
-                <circle cx="503" cy="297" r="9" fill="#E8B44C" />
-                <path d="M510 300 L530 310 L536 328" fill="none" stroke="#E8B44C" strokeWidth="6" strokeLinecap="round" />
-                <circle cx="520" cy="304" r="7.5" fill="#E8B44C" />
-                <path d="M538 330 L556 338 M538 340 L556 350 M556 336 L556 352" fill="none" stroke="#E8B44C" strokeWidth="4" strokeLinecap="round" />
-                <path d="M560 334 L562 356" stroke="#E8B44C" strokeWidth="5" strokeLinecap="round" />
-              </g>
-              <circle className="am-node" cx="512" cy="292" r="3.2" />
-              <polyline className="am-lead" points="512,292 516,252 518,238" />
-              <text className="am-lbl" x="518" y="226" textAnchor="middle">{t("hero.lbl.bones")}</text>
-              <path className="am-ring" d="M456 282 h122 v86 h-122 Z" />
-              <path className="am-hit" d="M456 282 h122 v86 h-122 Z" />
-            </g>
-
-            <g {...bind("vestibular")}>
-              <g className="am-art">
-                <ellipse cx="612" cy="250" rx="30" ry="47" transform="rotate(-26 612 250)" fill="none" stroke="#4FD1A5" strokeWidth="7" opacity=".9" />
-                <ellipse cx="664" cy="262" rx="45" ry="26" transform="rotate(14 664 262)" fill="none" stroke="#4FD1A5" strokeWidth="7" opacity=".9" />
-                <ellipse cx="628" cy="296" rx="26" ry="38" transform="rotate(66 628 296)" fill="none" stroke="#4FD1A5" strokeWidth="7" opacity=".75" />
-                <path d="M604 312 C596 330 596 344 604 356" fill="none" stroke="#4FD1A5" strokeWidth="9" strokeLinecap="round" opacity=".8" />
-              </g>
-              <circle className="am-node" cx="676" cy="230" r="3.2" />
-              <polyline className="am-lead" points="676,230 706,196 718,188" />
-              <text className="am-lbl" x="726" y="182">{t("hero.lbl.balance")}</text>
-              <path className="am-ring" d="M572 196 h146 v126 h-146 Z" />
-              <path className="am-hit" d="M572 196 h146 v126 h-146 Z" />
-            </g>
-
-            <g {...bind("cochlea")}>
-              <g className="am-art">
-                <path d={spiralPath(0, 0.46)} fill="none" stroke="#4FD1A5" strokeWidth="13" strokeLinecap="round" opacity=".8" />
-                <path d={spiralPath(0.44, 0.76)} fill="none" stroke="#4FD1A5" strokeWidth="9" strokeLinecap="round" opacity=".8" />
-                <path d={spiralPath(0.74, 1)} fill="none" stroke="#4FD1A5" strokeWidth="5" strokeLinecap="round" opacity=".8" />
-                <path d={bandPath} className={"am-danger" + (inDangerBand ? " am-lit" : "")} fill="none" strokeWidth="15" strokeLinecap="butt" />
-                <path ref={travelGlowRef} d={travelPath} className="am-travel am-bloom" fill="none" strokeWidth="15" strokeLinecap="round" />
-                <path ref={travelRef} d={travelPath} className="am-travel" fill="none" strokeWidth="5" strokeLinecap="round" />
-                <circle ref={peakHaloRef} className="am-peak-halo" cx={peak.x} cy={peak.y} r="20" fill="url(#amPeakGlow)" />
-                <circle ref={peakRef} cx={peak.x} cy={peak.y} r="7" fill="#EFFFF8" />
-              </g>
-              <circle className="am-node" cx="672" cy="430" r="3.2" />
-              <polyline className="am-lead" points="672,430 706,470 716,478" />
-              <text className="am-lbl" x="724" y="484">{t("hero.lbl.cochlea")}</text>
-              <circle className="am-ring" cx="640" cy="392" r="78" />
-              <circle className="am-hit" cx="640" cy="392" r="78" />
-            </g>
-
-            <g className="am-annot" pointerEvents="none">
-              <polyline points="622,444 566,494 556,502" fill="none" />
-              <text x="548" y="508" textAnchor="end">4–6 kHz</text>
-              <text x="548" y="526" textAnchor="end" className="am-annot-sub">{t("hero.annot.first")}</text>
-            </g>
-
-            <g {...bind("nerve")}>
-              <g className="am-art">
-                <path d="M654 402 C724 400 776 394 884 366" fill="none" stroke="#E8B44C" strokeWidth="15" strokeLinecap="round" opacity=".55" />
-                <path d="M700 402 C760 412 810 420 880 414" fill="none" stroke="#E8B44C" strokeWidth="6" strokeLinecap="round" opacity=".3" />
-                <path ref={nerveGlowRef} d="M654 402 C724 400 776 394 884 366" className="am-bloom" fill="none" stroke="#FFE3A6" strokeWidth="17" strokeLinecap="round" />
-                <path ref={nerveRef} d="M654 402 C724 400 776 394 884 366" fill="none" stroke="#FFE3A6" strokeWidth="7" strokeLinecap="round" />
-              </g>
-              <circle className="am-node" cx="796" cy="384" r="3.2" />
-              <polyline className="am-lead" points="796,384 792,340 790,328" />
-              <text className="am-lbl" x="790" y="316" textAnchor="middle">{t("hero.lbl.nerve")}</text>
-              <path className="am-ring" d="M650 356 h244 v72 h-244 Z" />
-              <path className="am-hit" d="M650 356 h244 v72 h-244 Z" />
-            </g>
-
-            <g
-              className="am-gate"
-              role="button"
-              tabIndex={0}
-              aria-label={t("path.hero.gate")}
-              onClick={toPathway}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  toPathway();
-                }
-              }}
-            >
-              <circle className="am-gate-halo" cx="872" cy="368" r="27" />
-              <circle className="am-gate-ring" cx="872" cy="368" r="15" />
-              <path className="am-gate-arrow" d="M864 368 h15 M874 362 l6 6 l-6 6" />
-              <text className="am-gate-lbl" x="896" y="414" textAnchor="end">
-                {t("path.hero.gate")}
-              </text>
-              <text className="am-gate-sub" x="896" y="433" textAnchor="end">
-                {t("path.hero.gate.sub")}
-              </text>
-              <circle className="am-hit" cx="872" cy="368" r="34" />
-            </g>
-
-            <g {...bind("eustachian")}>
-              <g className="am-art">
-                <path d="M552 388 C628 462 690 512 828 592" fill="none" stroke="#8FA0AC" strokeWidth="13" strokeLinecap="round" opacity=".38" />
-                <path d="M556 394 C630 466 692 516 824 596" fill="none" stroke="#0C1620" strokeWidth="4" strokeLinecap="round" opacity=".6" />
-              </g>
-              <circle className="am-node" cx="694" cy="516" r="3.2" />
-              <polyline className="am-lead" points="694,516 700,566 702,578" />
-              <text className="am-lbl" x="710" y="586">{t("hero.lbl.eustachian")}</text>
-              <path className="am-ring" d="M544 380 L836 584 L822 604 L534 400 Z" />
-              <path className="am-hit" d="M540 374 L840 580 L820 610 L526 404 Z" />
-            </g>
-          </g>
-        </svg>
+        {selected && (asSheet ? createPortal(<div className="am-sheet-root">{panel(selected)}</div>, document.body) : panel(selected))}
       </div>
+
+      <div className="am-stage" ref={stageRef} data-dim={shown ? "" : undefined}>
+        <div className="am-sign" aria-hidden />
+        <div className="am-gl" ref={hostRef} role="img" aria-label={t("hero.svg.alt")} />
+        {!ready && !glFailed && <p className="am-status">{t("hero.loading")}</p>}
+        {glFailed && <p className="am-status">{t("hero.nogl")}</p>}
+        {ready && (
+          <div className="am-tags" aria-hidden>
+            {PARTS.map((id) => (
+              <button
+                key={id}
+                ref={(el) => {
+                  tagRefs.current[id] = el;
+                }}
+                type="button"
+                tabIndex={-1}
+                className="am-tag"
+                data-hot={shown === id ? "" : undefined}
+                data-seen={visited.includes(id) ? "" : undefined}
+                onClick={() => select(id)}
+                onPointerEnter={(e) => e.pointerType === "mouse" && !selected && setHovered(id)}
+                onPointerLeave={() => !selected && setHovered(null)}
+              >
+                {t(LABEL[id])}
+              </button>
+            ))}
+            <span
+              ref={(el) => {
+                tagRefs.current.danger = el;
+              }}
+              className="am-tag am-tag-hz"
+              data-hot={inDangerBand ? "" : undefined}
+            >
+              {formatFreq(freq)}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <nav className="am-path" aria-label={t("hero.panel.path")}>
+        <div className="am-path-run">{PATH.map(plate)}</div>
+        <div className="am-path-run am-path-side">
+          {OFF_PATH.map(plate)}
+          <Link className="am-plate am-plate-out" to="/auditory-pathway">
+            {t("path.hero.step")}
+            <ArrowRight aria-hidden className="am-btn-icon" />
+          </Link>
+        </div>
+      </nav>
     </section>
   );
 }
 
 const CSS = `
+.am-home{
+  --foreground:#f4f1ea; --muted-foreground:#dfe5ee; --signal:#f4f1ea;
+  --primary:#f6b800; --primary-foreground:#121212; --card:#103a72; --border:#2a5c9c;
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  background:#15488a;
+}
+.am-home header > div{max-width:none; padding-inline:clamp(20px,3vw,48px)}
+.am-home header .nav-link:hover{color:#ffffff}
+.am-home header .nav-link:focus-visible{outline:2px solid #f6b800; outline-offset:2px}
+
+.am-hero,.am-sheet-root{
+  --am-blue:#15488a; --am-blue-deep:#103a72; --am-blue-step:#1b569e;
+  --am-enamel:#f4f1ea; --am-yellow:#f6b800; --am-ink:#121212;
+  --am-ease:cubic-bezier(0.23,1,0.32,1);
+  --am-cond:"Barlow Condensed","Arial Narrow",sans-serif;
+  --am-text:"Barlow","Helvetica Neue",Arial,sans-serif;
+  font-family:var(--am-text);
+}
 .am-hero{
-  --am-ink:#060B12; --am-bone:#E8E3D6; --am-muted:#8FA0AC;
-  --am-jade:#4FD1A5; --am-gold:#E8B44C; --am-hot:#FF7A4A;
-  --am-px:0; --am-py:0;
-  position:relative; display:grid; grid-template-columns:minmax(320px,44%) 1fr;
-  align-items:center; overflow:hidden; min-height:100svh;
-  color:var(--am-bone); background:radial-gradient(120% 90% at 78% 42%,#101E28 0%,#08111A 45%,var(--am-ink) 78%);
+  position:relative; display:grid;
+  grid-template-columns:minmax(0,5.6fr) minmax(0,6.4fr);
+  grid-template-rows:1fr auto;
+  min-height:100svh; overflow:hidden;
+  padding:clamp(76px,9vh,104px) clamp(20px,3vw,48px) clamp(20px,3vh,32px);
+  column-gap:clamp(16px,2vw,40px);
+  background:var(--am-blue); color:var(--am-enamel);
+  font-family:var(--am-text);
 }
-.am-hero::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background-image:linear-gradient(to right,rgba(143,160,172,.055) 1px,transparent 1px),
-                   linear-gradient(to bottom,rgba(143,160,172,.055) 1px,transparent 1px);
-  background-size:78px 78px;
-  -webkit-mask-image:radial-gradient(80% 70% at 60% 45%,#000 20%,transparent 78%);
-  mask-image:radial-gradient(80% 70% at 60% 45%,#000 20%,transparent 78%);
-}
-.am-copy{position:relative; z-index:3; padding:clamp(28px,5vw,84px); max-width:38em}
-.am-stage{position:relative; z-index:2; min-width:0}
-.am-stage svg{width:100%; height:auto; display:block; overflow:visible}
+.am-hero ::selection{background:var(--am-yellow); color:var(--am-ink)}
 
-.am-mark{display:flex; gap:.6rem; align-items:baseline; flex-wrap:wrap;
-  font-size:.92rem; color:var(--am-muted); margin:0 0 clamp(24px,6vh,52px)}
-.am-mark b{color:var(--am-bone); font-weight:600}
+/* ---------- copy ---------- */
+.am-copy{position:relative; z-index:3; align-self:center; max-width:40rem; padding-block:clamp(8px,3vh,32px)}
 .am-hero h1{
-  font-family:var(--am-display, ui-serif, Georgia, "Times New Roman", serif);
-  font-weight:400; font-size:clamp(2.1rem,4.2vw,3.7rem); line-height:1.04;
-  letter-spacing:-.018em; margin:0 0 1.1rem; text-wrap:balance;
+  font-family:var(--am-cond); font-weight:700; font-size:clamp(2.6rem,4vw,4.4rem);
+  line-height:.94; letter-spacing:-.012em; margin:0 0 clamp(18px,2.6vh,28px); text-wrap:balance;
 }
-.am-lede{font-size:clamp(1rem,1.1vw,1.1rem); line-height:1.62; color:#B9C4CC; max-width:33em; margin:0 0 2rem}
+.am-sub{font-size:clamp(1.12rem,1.35vw,1.32rem); line-height:1.42; font-weight:500; margin:0 0 1.1rem; max-width:32em; text-wrap:pretty}
+.am-lede{font-size:1rem; line-height:1.6; margin:0; max-width:36em; text-wrap:pretty}
 
-.am-meter{border-top:1px solid rgba(143,160,172,.22); padding-top:1.3rem; max-width:31em}
-.am-meter label{display:block; font-size:.88rem; color:var(--am-muted); margin-bottom:.85rem}
-.am-readout{display:flex; align-items:baseline; gap:.75rem; flex-wrap:wrap; margin-bottom:.4rem}
-.am-hz{font-family:var(--am-display, ui-serif, Georgia, serif); font-size:2.9rem; line-height:1; font-variant-numeric:tabular-nums}
-.am-band{font-size:1rem; color:#B9C4CC}
-.am-place{font-size:.9rem; line-height:1.5; color:var(--am-muted); min-height:3em; max-width:28em; margin:.2rem 0 0}
-.am-place em{font-style:normal; color:var(--am-bone)}
-.am-place.am-warn{color:#FFB79B}
+.am-actions{display:flex; flex-wrap:wrap; gap:.6rem; margin-top:clamp(22px,3.4vh,34px)}
+.am-btn{
+  display:inline-flex; align-items:center; gap:.55rem;
+  font-family:var(--am-cond); font-weight:600; font-size:1.2rem; letter-spacing:.01em;
+  padding:.78rem 1.25rem .74rem; border-radius:0; text-decoration:none;
+  transition:transform 160ms var(--am-ease), background-color 160ms ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.am-btn:active{transform:scale(.97)}
+.am-btn:focus-visible,.am-plate:focus-visible,.am-key:focus-visible,.am-close:focus-visible{outline:3px solid var(--am-yellow); outline-offset:3px}
+.am-btn-go{background:var(--am-yellow); color:var(--am-ink)}
+.am-btn-quiet{background:var(--am-blue-deep); color:var(--am-enamel)}
+@media (hover:hover) and (pointer:fine){
+  .am-btn-go:hover{background:#ffc928}
+  .am-btn-quiet:hover{background:#0c2f5e}
+}
+.am-btn-icon{width:1.05em; height:1.05em; flex:none}
+.am-fine{font-size:.9rem; line-height:1.5; margin:.85rem 0 0; color:#dfe5ee}
 
-.am-hero input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:32px;
-  background:transparent; margin:.2rem 0 .5rem; cursor:grab}
-.am-hero input[type=range]:active{cursor:grabbing}
-.am-hero input[type=range]::-webkit-slider-runnable-track{height:3px; border-radius:2px;
-  background:linear-gradient(to right,var(--am-jade) 0%,var(--am-jade) 62%,var(--am-gold) 78%,var(--am-hot) 92%,var(--am-jade) 100%); opacity:.7}
-.am-hero input[type=range]::-moz-range-track{height:3px; border-radius:2px;
-  background:linear-gradient(to right,var(--am-jade) 0%,var(--am-jade) 62%,var(--am-gold) 78%,var(--am-hot) 92%,var(--am-jade) 100%); opacity:.7}
-.am-hero input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none;
-  width:18px; height:18px; border-radius:50%; background:var(--am-bone); border:0; margin-top:-7.5px;
-  box-shadow:0 0 0 6px rgba(232,227,214,.12)}
-.am-hero input[type=range]::-moz-range-thumb{width:18px; height:18px; border-radius:50%;
-  background:var(--am-bone); border:0; box-shadow:0 0 0 6px rgba(232,227,214,.12)}
-.am-hero input[type=range]:focus-visible{outline:none}
-.am-hero input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px var(--am-jade)}
-.am-hero input[type=range]:focus-visible::-moz-range-thumb{box-shadow:0 0 0 4px var(--am-jade)}
+.am-detail{margin-top:clamp(20px,3.4vh,36px); min-height:6.4em; max-width:34em}
+.am-hint{margin:0; font-size:.95rem; line-height:1.5; color:#dfe5ee}
+.am-count{color:var(--am-enamel); font-weight:600}
+.am-peek{background:var(--am-blue-deep); padding:.85rem 1rem; animation:am-rise 180ms var(--am-ease) both}
+.am-peek p{margin:0; font-size:.95rem; line-height:1.5}
+.am-peek .am-peek-title{font-family:var(--am-cond); font-weight:600; font-size:1.2rem; margin-bottom:.2rem}
+@keyframes am-rise{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
 
-.am-actions{display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.5rem}
-.am-btn{font:inherit; font-size:.95rem; font-weight:500; padding:.72rem 1.25rem; border-radius:2px;
-  border:1px solid transparent; text-decoration:none; transition:background .18s,border-color .18s}
-.am-btn-solid{background:var(--am-bone); color:#0A121A}
-.am-btn-solid:hover{background:#fff}
-.am-btn-line{border-color:rgba(143,160,172,.4); color:var(--am-bone)}
-.am-btn-line:hover{border-color:var(--am-bone)}
-.am-btn:focus-visible{outline:2px solid var(--am-jade); outline-offset:3px}
-.am-fine{font-size:.82rem; color:rgba(143,160,172,.8); margin:.9rem 0 0}
-
-/* hover preview */
-.am-detail{position:relative; margin-top:clamp(26px,4vh,44px); min-height:7em; max-width:30em}
-.am-peek{position:absolute; inset:0; border-left:1px solid var(--am-jade); padding:.15rem 0 .15rem 1rem;
-  opacity:0; transform:translateY(6px); transition:opacity .2s,transform .2s; pointer-events:none}
-.am-peek.am-on{opacity:1; transform:none}
-.am-peek h2{font-family:var(--am-display, ui-serif, Georgia, serif); font-weight:400; font-size:1.1rem; margin:0 0 .3rem}
-.am-peek p{margin:0 0 .45rem; font-size:.9rem; line-height:1.55; color:#AEBAC3}
-.am-more{font-size:.8rem; color:var(--am-jade)}
-.am-hint{position:absolute; inset:0; margin:0; font-size:.85rem; color:rgba(143,160,172,.72); transition:opacity .2s}
-.am-hint.am-off{opacity:0}
-.am-count{color:rgba(143,160,172,.5)}
-
-/* detail panel */
+/* ---------- panel: an enamel plate over the copy ---------- */
 .am-panel{
-  position:absolute; z-index:6; left:0; top:0; bottom:0; width:min(46ch,100%);
-  padding:clamp(28px,4vw,56px); overflow:auto;
-  background:linear-gradient(to right,rgba(6,11,18,.97) 70%,rgba(6,11,18,.86));
-  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
-  border-right:1px solid rgba(79,209,165,.25);
-  animation:am-in .24s ease both;
+  position:absolute; z-index:6; inset:0 0 0 0; overflow:auto; overscroll-behavior:contain;
+  background:var(--am-enamel); color:var(--am-ink);
+  padding:clamp(20px,2.4vw,34px);
+  box-shadow:0 18px 48px -12px rgba(5,20,45,.45);
+  animation:am-in 240ms var(--am-ease) both;
+  scrollbar-color:#9aa6b8 transparent;
 }
-@keyframes am-in{from{opacity:0; transform:translateX(-14px)} to{opacity:1; transform:none}}
+@keyframes am-in{from{opacity:0; transform:translateY(10px) scale(.985)} to{opacity:1; transform:none}}
 .am-panel:focus{outline:none}
-.am-close{position:sticky; top:0; z-index:8; float:right; margin:0 0 .5rem 1rem;
-  font:inherit; font-size:.82rem;
-  background:rgba(6,11,18,.92); border:1px solid rgba(143,160,172,.35); color:var(--am-muted);
-  padding:.45rem .9rem; border-radius:2px; cursor:pointer; -webkit-tap-highlight-color:transparent}
-.am-close:hover{color:var(--am-bone); border-color:var(--am-bone)}
-.am-close:focus-visible{outline:2px solid var(--am-jade); outline-offset:2px}
-.am-kind{margin:0 0 .5rem; font-size:.8rem; color:var(--am-gold)}
-.am-panel h2{font-family:var(--am-display, ui-serif, Georgia, serif); font-weight:400;
-  font-size:1.8rem; line-height:1.1; margin:0 0 .7rem}
-.am-panel h3{font-size:.82rem; font-weight:600; color:var(--am-muted);
-  margin:1.5rem 0 .4rem; letter-spacing:.01em}
-.am-panel p{margin:0; font-size:.95rem; line-height:1.62; color:#C3CCD4}
-.am-what{color:#98A6B0 !important; font-size:.9rem !important}
-.am-prof{color:var(--am-jade) !important}
-.am-chain{margin-top:1.7rem; border-top:1px solid rgba(143,160,172,.18); padding-top:.3rem}
-.am-chain-sub{margin-top:1.1rem !important}
-.am-steps{display:flex; flex-wrap:wrap; gap:.4rem}
-.am-step{font:inherit; font-size:.82rem; padding:.4rem .7rem; border-radius:2px; cursor:pointer;
-  background:none; color:var(--am-muted); border:1px solid rgba(143,160,172,.28)}
-.am-step:hover{color:var(--am-bone); border-color:var(--am-bone)}
-.am-step-seen{color:#B9C4CC}
-.am-step-now{background:var(--am-jade); border-color:var(--am-jade); color:#062018; font-weight:500}
-.am-step:focus-visible{outline:2px solid var(--am-jade); outline-offset:2px}
-.am-done{margin-top:1.6rem !important; font-size:.88rem !important; color:var(--am-bone) !important}
-.am-done a{color:var(--am-jade); margin-left:.4rem}
+.am-panel ::selection{background:var(--am-blue); color:var(--am-enamel)}
+.am-panel-head{display:flex; align-items:flex-start; justify-content:space-between; gap:1rem}
+.am-panel h2{font-family:var(--am-cond); font-weight:700; font-size:clamp(2rem,2.6vw,2.6rem); line-height:.98; margin:0}
+.am-close{
+  display:inline-flex; align-items:center; gap:.35rem; flex:none; cursor:pointer;
+  font:600 .95rem var(--am-cond); background:var(--am-ink); color:var(--am-enamel);
+  border:0; border-radius:0; padding:.45rem .75rem; transition:transform 160ms var(--am-ease);
+}
+.am-close:active{transform:scale(.97)}
+.am-kind{margin:.55rem 0 .9rem; font-weight:600; font-size:.98rem; display:flex; align-items:center; gap:.5rem}
+.am-kind::before{content:""; width:.7rem; height:.7rem; background:var(--am-yellow); flex:none}
+.am-panel p{margin:0; font-size:1rem; line-height:1.58}
+.am-panel h3{font-family:var(--am-cond); font-weight:600; font-size:1.2rem; margin:1.5rem 0 .35rem}
+.am-prof{font-weight:600; color:var(--am-blue)}
+.am-onward{margin-top:1.3rem !important; font-weight:500}
+.am-onward a{color:var(--am-blue); font-weight:600; text-underline-offset:3px}
 
-.am-bloom{filter:none; pointer-events:none}
-.am-travel,.am-bloom,.am-peak-halo{will-change:opacity,stroke-dashoffset}
+/* the experiment: a blue plate inside the white one */
+.am-try{background:var(--am-blue); color:var(--am-enamel); padding:1rem 1.1rem 1.15rem; margin-top:1.3rem}
+.am-try h3{margin:0 0 .7rem !important}
+.am-try ::selection{background:var(--am-yellow); color:var(--am-ink)}
+.am-x-label{display:block; font-weight:600; font-size:.98rem; margin:0 0 .55rem}
+.am-seg{display:flex; flex-wrap:wrap; gap:.4rem}
+.am-key{
+  font:600 1.05rem var(--am-cond); letter-spacing:.01em; cursor:pointer;
+  background:var(--am-blue-deep); color:var(--am-enamel); border:0; border-radius:0;
+  padding:.55rem .9rem .5rem; transition:transform 160ms var(--am-ease), background-color 140ms ease, color 140ms ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.am-key:active{transform:scale(.97)}
+.am-key[aria-checked=true],.am-key[aria-pressed=true]{background:var(--am-enamel); color:var(--am-ink)}
+.am-key-hazard{background:var(--am-yellow); color:var(--am-ink)}
+.am-key:disabled{cursor:default; background:#0c2f5e; color:#9fb3cf}
+@media (hover:hover) and (pointer:fine){
+  .am-key:not(:disabled):not([aria-pressed=true]):not([aria-checked=true]):not(.am-key-hazard):hover{background:#0c2f5e}
+}
+.am-try .am-read{margin-top:.75rem; font-size:.97rem; line-height:1.55}
+.am-try .am-read strong{font-weight:600; font-variant-numeric:tabular-nums}
+.am-note{margin-top:.5rem !important; font-size:.88rem !important; color:#dfe5ee}
+.am-scar{margin-top:.8rem !important; background:var(--am-yellow); color:var(--am-ink); padding:.6rem .75rem; font-weight:600; font-size:.95rem !important}
+.am-readout{display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap; margin:0 0 .2rem !important}
+.am-hz{font:700 2.6rem/1 var(--am-cond); font-variant-numeric:tabular-nums}
+.am-band{font-size:.98rem}
 
-/* the way on to the auditory pathway */
-.am-gate{cursor:pointer}
-.am-gate:focus{outline:none}
-.am-gate-halo{fill:rgba(232,180,76,.14); stroke:none; transform-box:fill-box; transform-origin:center;
-  animation:am-gate-pulse 2.8s ease-in-out infinite}
-.am-gate-ring{fill:rgba(6,11,18,.78); stroke:var(--am-gold); stroke-width:1.6; transition:fill .2s}
-.am-gate-arrow{fill:none; stroke:var(--am-gold); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .2s}
-.am-gate-lbl{fill:var(--am-gold); font-size:15px; font-weight:600; transition:fill .2s}
-.am-gate-sub{fill:var(--am-muted); font-size:12.5px}
-.am-gate:hover .am-gate-ring,.am-gate:focus-visible .am-gate-ring{fill:var(--am-gold)}
-.am-gate:hover .am-gate-arrow,.am-gate:focus-visible .am-gate-arrow{stroke:#0A121A}
-.am-gate:hover .am-gate-lbl,.am-gate:focus-visible .am-gate-lbl{fill:var(--am-bone)}
-@keyframes am-gate-pulse{0%,100%{opacity:.3; transform:scale(.84)} 50%{opacity:1; transform:scale(1.14)}}
-.am-step-gate{border-color:rgba(232,180,76,.5); color:var(--am-gold)}
-.am-step-gate:hover{border-color:var(--am-gold); color:var(--am-gold)}
-.am-onward{margin-top:1.5rem !important; font-size:.88rem !important; color:var(--am-bone) !important}
-.am-onward a{color:var(--am-gold); margin-left:.4rem}
+:is(.am-hero,.am-sheet-root) input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:34px; background:transparent; margin:.1rem 0; cursor:grab}
+:is(.am-hero,.am-sheet-root) input[type=range]:active{cursor:grabbing}
+:is(.am-hero,.am-sheet-root) input[type=range]::-webkit-slider-runnable-track{height:6px; background:var(--am-blue-deep)}
+:is(.am-hero,.am-sheet-root) input[type=range]::-moz-range-track{height:6px; background:var(--am-blue-deep)}
+:is(.am-hero,.am-sheet-root) input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:22px; height:22px; margin-top:-8px; background:var(--am-enamel); border:0; border-radius:0}
+:is(.am-hero,.am-sheet-root) input[type=range]::-moz-range-thumb{width:22px; height:22px; background:var(--am-enamel); border:0; border-radius:0}
+:is(.am-hero,.am-sheet-root) input[type=range].am-hot::-webkit-slider-thumb{background:var(--am-yellow)}
+:is(.am-hero,.am-sheet-root) input[type=range].am-hot::-moz-range-thumb{background:var(--am-yellow)}
+:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible{outline:none}
+:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid var(--am-yellow); outline-offset:2px}
+:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible::-moz-range-thumb{outline:3px solid var(--am-yellow); outline-offset:2px}
 
-/* anatomy */
-#am-far{transform:translate(calc(var(--am-px) * 7px),calc(var(--am-py) * 5px))}
-#am-mid{transform:translate(calc(var(--am-px) * 14px),calc(var(--am-py) * 10px))}
-#am-near{transform:translate(calc(var(--am-px) * 24px),calc(var(--am-py) * 17px))}
+/* ---------- stage: the sign the ear came off ---------- */
+.am-stage{position:relative; z-index:2; min-height:0; min-width:0}
+.am-sign{
+  position:absolute; left:50%; top:50%; width:min(94%,76svh); aspect-ratio:1; transform:translate(-50%,-50%);
+  border-radius:50%; background:var(--am-blue-deep);
+  box-shadow:0 0 0 clamp(10px,1vw,16px) var(--am-enamel);
+}
+.am-gl{position:absolute; inset:0}
+.am-canvas{display:block; width:100%; height:100%; cursor:grab}
+.am-canvas:active{cursor:grabbing}
+.am-status{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); margin:0; font:600 1.15rem var(--am-cond); text-align:center; max-width:22em}
 
-.am-part{cursor:pointer}
-.am-part:focus{outline:none}
-.am-hit{fill:transparent; stroke:none}
-.am-art{transition:opacity .25s}
-.am-ring{fill:none; stroke:var(--am-bone); stroke-width:1.5; stroke-dasharray:3 4; opacity:0; pointer-events:none}
-.am-part:focus-visible .am-ring{opacity:1}
-.am-lbl{font-size:15px; font-weight:500; fill:var(--am-bone); opacity:.34; transition:opacity .25s; pointer-events:none}
-.am-lead{stroke:var(--am-bone); stroke-width:1; opacity:.22; fill:none; transition:opacity .25s; pointer-events:none}
-.am-node{fill:var(--am-bone); opacity:.3; transition:opacity .25s,fill .25s; pointer-events:none}
-.am-seen .am-node{fill:var(--am-jade); opacity:.55}
-.am-part:hover .am-lbl,.am-part:focus-visible .am-lbl,.am-part.am-on .am-lbl{opacity:1}
-.am-part:hover .am-lead,.am-part:focus-visible .am-lead,.am-part.am-on .am-lead{opacity:.6}
-.am-part:hover .am-node,.am-part:focus-visible .am-node,.am-part.am-on .am-node{opacity:1}
-svg.am-dim .am-part:not(.am-on) .am-art{opacity:.22}
-svg.am-dim .am-part:not(.am-on) .am-lbl{opacity:.14}
+.am-tags{position:absolute; inset:0; pointer-events:none}
+.am-tag{
+  position:absolute; left:0; top:0; pointer-events:auto; cursor:pointer; white-space:nowrap;
+  font:600 .92rem/1 var(--am-cond); letter-spacing:.01em;
+  background:var(--am-enamel); color:var(--am-ink); border:0; border-radius:0;
+  padding:.38rem .55rem .34rem; margin:0; translate:-50% -50%;
+  transition:background-color 140ms ease, opacity 200ms ease;
+}
+.am-tag[data-seen]::after{content:""; display:inline-block; width:.42rem; height:.42rem; margin-left:.4rem; vertical-align:.08em; background:var(--am-blue)}
+.am-tag[data-hot]{background:var(--am-yellow)}
+.am-stage[data-dim] .am-tag:not([data-hot]){opacity:.3}
+.am-tag-hz{pointer-events:none; background:var(--am-ink); color:var(--am-enamel); font-variant-numeric:tabular-nums}
+.am-tag-hz[data-hot]{background:var(--am-yellow); color:var(--am-ink)}
 
-.am-wave{fill:none; stroke:#7FB6E8; stroke-linecap:round}
-.am-travel{stroke:#EFFFF8}
-.am-danger{stroke:var(--am-gold); opacity:.32; transition:opacity .3s,stroke .3s}
-.am-danger.am-lit{stroke:var(--am-hot); opacity:.85}
-.am-annot polyline{stroke:var(--am-gold); stroke-width:1; opacity:.45}
-.am-annot text{fill:var(--am-gold); font-size:14px; font-weight:500; opacity:.8}
-.am-annot .am-annot-sub{opacity:.5; font-size:13px}
+/* ---------- the signal path: one unbroken row of plates ---------- */
+.am-path{grid-column:1 / -1; position:relative; z-index:4; display:flex; flex-wrap:wrap; gap:clamp(10px,1.4vw,22px); margin-top:clamp(12px,2vh,20px)}
+.am-path-run{display:flex; gap:4px; flex-wrap:wrap}
+.am-path-side{margin-left:auto}
+.am-plate{
+  position:relative; display:inline-flex; align-items:center; gap:.45rem; cursor:pointer; text-decoration:none;
+  font:600 1.08rem/1 var(--am-cond); letter-spacing:.01em; color:var(--am-enamel);
+  background:var(--am-blue-deep); border:0; border-radius:0; padding:.82rem 1rem .76rem;
+  transition:transform 160ms var(--am-ease), background-color 140ms ease, color 140ms ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.am-plate:active{transform:scale(.97)}
+.am-plate::before{content:""; position:absolute; left:0; right:0; top:0; height:4px; background:var(--am-yellow); transform:scaleX(0); transform-origin:left; transition:transform 260ms var(--am-ease)}
+.am-plate[data-chase]::before{transform:scaleX(1)}
+.am-plate[data-seen]::after{content:""; width:.45rem; height:.45rem; background:var(--am-enamel); opacity:.7}
+.am-plate[data-hot]{background:var(--am-blue-step)}
+.am-plate[aria-pressed=true]{background:var(--am-enamel); color:var(--am-ink)}
+.am-plate[aria-pressed=true]::after{background:var(--am-blue)}
+.am-plate-out{background:transparent; padding-inline:.6rem}
+@media (hover:hover) and (pointer:fine){
+  .am-plate:not([aria-pressed=true]):hover{background:var(--am-blue-step)}
+  .am-plate-out:hover{background:var(--am-blue-deep)}
+}
 
+/* ---------- narrower screens ---------- */
 @media (max-width:1000px){
-  .am-hero{grid-template-columns:1fr; min-height:auto; align-content:start}
-  .am-stage{order:-1; padding-top:10px}
-  .am-copy{padding:clamp(22px,6vw,40px) clamp(22px,6vw,40px) 30px}
-  .am-detail{min-height:8.4em; max-width:none}
-  .am-hero h1{font-size:clamp(1.9rem,6.4vw,2.7rem)}
-  .am-hz{font-size:2.4rem}
-  .am-panel{position:fixed; inset:auto 0 0 0; top:auto; width:100%; max-height:76svh;
-    border-right:0; border-top:1px solid rgba(79,209,165,.3);
-    background:rgba(6,11,18,.97); animation:am-up .24s ease both}
-  @keyframes am-up{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+  .am-hero{display:flex; flex-direction:column; min-height:auto; padding-top:84px}
+  /* the ear comes straight after the headline, before the long read */
+  .am-copy{display:contents}
+  .am-copy > h1{order:1}
+  .am-sub{order:2}
+  .am-stage{order:3; height:min(100vw,560px); margin-inline:calc(-1 * clamp(20px,3vw,48px))}
+  .am-path{order:4; margin-top:0}
+  .am-lede{order:5; margin-top:clamp(28px,5vh,40px)}
+  .am-actions{order:6}
+  .am-fine{order:7}
+  .am-detail{order:8}
+  .am-sign{width:min(88%,520px)}
+  .am-detail{min-height:0}
+  .am-panel{position:fixed; z-index:60; inset:auto 0 0 0; max-height:78svh; padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)); animation-name:am-up}
+  @keyframes am-up{from{opacity:0; transform:translateY(24px)} to{opacity:1; transform:none}}
+  .am-path-side{margin-left:0}
 }
 @media (max-width:640px){
-  .am-lbl{display:none}
-  .am-gate-lbl{font-size:19px}
-  .am-gate-sub{font-size:16px}
-  .am-annot text{font-size:19px}
-  .am-node{opacity:.8}
+  .am-tag{font-size:.8rem; padding:.3rem .42rem .27rem}
+  /* too small for every label at once: the row below names the parts */
+  .am-tag:not([data-hot]):not(.am-tag-hz){opacity:0 !important; pointer-events:none}
+  .am-plate{font-size:1rem; padding:.7rem .8rem .66rem}
+  .am-hero h1{font-size:clamp(2.1rem,9.2vw,3rem)}
 }
 @media (prefers-reduced-motion:reduce){
-  .am-hero *{transition-duration:.01ms !important; animation:none !important}
+  .am-hero *{animation:none !important; transition-property:opacity,background-color,color !important}
+  .am-plate::before{display:none}
 }
 `;
