@@ -1,4 +1,6 @@
-import { clearPending, loadPending, savePending } from "@/lib/pending-result";
+import { clearPending, loadPending, newResultId, savePending } from "@/lib/pending-result";
+import { saveToneOnce } from "@/lib/save-results";
+import { resultTable, thresholdPoints } from "@/lib/save-results-supabase";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -119,7 +121,13 @@ function TestPage() {
   /** Set when a guest's finished result was restored after sign-in and still needs saving. */
   const [restoredId, setRestoredId] = useState<string | null>(null);
   const [restoredTrials, setRestoredTrials] = useState<number | null>(null);
-  const savingRef = useRef(false);
+  /** One id per finished result; it is the database client_result_id. */
+  const [resultId, setResultId] = useState<string | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  /** False when browser storage refused the guest copy, so sign-in can't preserve it. */
+  const [pendingKept, setPendingKept] = useState<boolean | null>(null);
+  const inFlight = useRef(false);
+  const savedId = useRef<string | null>(null);
 
   useEffect(() => {
     setSaved(loadSaved());
@@ -170,6 +178,7 @@ function TestPage() {
     const t = nextTrial(s);
     if (!t || isComplete(s)) {
       setTrial(null);
+      setResultId(newResultId());
       setFinal(results(s));
       setPhase("done");
       return;
@@ -250,6 +259,10 @@ function TestPage() {
     setRel({ catchTrials: 0, catchPassed: 0, repeatTrials: 0, repeatAgreed: 0 });
     setState(fresh);
     setFinal(null);
+    setResultId(null);
+    setRestoredId(null);
+    setSaveFailed(false);
+    setPendingKept(null);
     setPhase("running");
     await runTrial(fresh);
   }
@@ -286,14 +299,20 @@ function TestPage() {
 
 
 
+  const pendingPayload = (): TonePending | null =>
+    final ? { points: final, environmentDb: noise, trials: restoredTrials ?? state.trialCount, device, rel } : null;
+
   const saveResults = useCallback(async () => {
-    if (!final || !user || savingRef.current) return;
-    savingRef.current = true;
+    if (!final || !user || !resultId || inFlight.current || savedId.current === resultId) return;
+    inFlight.current = true;
     setSaving(true);
+    setSaveFailed(false);
     const summary = screeningSummary(final);
-    const { data, error } = await supabase
-      .from("hearing_tests")
-      .insert({
+    const outcome = await saveToneOnce(
+      resultTable("hearing_tests", user.id),
+      thresholdPoints(),
+      resultId,
+      {
         user_id: user.id,
         environment_db: noise,
         trials: restoredTrials ?? state.trialCount,
@@ -304,39 +323,36 @@ function TestPage() {
         device_type: device,
         engine_version: 2,
         notes: protocol ? encodeNotes(protocol) : null,
-      })
-      .select("id")
-      .single();
-
-    if (error || !data) {
-      setSaving(false);
-      savingRef.current = false;
-      toast.error(t("test.toastSaveTestFail"));
+      },
+      (testId) =>
+        final.map((r) => ({
+          test_id: testId,
+          user_id: user.id,
+          ear: r.ear,
+          frequency_hz: r.frequency,
+          threshold_db: r.thresholdDb,
+          confidence: r.confidence,
+        })),
+    );
+    inFlight.current = false;
+    setSaving(false);
+    if (!outcome.ok) {
+      // Keep a retryable copy (it survives a refresh too); the retry finds the
+      // same parent row by its id and finishes the points instead of duplicating.
+      const payload = pendingPayload();
+      if (payload) savePending<TonePending>("tone", payload, Date.now(), resultId);
+      setSaveFailed(true);
+      toast.error(t(outcome.stage === "points" ? "test.toastSavePointsFail" : "test.toastSaveTestFail"));
       return;
     }
-    // The test row exists now; never insert it a second time for this result.
+    savedId.current = resultId;
     clearPending("tone");
     setRestoredId(null);
-
-    const { error: pointsError } = await supabase.from("threshold_points").insert(
-      final.map((r) => ({
-        test_id: data.id,
-        user_id: user.id,
-        ear: r.ear,
-        frequency_hz: r.frequency,
-        threshold_db: r.thresholdDb,
-        confidence: r.confidence,
-      })),
-    );
-    setSaving(false);
-    if (pointsError) {
-      toast.error(t("test.toastSavePointsFail"));
-      return;
-    }
     void queryClient.invalidateQueries();
     toast.success(t("test.toastSaveSuccess"));
     void navigate({ to: "/history" });
-  }, [final, user, noise, state.trialCount, restoredTrials, navigate, device, queryClient, protocol]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [final, user, resultId, noise, state.trialCount, restoredTrials, navigate, device, queryClient, protocol, rel]);
 
   useEffect(() => {
     if (phase === "done" && final) setArmed(false);
@@ -345,13 +361,14 @@ function TestPage() {
       setSaved(null);
     }
     // A restored guest result is saved only when the user presses save.
-    if (phase === "done" && final && user && !restoredId) void saveResults();
+    if (phase === "done" && final && user && resultId && !restoredId) void saveResults();
     // A guest's result is kept so signing in to save it doesn't lose it.
-    if (phase === "done" && final && !user && !loading) {
-      savePending<TonePending>("tone", { points: final, environmentDb: noise, trials: state.trialCount, device, rel });
+    if (phase === "done" && final && resultId && !user && !loading) {
+      const payload = pendingPayload();
+      setPendingKept(payload ? savePending<TonePending>("tone", payload, Date.now(), resultId) != null : false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, final, user]);
+  }, [phase, final, user, resultId]);
 
   // Back from sign-in: show the same result again, ready to save once.
   useEffect(() => {
@@ -359,6 +376,7 @@ function TestPage() {
     const p = loadPending<TonePending>("tone");
     if (!p) return;
     setRestoredId(p.id);
+    setResultId(p.id);
     setRestoredTrials(p.payload.trials);
     setNoise(p.payload.environmentDb);
     setDeviceState(p.payload.device);
@@ -520,7 +538,9 @@ function TestPage() {
             trials={state.trialCount}
             device={device}
             reliability={rel}
-            onSave={restoredId ? () => void saveResults() : undefined}
+            onSave={restoredId || saveFailed ? () => void saveResults() : undefined}
+            retry={saveFailed}
+            pendingKept={pendingKept}
           />
         ) : null}
       </main>
@@ -536,11 +556,16 @@ function ResultsView({
   device,
   reliability,
   onSave,
+  retry = false,
+  pendingKept = null,
 }: {
   points: ThresholdResult[];
   saving: boolean;
-  /** Present when this result came back from sign-in and still needs saving. */
+  /** Present when this result still needs saving (restored after sign-in, or a failed save). */
   onSave?: (() => void) | undefined;
+  retry?: boolean;
+  /** False when the guest copy couldn't be stored, so sign-in won't keep it. */
+  pendingKept?: boolean | null;
   environmentDb: number | null;
   trials: number;
   device: DeviceId;
@@ -617,12 +642,14 @@ function ResultsView({
         </Button>
         {user && onSave ? (
           <Button disabled={saving} onClick={onSave}>
-            {saving ? t("test.saving") : t("test.saveToAccount")}
+            {saving ? t("test.saving") : t(retry ? "test.retrySave" : "test.saveToAccount")}
           </Button>
         ) : user ? (
           <Button asChild variant="secondary" disabled={saving}>
             <Link to="/history">{saving ? t("test.saving") : t("test.viewHistory")}</Link>
           </Button>
+        ) : pendingKept === false ? (
+          <p className="text-sm text-muted-foreground">{t("test.cantKeep")}</p>
         ) : (
           <Button asChild variant="secondary">
             <Link to="/auth" search={{ returnTo: "/test" }}>{t("test.signInSave")}</Link>

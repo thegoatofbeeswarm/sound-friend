@@ -1,5 +1,7 @@
 export const testPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
+    "test.cantKeep": "Your browser blocked local storage, so this result can't be kept while you sign in. Sign in before your next test to save it.",
+    "test.retrySave": "Try saving again",
     "test.saveToAccount": "Save to my account",
     "test.generalGuidance": "General guidance, not a personal limit: the WHO-ITU safe listening standard sets an adult reference of 80 dB for up to 40 hours a week, and 75 dB for children.",
     "test.levelsMeaning": "These are estimated levels relative to your headphones and volume setting, not clinical dB HL. A screening like this can't tell you whether you have hearing loss or how loud is safe for you. If anything worries you, see an audiologist.",
@@ -41,6 +43,8 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.toastSaveSuccess": "Screening saved to your history.",
   },
   zh: {
+    "test.cantKeep": "你的浏览器阻止了本地存储，因此登录期间无法保留这个结果。请在下次测试前先登录，以便保存。",
+    "test.retrySave": "重新保存",
     "test.saveToAccount": "保存到我的账户",
     "test.generalGuidance": "一般性参考，并非个人上限：WHO-ITU 安全聆听标准为成人设定的参考值是每周最多 40 小时、80 dB，儿童为 75 dB。",
     "test.levelsMeaning": "这些是相对于你的耳机和音量设置的估计值，不是临床 dB HL。这类筛查无法判断你是否有听力损失，也无法告诉你多大音量对你是安全的。如有担心，请咨询听力师。",
@@ -81,6 +85,8 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.toastSaveSuccess": "筛查已保存到你的历史记录。",
   },
   es: {
+    "test.cantKeep": "Tu navegador bloqueó el almacenamiento local, así que este resultado no se puede conservar mientras inicias sesión. Inicia sesión antes de tu próxima prueba para guardarlo.",
+    "test.retrySave": "Intentar guardar de nuevo",
     "test.saveToAccount": "Guardar en mi cuenta",
     "test.generalGuidance": "Orientación general, no un límite personal: la norma WHO-ITU de escucha segura fija una referencia para adultos de 80 dB hasta 40 horas por semana, y de 75 dB para niños.",
     "test.levelsMeaning": "Son niveles estimados relativos a tus auriculares y a tu volumen, no dB HL clínicos. Un cribado así no puede decirte si tienes pérdida auditiva ni qué volumen es seguro para ti. Si algo te preocupa, consulta a un audiólogo.",

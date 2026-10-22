@@ -1,4 +1,6 @@
-import { clearPending, loadPending, savePending } from "@/lib/pending-result";
+import { clearPending, loadPending, newResultId, savePending } from "@/lib/pending-result";
+import { saveRowOnce } from "@/lib/save-results";
+import { resultTable } from "@/lib/save-results-supabase";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -78,7 +80,12 @@ function SpeechPage() {
   const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
   const [audioIssue, setAudioIssue] = useState<PlaybackResult | null>(null);
   const busy = useRef(false);
-  const savingRef = useRef(false);
+  const inFlight = useRef(false);
+  const savedId = useRef<string | null>(null);
+  /** One id per finished result; it is the database client_result_id. */
+  const [resultId, setResultId] = useState<string | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const [pendingKept, setPendingKept] = useState<boolean | null>(null);
   /** Set when a guest's result came back from sign-in and still needs saving. */
   const [restoredId, setRestoredId] = useState<string | null>(null);
 
@@ -90,6 +97,7 @@ function SpeechPage() {
       const next = nextSinTrial(s);
       if (!next || isSinComplete(s)) {
         setTrial(null);
+        setResultId(newResultId());
         setFinal(sinResult(s));
         setPhase("done");
         return;
@@ -110,6 +118,10 @@ function SpeechPage() {
     const fresh = createSinState();
     setState(fresh);
     setFinal(null);
+    setResultId(null);
+    setRestoredId(null);
+    setSaveFailed(false);
+    setPendingKept(null);
     setEntry([]);
     setPhase("running");
     await runTrial(fresh, noise);
@@ -125,10 +137,13 @@ function SpeechPage() {
   }
 
   const saveResult = useCallback(async () => {
-    if (!final || !user || savingRef.current) return;
-    savingRef.current = true;
+    // Saving belongs to one finished result: a new test gets a new id, so it is
+    // never blocked by the previous one, and the same id is never saved twice.
+    if (!final || !user || !resultId || inFlight.current || savedId.current === resultId) return;
+    inFlight.current = true;
     setSaving(true);
-    const { error } = await supabase.from("speech_tests").insert({
+    setSaveFailed(false);
+    const outcome = await saveRowOnce(resultTable("speech_tests", user.id), resultId, {
       user_id: user.id,
       srt_db: final.srtDb,
       score: final.score,
@@ -139,25 +154,28 @@ function SpeechPage() {
       device_type: device,
       engine_version: 2,
     });
+    inFlight.current = false;
     setSaving(false);
-    if (error) {
-      savingRef.current = false;
+    if (!outcome.ok) {
+      savePending<SpeechPending>("speech", { final, noise, device }, Date.now(), resultId);
+      setSaveFailed(true);
       toast.error(t("sin.saveFail"));
       return;
     }
+    savedId.current = resultId;
     clearPending("speech");
     setRestoredId(null);
     void queryClient.invalidateQueries();
     toast.success(t("sin.saved"));
-  }, [final, user, noise, device, t, queryClient]);
+  }, [final, user, resultId, noise, device, t, queryClient]);
 
   useEffect(() => {
-    if (phase === "done" && final && user && !restoredId) void saveResult();
-    if (phase === "done" && final && !user && !loading) {
-      savePending<SpeechPending>("speech", { final, noise, device });
+    if (phase === "done" && final && user && resultId && !restoredId) void saveResult();
+    if (phase === "done" && final && resultId && !user && !loading) {
+      setPendingKept(savePending<SpeechPending>("speech", { final, noise, device }, Date.now(), resultId) != null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, final, user]);
+  }, [phase, final, user, resultId]);
 
   // Back from sign-in: show the same result again, ready to save once.
   useEffect(() => {
@@ -165,6 +183,7 @@ function SpeechPage() {
     const p = loadPending<SpeechPending>("speech");
     if (!p) return;
     setRestoredId(p.id);
+    setResultId(p.id);
     setNoise(p.payload.noise);
     setDeviceState(p.payload.device);
     setFinal(p.payload.final);
@@ -369,9 +388,9 @@ function SpeechPage() {
               <Button asChild variant="secondary">
                 <Link to="/train">{t("sin.train")}</Link>
               </Button>
-              {user && restoredId ? (
+              {user && (restoredId || saveFailed) ? (
                 <Button disabled={saving} onClick={() => void saveResult()}>
-                  {saving ? t("sin.saving") : t("test.saveToAccount")}
+                  {saving ? t("sin.saving") : t(saveFailed ? "test.retrySave" : "test.saveToAccount")}
                 </Button>
               ) : user ? (
                 <Button
@@ -381,6 +400,8 @@ function SpeechPage() {
                 >
                   {saving ? t("sin.saving") : t("sin.viewHistory")}
                 </Button>
+              ) : pendingKept === false ? (
+                <p className="text-sm text-muted-foreground">{t("test.cantKeep")}</p>
               ) : (
                 <Button asChild variant="ghost">
                   <Link to="/auth" search={{ returnTo: "/speech" }}>{t("sin.signInSave")}</Link>

@@ -34,10 +34,19 @@ function newId(): string {
   return c?.randomUUID ? c.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-export function savePending<T>(kind: PendingKind, payload: T, now = Date.now()): string | null {
+/** A fresh id for a finished result; it becomes the database client_result_id. */
+export function newResultId(): string {
+  return newId();
+}
+
+/**
+ * Keep a finished result. `id` should be the result's own id so the pending
+ * copy and the eventual database row share one identity.
+ */
+export function savePending<T>(kind: PendingKind, payload: T, now = Date.now(), id: string = newId()): string | null {
   const s = storage();
   if (!s) return null;
-  const entry: Pending<T> = { v: 1, id: newId(), kind, createdAt: now, payload };
+  const entry: Pending<T> = { v: 1, id, kind, createdAt: now, payload };
   try {
     s.setItem(key(kind), JSON.stringify(entry));
     return entry.id;

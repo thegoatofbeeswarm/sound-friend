@@ -158,6 +158,7 @@ export type Database = {
       }
       hearing_tests: {
         Row: {
+          client_result_id: string | null
           avg_threshold_db: number | null
           created_at: string
           device_type: string | null
@@ -171,6 +172,7 @@ export type Database = {
           worst_threshold_db: number | null
         }
         Insert: {
+          client_result_id?: string | null
           avg_threshold_db?: number | null
           created_at?: string
           device_type?: string | null
@@ -184,6 +186,7 @@ export type Database = {
           worst_threshold_db?: number | null
         }
         Update: {
+          client_result_id?: string | null
           avg_threshold_db?: number | null
           created_at?: string
           device_type?: string | null
@@ -218,6 +221,7 @@ export type Database = {
       }
       speech_tests: {
         Row: {
+          client_result_id: string | null
           created_at: string
           device_type: string | null
           engine_version: number
@@ -231,6 +235,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          client_result_id?: string | null
           created_at?: string
           device_type?: string | null
           engine_version?: number
@@ -244,6 +249,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          client_result_id?: string | null
           created_at?: string
           device_type?: string | null
           engine_version?: number
@@ -325,6 +331,7 @@ export type Database = {
       }
       training_sessions: {
         Row: {
+          client_result_id: string | null
           accuracy: number
           correct: number
           created_at: string
@@ -340,6 +347,7 @@ export type Database = {
           xp: number
         }
         Insert: {
+          client_result_id?: string | null
           accuracy?: number
           correct?: number
           created_at?: string
@@ -355,6 +363,7 @@ export type Database = {
           xp?: number
         }
         Update: {
+          client_result_id?: string | null
           accuracy?: number
           correct?: number
           created_at?: string

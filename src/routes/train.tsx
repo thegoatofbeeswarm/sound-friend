@@ -1,4 +1,6 @@
-import { clearPending, loadPending, savePending } from "@/lib/pending-result";
+import { clearPending, loadPending, newResultId, savePending } from "@/lib/pending-result";
+import { saveRowOnce } from "@/lib/save-results";
+import { resultTable } from "@/lib/save-results-supabase";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -153,7 +155,13 @@ function TrainPage() {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [kind, setKind] = useState<"train" | "transfer">("train");
   const [fixedLevel, setFixedLevel] = useState<number | null>(null);
+  /** True while a save is in flight. */
   const saved = useRef(false);
+  const savedId = useRef<string | null>(null);
+  /** One id per finished session; it is the database client_result_id. */
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const [pendingKept, setPendingKept] = useState<boolean | null>(null);
 
   const { data: ceiling } = useQuery({
     enabled: !!user,
@@ -285,6 +293,9 @@ function TrainPage() {
     if (mode0.needsSpeech) await warmUpSpeech();
     saved.current = false;
     answering.current = false;
+    setSessionId(null);
+    setSaveFailed(false);
+    setPendingKept(null);
     setRestoredId(null);
     setRestoredDuration(null);
     setKind(nextKind);
@@ -319,6 +330,7 @@ function TrainPage() {
     await new Promise((resolve) => setTimeout(resolve, 750));
     if (!mounted.current) return;
     if (next.rounds >= roundsTotal) {
+      setSessionId(newResultId());
       setRound(null);
       setPhase("done");
       return;
@@ -337,11 +349,11 @@ function TrainPage() {
   const durationSec = () => restoredDuration ?? (startedAt == null ? 0 : Math.round((Date.now() - startedAt) / 1000));
 
   const saveSession = async () => {
-    if (!user || saved.current) return;
+    if (!user || !sessionId || saved.current || savedId.current === sessionId) return;
     saved.current = true;
     const accuracy = Math.round((trainer.correct / Math.max(1, trainer.rounds)) * 100);
     const xp = sessionXp(trainer.correct, trainer.rounds, trainer.level);
-    const { error } = await supabase.from("training_sessions").insert({
+    const outcome = await saveRowOnce(resultTable("training_sessions", user.id), sessionId, {
       user_id: user.id,
       mode: modeId,
       kind,
@@ -354,11 +366,15 @@ function TrainPage() {
       xp,
       duration_sec: durationSec(),
     });
-    if (error) {
-      saved.current = false;
+    saved.current = false;
+    if (!outcome.ok) {
+      savePending<TrainingPending>("training", { trainer, modeId, kind, durationSec: durationSec() }, Date.now(), sessionId);
+      setSaveFailed(true);
       toast.error(t("train.toastSessionFail"));
       return;
     }
+    savedId.current = sessionId;
+    setSaveFailed(false);
     clearPending("training");
     setRestoredId(null);
     toast.success(t("train.toastSessionSavedTemplate").replace("{xp}", String(xp)));
@@ -366,14 +382,16 @@ function TrainPage() {
   };
 
   useEffect(() => {
-    if (phase !== "done") return;
+    if (phase !== "done" || !sessionId) return;
     // A restored guest session is saved only when the user presses save.
     if (user && !restoredId) void saveSession();
     if (!user && !loading) {
-      savePending<TrainingPending>("training", { trainer, modeId, kind, durationSec: durationSec() });
+      setPendingKept(
+        savePending<TrainingPending>("training", { trainer, modeId, kind, durationSec: durationSec() }, Date.now(), sessionId) != null,
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, user]);
+  }, [phase, user, sessionId]);
 
   // Back from sign-in: show the same finished session again, ready to save once.
   useEffect(() => {
@@ -382,6 +400,7 @@ function TrainPage() {
     if (!p) return;
     saved.current = false;
     setRestoredId(p.id);
+    setSessionId(p.id);
     setRestoredDuration(p.payload.durationSec);
     setTrainer(p.payload.trainer);
     setModeId(p.payload.modeId);
@@ -619,11 +638,15 @@ function TrainPage() {
               <Stat label={t("train.xpEarned")} value={`+${sessionXp(trainer.correct, trainer.rounds, trainer.level)}`} />
             </div>
             {!user ? (
-              <p className="mt-6 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-                <Link to="/auth" search={{ returnTo: "/train" }} className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInSessionSuffix")}
-              </p>
-            ) : restoredId ? (
-              <Button className="mt-6" onClick={() => void saveSession()}>{t("test.saveToAccount")}</Button>
+              pendingKept === false ? (
+                <p className="mt-6 rounded-xl bg-card p-4 text-sm text-muted-foreground">{t("test.cantKeep")}</p>
+              ) : (
+                <p className="mt-6 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
+                  <Link to="/auth" search={{ returnTo: "/train" }} className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInSessionSuffix")}
+                </p>
+              )
+            ) : restoredId || saveFailed ? (
+              <Button className="mt-6" onClick={() => void saveSession()}>{t(saveFailed ? "test.retrySave" : "test.saveToAccount")}</Button>
             ) : null}
             <div className="mt-8 flex flex-wrap gap-3">
               <Button onClick={() => void begin()}><RefreshCw className="mr-2 h-4 w-4" /> {t("train.trainAgain")}</Button>
