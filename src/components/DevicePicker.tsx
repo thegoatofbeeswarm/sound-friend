@@ -1,6 +1,12 @@
 import { AlertTriangle, BadgeCheck, Headphones } from "lucide-react";
 import { DEVICES, DEVICE_GROUPS, getDevice, type DeviceId } from "@/lib/devices";
+import { useI18n } from "@/lib/i18n";
 
+/**
+ * Headphone choice. A known model gets an estimated level offset taken from
+ * published measurements of that model; it is not an acoustic calibration of
+ * the listener's own headphones, and it sets no personal volume limit.
+ */
 export function DevicePicker({
   value,
   onChange,
@@ -10,26 +16,27 @@ export function DevicePicker({
   onChange: (id: DeviceId) => void;
   className?: string;
 }) {
+  const { t } = useI18n();
   const selected = getDevice(value);
+  const hint = (id: DeviceId, fallback: string) => {
+    const key = `device.hint.${id}`;
+    const text = t(key);
+    return text === key ? fallback : text;
+  };
 
   return (
     <div className={className}>
       <p className="flex items-center gap-2 text-sm font-medium">
-        <Headphones className="h-4 w-4 text-signal" /> What are you listening with?
+        <Headphones className="h-4 w-4 text-signal" /> {t("device.question")}
       </p>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Every headphone has its own frequency response, so the model you pick calibrates both the
-        test tones and your volume ceiling.
-      </p>
+      <p className="mt-1 text-xs text-muted-foreground">{t("device.desc")}</p>
 
       {DEVICE_GROUPS.map((group) => {
         const items = DEVICES.filter((d) => d.group === group);
         if (items.length === 0) return null;
         return (
           <div key={group} className="mt-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {group}
-            </p>
+            <p className="text-xs font-medium text-muted-foreground">{t(`home.cta.group.${group}`)}</p>
             <div className="mt-2 grid gap-2 sm:grid-cols-3">
               {items.map((d) => {
                 const active = d.id === value;
@@ -50,12 +57,12 @@ export function DevicePicker({
                     >
                       {d.label}
                       {d.calibrated ? (
-                        <BadgeCheck className="h-3.5 w-3.5 text-signal" aria-label="Calibrated" />
+                        <BadgeCheck className="h-3.5 w-3.5 text-signal" aria-label={t("device.calibratedAria")} />
                       ) : null}
                     </span>
-                    <span className="mt-0.5 block text-xs text-muted-foreground">{d.hint}</span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">{hint(d.id, d.hint)}</span>
                     <span className="mt-1 block text-xs text-muted-foreground">
-                      peaks ~{d.maxOutputDb} dB
+                      {t("device.peaks").replace("{db}", String(d.maxOutputDb))}
                     </span>
                   </button>
                 );
@@ -69,18 +76,16 @@ export function DevicePicker({
         <p className="mt-4 flex items-start gap-2 rounded-xl border border-signal/40 bg-signal/5 p-3 text-xs text-muted-foreground">
           <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
           <span>
-            <strong className="text-foreground">Calibration profile applied.</strong> Tones are
-            corrected for the typical response of the {selected.label}, so absolute thresholds are
-            more trustworthy.
+            <strong className="text-foreground">{t("device.calibratedNote")}</strong>{" "}
+            {t("device.calibratedDetail").replace("{device}", selected.label)}
           </span>
         </p>
       ) : (
         <p className="mt-4 flex items-start gap-2 rounded-xl border border-caution/40 bg-caution/5 p-3 text-xs text-muted-foreground">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-caution" />
           <span>
-            <strong className="text-foreground">Uncalibrated headphones.</strong> We only assume a
-            generic {selected.hint.toLowerCase()} response. Results still track relative changes
-            over time, but absolute thresholds may be off by several dB.
+            <strong className="text-foreground">{t("device.uncalibratedNote")}</strong>{" "}
+            {t("device.uncalibratedDetail").replace("{hint}", hint(selected.id, selected.hint).toLowerCase())}
           </span>
         </p>
       )}

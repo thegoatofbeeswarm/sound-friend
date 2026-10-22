@@ -112,6 +112,13 @@ export const Route = createFileRoute("/train")({
 const ROUNDS = 12;
 type Phase = "intro" | "playing" | "answer" | "feedback" | "audioError" | "done";
 
+/**
+ * Fixed reference for practice playback levels. Older screenings stored a
+ * "personal ceiling" offset; it had no validated basis and no longer shapes
+ * practice, so every listener starts from the same relative scale.
+ */
+const PLAYBACK_REFERENCE_DB = 85;
+
 /** What a guest's finished session keeps while they sign in. */
 type TrainingPending = { trainer: TrainerState; modeId: ModeId; kind: "train" | "transfer"; durationSec: number };
 
@@ -163,19 +170,6 @@ function TrainPage() {
   const [saveFailed, setSaveFailed] = useState(false);
   const [pendingKept, setPendingKept] = useState<boolean | null>(null);
 
-  const { data: ceiling } = useQuery({
-    enabled: !!user,
-    queryKey: ["latest-ceiling", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("hearing_tests")
-        .select("safe_volume_offset_db")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      return 85 + Number(data?.safe_volume_offset_db ?? 0);
-    },
-  });
 
   const { data: plan } = useQuery({
     enabled: !!user,
@@ -311,7 +305,7 @@ function TrainPage() {
     setTrainer(fresh);
     setLastCorrect(null);
     setStartedAt(Date.now());
-    const nextRound = mode.makeRound(fresh.level, ceiling ?? 85);
+    const nextRound = mode.makeRound(fresh.level, PLAYBACK_REFERENCE_DB);
     setRound(nextRound);
     await play(nextRound);
   }
@@ -335,7 +329,7 @@ function TrainPage() {
       setPhase("done");
       return;
     }
-    const nextRound = currentMode.makeRound(next.level, ceiling ?? 85);
+    const nextRound = currentMode.makeRound(next.level, PLAYBACK_REFERENCE_DB);
     setRound(nextRound);
     setLastCorrect(null);
     await play(nextRound);
@@ -484,7 +478,6 @@ function TrainPage() {
                     )}
                   </p>
                 </div>
-                {ceiling ? <p className="text-xs text-signal">{t("train.calibrated")}</p> : null}
               </div>
               <div role="radiogroup" aria-label={t("train.chooseTrack")} className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {TRAINING_MODES.map((mode) => {

@@ -1,5 +1,14 @@
 export const dataPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
+    "device.hint.in-ear": "Earbuds or tips inside the ear canal",
+    "device.hint.on-ear": "Pads rest on top of the ear",
+    "device.hint.over-ear": "Cups surround the whole ear",
+    "device.hint.bose-qc-ultra": "Over-ear, strong ANC",
+    "device.hint.sony-wh1000xm6": "Over-ear, strong ANC",
+    "device.hint.earpods-wired": "Unsealed wired buds",
+    "device.hint.airpods": "Unsealed buds resting in the ear",
+    "device.hint.airpods-pro-2": "Sealed tips, ANC",
+    "device.hint.airpods-pro-3": "Sealed tips, adaptive ANC",
     "noise.noMic": "No microphone was found, so the room can't be checked. You can still take the test; its quality score will note the missing check.",
     "data.badge": "Your hearing data",
     "data.title": "Your clinic report next to your screenings",
@@ -72,14 +81,14 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "device.question": "What are you listening with?",
     "device.desc":
-      "Every headphone has its own frequency response, so the model you pick sets which estimated correction profile is applied to the test tones and your volume ceiling.",
-    "device.calibratedAria": "Supported model",
-    "device.calibratedNote": "Estimated correction profile applied.",
+      "Headphones differ in how loud the same signal sounds. For a known model the test applies an estimated level offset; it isn't a calibration of your own headphones.",
+    "device.calibratedAria": "Model with an estimated adjustment",
+    "device.calibratedNote": "Estimated adjustment for this model.",
     "device.calibratedDetail":
-      "Tones use an estimated correction for the typical response of the {device}. That isn't a true calibration, but it gets the levels closer than a generic guess.",
-    "device.uncalibratedNote": "No model profile for these headphones.",
+      "Tones get an estimated offset for the typical response of the {device}, taken from published measurements of that model. Your own pair and fit can differ, so compare results on the same setup.",
+    "device.uncalibratedNote": "No adjustment for these headphones.",
     "device.uncalibratedDetail":
-      "We only assume a generic {hint} response. Results still track relative changes over time, but levels may be off by several dB.",
+      "We only assume a generic {hint} response. Results still track relative changes on the same setup, but levels may be off by several dB.",
     "device.peaks": "peaks ~{db} dB",
 
     "how.title": "How Audiomaxxer works",
@@ -115,6 +124,15 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.footnote": "This is sample data. Try your own screening to see real results.",
   },
   zh: {
+    "device.hint.in-ear": "塞入耳道的耳塞",
+    "device.hint.on-ear": "耳垫压在耳朵上",
+    "device.hint.over-ear": "耳罩包住整个耳朵",
+    "device.hint.bose-qc-ultra": "头戴式，强降噪",
+    "device.hint.sony-wh1000xm6": "头戴式，强降噪",
+    "device.hint.earpods-wired": "非密封有线耳机",
+    "device.hint.airpods": "非密封、搭在耳中的耳机",
+    "device.hint.airpods-pro-2": "密封耳塞，降噪",
+    "device.hint.airpods-pro-3": "密封耳塞，自适应降噪",
     "noise.noMic": "没有找到麦克风，因此无法检查房间。你仍然可以进行测试，质量评分会注明缺少这项检查。",
     "data.badge": "你的听力数据",
     "data.title": "透明地对比筛查结果。",
@@ -185,13 +203,13 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "noise.scan": "扫描",
 
     "device.question": "你正在使用什么设备聆听？",
-    "device.desc": "每款耳机都有其独特的频率响应，因此你选择的型号决定了对测试音调和音量上限应用哪种估算校正配置。",
-    "device.calibratedAria": "已支持的型号",
-    "device.calibratedNote": "已应用估算校正配置。",
-    "device.calibratedDetail": "音调已按 {device} 的典型响应做了估算校正。这并非真正的校准，但数值比通用估计更接近。",
-    "device.uncalibratedNote": "该耳机没有对应的型号配置。",
+    "device.desc": "同样的信号在不同耳机上听起来响度不同。对于已知型号，测试会施加一个估计的音量偏移；这并不是对你自己耳机的校准。",
+    "device.calibratedAria": "有估计调整的型号",
+    "device.calibratedNote": "已为此型号施加估计调整。",
+    "device.calibratedDetail": "提示音会按 {device} 的典型响应施加一个估计偏移，数据来自该型号已发布的测量。你自己的耳机和佩戴方式可能不同，所以请在相同设置下比较结果。",
+    "device.uncalibratedNote": "这副耳机没有调整。",
     "device.uncalibratedDetail":
-      "我们只能假设一个通用的 {hint} 响应。结果仍能追踪相对变化，但数值可能存在若干 dB 的偏差。",
+      "我们只假设一个通用的{hint}响应。在相同设置下结果仍能反映相对变化，但数值可能偏差几分贝。",
     "device.peaks": "峰值约 {db} dB",
 
     "how.title": "Audiomaxxer 的工作原理",
@@ -222,6 +240,15 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.footnote": "这是示例数据。做一次你自己的筛查，看看真实结果。",
   },
   es: {
+    "device.hint.in-ear": "Auriculares o puntas dentro del canal auditivo",
+    "device.hint.on-ear": "Las almohadillas se apoyan sobre la oreja",
+    "device.hint.over-ear": "Las almohadillas rodean toda la oreja",
+    "device.hint.bose-qc-ultra": "Circumaurales, ANC fuerte",
+    "device.hint.sony-wh1000xm6": "Circumaurales, ANC fuerte",
+    "device.hint.earpods-wired": "Auriculares con cable abiertos",
+    "device.hint.airpods": "Auriculares abiertos apoyados en el oído",
+    "device.hint.airpods-pro-2": "Puntas selladas, ANC",
+    "device.hint.airpods-pro-3": "Puntas selladas, ANC adaptativa",
     "noise.noMic": "No se encontró ningún micrófono, así que no se puede comprobar la sala. Aun así puedes hacer la prueba; su puntuación de calidad indicará que falta esta comprobación.",
     "data.badge": "Tus datos auditivos",
     "data.title": "Compara cribados con total transparencia.",
@@ -294,15 +321,15 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "device.question": "¿Con qué estás escuchando?",
     "device.desc":
-      "Cada auricular tiene su propia respuesta en frecuencia, así que el modelo que elijas define qué perfil de corrección estimada se aplica a los tonos y a tu límite de volumen.",
-    "device.calibratedAria": "Modelo compatible",
-    "device.calibratedNote": "Perfil de corrección estimada aplicado.",
+      "Los auriculares no suenan igual de fuerte con la misma señal. Para un modelo conocido la prueba aplica un ajuste de nivel estimado; no es una calibración de tus propios auriculares.",
+    "device.calibratedAria": "Modelo con ajuste estimado",
+    "device.calibratedNote": "Ajuste estimado para este modelo.",
     "device.calibratedDetail":
-      "Los tonos usan una corrección estimada según la respuesta típica del {device}. No es una calibración, pero los niveles se acercan más que una suposición genérica.",
-    "device.uncalibratedNote": "Sin perfil de modelo para estos auriculares.",
+      "Los tonos reciben un ajuste estimado para la respuesta típica de {device}, tomado de mediciones publicadas de ese modelo. Tus auriculares y su colocación pueden variar, así que compara resultados con la misma configuración.",
+    "device.uncalibratedNote": "Sin ajuste para estos auriculares.",
     "device.uncalibratedDetail":
-      "Solo asumimos una respuesta genérica de {hint}. Los resultados aún siguen los cambios relativos con el tiempo, pero los niveles pueden variar varios dB.",
-    "device.peaks": "picos ~{db} dB",
+      "Solo suponemos una respuesta genérica de {hint}. Los resultados siguen mostrando cambios relativos con la misma configuración, pero los niveles pueden desviarse varios dB.",
+    "device.peaks": "pico ~{db} dB",
 
     "how.title": "Cómo funciona Audiomaxxer",
     "how.desc":

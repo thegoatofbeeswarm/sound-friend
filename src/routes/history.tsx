@@ -57,7 +57,6 @@ type SavedTest = {
   created_at: string;
   avg_threshold_db: number | null;
   worst_threshold_db: number | null;
-  safe_volume_offset_db: number | null;
   trials: number;
   environment_db: number | null;
   device_type: string | null;
@@ -118,7 +117,7 @@ function HistoryPage() {
         await Promise.all([
           supabase
              .from("hearing_tests")
-             .select("id, created_at, avg_threshold_db, worst_threshold_db, safe_volume_offset_db, trials, environment_db, device_type")
+             .select("id, created_at, avg_threshold_db, worst_threshold_db, trials, environment_db, device_type")
              .order("created_at", { ascending: false }),
           supabase
             .from("threshold_points")
