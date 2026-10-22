@@ -17,7 +17,7 @@ export const charts: {
 
     "quality.title": "Screening quality",
     "quality.compact": "Screening quality {score}/100 · {label}",
-    "quality.heading": "Screening quality — {label}",
+    "quality.heading": "Screening quality: {label}",
     "quality.label.excellent": "Excellent conditions",
     "quality.label.good": "Good conditions",
     "quality.label.fair": "Fair conditions",
@@ -32,7 +32,7 @@ export const charts: {
       "Treat these numbers as indicative only and repeat the screening in better conditions.",
     "quality.issue.noNoiseScan": "Room noise was not measured before the screening.",
     "quality.issue.noisy": "Background noise was ~{db} dB, which can mask the quietest tones.",
-    "quality.issue.veryNoisy": "Background noise was ~{db} dB — too loud for reliable low-level tones.",
+    "quality.issue.veryNoisy": "Background noise was about {db} dB, too loud for reliable quiet tones.",
     "quality.issue.noDevice": "No listening device was recorded for this screening.",
     "quality.issue.uncalibrated":
       "No model profile for {device}, so levels may be off by several dB.",
@@ -109,7 +109,7 @@ export const charts: {
 
     "quality.title": "Calidad del cribado",
     "quality.compact": "Calidad del cribado {score}/100 · {label}",
-    "quality.heading": "Calidad del cribado — {label}",
+    "quality.heading": "Calidad del cribado: {label}",
     "quality.label.excellent": "Condiciones excelentes",
     "quality.label.good": "Buenas condiciones",
     "quality.label.fair": "Condiciones aceptables",

@@ -158,7 +158,7 @@ export const sciencePack: {
     "sci.badge": "Métodos y evidencia",
     "sci.h1": "La ciencia detrás de Audiomaxxer",
     "sci.lead":
-      "Qué medimos, por qué elegimos estos métodos, de dónde viene la evidencia y —igual de importante— qué no puede decirte esta app.",
+      "Qué medimos, por qué elegimos estos métodos, de dónde viene la evidencia y qué no puede decirte esta app.",
     "sci.group.test": "Entiende la prueba",
     "sci.group.method": "Entiende el método",
     "sci.group.protect": "Protege tu audición",

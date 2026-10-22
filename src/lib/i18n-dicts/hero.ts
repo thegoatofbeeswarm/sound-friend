@@ -42,7 +42,7 @@ export const heroPack: {
     "hero.spec.id": "Specimen 01",
     "hero.spec.name": "Human ear: outer, middle, inner",
     "hero.spec.count": "8 structures · 6 on the signal path",
-    "hero.spec.fig": "Fig. 1 — cut-away view",
+    "hero.spec.fig": "Fig. 1: cut-away view",
     "hero.idx.side": "Off the path",
     "hero.idx.drag": "Drag to turn · press a part",
     "hero.tagline": "listening health for the headphone generation",
@@ -107,7 +107,7 @@ export const heroPack: {
     "hero.x.eus.read": "The tube flicks open for a moment and lets air in or out until both sides of the eardrum match.",
     "hero.band.1": "bass you feel more than hear",
     "hero.band.2": "the warmth in a voice",
-    "hero.band.3": "vowels — the body of speech",
+    "hero.band.3": "vowels, the body of speech",
     "hero.band.4": "where a voice is easiest to place",
     "hero.band.5": "consonants: t, k, s, f",
     "hero.band.6": "the ear canal's own resonance",
@@ -185,7 +185,7 @@ export const heroPack: {
     "hero.part.vestibular.wrong":
       "The semicircular canals share fluid and bone with the cochlea. Very loud sound makes some people briefly dizzy, and inner-ear disorders often affect both hearing and balance.",
     "hero.part.vestibular.profile":
-      "Not measured — see a clinician about balance symptoms",
+      "Not measured. See a clinician about balance symptoms.",
     "hero.part.vestibular.kind": "Off the hearing path",
 
     "hero.part.eustachian.title": "Eustachian tube",
@@ -430,13 +430,13 @@ export const heroPack: {
     "hero.spec.id": "Espécimen 01",
     "hero.spec.name": "Oído humano: externo, medio, interno",
     "hero.spec.count": "8 estructuras · 6 en el recorrido",
-    "hero.spec.fig": "Fig. 1 — vista en corte",
+    "hero.spec.fig": "Fig. 1: vista en corte",
     "hero.idx.side": "Fuera del recorrido",
     "hero.idx.drag": "Arrastra para girar · pulsa una parte",
     "hero.tagline": "salud auditiva para la generación de los auriculares",
     "hero.title": "La pérdida auditiva es un problema creciente en todo el mundo.",
     "hero.lede":
-      "Los estudios muestran que entre el 12 y el 17 % de los adolescentes tiene problemas auditivos que pasan desapercibidos. No poder seguir una conversación en un lugar ruidoso es una señal. Para combatir la pérdida auditiva acelerada, Audiomaxxer usa una prueba de cribado para crear un perfil de escucha de cinco partes — sensibilidad, habla en ruido, discriminación, atención y memoria — y luego entrena tu habilidad más débil y la vuelve a medir.",
+      "Los estudios muestran que entre el 12 y el 17 % de los adolescentes tiene problemas auditivos que pasan desapercibidos. No poder seguir una conversación en un lugar ruidoso es una señal. El cribado de Audiomaxxer crea un perfil de escucha de cinco partes (sensibilidad, habla en ruido, discriminación, atención y memoria) y luego entrena tu habilidad más débil y la vuelve a medir.",
     "hero.meter.label": "Reproduce un tono dentro del oído",
     "hero.place.danger":
       "Su pico está a {mm} de la base: el tramo que el ruido daña primero y que una prueba de umbrales puede pasar por alto.",
