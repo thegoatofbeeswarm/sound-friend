@@ -59,6 +59,7 @@ import {
   type ModeId,
   type ModeRound,
   warmUpSpeech,
+  beginSpeechRound,
   takeSpeechResult,
   type PlaybackResult,
 } from "@/lib/training-modes";
@@ -266,7 +267,7 @@ function TrainPage() {
   const play = useCallback(async (nextRound: ModeRound) => {
     setPhase("playing");
     setAudioIssue(null);
-    takeSpeechResult();
+    beginSpeechRound();
     await new Promise((resolve) => setTimeout(resolve, 350));
     await nextRound.play();
     if (!mounted.current) return;

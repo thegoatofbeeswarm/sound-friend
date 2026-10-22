@@ -6,6 +6,7 @@
  * A mode's difficulty argument is the shared 1..10 trainer level.
  */
 
+import { speakUtterance, speechTimeoutMs, type PlaybackResult } from "@/lib/speech-playback";
 import { dbToGain, getAudioContext, SILENT_GAIN, unlockAudio } from "@/lib/audiometry";
 import {
   playSoundscape,
@@ -182,14 +183,22 @@ export async function warmUpSpeech(): Promise<void> {
   await wait(150);
 }
 
-export type PlaybackResult = "ok" | "unsupported" | "error" | "not-started";
+export type { PlaybackResult } from "@/lib/speech-playback";
 
 /**
  * Outcome of the speech played during the current round, or null when the
- * round used no speech. The trainer reads and clears it after each round so a
- * failed playback is never scored as an answer.
+ * round used no speech. The trainer starts each round with beginSpeechRound()
+ * and reads the outcome with takeSpeechResult() so a failed or unconfirmed
+ * playback is never scored as an answer.
  */
 let speechResult: PlaybackResult | null = null;
+/** Increments every round; callbacks from an earlier round are ignored. */
+let speechRound = 0;
+
+export function beginSpeechRound() {
+  speechResult = null;
+  speechRound++;
+}
 
 export function takeSpeechResult(): PlaybackResult | null {
   const r = speechResult;
@@ -197,15 +206,17 @@ export function takeSpeechResult(): PlaybackResult | null {
   return r;
 }
 
-function noteSpeech(r: PlaybackResult) {
+function noteSpeech(r: PlaybackResult, round: number) {
+  if (round !== speechRound) return;
   // Within one round, any failure wins over an earlier success.
   if (speechResult == null || speechResult === "ok") speechResult = r;
 }
 
-/** Speech synthesis with a rate and volume, resolving with how it went. */
+/** Speech synthesis with a rate and volume; the outcome is recorded for the round. */
 async function speak(text: string, rate: number, volume: number): Promise<void> {
+  const round = speechRound;
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    noteSpeech("unsupported");
+    noteSpeech("unsupported", round);
     return;
   }
   const synth = window.speechSynthesis;
@@ -214,37 +225,15 @@ async function speak(text: string, rate: number, volume: number): Promise<void> 
   synth.cancel();
   // Chrome needs a beat between cancel() and speak() or the utterance is lost.
   await wait(120);
-  return new Promise((resolve) => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = rate;
-    u.volume = Math.max(0.05, Math.min(1, volume));
-    const v =
-      voices.find((x) => x.default && x.lang?.toLowerCase().startsWith("en")) ??
-      voices.find((x) => x.lang?.toLowerCase().startsWith("en"));
-    if (v) u.voice = v;
-    let started = false;
-    let settled = false;
-    const finish = (result: PlaybackResult) => {
-      if (settled) return;
-      settled = true;
-      clearInterval(keepAlive);
-      noteSpeech(result);
-      resolve();
-    };
-    u.onstart = () => {
-      started = true;
-    };
-    u.onend = () => finish("ok");
-    u.onerror = () => finish("error");
-    // Chrome pauses long-running synthesis; resume keeps it flowing.
-    const keepAlive = setInterval(() => {
-      if (synth.speaking && !synth.paused) synth.resume();
-    }, 4000);
-    synth.speak(u);
-    // Watchdog: speech that started but never fired onend was heard; speech
-    // that never started was not.
-    setTimeout(() => finish(started ? "ok" : "not-started"), 8000);
-  });
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = rate;
+  u.volume = Math.max(0.05, Math.min(1, volume));
+  const v =
+    voices.find((x) => x.default && x.lang?.toLowerCase().startsWith("en")) ??
+    voices.find((x) => x.lang?.toLowerCase().startsWith("en"));
+  if (v) u.voice = v;
+  const result = await speakUtterance(synth, u, speechTimeoutMs(text, rate));
+  noteSpeech(result, round);
 }
 
 

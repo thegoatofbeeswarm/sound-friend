@@ -13,6 +13,7 @@
  * reported SRT is the mean SNR across the settled reversals.
  */
 
+import { speakUtterance, speechTimeoutMs, type PlaybackResult } from "@/lib/speech-playback";
 import { unlockAudio } from "@/lib/audiometry";
 import { startSampleLoop } from "@/lib/soundscapes";
 import { warmUpSpeech } from "@/lib/training-modes";
@@ -215,12 +216,7 @@ function wait(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/**
- * How a spoken stimulus went. Only "ok" may be scored: an unsupported engine,
- * an error, or speech that never started means the listener did not hear the
- * intended item.
- */
-export type PlaybackResult = "ok" | "unsupported" | "error" | "not-started";
+export type { PlaybackResult } from "@/lib/speech-playback";
 
 async function speakDigits(digits: number[]): Promise<PlaybackResult> {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return "unsupported";
@@ -234,32 +230,13 @@ async function speakDigits(digits: number[]): Promise<PlaybackResult> {
     voices.find((v) => v.default && v.lang?.toLowerCase().startsWith("en")) ??
     voices.find((v) => v.lang?.toLowerCase().startsWith("en"));
 
-  return new Promise<PlaybackResult>((resolve) => {
-    const u = new SpeechSynthesisUtterance(digits.join(", "));
-    u.rate = 0.85;
-    u.volume = SPEECH_LEVEL;
-    if (voice) u.voice = voice;
-    let started = false;
-    let settled = false;
-    const finish = (result: PlaybackResult) => {
-      if (settled) return;
-      settled = true;
-      clearInterval(keepAlive);
-      resolve(result);
-    };
-    u.onstart = () => {
-      started = true;
-    };
-    u.onend = () => finish("ok");
-    u.onerror = () => finish("error");
-    const keepAlive = setInterval(() => {
-      if (synth.speaking && !synth.paused) synth.resume();
-    }, 4000);
-    synth.speak(u);
-    // Watchdog. Speech that started but never reported its end (a Chrome
-    // quirk) was heard; speech that never started was not.
-    setTimeout(() => finish(started ? "ok" : "not-started"), 9000);
-  });
+  const text = digits.join(", ");
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.85;
+  u.volume = SPEECH_LEVEL;
+  if (voice) u.voice = voice;
+  // Only a confirmed end counts; a start that stalls is "stalled" and unscored.
+  return speakUtterance(synth, u, speechTimeoutMs(text, 0.85, 9000));
 }
 
 /** Play one trial: babble in, digits spoken over it, babble out. */
