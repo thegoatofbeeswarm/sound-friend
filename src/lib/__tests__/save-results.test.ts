@@ -108,3 +108,14 @@ describe("tone test saving", () => {
     expect(rows.length).toBe(1);
   });
 });
+
+describe("before migration 0010 is applied", () => {
+  test("missing-column errors are recognised, others are not", async () => {
+    const { isMissingClientIdColumn } = await import("../save-results-supabase");
+    expect(isMissingClientIdColumn({ code: "42703", message: "column hearing_tests.client_result_id does not exist" })).toBe(true);
+    expect(isMissingClientIdColumn({ code: "PGRST204", message: "Could not find the 'client_result_id' column of 'speech_tests' in the schema cache" })).toBe(true);
+    expect(isMissingClientIdColumn({ code: "42703", message: "column hearing_tests.other does not exist" })).toBe(false);
+    expect(isMissingClientIdColumn({ code: "23505", message: "duplicate key" })).toBe(false);
+    expect(isMissingClientIdColumn(null)).toBe(false);
+  });
+});
