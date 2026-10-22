@@ -149,11 +149,26 @@ export function statusForDose(dose: number): ExposureStatus {
   return "high";
 }
 
-export const STATUS_LABEL: Record<ExposureStatus, string> = {
+export const STATUS_LABEL: Record<ExposureStatus | "legacy", string> = {
   low: "Low",
   moderate: "Moderate",
   high: "High",
+  legacy: "Not comparable (old-format log)",
 };
+
+/**
+ * Status for a day, or "legacy" for days saved before per-stretch logging.
+ * Their merged level understates loud stretches, so they get no reassuring
+ * current-model classification.
+ */
+export function entryStatus(entry: ExposureEntry): ExposureStatus | "legacy" {
+  return entry.legacyMerged ? "legacy" : statusForDose(entryDosePercent(entry));
+}
+
+/** Weekly status, or "legacy" when any day in the window is old-format. */
+export function windowStatus(w: ExposureWindow): ExposureStatus | "legacy" {
+  return w.includesLegacy ? "legacy" : statusForDose(w.avgDosePercent);
+}
 
 export interface ExposureWindow {
   days: number;

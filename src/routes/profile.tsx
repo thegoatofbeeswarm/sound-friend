@@ -17,6 +17,7 @@ import {
   bandOf,
   buildProfile,
   listeningTimeline,
+  profileChange,
   DIMENSION_ACTION,
   listeningScore,
   weakestDimension,
@@ -233,8 +234,8 @@ function ProfilePage() {
 
   const dims = data?.dims ?? [];
   const timeline = data?.timeline ?? [];
-  const trendChange =
-    timeline.length >= 2 ? timeline[timeline.length - 1]!.score - timeline[0]!.score : null;
+  const change = profileChange(timeline);
+  const trendChange = change.change;
   const overall = listeningScore(dims);
   const weakest = weakestDimension(dims);
 
@@ -303,15 +304,18 @@ function ProfilePage() {
                 <p className="mt-4 text-sm text-muted-foreground">{t("trend.empty")}</p>
               ) : (
                 <>
-                  {timeline[0]!.coverage !== timeline[timeline.length - 1]!.coverage ? (
-                    <p className="mt-3 text-sm">{t("trend.mixNote")}</p>
-                  ) : null}
+                  {change.expanded ? <p className="mt-3 text-sm">{t("trend.mixNote")}</p> : null}
                   <p className="mt-3 text-sm text-signal">
-                    {trendChange == null || Math.abs(trendChange) < 2
-                      ? t("trend.changeFlat")
-                      : trendChange > 0
-                        ? t("trend.changeUp").replace("{n}", String(trendChange))
-                        : t("trend.changeDown").replace("{n}", String(Math.abs(trendChange)))}
+                    {trendChange == null
+                      ? t("trend.waitForComparable")
+                      : (Math.abs(trendChange) < 2
+                          ? t("trend.changeFlat")
+                          : trendChange > 0
+                            ? t("trend.changeUp").replace("{n}", String(trendChange))
+                            : t("trend.changeDown").replace("{n}", String(Math.abs(trendChange)))) +
+                        (change.expanded && change.since
+                          ? " " + t("trend.sinceSameSkills").replace("{date}", new Date(change.since).toLocaleDateString())
+                          : "")}
                   </p>
                   <div className="mt-4 h-64 w-full">
                     <ScoreTrend timeline={timeline} scoreLabel={t("trend.score")} />

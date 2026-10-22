@@ -14,6 +14,7 @@ import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from
 import {
   dosePercent,
   entryDosePercent,
+  entryStatus,
   formatMinutes,
   lastSevenDays,
   loadExposure,
@@ -101,6 +102,7 @@ function RisksPage() {
     low: t("risks.status.low"),
     moderate: t("risks.status.moderate"),
     high: t("risks.status.high"),
+    legacy: t("risks.status.legacy"),
   };
 
   return (
@@ -133,8 +135,8 @@ function RisksPage() {
               <Stat label={t("risks.loudestSession")} value={today ? `~${today.peakDb} dB` : "-"} sub={t("risks.estimatedPeak")} />
               <Stat
                 label={t("risks.exposureStatus")}
-                value={today ? (statusLabel[statusForDose(entryDosePercent(today))] ?? "-") : t("risks.notSet")}
-                sub={t("risks.basedOnToday")}
+                value={today ? (statusLabel[entryStatus(today)] ?? "-") : t("risks.notSet")}
+                sub={today?.legacyMerged ? t("risks.legacyShort") : t("risks.basedOnToday")}
                 highlight={today != null}
               />
             </section>
@@ -205,6 +207,9 @@ function RisksPage() {
               </Button>
             </section>
 
+            {week.includesLegacy ? (
+              <p role="note" className="mt-8 rounded-xl bg-card p-4 text-sm">{t("risks.legacyNote")}</p>
+            ) : null}
             <section className="mt-8 grid gap-4 sm:grid-cols-3">
               <Stat label={t("risks.sevenDayListening")} value={formatMinutes(week.totalMinutes)} sub={week.avgDb == null ? t("risks.nothingLoggedYet") : t("risks.avgAbbrev").replace("{n}", String(week.avgDb))} />
               <Stat label={t("risks.sevenDayLoudest")} value={week.peakDb == null ? "-" : `~${week.peakDb} dB`} sub={t("risks.estimatedPeak")} />

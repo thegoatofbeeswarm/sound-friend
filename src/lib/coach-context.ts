@@ -5,7 +5,7 @@ import {
   lastSevenDays,
   weeklyTrendPercent,
   STATUS_LABEL,
-  statusForDose,
+  windowStatus,
 } from "@/lib/exposure";
 import { dayStreak, totalXp } from "@/lib/gamification";
 import { TRAINING_MODES } from "@/lib/training-modes";
@@ -141,7 +141,8 @@ export async function buildCoachContext(): Promise<string> {
     const exposure = loadExposure();
     const week = lastSevenDays(exposure);
     const trend = weeklyTrendPercent(exposure);
-    const status = statusForDose(week.avgDosePercent);
+    // Old-format days can't be classified under the current model.
+    const status = windowStatus(week);
     lines.push(
       `Logged listening behaviour: ${week.totalMinutes} minutes in the last 7 days, average estimate ${week.avgDb ?? "not logged"} dB, peak ${week.peakDb ?? "not logged"} dB, exposure status ${STATUS_LABEL[status]}${trend == null ? "" : `, ${trend >= 0 ? "+" : ""}${trend}% vs prior week`}.`,
     );

@@ -9,7 +9,7 @@ const store = new Map<string, string>();
   },
 };
 
-const { logListening, entryDosePercent, equivalentLevelDb, dosePercent, lastSevenDays, loadExposure, dayId } =
+const { logListening, entryDosePercent, equivalentLevelDb, dosePercent, lastSevenDays, loadExposure, dayId, entryStatus, windowStatus } =
   await import("../exposure");
 
 beforeEach(() => store.clear());
@@ -50,5 +50,20 @@ describe("exposure aggregation", () => {
     const [legacy] = loadExposure();
     expect(legacy!.legacyMerged).toBe(true);
     expect(lastSevenDays(loadExposure()).includesLegacy).toBe(true);
+  });
+
+  test("an old-format day gets no reassuring status", () => {
+    store.set(
+      "audiomaxxer.exposure.v1",
+      JSON.stringify([{ day: dayId(), minutes: 120, avgDb: 70, peakDb: 100 }]),
+    );
+    const entries = loadExposure();
+    expect(entryStatus(entries[0]!)).toBe("legacy");
+    expect(windowStatus(lastSevenDays(entries))).toBe("legacy");
+  });
+
+  test("new logs still get a status", () => {
+    const entries = logListening(60, 70);
+    expect(entryStatus(entries[0]!)).toBe("low");
   });
 });

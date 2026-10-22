@@ -1,5 +1,9 @@
 export const risksPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
+    "risks.legacyNote": "Some days in this week were logged before the app kept each listening stretch separately. Those days were merged into one average that understates loud stretches, so their dose is at best a lower bound and they get no status here. New logs are calculated correctly.",
+    "risks.legacyShort": "Old-format log",
+    "report.status.legacy": "Not comparable",
+    "risks.status.legacy": "Not comparable",
     "risks.tagline": "Listening habits",
     "risks.title": "Your listening risk",
     "risks.lead": "Audiomaxxer combines your listening habits, estimated sound exposure and screening results to show how your habits add up. These are estimates, not a diagnosis or a medically validated safety limit for you.",
@@ -48,6 +52,10 @@ export const risksPage: { en: Record<string, string>; zh: Record<string, string>
     "risks.status.high": "High",
   },
   zh: {
+    "risks.legacyNote": "本周有些日子是在应用分别记录每段聆听之前记录的。那些日子被合并成一个平均值，会低估大声的时段，因此它们的剂量最多只是下限，这里不给出状态。新的记录会正确计算。",
+    "risks.legacyShort": "旧格式记录",
+    "report.status.legacy": "无法比较",
+    "risks.status.legacy": "无法比较",
     "risks.tagline": "聆听习惯",
     "risks.title": "个性化聆听风险",
     "risks.lead": "Audiomaxxer 结合你报告的聆听习惯、估算的声音暴露以及筛查背景，帮助你了解自己的行为模式。这些估算并非诊断，也不是经过医学验证的个人安全限值。",
@@ -96,6 +104,10 @@ export const risksPage: { en: Record<string, string>; zh: Record<string, string>
     "risks.status.high": "高",
   },
   es: {
+    "risks.legacyNote": "Algunos días de esta semana se registraron antes de que la app guardara cada tramo de escucha por separado. Esos días se fusionaron en un promedio que subestima los tramos fuertes, así que su dosis es como mucho un límite inferior y aquí no reciben estado. Los registros nuevos se calculan correctamente.",
+    "risks.legacyShort": "Registro en formato antiguo",
+    "report.status.legacy": "No comparable",
+    "risks.status.legacy": "No comparable",
     "risks.tagline": "Hábitos de escucha",
     "risks.title": "Riesgo auditivo personalizado",
     "risks.lead": "Audiomaxxer combina tus hábitos de escucha reportados, la exposición sonora estimada y el contexto de tus cribados para ayudarte a entender tu comportamiento. Estas estimaciones no son un diagnóstico ni un límite de seguridad personal validado médicamente.",

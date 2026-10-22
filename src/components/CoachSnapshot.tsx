@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Activity, Ear, Flame, Headphones } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { lastSevenDays, loadExposure, STATUS_LABEL, statusForDose } from "@/lib/exposure";
+import { lastSevenDays, loadExposure, STATUS_LABEL, windowStatus } from "@/lib/exposure";
 import { dayStreak, type SessionRow } from "@/lib/gamification";
 import { scoreScreening } from "@/lib/test-quality";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ export function CoachSnapshot({ userId, onStartConversation }: { userId: string;
   }, []);
 
   const streak = data ? dayStreak(data.sessions) : 0;
-  const status = statusForDose(exposure.avgDosePercent);
+  const status = windowStatus(exposure);
   const latestAccuracy = data?.sessions[0]?.accuracy;
 
   return (

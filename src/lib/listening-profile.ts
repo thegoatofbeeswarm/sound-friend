@@ -85,14 +85,30 @@ export interface SessionRow {
  * and is read as 1%.
  */
 export function sessionAccuracyPct(row: SessionRow): number | null {
-  const rounds = Number(row.rounds);
-  const correct = Number(row.correct);
-  if (Number.isFinite(rounds) && rounds > 0 && Number.isFinite(correct) && correct >= 0 && correct <= rounds) {
+  const rounds = present(row.rounds);
+  const correct = present(row.correct);
+  if (rounds != null && rounds > 0 && correct != null && correct >= 0 && correct <= rounds) {
     return (correct / rounds) * 100;
   }
-  const acc = Number(row.accuracy);
-  if (!Number.isFinite(acc) || acc < 0 || acc > 100) return null;
+  const acc = present(row.accuracy);
+  if (acc == null || acc < 0 || acc > 100) return null;
   return acc > 0 && acc < 1 ? acc * 100 : acc;
+}
+
+/**
+ * A stored number, or null when the field is missing. Presence is checked
+ * before conversion: Number(null) and Number("") are 0, which would turn a
+ * missing count into a real-looking zero.
+ */
+function present(v: unknown): number | null {
+  if (v == null || (typeof v === "string" && v.trim() === "")) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Rows that can actually contribute to a trained score. */
+function usableSessions(rows: SessionRow[]): SessionRow[] {
+  return rows.filter((r) => sessionAccuracyPct(r) != null && present(r.end_level) != null);
 }
 
 /** Modes that feed each trained dimension. */
@@ -153,7 +169,8 @@ export function buildProfile(input: ProfileInput): Dimension[] {
   };
 
   const trained = (Object.keys(MODE_MAP) as (keyof typeof MODE_MAP)[]).map<Dimension>((id) => {
-    const mine = input.sessions.filter((s) => MODE_MAP[id].includes(s.mode));
+    // Evidence counts only sessions that can be scored, not every stored row.
+    const mine = usableSessions(input.sessions.filter((s) => MODE_MAP[id].includes(s.mode)));
     return {
       id,
       score: mine.length ? trainedScore(mine) : null,
@@ -212,6 +229,37 @@ export interface TimelinePoint {
   score: number;
   /** How many of the five skills the score averaged at this point. */
   coverage: number;
+  /** Which skills those were, so changes are only compared like-for-like. */
+  measured?: DimensionId[];
+}
+
+export interface ProfileChange {
+  /** Score change between two points that cover the same skills, or null. */
+  change: number | null;
+  /** Date the compared stretch starts; later than the first point if the profile grew. */
+  since: string | null;
+  /** True when the set of measured skills changed at some point in the timeline. */
+  expanded: boolean;
+}
+
+const sameSet = (a: DimensionId[] = [], b: DimensionId[] = []) =>
+  a.length === b.length && a.every((d) => b.includes(d));
+
+/**
+ * The overall score is a mean of whatever skills are measured, so adding a
+ * first speech result can move it without any change in listening. A change
+ * is therefore only stated across the latest stretch in which the same skills
+ * were measured; if that stretch is a single point, no change is claimed.
+ */
+export function profileChange(timeline: TimelinePoint[]): ProfileChange {
+  if (timeline.length < 2) return { change: null, since: null, expanded: false };
+  const last = timeline[timeline.length - 1]!;
+  let start = timeline.length - 1;
+  while (start > 0 && sameSet(timeline[start - 1]!.measured, last.measured)) start--;
+  const expanded = start > 0;
+  if (start === timeline.length - 1) return { change: null, since: last.date, expanded };
+  const first = timeline[start]!;
+  return { change: last.score - first.score, since: first.date, expanded };
 }
 
 /**
@@ -255,8 +303,8 @@ export function listeningTimeline(input: TimelineInput, maxPoints = 16): Timelin
             .map((s) => ({ mode: s.mode, accuracy: s.accuracy, end_level: s.end_level, rounds: s.rounds, correct: s.correct })),
       });
       const score = listeningScore(dims);
-      const coverage = dims.filter((d) => d.score != null).length;
-      return score == null ? null : { date: week, score, coverage };
+      const measured = dims.filter((d) => d.score != null).map((d) => d.id);
+      return score == null ? null : { date: week, score, coverage: measured.length, measured };
     })
     .filter(Boolean) as TimelinePoint[];
 

@@ -21,7 +21,7 @@ import {
   formatMinutes,
   lastSevenDays,
   loadExposure,
-  statusForDose,
+  windowStatus,
   weeklyTrendPercent,
   type ExposureEntry,
 } from "@/lib/exposure";
@@ -146,7 +146,7 @@ function ReportPage() {
 
   const week = lastSevenDays(exposure);
   const trend = weeklyTrendPercent(exposure);
-  const status = statusForDose(week.avgDosePercent);
+  const status = windowStatus(week);
   const focusMeta = modeById(report.focus);
 
   if (loading || (user && isLoading)) {
@@ -247,7 +247,7 @@ function ReportPage() {
           <Stat
             label={t("report.exposureStatus")}
             value={t(`report.status.${status}`)}
-            sub={f("report.avgDailyDose", { n: week.avgDosePercent })}
+            sub={status === "legacy" ? t("risks.legacyShort") : f("report.avgDailyDose", { n: week.avgDosePercent })}
           />
           <Stat
             label={t("report.sevenDayTrend")}
