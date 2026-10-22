@@ -44,9 +44,9 @@ import { useI18n } from "@/lib/i18n";
 import { buildTrainingPlan, type TrainingPlan } from "@/lib/training-plan";
 import {
   createTrainer,
+  scoreRound,
   quietestHeard,
   stopSoundscape,
-  FLOOR_STEP,
   type TrainerState,
 } from "@/lib/soundscapes";
 import {
@@ -105,7 +105,7 @@ export const Route = createFileRoute("/train")({
 });
 
 const ROUNDS = 12;
-type Phase = "intro" | "playing" | "answer" | "done";
+type Phase = "intro" | "playing" | "answer" | "feedback" | "done";
 
 type StoredSession = SessionRow & { id: string; quietest_db: number | null };
 
@@ -127,6 +127,15 @@ function TrainPage() {
   const { t } = useI18n();
   const qc = useQueryClient();
   const [trainer, setTrainer] = useState<TrainerState>(() => createTrainer());
+  /** Set while an answer is being scored, so a round accepts exactly one. */
+  const answering = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
   const [round, setRound] = useState<ModeRound | null>(null);
   const [phase, setPhase] = useState<Phase>("intro");
   const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
@@ -246,6 +255,8 @@ function TrainPage() {
     setPhase("playing");
     await new Promise((resolve) => setTimeout(resolve, 350));
     await nextRound.play();
+    if (!mounted.current) return;
+    answering.current = false;
     setPhase("answer");
   }, []);
 
@@ -254,6 +265,7 @@ function TrainPage() {
     const mode0 = modeById(nextMode);
     if (mode0.needsSpeech) await warmUpSpeech();
     saved.current = false;
+    answering.current = false;
     setKind(nextKind);
     setFixedLevel(nextKind === "transfer" ? (level ?? 3) : null);
     // Transfer checks draw only from material training never uses.
@@ -261,7 +273,7 @@ function TrainPage() {
     setModeId(nextMode);
     const fresh =
       nextKind === "transfer"
-        ? { ...createTrainer(), level: level ?? 3, floor: level ?? 3 }
+        ? createTrainer(level ?? 3)
         : createTrainer();
     const mode = modeById(nextMode);
     setTrainer(fresh);
@@ -273,35 +285,18 @@ function TrainPage() {
   }
 
   async function answer(id: string) {
-    if (!round || phase !== "answer") return;
+    // One answer per round: the lock is taken synchronously, before any state
+    // update, so rapid taps or key repeats during feedback are dropped.
+    if (!round || phase !== "answer" || answering.current) return;
+    answering.current = true;
+    setPhase("feedback");
     const correct = id === round.answerId;
     setLastCorrect(correct);
-    const rounds = trainer.rounds + 1;
-    // A transfer check stays at one difficulty so the score is comparable;
-    // a training session ratchets, so it never ends where it started.
-    const floor =
-      kind === "transfer" ? trainer.floor : Math.min(10, trainer.floor + FLOOR_STEP);
-    const next: TrainerState = {
-      ...trainer,
-      rounds,
-      correct: trainer.correct + (correct ? 1 : 0),
-      streak: correct ? trainer.streak + 1 : 0,
-      floor,
-      level:
-        kind === "transfer"
-          ? trainer.level
-          : Math.max(
-              1,
-              floor,
-              Math.min(10, trainer.level + (correct ? (trainer.streak + 1 >= 3 ? 0.9 : 0.5) : -0.8)),
-            ),
-      history: [
-        ...trainer.history,
-        { round: rounds, level: trainer.level, correct, levelDb: round.levelDb ?? 0 },
-      ],
-    };
+    // A transfer check stays at one difficulty so the score is comparable.
+    const next: TrainerState = scoreRound(trainer, round, correct, { fixed: kind === "transfer" });
     setTrainer(next);
     await new Promise((resolve) => setTimeout(resolve, 750));
+    if (!mounted.current) return;
     if (next.rounds >= roundsTotal) {
       setRound(null);
       setPhase("done");
@@ -482,7 +477,7 @@ function TrainPage() {
           </>
         ) : null}
 
-        {(phase === "playing" || phase === "answer") && round ? (
+        {(phase === "playing" || phase === "answer" || phase === "feedback") && round ? (
           <section className="mx-auto max-w-2xl text-center">
             <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
               <span>

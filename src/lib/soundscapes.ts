@@ -573,27 +573,42 @@ export interface TrainerState {
   level: number;
   rounds: number;
   correct: number;
+  /** Consecutive correct answers. */
   streak: number;
-  /**
-   * Difficulty can never fall below this. It creeps up with every answered
-   * round, so a session always ends harder than it started: without it the
-   * staircase can sit on one level for twelve rounds, or slide back to the
-   * opening difficulty after a couple of misses.
-   */
-  floor: number;
+  /** Consecutive wrong answers. */
+  missStreak: number;
   history: Array<{ round: number; level: number; correct: boolean; levelDb: number }>;
 }
 
 export function createTrainer(startLevel = 3): TrainerState {
-  return { level: startLevel, rounds: 0, correct: 0, streak: 0, floor: startLevel, history: [] };
+  return { level: startLevel, rounds: 0, correct: 0, streak: 0, missStreak: 0, history: [] };
 }
 
-/** How much the guaranteed minimum difficulty rises per answered round. */
-export const FLOOR_STEP = 0.22;
+/**
+ * The adaptive rule, in one place. A weighted up/down staircase:
+ *
+ * - a correct answer raises difficulty by 0.5, or by 0.9 once three in a row
+ *   are correct, so one lucky answer can't push the level far;
+ * - a wrong answer lowers it by 0.8, and by 1.2 from the third miss in a row,
+ *   so repeated errors bring the material back to where the listener copes;
+ * - the level stays within 1 to 10.
+ *
+ * With unequal steps the level settles where the listener is right roughly
+ * 60% of the time. There is no rising floor: a session ends wherever the
+ * listener's answers put it, and a high end level only reflects answers.
+ */
+export const STEP_UP = 0.5;
+export const STEP_UP_STREAK = 0.9;
+export const STEP_DOWN = 0.8;
+export const STEP_DOWN_STREAK = 1.2;
 
-/** Difficulty floor after `rounds` answered questions from `startLevel`. */
-export function floorAfter(startLevel: number, rounds: number): number {
-  return Math.min(MAX_LEVEL, startLevel + rounds * FLOOR_STEP);
+export function adaptLevel(level: number, correct: boolean, streak: number, missStreak: number): number {
+  const step = correct
+    ? streak >= 3
+      ? STEP_UP_STREAK
+      : STEP_UP
+    : -(missStreak >= 3 ? STEP_DOWN_STREAK : STEP_DOWN);
+  return Math.max(MIN_LEVEL, Math.min(MAX_LEVEL, level + step));
 }
 
 export interface TrainingRound {
@@ -640,35 +655,26 @@ export function nextRound(state: TrainerState, ceilingDb = 85): TrainingRound {
 }
 
 /**
- * Closed loop: correct answers raise difficulty (faster on a streak), misses
- * drop it, so the trainer settles just at the edge of the listener's ability.
- */
-/**
- * Closed loop: correct answers raise difficulty (faster on a streak), misses
- * drop it, so the trainer settles just at the edge of the listener's ability.
- * A rising floor is applied afterwards so a run of misses can soften the next
- * question without ever taking the session back to where it began.
+ * Record one answer. Training sessions adapt with `adaptLevel`; a transfer
+ * check passes `fixed` so every item stays at the same difficulty and the
+ * score is comparable.
  */
 export function scoreRound(
   state: TrainerState,
-  round: TrainingRound,
+  round: { levelDb?: number | undefined },
   correct: boolean,
+  options: { fixed?: boolean } = {},
 ): TrainerState {
   const streak = correct ? state.streak + 1 : 0;
-  const step = correct ? (streak >= 3 ? 0.9 : 0.5) : -0.8;
+  const missStreak = correct ? 0 : state.missStreak + 1;
   const rounds = state.rounds + 1;
-  const floor = Math.min(MAX_LEVEL, state.floor + FLOOR_STEP);
-  const level = Math.max(MIN_LEVEL, floor, Math.min(MAX_LEVEL, state.level + step));
   return {
-    level,
+    level: options.fixed ? state.level : adaptLevel(state.level, correct, streak, missStreak),
     rounds,
     correct: state.correct + (correct ? 1 : 0),
     streak,
-    floor,
-    history: [
-      ...state.history,
-      { round: rounds, level: state.level, correct, levelDb: round.levelDb },
-    ],
+    missStreak,
+    history: [...state.history, { round: rounds, level: state.level, correct, levelDb: round.levelDb ?? 0 }],
   };
 }
 
