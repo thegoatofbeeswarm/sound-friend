@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
+import { rememberReturnTo, safeReturnTo, takeReturnTo } from "@/lib/pending-result";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,6 +31,10 @@ export const Route = createFileRoute("/auth")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>): { returnTo?: string } => {
+    const returnTo = safeReturnTo(search["returnTo"]);
+    return returnTo ? { returnTo } : {};
+  },
   component: AuthPage,
 });
 
@@ -41,10 +46,17 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const { returnTo } = Route.useSearch();
+  const destination = returnTo ?? "/test";
+
+  // Kept across the OAuth round trip, which comes back to the site root.
+  useEffect(() => rememberReturnTo(returnTo), [returnTo]);
 
   useEffect(() => {
-    if (user) void navigate({ to: "/test" });
-  }, [user, navigate]);
+    if (!user) return;
+    takeReturnTo();
+    void navigate({ to: destination as "/test" });
+  }, [user, navigate, destination]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,7 +70,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/test` },
+          options: { emailRedirectTo: `${window.location.origin}${destination}` },
         });
         if (error) throw error;
         toast.success(t("auth.created"));
@@ -83,7 +95,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    void navigate({ to: "/test" });
+    void navigate({ to: destination as "/test" });
   }
 
   return (

@@ -1,3 +1,4 @@
+import { clearPending, loadPending, savePending } from "@/lib/pending-result";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -109,6 +110,9 @@ export const Route = createFileRoute("/train")({
 const ROUNDS = 12;
 type Phase = "intro" | "playing" | "answer" | "feedback" | "audioError" | "done";
 
+/** What a guest's finished session keeps while they sign in. */
+type TrainingPending = { trainer: TrainerState; modeId: ModeId; kind: "train" | "transfer"; durationSec: number };
+
 type StoredSession = SessionRow & { id: string; quietest_db: number | null };
 
 const MODE_ICONS = {
@@ -132,6 +136,9 @@ function TrainPage() {
   /** Set while an answer is being scored, so a round accepts exactly one. */
   const [audioIssue, setAudioIssue] = useState<PlaybackResult | null>(null);
   const answering = useRef(false);
+  /** Set when a guest's finished session came back from sign-in and still needs saving. */
+  const [restoredId, setRestoredId] = useState<string | null>(null);
+  const [restoredDuration, setRestoredDuration] = useState<number | null>(null);
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -278,6 +285,8 @@ function TrainPage() {
     if (mode0.needsSpeech) await warmUpSpeech();
     saved.current = false;
     answering.current = false;
+    setRestoredId(null);
+    setRestoredDuration(null);
     setKind(nextKind);
     setFixedLevel(nextKind === "transfer" ? (level ?? 3) : null);
     // Transfer checks draw only from material training never uses.
@@ -325,32 +334,61 @@ function TrainPage() {
     if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
   }, []);
 
-  useEffect(() => {
-    if (phase !== "done" || !user || saved.current) return;
+  const durationSec = () => restoredDuration ?? (startedAt == null ? 0 : Math.round((Date.now() - startedAt) / 1000));
+
+  const saveSession = async () => {
+    if (!user || saved.current) return;
     saved.current = true;
     const accuracy = Math.round((trainer.correct / Math.max(1, trainer.rounds)) * 100);
     const xp = sessionXp(trainer.correct, trainer.rounds, trainer.level);
-    void (async () => {
-      const { error } = await supabase.from("training_sessions").insert({
-        user_id: user.id,
-        mode: modeId,
-        kind,
-        rounds: trainer.rounds,
-        correct: trainer.correct,
-        accuracy,
-        start_level: 3,
-        end_level: Math.round(trainer.level * 10) / 10,
-        quietest_db: modeId === "soundscape" ? quietestHeard(trainer) : null,
-        xp,
-        duration_sec: startedAt == null ? 0 : Math.round((Date.now() - startedAt) / 1000),
-      });
-      if (error) toast.error(t("train.toastSessionFail"));
-      else {
-        toast.success(t("train.toastSessionSavedTemplate").replace("{xp}", String(xp)));
-        void qc.invalidateQueries({ queryKey: ["training-sessions", user.id] });
-      }
-    })();
-  }, [phase, user, trainer, qc, modeId, startedAt, kind]);
+    const { error } = await supabase.from("training_sessions").insert({
+      user_id: user.id,
+      mode: modeId,
+      kind,
+      rounds: trainer.rounds,
+      correct: trainer.correct,
+      accuracy,
+      start_level: 3,
+      end_level: Math.round(trainer.level * 10) / 10,
+      quietest_db: modeId === "soundscape" ? quietestHeard(trainer) : null,
+      xp,
+      duration_sec: durationSec(),
+    });
+    if (error) {
+      saved.current = false;
+      toast.error(t("train.toastSessionFail"));
+      return;
+    }
+    clearPending("training");
+    setRestoredId(null);
+    toast.success(t("train.toastSessionSavedTemplate").replace("{xp}", String(xp)));
+    void qc.invalidateQueries({ queryKey: ["training-sessions", user.id] });
+  };
+
+  useEffect(() => {
+    if (phase !== "done") return;
+    // A restored guest session is saved only when the user presses save.
+    if (user && !restoredId) void saveSession();
+    if (!user && !loading) {
+      savePending<TrainingPending>("training", { trainer, modeId, kind, durationSec: durationSec() });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, user]);
+
+  // Back from sign-in: show the same finished session again, ready to save once.
+  useEffect(() => {
+    if (loading || !user || phase !== "intro") return;
+    const p = loadPending<TrainingPending>("training");
+    if (!p) return;
+    saved.current = false;
+    setRestoredId(p.id);
+    setRestoredDuration(p.payload.durationSec);
+    setTrainer(p.payload.trainer);
+    setModeId(p.payload.modeId);
+    setKind(p.payload.kind);
+    setPhase("done");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user]);
 
   const points: ProgressPoint[] = allSessions.map((session) => ({
     date: session.created_at,
@@ -483,7 +521,7 @@ function TrainPage() {
               </section>
             ) : (
               <p className="mt-10 max-w-xl text-sm text-muted-foreground">
-                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInXpSuffix")}
+                <Link to="/auth" search={{ returnTo: "/train" }} className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInXpSuffix")}
               </p>
             )}
           </>
@@ -579,8 +617,10 @@ function TrainPage() {
             </div>
             {!user ? (
               <p className="mt-6 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInSessionSuffix")}
+                <Link to="/auth" search={{ returnTo: "/train" }} className="text-signal underline-offset-4 hover:underline">{t("train.signInLink")}</Link> {t("train.signInSessionSuffix")}
               </p>
+            ) : restoredId ? (
+              <Button className="mt-6" onClick={() => void saveSession()}>{t("test.saveToAccount")}</Button>
             ) : null}
             <div className="mt-8 flex flex-wrap gap-3">
               <Button onClick={() => void begin()}><RefreshCw className="mr-2 h-4 w-4" /> {t("train.trainAgain")}</Button>
@@ -590,7 +630,7 @@ function TrainPage() {
           </section>
         ) : null}
 
-        {user && phase !== "playing" && phase !== "answer" ? (
+        {user && (phase === "intro" || phase === "done") ? (
           <>
             <section className="mt-14">
               <div className="flex items-end justify-between gap-4">

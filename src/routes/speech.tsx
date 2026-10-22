@@ -1,3 +1,4 @@
+import { clearPending, loadPending, savePending } from "@/lib/pending-result";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -55,6 +56,9 @@ export const Route = createFileRoute("/speech")({
 
 type Phase = "intro" | "running" | "done";
 
+/** What a guest's finished speech test keeps while they sign in. */
+type SpeechPending = { final: SinResult; noise: NoiseId; device: DeviceId };
+
 const NOISE_IDS = Object.keys(NOISE_TRACKS) as NoiseId[];
 
 function SpeechPage() {
@@ -74,6 +78,9 @@ function SpeechPage() {
   const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
   const [audioIssue, setAudioIssue] = useState<PlaybackResult | null>(null);
   const busy = useRef(false);
+  const savingRef = useRef(false);
+  /** Set when a guest's result came back from sign-in and still needs saving. */
+  const [restoredId, setRestoredId] = useState<string | null>(null);
 
   useEffect(() => setDeviceState(loadDevice()), []);
   useEffect(() => () => stopSinAudio(), []);
@@ -118,7 +125,8 @@ function SpeechPage() {
   }
 
   const saveResult = useCallback(async () => {
-    if (!final || !user) return;
+    if (!final || !user || savingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
     const { error } = await supabase.from("speech_tests").insert({
       user_id: user.id,
@@ -133,17 +141,36 @@ function SpeechPage() {
     });
     setSaving(false);
     if (error) {
+      savingRef.current = false;
       toast.error(t("sin.saveFail"));
       return;
     }
+    clearPending("speech");
+    setRestoredId(null);
     void queryClient.invalidateQueries();
     toast.success(t("sin.saved"));
   }, [final, user, noise, device, t, queryClient]);
 
   useEffect(() => {
-    if (phase === "done" && final && user) void saveResult();
+    if (phase === "done" && final && user && !restoredId) void saveResult();
+    if (phase === "done" && final && !user && !loading) {
+      savePending<SpeechPending>("speech", { final, noise, device });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, final, user]);
+
+  // Back from sign-in: show the same result again, ready to save once.
+  useEffect(() => {
+    if (loading || !user || phase !== "intro") return;
+    const p = loadPending<SpeechPending>("speech");
+    if (!p) return;
+    setRestoredId(p.id);
+    setNoise(p.payload.noise);
+    setDeviceState(p.payload.device);
+    setFinal(p.payload.final);
+    setPhase("done");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user]);
 
   if (loading) {
     return (
@@ -341,7 +368,11 @@ function SpeechPage() {
               <Button asChild variant="secondary">
                 <Link to="/train">{t("sin.train")}</Link>
               </Button>
-              {user ? (
+              {user && restoredId ? (
+                <Button disabled={saving} onClick={() => void saveResult()}>
+                  {saving ? t("sin.saving") : t("test.saveToAccount")}
+                </Button>
+              ) : user ? (
                 <Button
                   variant="ghost"
                   disabled={saving}
@@ -351,7 +382,7 @@ function SpeechPage() {
                 </Button>
               ) : (
                 <Button asChild variant="ghost">
-                  <Link to="/auth">{t("sin.signInSave")}</Link>
+                  <Link to="/auth" search={{ returnTo: "/speech" }}>{t("sin.signInSave")}</Link>
                 </Button>
               )}
             </div>

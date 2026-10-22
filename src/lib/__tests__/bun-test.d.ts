@@ -4,6 +4,7 @@ declare module "bun:test" {
   interface Matchers {
     toBe(expected: unknown): void;
     toBeNull(): void;
+    toBeUndefined(): void;
     toBeCloseTo(expected: number, digits?: number): void;
     toBeGreaterThan(expected: number): void;
     toBeLessThan(expected: number): void;

@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
   useRouterState,
+  useNavigate,
 } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect, useState, type ReactNode } from "react";
 
@@ -16,9 +17,10 @@ import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { RouteProgress } from "@/components/RouteProgress";
 import { SiteFooter } from "@/components/SiteFooter";
+import { takeReturnTo } from "@/lib/pending-result";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { initNativeShell } from "@/lib/native";
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 
 function NotFoundComponent() {
   return (
@@ -166,6 +168,21 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Google sign-in comes back to the site root. If the user started sign-in from
+ * a page that had something to save, send them back there.
+ */
+function ReturnAfterSignIn() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!user) return;
+    const to = takeReturnTo();
+    if (to) void navigate({ to: to as "/test" });
+  }, [user, navigate]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -181,6 +198,7 @@ function RootComponent() {
           <AuthProvider>
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <RouteProgress />
+            <ReturnAfterSignIn />
             <div key={pathname} className="page-enter">
               <Outlet />
             </div>

@@ -1,3 +1,4 @@
+import { clearPending, loadPending, savePending } from "@/lib/pending-result";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -87,6 +88,15 @@ function loadSaved(): Saved | null {
   }
 }
 
+/** What a guest's finished screening keeps while they sign in. */
+type TonePending = {
+  points: ThresholdResult[];
+  environmentDb: number | null;
+  trials: number;
+  device: DeviceId;
+  rel: Saved["rel"];
+};
+
 function clearSaved() {
   if (typeof window !== "undefined") window.localStorage.removeItem(RESUME_KEY);
 }
@@ -106,6 +116,10 @@ function TestPage() {
   const [saving, setSaving] = useState(false);
   const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
   const [saved, setSaved] = useState<Saved | null>(null);
+  /** Set when a guest's finished result was restored after sign-in and still needs saving. */
+  const [restoredId, setRestoredId] = useState<string | null>(null);
+  const [restoredTrials, setRestoredTrials] = useState<number | null>(null);
+  const savingRef = useRef(false);
 
   useEffect(() => {
     setSaved(loadSaved());
@@ -273,7 +287,8 @@ function TestPage() {
 
 
   const saveResults = useCallback(async () => {
-    if (!final || !user) return;
+    if (!final || !user || savingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
     const summary = screeningSummary(final);
     const { data, error } = await supabase
@@ -281,7 +296,7 @@ function TestPage() {
       .insert({
         user_id: user.id,
         environment_db: noise,
-        trials: state.trialCount,
+        trials: restoredTrials ?? state.trialCount,
         worst_threshold_db: summary.worst,
         avg_threshold_db: summary.avg,
         // No personal safe-volume figure is derived from a screening any more.
@@ -295,9 +310,13 @@ function TestPage() {
 
     if (error || !data) {
       setSaving(false);
+      savingRef.current = false;
       toast.error(t("test.toastSaveTestFail"));
       return;
     }
+    // The test row exists now; never insert it a second time for this result.
+    clearPending("tone");
+    setRestoredId(null);
 
     const { error: pointsError } = await supabase.from("threshold_points").insert(
       final.map((r) => ({
@@ -317,7 +336,7 @@ function TestPage() {
     void queryClient.invalidateQueries();
     toast.success(t("test.toastSaveSuccess"));
     void navigate({ to: "/history" });
-  }, [final, user, noise, state.trialCount, navigate, device, queryClient, protocol]);
+  }, [final, user, noise, state.trialCount, restoredTrials, navigate, device, queryClient, protocol]);
 
   useEffect(() => {
     if (phase === "done" && final) setArmed(false);
@@ -325,9 +344,29 @@ function TestPage() {
       clearSaved();
       setSaved(null);
     }
-    if (phase === "done" && final && user) void saveResults();
+    // A restored guest result is saved only when the user presses save.
+    if (phase === "done" && final && user && !restoredId) void saveResults();
+    // A guest's result is kept so signing in to save it doesn't lose it.
+    if (phase === "done" && final && !user && !loading) {
+      savePending<TonePending>("tone", { points: final, environmentDb: noise, trials: state.trialCount, device, rel });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, final, user]);
+
+  // Back from sign-in: show the same result again, ready to save once.
+  useEffect(() => {
+    if (loading || !user || phase !== "intro") return;
+    const p = loadPending<TonePending>("tone");
+    if (!p) return;
+    setRestoredId(p.id);
+    setRestoredTrials(p.payload.trials);
+    setNoise(p.payload.environmentDb);
+    setDeviceState(p.payload.device);
+    setRel(p.payload.rel);
+    setFinal(p.payload.points);
+    setPhase("done");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user]);
 
 
   if (loading) {
@@ -399,7 +438,7 @@ function TestPage() {
             {!user ? (
               <p className="mt-6 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
                 {t("test.guestPre")}{" "}
-                <Link to="/auth" className="text-signal underline-offset-4 hover:underline">
+                <Link to="/auth" search={{ returnTo: "/test" }} className="text-signal underline-offset-4 hover:underline">
                   {t("test.guestLink")}
                 </Link>{" "}
                 {t("test.guestPost")}
@@ -481,6 +520,7 @@ function TestPage() {
             trials={state.trialCount}
             device={device}
             reliability={rel}
+            onSave={restoredId ? () => void saveResults() : undefined}
           />
         ) : null}
       </main>
@@ -495,9 +535,12 @@ function ResultsView({
   trials,
   device,
   reliability,
+  onSave,
 }: {
   points: ThresholdResult[];
   saving: boolean;
+  /** Present when this result came back from sign-in and still needs saving. */
+  onSave?: (() => void) | undefined;
   environmentDb: number | null;
   trials: number;
   device: DeviceId;
@@ -572,13 +615,17 @@ function ResultsView({
         <Button asChild variant="secondary">
           <Link to="/train">{t("test.trainHearing")}</Link>
         </Button>
-        {user ? (
+        {user && onSave ? (
+          <Button disabled={saving} onClick={onSave}>
+            {saving ? t("test.saving") : t("test.saveToAccount")}
+          </Button>
+        ) : user ? (
           <Button asChild variant="secondary" disabled={saving}>
             <Link to="/history">{saving ? t("test.saving") : t("test.viewHistory")}</Link>
           </Button>
         ) : (
           <Button asChild variant="secondary">
-            <Link to="/auth">{t("test.signInSave")}</Link>
+            <Link to="/auth" search={{ returnTo: "/test" }}>{t("test.signInSave")}</Link>
           </Button>
         )}
       </div>
