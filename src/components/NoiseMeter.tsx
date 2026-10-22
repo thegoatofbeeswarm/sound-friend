@@ -1,22 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n";
 
 /**
- * Environmental noise estimate from the device microphone.
- * Reported as an approximate SPL figure (uncalibrated microphones cannot be
- * exact), used to warn when a test room is too loud.
+ * Background-noise check from the device microphone. The number is
+ * 94 + 20·log10(RMS) on an uncalibrated microphone (often with automatic gain
+ * control), so it is a relative reading for spotting a noisy room, not a
+ * sound-level measurement, and the UI says so.
  */
 export function NoiseMeter({ onLevel }: { onLevel?: (db: number) => void }) {
+  const { t } = useI18n();
   const [level, setLevel] = useState<number | null>(null);
   const [active, setActive] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<"denied" | "noMic" | null>(null);
   const cleanup = useRef<(() => void) | null>(null);
 
   useEffect(() => () => cleanup.current?.(), []);
 
   async function start() {
     setError(null);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError("noMic");
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const ctx = new AudioContext();
@@ -46,8 +53,9 @@ export function NoiseMeter({ onLevel }: { onLevel?: (db: number) => void }) {
         void ctx.close();
         setActive(false);
       };
-    } catch {
-      setError("Microphone access was denied.");
+    } catch (e) {
+      const name = e instanceof DOMException ? e.name : "";
+      setError(name === "NotFoundError" || name === "OverconstrainedError" ? "noMic" : "denied");
     }
   }
 
@@ -56,23 +64,25 @@ export function NoiseMeter({ onLevel }: { onLevel?: (db: number) => void }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-xl border border-border/70 bg-card/60 p-4">
       <div>
-        <p className="text-sm font-medium">Room noise</p>
+        <p className="text-sm font-medium">{t("noise.title")}</p>
         <p className="text-xs text-muted-foreground">
           {level == null
-            ? "Scan your surroundings before testing."
-            : tooLoud
-              ? `~${level} dB - too loud, find a quieter space.`
-              : `~${level} dB - quiet enough to test.`}
+            ? t("noise.scanPrompt")
+            : t(tooLoud ? "noise.tooLoud" : "noise.ok").replace("{n}", String(level))}
         </p>
-        {error ? <p className="text-xs text-danger">{error}</p> : null}
+        {error ? (
+          <p role="alert" className="text-xs text-danger">
+            {t(error === "noMic" ? "noise.noMic" : "noise.error")}
+          </p>
+        ) : null}
       </div>
       {active ? (
         <Button variant="secondary" size="sm" onClick={() => cleanup.current?.()}>
-          <MicOff className="mr-2 h-4 w-4" /> Stop
+          <MicOff className="mr-2 h-4 w-4" /> {t("noise.stop")}
         </Button>
       ) : (
         <Button variant="secondary" size="sm" onClick={() => void start()}>
-          <Mic className="mr-2 h-4 w-4" /> Scan
+          <Mic className="mr-2 h-4 w-4" /> {t("noise.scan")}
         </Button>
       )}
     </div>

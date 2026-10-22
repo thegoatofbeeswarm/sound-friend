@@ -1,5 +1,6 @@
 export const dataPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
+    "noise.noMic": "No microphone was found, so the room can't be checked. You can still take the test; its quality score will note the missing check.",
     "data.badge": "Your hearing data",
     "data.title": "Your clinic report next to your screenings",
     "data.lead":
@@ -114,6 +115,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.footnote": "This is sample data. Try your own screening to see real results.",
   },
   zh: {
+    "noise.noMic": "没有找到麦克风，因此无法检查房间。你仍然可以进行测试，质量评分会注明缺少这项检查。",
     "data.badge": "你的听力数据",
     "data.title": "透明地对比筛查结果。",
     "data.lead":
@@ -178,7 +180,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "noise.scanPrompt": "测试前先扫描一下周围环境。",
     "noise.tooLoud": "背景噪音读数偏高（在此麦克风的相对刻度上约为 {n}）。请找一个更安静的地方。",
     "noise.ok": "背景噪音读数偏低（在此麦克风的相对刻度上约为 {n}）。可以开始。",
-    "noise.error": "麦克风访问被拒绝。",
+    "noise.error": "麦克风访问被阻止。请在浏览器设置中允许访问后再扫描房间。",
     "noise.stop": "停止",
     "noise.scan": "扫描",
 
@@ -220,6 +222,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.footnote": "这是示例数据。做一次你自己的筛查，看看真实结果。",
   },
   es: {
+    "noise.noMic": "No se encontró ningún micrófono, así que no se puede comprobar la sala. Aun así puedes hacer la prueba; su puntuación de calidad indicará que falta esta comprobación.",
     "data.badge": "Tus datos auditivos",
     "data.title": "Compara cribados con total transparencia.",
     "data.lead":
@@ -285,7 +288,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "noise.scanPrompt": "Escanea tu entorno antes de la prueba.",
     "noise.tooLoud": "El ruido de fondo se lee alto (unos {n} en la escala relativa de este micrófono). Busca un lugar más tranquilo.",
     "noise.ok": "El ruido de fondo se lee bajo (unos {n} en la escala relativa de este micrófono). Todo listo.",
-    "noise.error": "Se denegó el acceso al micrófono.",
+    "noise.error": "Se bloqueó el acceso al micrófono. Permítelo en la configuración del navegador para escanear la sala.",
     "noise.stop": "Detener",
     "noise.scan": "Escanear",
 
