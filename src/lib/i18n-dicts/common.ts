@@ -4,7 +4,7 @@ export const common: {
   es: Record<string, string>;
 } = {
   en: {
-    "nav.data": "Import Clinical Data",
+    "nav.data": "Import clinical data",
     "nav.report": "Report",
     "nav.science": "Science",
     "nav.coach": "Listening coach",
@@ -26,8 +26,8 @@ export const common: {
     "auth.continueWithout": "Continue without an account",
     "auth.created": "Account created. You can start testing.",
     "auth.passwordRule": "Password must be at least 8 characters and include 1 special character.",
-    "auth.failed": "Authentication failed",
-    "auth.googleFailed": "Google sign-in failed.",
+    "auth.failed": "Sign-in failed. Check your email and password, then try again.",
+    "auth.googleFailed": "Google sign-in failed. Try again, or use your email.",
   },
   zh: {
     "nav.data": "数据",

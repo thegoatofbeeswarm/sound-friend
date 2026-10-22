@@ -1,7 +1,7 @@
 export const risksPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
     "risks.tagline": "Listening habits",
-    "risks.title": "Personalized Listening Risk",
+    "risks.title": "Your listening risk",
     "risks.lead": "Audiomaxxer combines your listening habits, estimated sound exposure and screening results to show how your habits add up. These are estimates, not a diagnosis or a medically validated safety limit for you.",
     "risks.today": "Today",
     "risks.nothingLogged": "Nothing logged",

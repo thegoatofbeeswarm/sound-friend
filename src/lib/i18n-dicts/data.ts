@@ -1,7 +1,7 @@
 export const dataPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
     "data.badge": "Your hearing data",
-    "data.title": "Compare screenings, transparently.",
+    "data.title": "Your clinic report next to your screenings",
     "data.lead":
       "Bring a past clinic or hearing-center result into the same view as your Audiomaxxer data. The comparison checks the measurements; it can't diagnose anything.",
     "data.signInPrompt": "Sign in to upload reports and inspect your saved hearing data.",
@@ -57,15 +57,15 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "data.report.next": "Next:",
     "data.report.errChooseFile": "Choose a PDF, PNG or JPG hearing report.",
     "data.report.errFileSize": "The file must be between 1 byte and 15 MB.",
-    "data.report.errAnalyzeFail": "The report could not be analyzed.",
-    "data.report.errSaveFail": "Could not save the report.",
+    "data.report.errAnalyzeFail": "We couldn't read that report. Try a clearer scan or a PDF.",
+    "data.report.errSaveFail": "Couldn't save the report. Try again.",
     "data.report.toastAnalyzed": "Report analyzed · {n} threshold(s) found",
 
     "noise.title": "Room noise",
     "noise.scanPrompt": "Scan your surroundings before testing.",
-    "noise.tooLoud": "~{n} dB - too loud, find a quieter space.",
-    "noise.ok": "~{n} dB - quiet enough to test.",
-    "noise.error": "Microphone access was denied.",
+    "noise.tooLoud": "About {n} dB. Too loud, so find a quieter spot.",
+    "noise.ok": "About {n} dB. Quiet enough to test.",
+    "noise.error": "Microphone access was blocked. Allow it in your browser settings to scan the room.",
     "noise.stop": "Stop",
     "noise.scan": "Scan",
 
@@ -104,7 +104,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "Step 5 feeds back into step 3: an updated profile re-targets your training instead of repeating the same exercises. That is what we mean by {loop}.",
     "how.closedLoop": "closed loop",
 
-    "example.title": "Your Hearing Profile",
+    "example.title": "Your hearing profile",
     "example.badge": "Example result",
     "example.detected": "Audiomaxxer detected",
     "example.finding1": "Strong low-frequency hearing",

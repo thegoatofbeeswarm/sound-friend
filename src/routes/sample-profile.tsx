@@ -101,7 +101,7 @@ function SampleProfilePage() {
     <div className="min-h-screen bg-background">
       <SiteNav />
       <PageHero
-        title="Sample Listening Profile"
+        title="Sample listening profile"
         lede="The profile tracks five listening skills, updates as you test and train, and points at the one worth working on next."
         variant="band"
       />

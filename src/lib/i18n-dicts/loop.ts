@@ -8,7 +8,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "train.mode.street.blurb": "Follow directions over real traffic before the light changes.",
     "train.mode.street.skill": "Speech in low-frequency noise",
     "train.mode.phone-call.label": "Phone call",
-    "train.mode.phone-call.blurb": "A hissy phone call with no lips to read, just pure skill.",
+    "train.mode.phone-call.blurb": "A hissy phone call with no lips to read.",
     "train.mode.phone-call.skill": "Degraded-channel speech",
     "train.realWorld": "Real-world scenes",
 
@@ -17,7 +17,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "transfer.body":
       "A short check at a fixed difficulty, using sentences and sounds your training never uses. If your score holds up here, the practice is carrying over.",
     "transfer.run": "Run transfer check",
-    "transfer.needMore": "Finish two sessions of a track to unlock its transfer check.",
+    "transfer.needMore": "Finish two sessions of a track to run its transfer check.",
     "transfer.trained": "Trained",
     "transfer.unseen": "Unseen material",
     "transfer.gap": "Difference",

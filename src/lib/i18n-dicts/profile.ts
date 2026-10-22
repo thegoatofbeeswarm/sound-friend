@@ -2,7 +2,7 @@ export const profilePage: { en: Record<string, string>; zh: Record<string, strin
   en: {
     "nav.profile": "Listening profile",
     "home.ctaProfile": "See my listening profile",
-    "profile.title": "Your Listening Profile",
+    "profile.title": "Your listening profile",
     "profile.lead":
       "Your profile tracks five listening skills, updates as you test and train, and points at the one worth working on next.",
     "profile.signedOut": "Sign in to build and keep your listening profile.",

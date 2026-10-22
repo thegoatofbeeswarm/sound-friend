@@ -7,7 +7,7 @@ export const planPack: {
     "plan.title": "Your training plan",
     "plan.fromClinic": "Anchored to your clinic report: {source}",
     "plan.fromScreening": "Based on your latest Audiomaxxer screening",
-    "plan.fromNone": "A starter plan. Take a screening or upload a clinic report to personalize it.",
+    "plan.fromNone": "A starter plan. Take a screening or upload a clinic report and it gets rebuilt around your results.",
     "plan.step": "Step {n}",
     "plan.start": "Start this track",
     "plan.upload": "Bring your audiogram",
