@@ -231,10 +231,15 @@ async function speakDigits(digits: number[]): Promise<PlaybackResult> {
     voices.find((v) => v.lang?.toLowerCase().startsWith("en"));
 
   const text = digits.join(", ");
-  const u = new SpeechSynthesisUtterance(text);
-  u.rate = 0.85;
-  u.volume = SPEECH_LEVEL;
-  if (voice) u.voice = voice;
+  let u: SpeechSynthesisUtterance;
+  try {
+    u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.85;
+    u.volume = SPEECH_LEVEL;
+    if (voice) u.voice = voice;
+  } catch {
+    return "error";
+  }
   // Only a confirmed end counts; a start that stalls is "stalled" and unscored.
   return speakUtterance(synth, u, speechTimeoutMs(text, 0.85, 9000));
 }

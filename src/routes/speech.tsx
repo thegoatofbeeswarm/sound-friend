@@ -106,7 +106,13 @@ function SpeechPage() {
       setTrial(next);
       setAudioIssue(null);
       setPlaying(true);
-      const played = await playSinTrial(next, n);
+      let played: PlaybackResult;
+      try {
+        played = await playSinTrial(next, n);
+      } catch {
+        stopSinAudio();
+        played = "error";
+      }
       setPlaying(false);
       // Digits that never played can't be answered, so the trial stays unscored.
       if (played !== "ok") setAudioIssue(played);

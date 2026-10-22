@@ -225,13 +225,20 @@ async function speak(text: string, rate: number, volume: number): Promise<void> 
   synth.cancel();
   // Chrome needs a beat between cancel() and speak() or the utterance is lost.
   await wait(120);
-  const u = new SpeechSynthesisUtterance(text);
-  u.rate = rate;
-  u.volume = Math.max(0.05, Math.min(1, volume));
-  const v =
-    voices.find((x) => x.default && x.lang?.toLowerCase().startsWith("en")) ??
-    voices.find((x) => x.lang?.toLowerCase().startsWith("en"));
-  if (v) u.voice = v;
+  let u: SpeechSynthesisUtterance;
+  try {
+    u = new SpeechSynthesisUtterance(text);
+    u.rate = rate;
+    u.volume = Math.max(0.05, Math.min(1, volume));
+    const v =
+      voices.find((x) => x.default && x.lang?.toLowerCase().startsWith("en")) ??
+      voices.find((x) => x.lang?.toLowerCase().startsWith("en"));
+    if (v) u.voice = v;
+  } catch {
+    // An engine that can't even build the utterance can't deliver it.
+    noteSpeech("error", round);
+    return;
+  }
   const result = await speakUtterance(synth, u, speechTimeoutMs(text, rate));
   noteSpeech(result, round);
 }

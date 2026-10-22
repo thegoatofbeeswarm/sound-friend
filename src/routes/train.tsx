@@ -269,10 +269,16 @@ function TrainPage() {
     setAudioIssue(null);
     beginSpeechRound();
     await new Promise((resolve) => setTimeout(resolve, 350));
-    await nextRound.play();
+    let threw = false;
+    try {
+      await nextRound.play();
+    } catch {
+      // Audio that throws (blocked context, engine fault) must not leave the round hanging.
+      threw = true;
+    }
     if (!mounted.current) return;
     // A round whose speech failed to play is not answerable, so it is never scored.
-    const speech = takeSpeechResult();
+    const speech = threw ? "error" : takeSpeechResult();
     if (speech && speech !== "ok") {
       setAudioIssue(speech);
       setPhase("audioError");
