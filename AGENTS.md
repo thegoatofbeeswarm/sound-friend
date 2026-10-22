@@ -11,4 +11,16 @@
 
 ## Writing copy
 
-Run all user-facing text (i18n dictionaries in `src/lib/i18n-dicts/`, article routes, alt text) through the humanizer skill in `.claude/skills/humanizer` before committing it. Keep facts, numbers and citations exactly; remove AI writing patterns such as "not X but Y" contrasts, one-line closers, em dashes used as connectors, inflated claims and filler. Update the English first, then bring the `zh` and `es` dictionaries in line. If the stricter keez97 humanizer is installed (`~/.claude/skills/humanizer`), gate the English copy with `python3 ~/.claude/skills/humanizer/score.py <file> --mode light`; it must report PASS. Chinese copy keeps its normal `——` punctuation. Design rules for every page live in `DESIGN.md`.
+Two humanizer skills ship in `.claude/skills/`:
+
+- `/humanizer` is keez97/humanizer, the primary one. It names 43 AI-writing tells and includes `score.py`, a pass/fail checker.
+- `/humanizer-blader` is blader/humanizer, a second opinion for rewriting a passage.
+
+Run all user-facing English text (i18n dictionaries in `src/lib/i18n-dicts/`, article routes, alt text) through `/humanizer` before committing, then gate it with the checker:
+
+```bash
+python3 .claude/skills/humanizer/score.py <file> --mode light   # UI copy and articles; must PASS
+python3 .claude/skills/humanizer/score.py <file> --mode full    # optional, long published prose
+```
+
+Use light mode for this site: it is clinical and technical copy, and its careful hedges ("estimate", "may", "not a diagnosis") must stay. Keep every fact, number and citation. Revise at most twice against the checker. Update the English first, then bring the `zh` and `es` dictionaries in line; Chinese keeps its normal `——` punctuation. Design rules for every page live in `DESIGN.md`.

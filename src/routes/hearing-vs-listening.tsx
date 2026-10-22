@@ -71,7 +71,7 @@ function Page() {
         {
           title: "What this app is not",
           body: [
-            "Audiomaxxer is a screening and training tool. It cannot diagnose a hearing disorder, rule one out, or distinguish medical causes. If listening is hard for you in ordinary situations, see an audiologist, whatever any app says.",
+            "Audiomaxxer is a screening and training tool. It can't diagnose a hearing disorder, rule one out, or distinguish medical causes. If listening is hard for you in ordinary situations, see an audiologist, whatever any app says.",
           ],
         },
       ]}

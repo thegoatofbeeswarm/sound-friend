@@ -33,7 +33,7 @@ function Page() {
           title: "What the numbers say",
           body: [
             "A 2022 systematic review published in BMJ Global Health, summarised by the World Health Organization, estimated that around 24% of young people use personal listening devices at unsafe volumes, and that over one billion young people are potentially at risk of hearing loss from unsafe listening.",
-            "Risk estimates are not predictions about any individual. They describe a population, and they exist because sound dose is the one part of the picture people can actually change.",
+            "Risk estimates aren't predictions about any individual. They describe a population, and they exist because sound dose is the one part of the picture people can actually change.",
           ],
         },
         {
@@ -71,7 +71,7 @@ function Page() {
         {
           title: "The honest limits",
           body: [
-            "Noise-related change is generally permanent, so prevention outranks everything else here. A browser screening can flag a pattern worth watching and track it over time; it cannot confirm damage or replace an audiologist's assessment.",
+            "Noise-related change is generally permanent, so prevention outranks everything else here. A browser screening can flag a pattern worth watching and track it over time; it can't confirm damage or replace an audiologist's assessment.",
           ],
         },
       ]}

@@ -32,8 +32,8 @@ function Page() {
         {
           title: "What a threshold actually is",
           body: [
-            "Detection is not a hard cutoff. As a tone gets quieter, the probability that you notice it falls smoothly rather than dropping from certain to impossible. A threshold is a point on that curve, conventionally the level where detection becomes reliable, estimated from the pattern of your responses rather than read off a single trial.",
-            "That is why a screening presents several tones near the edge of audibility instead of asking you once. It is also why a single missed press does not move a well-estimated threshold much.",
+            "Detection isn't a hard cutoff. As a tone gets quieter, the probability that you notice it falls smoothly rather than dropping from certain to impossible. A threshold is a point on that curve, conventionally the level where detection becomes reliable, estimated from the pattern of your responses rather than read off a single trial.",
+            "That is why a screening presents several tones near the edge of audibility instead of asking you once. It is also why a single missed press doesn't move a well-estimated threshold much.",
           ],
         },
         {
@@ -52,7 +52,7 @@ function Page() {
         {
           title: "Units: relative and estimated, not clinical dB HL",
           body: [
-            "The levels we report are estimates on a scale similar to the ones used in clinics, but they are not the same thing. The actual sound pressure reaching your eardrum depends on your headphones, your operating-system and browser volume, and your browser's audio processing, none of which the app can measure.",
+            "The levels we report are estimates on a scale similar to the ones used in clinics, but they aren't the same thing. The actual sound pressure reaching your eardrum depends on your headphones, your operating-system and browser volume, and your browser's audio processing, none of which the app can measure.",
             "Room noise readings are likewise estimates from a phone or laptop microphone, not calibrated sound-level measurements. Use our numbers to compare against your own previous tests on the same device with the same volume settings, rather than as absolute dB SPL or clinical dB HL values.",
           ],
         },

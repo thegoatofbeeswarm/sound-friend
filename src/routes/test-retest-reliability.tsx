@@ -27,7 +27,7 @@ function Page() {
     <ArticlePage
       kicker="Measurement quality"
       title="Test-retest reliability"
-      intro="Take the same screening twice in an hour and the two results will not match exactly. Every measurement has some spread. The useful question is how big the ordinary spread is, so you know when a change means something."
+      intro="Take the same screening twice in an hour and the two results won't match exactly. Every measurement has some spread. The useful question is how big the ordinary spread is, so you know when a change means something."
       sections={[
         {
           title: "Precision is not accuracy",
@@ -47,10 +47,10 @@ function Page() {
         {
           title: "Where the spread comes from",
           bullets: [
-            "You: attention, tiredness, how willing you are to respond to a tone you are only half sure about.",
+            "You: attention, tiredness, how willing you're to respond to a tone you're only half sure about.",
             "The room: background noise raises the level at which a quiet tone becomes detectable.",
             "The hardware: headphone fit and position shift, and different models deliver different levels for the same setting.",
-            "The software stack: browser and operating-system volume paths are not calibrated to a physical reference.",
+            "The software stack: browser and operating-system volume paths aren't calibrated to a physical reference.",
           ],
         },
         {

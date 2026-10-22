@@ -34,7 +34,7 @@ function Page() {
           body: [
             "A traditional pure-tone audiogram plays fixed tones and moves the level up and down until the person no longer responds. It works, but it spends many trials on levels that were never in question, which is why a full clinical sweep takes time.",
             "Audiomaxxer keeps a probability distribution over your threshold at each frequency and ear, updates it after every response, and presents the next tone where uncertainty is greatest. The approach follows the Bayesian adaptive tradition of QUEST (Watson & Pelli, 1983) and Kontsevich & Tyler (1999).",
-            "The psychometric model includes small rates of false-positive and missed responses, so a single stray press does not distort the estimate. Tracks stop when the estimate is stable instead of after a fixed count, which is how a full ten-track screening fits into roughly four minutes.",
+            "The psychometric model includes small rates of false-positive and missed responses, so a single stray press doesn't distort the estimate. Tracks stop when the estimate is stable instead of after a fixed count, which is how a full ten-track screening fits into roughly four minutes.",
           ],
         },
         {
@@ -43,7 +43,7 @@ function Page() {
             {
               term: "Frequencies tested",
               value:
-                "500, 1000, 2000, 4000 and 8000 Hz, each ear separately, for ten tracks per screening. Stimuli are pure sine tones. We do not currently test 250 Hz or 6 kHz.",
+                "500, 1000, 2000, 4000 and 8000 Hz, each ear separately, for ten tracks per screening. Stimuli are pure sine tones. We don't currently test 250 Hz or 6 kHz.",
             },
             {
               term: "Tone duration",
@@ -53,7 +53,7 @@ function Page() {
             {
               term: "Catch trials",
               value:
-                "There are no silent catch trials today. Instead the psychometric model carries a fixed 2% false-positive rate and a 3% lapse rate, which absorbs stray or missed presses. The trade-off is that the screening cannot detect deliberately random responding; silent catch trials are planned.",
+                "There are no silent catch trials today. Instead the psychometric model carries a fixed 2% false-positive rate and a 3% lapse rate, which absorbs stray or missed presses. The trade-off is that the screening can't detect deliberately random responding; silent catch trials are planned.",
             },
             {
               term: "Bayesian prior",
@@ -73,7 +73,7 @@ function Page() {
             {
               term: "Environmental-noise rejection",
               value:
-                "Ambient level is estimated with the device microphone before and during screening: up to ~35 dB is excellent, up to ~45 dB acceptable, 45–55 dB degrades quality, and above ~55 dB quiet-tone results are not trustworthy. Noisy tests are still recorded, but flagged.",
+                "Ambient level is estimated with the device microphone before and during screening: up to ~35 dB is excellent, up to ~45 dB acceptable, 45–55 dB degrades quality, and above ~55 dB quiet-tone results aren't trustworthy. Noisy tests are still recorded, but flagged.",
             },
             {
               term: "Units",
@@ -85,7 +85,7 @@ function Page() {
         {
           title: "What the algorithm cannot fix",
           body: [
-            "Adaptive estimation makes the most of each response, but it cannot recover information that was never there. A noisy room, an uncalibrated headphone, an unknown system volume or an inattentive listener all limit accuracy regardless of how efficient the estimator is.",
+            "Adaptive estimation makes the most of each response, but it can't recover information that was never there. A noisy room, an uncalibrated headphone, an unknown system volume or an inattentive listener all limit accuracy regardless of how efficient the estimator is.",
           ],
         },
       ]}

@@ -1,209 +1,120 @@
-# Humanizer 
+# Humanizer
 
-sponsored by [cfo.ai](https://cfo.ai)
+A Claude Code skill that strips the tells of AI-generated writing out of prose. A *tell* here means one specific habit that marks text as machine-written, and the skill names 43 of them.
 
-[![GitHub stars](https://img.shields.io/github/stars/blader/humanizer?style=flat)](https://github.com/blader/humanizer/stargazers) [![skills.sh installs](https://skills.sh/b/blader/humanizer)](https://skills.sh/blader/humanizer) 
+Surface cleanup is the easy half. Anyone can delete em dashes and swap out `delve`. The tells that survive editing are the structural ones: paragraphs you could reorder without breaking the argument, colon-lead cascades, every sentence landing at 20 words, tidy endings that tie a bow. The skill fixes those first.
 
+**Current version: 2.9.0.** `SKILL.md` is the canonical rule set. If this README and `SKILL.md` disagree, `SKILL.md` wins.
 
-Humanizer makes AI-written text sound like a person wrote it, without changing what it says. It is built on Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), the guide Wikipedia editors use to catch AI-generated text, and it works in Claude Code, Codex, and any other agent that supports skills.
+## What this is honest about
 
-**Before:**
-> I'm thrilled to announce that shared drafts are finally here! 🚀 For months, our own team was drowning in files named final_v7.docx — and we knew there had to be a better way. Now two people can edit the same doc at once, with every change appearing live for both of them. It's not just a feature; it's a whole new way to collaborate. Comments stay anchored to the exact sentence they reference, even as the text around them evolves. And the best part? It's available today on every plan, completely free. Let that sink in.
+Editing AI-drafted text doesn't beat a trained classifier. A controlled run of six rewrites across two genres, scored against GPTZero Model 4.6b, held at 100% AI on every one. That includes rewrites where GPTZero's own sentence-by-sentence display had gone mostly green, so the per-sentence view and the document verdict clearly move independently. The same author's genuinely human-written essay scored 94% human on the same detector with no editing at all. What decides the verdict is who drafted the text, and editing can't change that.
 
-**After:**
-> Shared drafts are out today. For months our own team passed around files named final_v7.docx, so we built a way for two people to edit the same doc at once, with each person's changes showing up live for the other. Comments stay pinned to the sentence they're about, even when the text around them changes. It's free on every plan.
+So this is a writing-quality tool. Every rule in it also makes prose less generic, which is the reason to use it. [references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md) has the full study, including the genres where no amount of editing helps.
 
-In a blind test, judges preferred Humanizer's rewrite over the original AI text 16 times out of 16 ([#229](https://github.com/blader/humanizer/issues/229)).
-
-Humanizer edits for human readers. Getting past AI detectors is not a goal, and detectors still flag most of its output.
-
-## The five strongest tells
-
-These are the most common signs of AI writing, and Humanizer rewrites any of them on sight:
-
-1. **Not X but Y:** "It's not just a feature, it's a shift."
-2. **One-line closers:** "Let that sink in."
-3. **Sayings that sound deep:** "At its core, what really matters is..."
-4. **A staged run-up:** "Here's the thing." "Honestly?"
-5. **Arguing with no one:** "I'm not saying X, but..."
-
-Humanizer checks for [26 patterns](#the-26-patterns) in all.
-
-## Installation
-
-Once installed, the skill answers to `/humanizer`.
-
-### Claude Code
-
-```text
-/plugin marketplace add blader/humanizer
-/plugin install humanizer@humanizer
-```
-
-The plugin answers to `/humanizer:humanizer`. It needs Claude Code 2.1.142 or newer; on older versions, use `npx skills add blader/humanizer --global --agent claude-code`.
-
-### Codex
+## Install
 
 ```bash
-npx skills add blader/humanizer --global --agent codex
+git clone https://github.com/keez97/humanizer.git ~/.claude/skills/humanizer
 ```
 
-### Claude.ai and Claude Desktop
+That's the whole install. `score.py` is stdlib-only, so there is nothing to pip install and no virtualenv to create. Update with `git -C ~/.claude/skills/humanizer pull`.
 
-Download this repository as a ZIP (**Code → Download ZIP**) and upload it as a skill in Settings.
+Cloned into your skills directory like that, it loads as a skills-directory plugin and the skill keeps its plain name, so you invoke it as `/humanizer`.
 
-### Other agents
+It also ships a plugin manifest, so you can load it as a normal plugin instead:
 
 ```bash
-npx skills add blader/humanizer --global --agent '*'
+claude --plugin-dir /path/to/humanizer
 ```
 
-This installs Humanizer for every agent the Skills CLI supports, including Gemini CLI, GitHub Copilot, and Windsurf. Leave off `--global` in any command above to install it only in the current project. For an agent the Skills CLI does not know, copy `SKILL.md` into its skill folder.
+Loaded that way the skill is namespaced, so it becomes `/humanizer:humanizer`. Both routes run identical rules; pick whichever fits how you manage extensions.
 
 ## Usage
 
-Call the skill directly:
-
 ```
-/humanizer
-
-[paste your text here]
+/humanizer           # full mode: essays, cover letters, published body copy
+/humanizer light     # light mode: memos, case studies, technical docs
+/humanizer detect    # flag-only audit, no rewrite
 ```
 
-Or ask in plain language:
+In `full` mode you can pass a writing sample ("match my voice, here's a post") and it will calibrate against your own sentence-length variance, vocabulary register, and punctuation habits rather than imposing a default voice.
 
+Do not run it on chat replies, tables, code, commit messages, YAML, or internal artifacts like plans and handoffs. It will corrupt structure that parsers depend on.
+
+**When in doubt, use `light`.** It scrubs surface tells without stripping confidence hedging or forcing first person into a document that shouldn't have it.
+
+### Modes
+
+| Mode | Active | Use for |
+|---|---|---|
+| `full` | Every tell (Layers A through E), the statistical battery, the soul/imperfection mandate | Graded essays, cover letters, exec summaries, published body copy |
+| `light` | Banned vocab, em dash, signpost density. De-hedging is OFF | Consulting memos, case studies, technical docs |
+| `off` | Nothing | Chat, tables, code, internal artifacts |
+| `detect` | Flag-only, grouped P0/P1/P2 with a fix-vs-judgment-call verdict per flag | Auditing text you aren't going to rewrite |
+
+`light` mode never removes hedging, and that rule cannot be overridden. Analytical documents label claims `speculative` or `inferred`, and a de-hedging pass would strip exactly those labels.
+
+## The scorer
+
+```bash
+python3 ~/.claude/skills/humanizer/score.py <draft> --mode full
+python3 ~/.claude/skills/humanizer/score.py <draft> --mode light
+python3 ~/.claude/skills/humanizer/score.py <draft> --grok    # add Grok idiolect vocab
+cat draft.md | python3 score.py --mode light                  # reads stdin too
 ```
-Please humanize this text: [your text]
+
+Fourteen checks. How much sentence length varies, how much paragraph length varies, the vocabulary tiers, em dashes, signpost density, tricolon saturation, negation reversal, hedge stacking, and a floor on contractions. Exit code 0 for pass and 1 for fail, so you can gate a pipeline on it.
+
+A draft ships when every HARD check passes and fewer than three soft checks fail. Run the battery at most twice, because looping a draft against it more than that over-fits to the battery itself, and the battery then becomes its own signature.
+
+Two checks (colon-restatement and perplexity-anchor coverage) need judgment and are deliberately left to the model rather than faked in regex.
+
+## The optional model-based scorers
+
+`score.py` measures structure and lexicon. It can't see *perplexity*, which is the axis trained detectors actually score: how predictable each token is under a reference model, and how much that predictability varies sentence to sentence. Two scripts fill that gap. Both work, and both need PyTorch:
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+.venv/bin/python perplexity.py <draft>
+.venv/bin/python binoculars.py <draft>
 ```
 
-To rewrite a file, give Humanizer its path:
+First run downloads weights (~500 MB for GPT-2, ~2 GB for the Qwen pair).
 
-```
-Humanize the prose in docs/launch-post.md
-```
+**`perplexity.py`** loads GPT-2 and reports document perplexity, per-sentence perplexity, and burstiness, ranking sentences from most to least predictable.
 
-### Match your voice
+**`binoculars.py`** implements Binoculars ([Hans et al., 2024](https://arxiv.org/abs/2401.12070)), dividing log-perplexity under an observer model by cross-perplexity against a sibling performer model. Content that surprises both models cancels out, which matters in number-heavy writing where a figure like `$320m` inflates raw perplexity no matter who wrote it.
 
-If you want the rewrite to sound more like you, include a sample:
+**Trust the ranking. Ignore the score at the top.** The controlled study in [references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md) tested both tools against GPTZero, and neither reproduced its document-level judgment. GPT-2 rated the target text more human than a 1946 Orwell passage. So don't build a rewrite loop that optimizes against these numbers and expect the result to transfer to a commercial detector, because on the evidence available it doesn't.
 
-```
-/humanizer
+The rankings are a different matter. Run either tool on a paragraph and the sentences at the bottom of the list are where your prose has gone predictable, which is what D2 and D4 reach for indirectly. I use it that way and it earns its keep, even though the number at the top of the output travels nowhere.
 
-Here's a sample of my writing for voice matching:
-[paste 2-3 paragraphs of your own writing]
+## Portability
 
-Now humanize this text:
-[paste AI text to humanize]
-```
+`SKILL.md` conforms to the [Agent Skills](https://agentskills.io) open standard, which more than 40 tools now read, among them Cursor, Gemini CLI, OpenAI Codex, GitHub Copilot, VS Code, Goose, OpenCode, Roo Code, and Amp. The frontmatter sets only `name`, `description`, `license`, and `metadata`, so nothing in it is tied to one product. `allowed-tools` is deliberately absent, because the spec marks that field experimental with support that varies by agent.
 
-Humanizer follows the sample's rhythm, word choice, punctuation, and deliberate quirks, including dashes if you use them.
+`score.py` is stdlib Python and needs no agent at all. You can run it on a text file with no LLM involved.
 
-## How it works
+So the rules travel: point any skills-compatible agent at this directory, or paste `SKILL.md` into a system prompt and it works the same way.
 
-A language model writes whatever is most likely to come next, so by default it makes the choice that fits the widest range of readers and subjects. A person chooses for one reader and one subject. Every tell Humanizer looks for is a form of that default choice: a sentence that signals importance instead of adding a fact, rhythm or formatting applied by rule, an ordinary fact dressed as a pivotal one, text left over from the chat, or a reply that re-explains what the reader already knows.
+## Attribution
 
-> "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
-> Wikipedia, ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+This is an independent rewrite descended from [blader/humanizer](https://github.com/blader/humanizer) by Siqi Chen, MIT licensed. The two have diverged: as of this version they share six lines of text, all of them headings and frontmatter keys. The layer taxonomy, the mode system, the statistical battery, and all of the Python are written here. The debt is real anyway, and that project is worth reading on its own.
 
-Humanizer marks every tell it finds, strongest first. It drafts a rewrite without treating the original structure as fixed, checks the draft against the patterns and the original claims, and then writes the final version. It does not make things up. A name, number, date, quote, citation, or other factual detail must come from the source or the writer, and if a sentence needs a detail that is missing, Humanizer asks instead of inventing one.
+The underlying pattern catalogue originates with Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup, available under CC BY-SA. `SKILL.md` lists the individual studies it relies on.
 
-When you paste text, Humanizer shows its work: the first rewrite, a short critique of anything that still sounds artificial, and the final version. Point it at a file and it changes only the prose, leaving code, data, frontmatter, and link targets alone. Personal writing keeps the writer's opinions and quirks. Technical and reference prose stays neutral and plain.
+## Repo contents
 
-## The 26 patterns
-
-The patterns are numbered by strength and frequency. The first five justify an edit on a single sighting. Patterns marked *weak alone* count only when several tells share a passage, because a careful writer may use any one of them on purpose.
-
-### A. Staging instead of stating
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 1 | **Not X but Y** | "It's not just X, it's Y", "This doesn't mean X. It means Y." | State the point directly |
-| 2 | **One-line closers and dramatic fragments** | "That is the real win." after every section; "This shows the importance of..." after an example; "No prior. No nostalgia." | Cut the closer that repeats or explains the example; merge fragments into a specific claim |
-| 3 | **Sayings that sound deep** | "At its core, what matters is...", "Symmetry is the language of trust" | Replace the saying with the specific claim |
-| 4 | **Staged run-up before the point** | "Let's dive in", "Honestly? It depends..." | Remove the run-up and state the point |
-| 5 | **Arguing with no one** | "This isn't mainly about...", "A tempting approach would be..." | Remove the unraised objection or fake option; keep any real claim |
-
-### B. Rhythm by rule
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 6 | **Forced triads** | "innovation, inspiration, and insights"; three examples plus a lesson | Use the number of items the meaning needs |
-| 7 | **Repeated sentence openings** | "She noted... She noted... She filed..." | Merge the sentences or change the subject |
-| 8 | **Dashes as the universal connector** (*weak alone*) | "institutions—not the people—yet this continues—" | Use periods, commas, colons, or parentheses; match a sample that uses dashes |
-| 9 | **Stacked qualifiers** (*weak alone*) | "could potentially possibly be argued" | Keep only qualifiers the source supports |
-| 10 | **Hyphenated pairs everywhere** (*weak alone*) | "the report is high-quality" | Keep the hyphen before the noun or where the dictionary has one |
-| 11 | **Passive voice and missing subjects** (*weak alone*) | "No configuration file needed" | Name the actor when that helps |
-
-### C. Inflation and borrowed authority
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 12 | **Overused AI words** | "delve... testament... landscape... showcasing" | Use plain words |
-| 13 | **Inflated significance** | "marking a pivotal moment", "Despite challenges... continues to thrive", "The future looks bright" | Keep the fact and drop the significance; end on the last concrete fact |
-| 14 | **Vague connection or association** | "associated with the leadership of", "in connection with" | State the relationship the source gives |
-| 15 | **Shallow -ing riders** | "symbolizing... reflecting... showcasing..." | Keep only what the source supports |
-| 16 | **Sales language** | "nestled within the breathtaking region" | State what the thing is |
-| 17 | **Borrowed authority** | "Experts believe...", "cited in NYT, BBC, FT, and The Hindu" | Name a real source and what it said, or remove the claim or list |
-| 18 | **Avoiding is, are, and has** | "serves as... features... boasts" | "is... has" |
-
-### D. Formatting by rule
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 19 | **Bold as decoration** | "**OKRs**, **KPIs**"; "**Performance:** Performance improved" | Remove the bold; turn a labeled list into prose |
-| 20 | **Decorative headings** | "Strategic Negotiations And Partnerships", "🚀 Launch Phase:", "The decision, on one screen" | Sentence case; remove emojis and arrows; name what the section holds |
-| 21 | **Curly quotation marks** (*weak alone*) | `said “the project”` | `said "the project"` |
-
-### E. Leftovers from the chat and the draft
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 22 | **Chatbot residue** | "Great question! ... I hope this helps!" | Remove the wrapper and keep the content |
-| 23 | **Knowledge-limit disclaimers and guesses** | "While details are limited in available sources, it appears..." | State what the source shows, or remove the sentence |
-| 24 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 25 | **Writing about the document instead of its subject** | "This function was added to replace...", "compiled from...", "The table below compares..." | Describe the subject; state a convention only when the reader cannot see it |
-
-### F. Writing for the wrong reader
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 26 | **Re-explaining what the reader knows** | A reply that walks the diagnosis and proves the plan works before the decision | Lead with the decision; leave the diagnosis and the proof for the ticket that follows |
-
-## Full example
-
-**Before (AI-sounding):**
-> I recently spent five unforgettable days in Lisbon last October, and let me tell you — this city completely stole my heart. From the moment I checked into my charming hotel perched high in the historic Alfama district, I knew I was somewhere truly special.
->
-> Yes, the famous hills are challenging — with countless stairs between my hotel and everything else, my legs certainly felt it! — but every climb rewards you with breathtaking, panoramic views that make it all worthwhile.
->
-> No trip would be complete without riding the iconic Tram 28, a roughly forty-minute journey shared with plenty of fellow travelers eager to capture the magic. And the food? Simply divine. While the pastéis de nata at Pastéis de Belém are a beloved national treasure, my absolute favorite came from a hidden gem in Graça, still warm from the oven.
->
-> But what truly makes Lisbon special isn't just the sights — it's the feeling. Wander just a block or two above the main squares and you'll discover a quieter, more authentic side of the city, inviting you to slow down and savor every moment.
->
-> Of course, the must-see São Jorge Castle offers stunning views over the rooftops below. The queues can be long, but the experience is absolutely worth it for any history buff or curious traveler.
->
-> Would I go back? Absolutely — next time in spring, and with better shoes! Lisbon isn't just a place to visit; it's a place to fall in love with, again and again. ✨
-
-**After:**
-> I spent five days in Lisbon last October. My hotel was up in Alfama, with a lot of stairs between it and everything else, and my legs felt every one of them. The views from the top were worth the climb.
->
-> Everyone tells you to ride Tram 28, so I did. The trip took about forty minutes, and most of the car was other tourists taking pictures out the windows. The custard tarts at Pastéis de Belém are the famous ones, but my favorite came from a place in Graça, still warm from the oven.
->
-> The part of Lisbon I liked best starts a block or two above the main squares, where the streets go quiet and nobody is in a hurry. São Jorge Castle has good views over the rooftops and a long queue to get them.
->
-> I'd go back, in spring next time, and with better shoes.
-
-## Sources
-
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) is the source for the pattern list.
-- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) maintains the page.
-
-## Version history
-
-See [CHANGELOG.md](CHANGELOG.md).
+| File | What it is |
+|---|---|
+| `SKILL.md` | The canonical rule set. Everything else is support. |
+| `.claude-plugin/plugin.json` | Plugin manifest, so the repo can be loaded as a Claude Code plugin as well as a plain skill. |
+| `score.py` | The scoring battery. Stdlib only. |
+| `references/` | Material loaded on demand rather than on every invocation: the detector study, a worked example, the source list, voice calibration. |
+| `perplexity.py`, `binoculars.py` | Optional model-based scorers. They work; see below. Require PyTorch. |
+| `requirements.txt` | Deps for those two only. `score.py` needs nothing. |
 
 ## License
 
-MIT
-
-If Humanizer helps you, a star helps other people find it.
+MIT. See `LICENSE`.

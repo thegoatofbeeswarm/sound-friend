@@ -47,7 +47,7 @@ function Page() {
           title: "Practical ways to lower your exposure",
           bullets: [
             "Turn the volume down a little, often. Small reductions buy back a lot of safe listening time.",
-            "Use noise-isolating or noise-cancelling headphones so you are not raising the volume to beat background noise.",
+            "Use noise-isolating or noise-cancelling headphones so you aren't raising the volume to beat background noise.",
             "Take quiet breaks: your weekly dose is cumulative, and breaks reduce it.",
             "Wear earplugs at concerts, clubs and events; venue levels are usually far above any safe continuous limit.",
             "Watch your loudest sessions as well as the average. A single very loud hour can dominate a week.",
@@ -56,7 +56,7 @@ function Page() {
         {
           title: "How Audiomaxxer frames listening risk",
           body: [
-            "We describe your listening behaviour (estimated exposure, loudest sessions, weekly trend) and don't claim a personal medical exposure limit derived from your hearing thresholds. There is no established way to turn a screening threshold into an individual safe-volume number.",
+            "We describe your listening behaviour (estimated exposure, loudest sessions, weekly trend) and don't claim a personal medical exposure limit derived from your hearing thresholds. There's no established way to turn a screening threshold into an individual safe-volume number.",
             "Estimated levels are directional: they depend on your device, headphones and volume setting, so treat them as a trend to manage rather than a measurement.",
           ],
         },

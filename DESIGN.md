@@ -100,7 +100,7 @@ They sit inside the coil-corner shape. Add new ones through `src/lib/credits.ts`
 
 ## Writing
 
-All visible copy goes through the humanizer skill (`.claude/skills/humanizer`) before it ships. Plain, specific sentences: no "not X but Y" contrasts, no one-line closers, no dashes as connectors, no inflated claims, no filler. Keep every fact, number and citation. Write the English first, then update the zh and es dictionaries to match.
+All visible copy goes through `/humanizer` (keez97, `.claude/skills/humanizer`) and must pass `score.py --mode light` before it ships; `/humanizer-blader` is there for a second rewrite. Plain, specific sentences: no "not X but Y" contrasts, no one-line closers, no dashes as connectors, no inflated claims, no filler. Keep every fact, number and citation. Write the English first, then update the zh and es dictionaries to match.
 
 ## Do / don't
 

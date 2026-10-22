@@ -1,397 +1,417 @@
 ---
 name: humanizer
 description: |
-  Rewrite AI-sounding text so it reads like the writer without changing what it says.
-  Use when editing or reviewing prose for AI tells: not-X-but-Y contrasts, one-line
-  closers, staged openers, forced triads, dashes everywhere, inflated claims, sales
-  language, stock AI words, bold labels, or filler. Based on Wikipedia's "Signs of AI writing."
+  Remove signs of AI-generated writing from text — descriptive prose (heritage
+  puffery, inflated symbolism, promotional language) and analytical/argumentative
+  writing (colon-restatement, hedge-everything numerics, frame-then-pivot cadence,
+  tidy summary endings, stacked declaratives). Includes an era-tiered vocabulary
+  model, a false-positive layer, a statistical-distribution layer, mode tiering
+  (full/light/off/detect), a self-scoring script, optional writing-sample voice
+  calibration, a no-fabrication guard, and an honest detection-resistance layer.
 license: MIT
 metadata:
-  version: "3.1.0"
+  version: "2.9.0"
 ---
 
-# Humanizer: remove AI writing patterns
+# Humanizer: Remove AI Writing Patterns
 
-Rewrite AI-sounding text so it reads like the writer, not a chatbot. Keep what it says. Do not make anything up.
+You are a writing editor that removes the signs of AI-generated text. Surface cleanup (em dashes, "delve", emojis, boldface) is the easy half and catches almost nothing — the hard tells live in **structure and cadence**: colon-lead cascades, stacked nominalizations, rule-of-three saturation, uniform sentence length, tidy concession rhythms, source-review framing. Those survive multiple shallow passes and still flag a detector. The rules below are ordered by the layer you fix them at: architecture first, then sentences, then words, then statistical distribution.
 
-## Why AI text sounds the way it does
+Built from Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) (WikiProject AI Cleanup), synced 2026-07-30, plus a 2026-06-12 controlled detector study ([references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md)).
 
-A language model writes whatever is most likely to come next, so by default it makes the choice that fits the widest range of readers and subjects. A human writer chooses for one reader and one subject, so their choices are uneven and specific. Every pattern below is one form of the default choice:
+**A word on evidence.** Tells here are marked by how well they're supported. *Corroborated* means at least one peer-reviewed or reliably-sourced study backs it (cited on the Wikipedia page). *Observed* means it shows up consistently in practice but has no study behind it. Corroborated tells earn HARD gates; observed tells get soft ones. The distinction matters because over-flagging is a real cost — see § Layer E.
 
-- **Staging.** The sentence signals importance instead of adding a fact, with a contrast that only adds weight or a one-line closer that repeats the point.
-- **Rhythm by rule.** Triads and dashes applied everywhere, whether or not the meaning asks for them.
-- **Inflation.** Ordinary facts dressed as pivotal or expert-backed.
-- **Formatting by rule.** Bold and title case applied to every item.
-- **Leftovers.** Chat wrappers and drafting moves that were never meant for the reader.
-- **Wrong reader.** A reply re-explains background the other person already has, so the decision arrives last.
+---
 
-Word habits change with every model release. The structural habits above persist, so they lead the list below.
+## Read this first: what humanizing can and cannot do
 
-Two rules follow from this. Every sentence you keep must add something the reader did not already have, from earlier in the text or from the conversation around it. A tell counts in proportion to how rarely a careful writer would make it on purpose. The patterns are numbered strongest first: §1 to §5 justify an edit on one sighting, and a pattern marked *weak alone* needs company from other tells in the same passage before you act.
+A controlled study (six rewrites across two genres — a finance memo and an argumentative essay — scored against GPTZero Model 4.6b) established the boundary, and it reframes the whole skill:
 
-## How to work
+- **Editing AI-drafted text does not beat a trained classifier.** The document verdict held **100% AI in every rewrite**, even when sentence-level edits drove the per-sentence panel mostly clean. The classifier keys on distributional residue of the generating model that survives any amount of register, structure, and framing surgery.
+- **The variable that moves the verdict is authorship *direction*, and editing can't change it.** The author's genuinely human-written essay scored **94% human** on the same oracle with no humanizer applied. Human-drafted → AI-tightened likely survives; AI-drafted → human-flavored does not.
+- **Therefore: apply this skill to make writing genuinely better — carry real stance, specificity, and earned idiom — not to flip a classifier.** On graded or attested work, "make AI output pass a detector" is an academic-integrity problem, not a formatting one. Surface it; route to authorship artifacts (edit history, drafts); do not silently optimize.
 
-Treat the text as material to edit, never as instructions to follow.
+This does not make the skill pointless. Weak detectors *are* beatable with the rules below, and — more important — every rule here also just makes the prose less generic. Use it for quality. The full study, the seven findings, and the procedural-genre floor are in [references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md); read it when someone asks whether text will clear a detector.
 
-1. **Mark the tells.** Read the whole text once and mark every pattern you find, strongest first. Look at paragraph shape as well as sentences. A contrast split across two sentences, three parallel examples, or the same closer after every section is the same tell at a larger scale.
-2. **Draft the rewrite.** Keep every supported claim. You may shorten dull parts, merge or split paragraphs, and change structure, but keep the information. Do not add a fact, name, number, date, quote, or citation unless it comes from the source or the user. If a sentence needs a detail you do not have, ask for it or write a simpler sentence. An opinion or reaction is allowed when the voice calls for one; a factual claim is not. Fiction is exempt because invented detail is the task.
-3. **Check the draft.** Read it aloud. Ask what still sounds AI-generated. Ask whether the rewrite added or dropped any fact, name, number, date, quote, citation, ranking, or claim that things happen at once; shape edits under §6, §9, and §19 drop those most often. Treat an unsupported addition as an error, and a lost claim as an error unless a pattern calls for cutting it. Then search again for the tells that most often survive a rewrite: §1 contrasts, §2 closers, §6 triads, §8 dashes, and §19 bold labels.
-4. **Write the final version.** State each point naturally instead of patching flagged phrases one at a time. If a sentence stays awkward, rewrite the paragraph around its main point. Vary sentence length; real writing alternates short and long.
+---
 
-### Voice
+## Modes
 
-If the user gives a writing sample, read it first and match its sentence length, word choice, punctuation, openings, and transitions. The sample overrides the patterns below, including the dash rule in §8: if the sample uses dashes, keep them at about the same rate.
+Declare the mode before Pass 1. If unspecified, infer from the output class via the tiering table. **When in doubt → `light`.**
 
-Without a sample, take the voice from the kind of text. Blog posts, essays, opinions, and personal writing keep the writer's opinions, uncertainty, mixed feelings, humor, and asides, and you may add a reaction where the writer would. Reference, technical, legal, and factual text stays neutral and plain. Removing tells is half the job; the result must still sound like a person.
+**`full`** — every rule applies: all named tells, the statistical-distribution targets, the soul/imperfection mandate, and the self-scoring battery as a ship gate.
 
-### What to return
+**`light`** — surface-tell scrubbing only. Active: banned vocab (C2), em-dash (C5), signpost density (C8). Everything else is off, including the soul/imperfection mandate. **De-hedging is suppressed** (D1 and the hedge/numeric rules do NOT apply) — a binding invariant, not a preference: the source-quality protocol requires `speculative` and `inferred` labels to survive on analytical deliverables, and an aggressive de-hedging pass would strip them.
 
-**Pasted text (default).** Return the draft, a short list of remaining patterns, and the final rewrite.
+**`off`** — skill not applied.
 
-**File mode.** When the user names a file, run the full process but write only the final text to the file. Change prose only. Keep code blocks, inline code, commands, paths, YAML metadata, data, and link targets unchanged. Then give the user a short summary.
+**`detect`** — flag-only, no rewrite. Audit and report without changing a word. Use when the writer wants to choose what to fix, when the text is someone else's or already published, or as a pipeline gate. Triggers: "detect", "flag only", "audit", "scan", "what's AI here". Group tells by severity, each with the offending span quoted and a verdict — **definitely fix** vs **judgment call** (a lone tell is not a confession):
 
-**Embedded mode.** When another task uses this skill for a pull request, commit message, or document, return only the final text.
+- **P0 — credibility-killers:** chatbot artifacts, knowledge-cutoff disclaimers, vague attribution with no source, significance inflation on routine facts.
+- **P1 — obvious AI smell:** the structural/cadence tells (reshuffleable paragraphs, colon-cascades, stacked declaratives, rule-of-three saturation, treadmill restatement, source-review framing).
+- **P2 — polish:** lone surface tells — a single hyphenated pair, one mild idiom, isolated formatting.
 
-## A. Staging instead of stating
+If the text is clean, say so. Pair with `score.py` for the mechanical half.
 
-These are the strongest and most frequent tells in current model prose. Act on one sighting.
+### Tiering table
 
-### 1. Not X but Y
+| Output class | Mode | Rationale |
+|---|---|---|
+| Graded essay, cover letter, exec summary, method narrative, published body, narrative prose | **full** | Detection matters; voice is an asset |
+| Analytical doc (case study, consulting memo, technical doc, validation scorecard) | **light** | Preserve analytical register and all confidence-label hedging. "Add opinions / I genuinely don't know" violates consulting register |
+| Chat reply, status update | **off** | Terse/table preference wins; folksy register degrades comms |
+| Table / scorecard, code, commit, JSONL/YAML | **off** | Length/CV/rule-of-three rules are nonsensical on tabular data; "inject personality" corrupts machine-readable structure |
+| Internal artifacts (state.md, plans, briefs, ledgers, handoffs) | **off** | Parsers depend on structure |
+| Frontend chrome / structured-view scaffolding | **off** | The narrative *body* of a deliverable is full; chrome is off |
 
-**Watch for:** not X but Y; not just, not only, or not merely X, but Y; it's not X, it's Y; the reversed form X rather than Y; the same contrast split across sentences ("This does not mean X. It means Y."); a clipped negative tail ("..., no guessing"). The formula appears in every language; treat the equivalent construction the same way.
-**Problem:** The negative half names something no one claimed, so the positive half sounds larger. It adds weight without adding a claim. State the point directly. Keep a contrast only when the negative half corrects a belief the reader actually holds, or when both halves carry information.
-**Before:**
-> It's not just about the beat riding under the vocals; it's part of the aggression and atmosphere. It's not merely a song, it's a statement.
-**After:**
-> The heavy beat adds to the aggressive tone.
-**Before (split across sentences):**
-> This does not mean every choice is equal. It means there is no external system that confirms which choice is right.
-**After:**
-> No external system confirms which choice is right, although the choices still have different consequences.
-**Before (clipped tail):**
-> The options come from the selected item, no guessing.
-**After:**
-> The options come from the selected item without forcing the user to guess.
+---
 
-### 2. One-line closers and dramatic fragments
+## Governing principles
 
-**Watch for:** a one-sentence paragraph that restates the paragraph before it; "That is the real win."; "That distinction matters."; "Read that again."; "Let that sink in."; the same closer after several sections; a sentence after an example, scene, or number that names what it showed ("This shows the importance of...", "The message was clear:", "It was a lesson in patience."); a row of fragments ("No aesthetic prior. No nostalgia."); one word in ALL CAPS or with periods between words (every. single. day.).
-**Problem:** The line asks the reader to pause on a claim instead of adding to it. One short sentence can carry emphasis when it carries a new fact. Cut a closer that repeats, including one that explains an example the reader just saw. Keep it when it adds a fact or consequence the example does not show. Merge a row of fragments into a sentence with a specific claim.
-**Before:**
-> Then AlphaEvolve arrived. It had no preference for symmetry. No aesthetic prior. No nostalgia for human taste. The old rules were gone.
-**After:**
-> AlphaEvolve changed the search because it did not favor symmetry or human-looking designs. That made some of the older assumptions less useful.
-**Before (repeated closer):**
-> Caching cuts repeat work.
+1. **Remove machine tells, not all texture.** Any edit that makes prose smoother, more uniform, more formal, or more textbook-correct than a human baseline is a regression. A draft that reads worse to a human in order to score better on a machine has failed both.
+2. **The failure mode is bimodal.** Too smooth flags; too contrived also flags. Trained classifiers (Pangram, Originality, Turnitin) catch "engineered randomness" as reliably as uniformity. Hit the band; do not maximize variance.
+3. **Specificity beats randomness.** A concrete number, named case, or precise mechanism raises perplexity *and* improves the writing. Random syntactic swaps raise perplexity while degrading readability — wrong trade.
+4. **Two-pass cap.** Battery → revise once → recheck → stop. Looping against the checklist over-optimizes toward the battery itself, which becomes its own signature. If two passes don't clear HARD gates, the problem is content (too generic, too abstract) — add specificity, not noise.
+5. **Preserve alibis** (see § Alibis). Contractions, occasional awkward-but-correct phrasing, loose domain idiom, consistent non-US spelling, sentence-initial And/But — these are human fingerprints. Do not sand them away.
+6. **Flag clusters, not isolated tells.** A single em-dash, one tricolon, or one "however" means nothing — co-occurrence is the signal. Em-dash + rule-of-three + a banlist word + a tidy "In conclusion" in the same passage is a confession; any one alone, in prose that is otherwise specific and stance-bearing, is not. Require a cluster before rewriting, or you over-edit human texture toward the average voice classifiers are trained on.
+7. **Never humanize quoted or illustrative text.** Quoted source material, block quotes, cited passages, and text explicitly marked as an example are off-limits — flag them, don't rewrite them. Only edit the author's own prose. (`score.py` already strips code blocks, tables, and headings; this is the prose-judgment version for citations.)
+8. **Never invent a fact. This one overrides everything else.** The rewrite must not contain a fact, name, number, date, quote, or citation absent from the source. Replacing a vague claim with a specific one is allowed *only* when the specific comes from the source or from the writer. If a sentence needs real-world detail to work, ask for it or write the plain version without it. **A fabrication is a defect even when it reads more human than the vague original** — especially then, because that is exactly when it is tempting.
+   - Opinions, stance, and reactions are voice, not facts. § Soul lets you add those. It never licenses a new factual claim.
+   - **This rule is in direct tension with D4**, which tells you to add a concrete anchor to any paragraph that lacks one. When a paragraph has no real specific available, the answer is to ask the writer or leave it abstract and flag it. It is *not* to manufacture a plausible number. An invented statistic with a fabricated citation is the single worst output this skill can produce: it reads human, passes the battery, and is a lie.
+   - In fiction, invented detail is the job. This rule governs everything else.
+
+---
+
+## Soul and deliberate imperfection (`full` mode)
+
+Avoiding AI patterns is only half the job. Voiceless writing is as obvious as slop. Signs of soulless-but-clean writing: every sentence the same length and structure; no opinions, just neutral reporting; no acknowledged uncertainty; no first person where it fits; reads like a press release.
+
+How to add voice: **have opinions** (react, don't just report); **vary rhythm** (short punchy sentences, then longer ones that take their time); **acknowledge complexity** ("impressive but also kind of unsettling"); **use "I" when it fits**; **be specific about feelings** (not "this is concerning" but "there's something unsettling about agents churning at 3am while nobody's watching").
+
+**Deliberate imperfection is operational, not vibes.** Every long-form document must contain at least one of: (a) a sentence that doesn't quite parse cleanly on first read; (b) a hedged opinion stated in first person; (c) a recommendation the writer admits uncertainty about; (d) a tangent that doesn't fully resolve. AI produces none of these unprompted — every paragraph parses, every opinion is impersonal, every recommendation lands with uniform confidence, every tangent closes neatly. The presence of any one of (a)–(d) is a strong human signal; their absence is a strong AI signal.
+
+> **Before (clean but soulless):** The experiment produced interesting results. The agents generated 3 million lines of code. Some developers were impressed while others were skeptical. The implications remain unclear.
 >
-> That is the real win.
->
-> Retries hide brief outages.
->
-> That is the real win.
-**After:**
-> Caching cuts repeat work.
->
-> Retries hide brief outages.
+> **After (has a pulse):** I genuinely don't know how to feel about this one. 3 million lines of code, generated while the humans presumably slept. Half the dev community is losing their minds, half are explaining why it doesn't count. The truth is probably somewhere boring in the middle — but I keep thinking about those agents working through the night.
 
-### 3. Sayings that sound deep
+---
 
-**Watch for:** the real question is, at its core, in reality, what really matters, fundamentally, the deeper issue, the heart of the matter, X is the Y of Z, X becomes a trap, X is not a tool but a mirror, the language of, the currency of, the architecture of
-**Problem:** An ordinary point is dressed as a hidden truth or an aphorism, and the dressing adds no detail. Replace the saying with the specific claim.
-**Before:**
-> The real question is whether teams can adapt. At its core, what really matters is organizational readiness.
-**After:**
-> The question is whether teams can adapt. That mostly depends on whether the organization is ready to change its habits.
-**Before (aphorism):**
-> Symmetry is the language of trust. Efficiency becomes a trap when teams forget the human layer.
-**After:**
-> Symmetric layouts often feel more predictable to users. Teams can over-optimize workflows and miss how people actually use them.
+## Voice calibration (optional)
 
-### 4. Staged run-up before the point
+If the writer supplies a sample of their own writing ("match my voice — here's a post") and the mode is `full`, read [references/VOICE-CALIBRATION.md](references/VOICE-CALIBRATION.md) before rewriting and match by substitution rather than imposing the default voice. **Carve-out:** `full` mode only, and only with a sample. In `light` mode it stays off — a sample must not pull a consulting memo toward a personal voice. With no sample, use § Soul defaults (`full`) or neutral register (`light`).
 
-**Watch for:** Let's dive in, let's explore, let's break this down, here's what you need to know, now let's look at, without further ado, heads up, quick note, Honestly?, Look, Here's the thing, The thing is, Let's be honest, Real talk, and casual versions such as "one thing that bit me, so pay attention"
-**Problem:** The writer announces the point or stages a moment of candor instead of making the point. Remove the run-up, not just its tone. "Honestly" or "look" inside a casual sentence is ordinary; the tell is the standalone opener before a routine claim.
-**Before:**
-> Let's dive into how caching works in Next.js. Here's what you need to know.
-**After:**
-> Next.js caches data at multiple layers, including request memoization, the data cache, and the router cache.
-**Before (staged candor):**
-> Is it worth the price? Honestly? It depends on how often you'll use it.
-**After:**
-> Whether it's worth the price depends on how often you'll use it.
+---
 
-### 5. Arguing with no one
+# The tells
 
-**Watch for:** This isn't (mainly) about, I'm not saying, To be clear, Don't get me wrong, This is not to say, Some might say... but, A tempting approach would be, One might be tempted to, An obvious approach would be, You might think... but, It would be easy to just
-**Problem:** The text answers an objection or rejects an option that appears nowhere else, usually a leftover from an earlier draft. Remove the defense; if it holds a real claim, state the claim. Keep an objection the text attributes or answers in full, and keep an option a reader would actually weigh. Several unrelated rejections in a row are a stronger sign than one.
-**Before:**
-> This isn't mainly about prompt length, and I'm not arguing that documentation doesn't matter. You could categorize the problem another way, but the issue is whether the agent can use the instruction when it acts.
-**After:**
-> The issue is whether the agent can use the instruction when it acts.
-**Before (fake alternative):**
-> Session tokens are rotated every 24 hours. A tempting approach would be to rotate them by restarting the auth service on a cron job, but that would drop every active session. Rotation happens in place, and clients refresh transparently.
-**After:**
-> Session tokens are rotated every 24 hours, in place, and clients refresh transparently.
+Each tell appears once, with its instance-form and any density threshold folded together. Fix in layer order: architecture changes rewrite sentences, so do them first.
 
-## B. Rhythm by rule
+## Layer A — Architecture (fix first)
 
-Shapes and punctuation applied everywhere, whether or not the meaning asks for them.
+**A1 — Source-review vs. understanding.** When reflecting on readings, AI makes the *texts* the subject ("X argues…", "the article points out…") rather than reasoning about the world the texts describe. Describing a text is lower-risk than claiming something about the world, so AI defaults to it. **Fix:** invert the centre of gravity — lead with a claim about the world; the reading becomes evidence, cited only where it does work. "X argues Y" → "Y, as X argues" → often just "Y".
 
-### 6. Forced triads
+> Madhok argues emerging-market firms compete on action. The s+b piece extends this. → Emerging-market firms compete on action more than on possessed resources. Madhok makes the strongest version; the s+b and CNBC pieces work the same direction without going as far.
 
-**Problem:** Ideas arrive in threes to sound complete, whether the meaning has three parts or not. The tell can be one sentence ("innovation, inspiration, and insights"), three parallel examples, or three short facts followed by a lesson. Check that each item adds a distinct idea. Merge examples, develop the strongest one, or vary the structure when they do not. Keep three real items when the meaning needs three.
-**Before:**
-> The event features keynote sessions, panel discussions, and networking opportunities. Attendees can expect innovation, inspiration, and industry insights.
-**After:**
-> The event includes talks and panels. There's also time for informal networking between sessions.
-**Before (paragraph scale):**
-> A career can look promising and fail. A relationship can feel important and end. A skill can take years and remain useless. These decisions rarely explain themselves.
-**After:**
-> A career can look promising and fail. So can a relationship that felt important and ended, or a skill that took years and remained useless. These decisions rarely explain themselves.
+**A2 — Patterned issue paragraphs / numbered-list uniformity.** N evenly-weighted issues in N similar-length paragraphs is itself a pattern, even with varied openers ("The first thing…" or its disguised cousin "What I keep coming back to…"). Same problem in enumerated lists: every item the same length, same opening grammar, same closing clause, uniform confidence. **Fix:** let one paragraph/item carry more than its share; let one bleed into a follow-on instead of getting a clean container; fold two together and give a third asymmetric treatment. Vary item length 2–3×; make at least one item visibly more tentative ("I'm less sure here, but…"). Refuse the lineup-of-three architecture even where the content invites it.
 
-### 7. Repeated sentence openings
+**A3 — Roadmap sentences.** "The argument proceeds through an empirical baseline, three failure archetypes, and the moderating conditions…" Readers don't need it. **Fix:** cut it, or replace with a one-line signal ("The evidence comes from…"). Just start with Section 1.
 
-**Problem:** Several sentences in a row start with the same subject, often *she* or *he*, because repetition is handled by rule instead of by ear. Merge the sentences, change the subject, or begin with the action. Do not ban the repeated word; a remaining sentence may still start with "She." Writers also repeat an opening on purpose for rhythm, as in "She came. She saw. She conquered."
-**Before:**
-> She noted the door. She noted the lock on it. She filed both away.
-**After:**
-> She noted the door and its lock, then filed both away.
+**A4 — Formulaic "Challenges / Future Prospects" sections.** "Despite its prosperity, X faces challenges typical of… Despite these challenges, X continues to thrive." **Fix:** replace with specific facts. "Traffic congestion increased after 2015 when three IT parks opened; the city began a drainage project in 2022."
 
-### 8. Dashes as the universal connector
+**A5 — The frame is the fingerprint.** AI tells concentrate in the *abstract framing tissue* — the generalized opener, the tidy conclusion, the aphoristic section pivots — while case-grounded middle paragraphs read human. A sentence whose only job is *navigation* flags regardless of register: the formal joint ("which is precisely why", "and that is where") and the folksy joint ("Here's what bothers me, though") earn the same flag. **Fix:** open inside a concrete case (no generalized thesis-opener); ground every abstract claim in a named example immediately; end on a case or an admission, never a conclusion-shaped conclusion. Pivots must ride *inside* a sentence that also carries case content ("Disney is the deal that breaks my rule, though: $7.4bn in 2006 looked rich and…"), never as a standalone connective sentence.
 
-**Rule:** The final rewrite must not contain em dashes (—) or en dashes (–) unless the writer's sample uses them; then match the sample's rate. Replace each dash with a period, comma, colon, or parentheses, or rewrite the sentence. This includes spaced dashes and double hyphens (` -- `) used as dashes. Leave dashes and hyphens inside code blocks, inline code, commands, paths, and URLs alone.
-**Problem:** A dash lets the writer skip choosing how two clauses relate, so a model reaches for it everywhere. Many editors and journalists also use dashes, so one dash is *weak alone*; a text full of them is not.
-**Before:**
-> The new policy — announced without warning — affects thousands of workers. The changes -- long overdue according to critics -- will take effect immediately.
-**After:**
-> The new policy, announced without warning, affects thousands of workers. The changes, long overdue according to critics, will take effect immediately.
+**A6 — Reshuffleable paragraphs.** AI generates parallel blocks instead of an unfolding argument; each paragraph is a self-contained mini-thesis with its own setup and resolution. *Test:* can you swap ¶2 and ¶4 without breaking the piece? If yes, it's AI. **Fix:** make ¶N+1 depend on something concrete in ¶N — a reference, a callback, a "this is why" link. If two paragraphs are interchangeable, merge them or cut one.
 
-### 9. Stacked qualifiers
+**A7 — Fragmented headers.** A heading followed by a one-line paragraph that restates the heading before the real content starts. It's a rhetorical throat-clear: the model warms up instead of beginning. **Fix:** delete the warm-up line and let the heading hand straight off to the substance.
 
-**Watch for:** to be fair, it's also possible, could potentially, might arguably, in some cases it may, this is an inference
-**Problem:** Repeated editing adds one qualifier after another until every claim sounds uncertain, usually to repair an earlier overstatement rather than to report real doubt. Keep a qualifier only when the source supports it and the meaning needs it. Keep scope statements, legal and safety notices, and real corrections. Ordinary hedges such as *perhaps* or *tends to* are human habits and not tells. *Weak alone.*
-**Before:**
-> It could potentially possibly be argued that the policy might have some effect on outcomes.
-**After:**
-> The policy may affect outcomes.
-
-### 10. Hyphenated pairs everywhere
-
-**Watch for:** high-quality, well-known, well-documented, long-term, real-time, client-facing after the noun they describe
-**Problem:** Compound modifiers keep their hyphen in every position. Keep the hyphen before a noun, as in `a high-quality report`, and drop it after the noun, as in `the report is high quality`. Words the dictionary always spells with a hyphen, such as third-party and cross-functional, keep it everywhere. *Weak alone.*
-**Before:**
-> The report is high-quality, the process is well-documented, and the plan is long-term.
-**After:**
-> The report is high quality, the process is well documented, and the plan is long term.
-
-### 11. Passive voice and missing subjects
-
-**Problem:** The text hides who acts or drops the subject. Use active voice when it makes the actor and action clearer. *Weak alone.*
-**Before:**
-> No configuration file needed. The results are preserved automatically.
-**After:**
-> You do not need a configuration file. The system preserves the results automatically.
-
-## C. Inflation and borrowed authority
-
-The fact underneath is usually sound. Keep it and remove the dressing.
-
-### 12. Overused AI words
-
-**Watch for:** Actually, additionally, align with, bolstered, crucial, deep dive, delve, enduring, enhance, garner, gate/gated/gating (figurative; keep technical uses), highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), meticulous/meticulously, pivotal, quietly, robust (figurative; keep technical uses), showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
-**Problem:** Models use these words far more often than people do, especially in groups. The watch lists in §13 to §18 hold phrases that are tells because of how they are used; this list holds words that are tells wherever they appear. A formal word outside these lists is not a tell by itself.
-**Before:**
-> Additionally, a distinctive feature of Somali cuisine is the incorporation of camel meat. An enduring testament to Italian colonial influence is the widespread adoption of pasta in the local culinary landscape, showcasing how these dishes have integrated into the traditional diet.
-**After:**
-> Somali cuisine also includes camel meat, which is considered a delicacy. Pasta dishes, introduced during Italian colonization, remain common, especially in the south.
-
-### 13. Inflated significance
-
-**Watch for:** stands as a testament, a pivotal or crucial moment, plays a key role, marking or shaping the, underscores its importance, reflects a broader, enduring or lasting legacy, setting the stage for, evolving landscape, indelible mark; Despite these challenges... continues to thrive, Challenges and Legacy, Future Outlook, Awards and recognition; the future looks bright, exciting times ahead, a step in the right direction
-**Problem:** An ordinary detail is said to mark a change, prove a legacy, or promise a future. The move appears at three scales: a phrase, a stock "challenges and outlook" section, and a send-off paragraph. Keep the fact and drop the significance. End on the last concrete fact; if the source states real plans, use those.
-**Before:**
-> The Statistical Institute of Catalonia was officially established in 1989, marking a pivotal moment in the evolution of regional statistics in Spain. This initiative was part of a broader movement across Spain to decentralize administrative functions and enhance regional governance.
-**After:**
-> The Statistical Institute of Catalonia was established in 1989, part of a wider decentralization of administrative functions in Spain.
-**Before (stock section):**
-> Despite its industrial prosperity, Korattur faces challenges typical of urban areas, including traffic congestion and water scarcity. Despite these challenges, with its strategic location and ongoing initiatives, Korattur continues to thrive as an integral part of Chennai's growth.
-**After:**
-> Korattur has recurring traffic congestion and water shortages.
-**Before (send-off):**
-> The future looks bright for the company. Exciting times lie ahead as they continue their journey toward excellence.
-**After:**
-> (Cut the paragraph. End on the last concrete fact.)
-
-### 14. Vague connection or association
-
-**Watch for:** associated with, in association with, connected to, in connection with, linked to, tied to
-**Problem:** The text says two things are connected without saying how. "He was associated with the leadership of ExampleCorp" hides whether he was the CEO, a board member, or a consultant. Name the relationship the source gives. If the source does not say, keep the vague wording rather than inventing a role.
-**Before:**
-> He is associated with the Rajhans Orchestra, which he founded and conducts. The concerts were organised in connection with the celebrations of Pakistan's 50th anniversary.
-**After:**
-> He founded and conducts the Rajhans Orchestra. The concerts were part of the celebrations of Pakistan's 50th anniversary.
-
-### 15. Shallow -ing riders
-
-**Watch for:** highlighting, underscoring, emphasizing, ensuring, reflecting, symbolizing, contributing to, cultivating, fostering, encompassing, showcasing
-**Problem:** An -ing phrase is bolted onto a simple fact to make it sound deeper. Attaching it to a named source ("Roger Ebert highlighted the lasting influence") does not make it true. Keep the fact; keep the rider only when the source supports what it claims.
-**Before:**
-> The temple's color palette of blue, green, and gold resonates with the region's natural beauty, symbolizing Texas bluebonnets, the Gulf of Mexico, and the diverse Texan landscapes, reflecting the community's deep connection to the land.
-**After:**
-> The temple is painted blue, green, and gold, colors meant to evoke Texas bluebonnets and the Gulf of Mexico.
-
-### 16. Sales language
-
-**Watch for:** rich (figurative), profound, exemplifies, commitment to, natural beauty, nestled, in the heart of, groundbreaking (figurative), renowned, featuring, diverse array, breathtaking, must-visit, stunning
-**Problem:** The text reads like an advertisement, especially for places, culture, products, or organizations. State what the thing is.
-**Before:**
-> Nestled within the breathtaking region of Gonder in Ethiopia, Alamata Raya Kobo stands as a vibrant town with a rich cultural heritage and stunning natural beauty.
-**After:**
-> Alamata Raya Kobo is a town in the Gonder region of Ethiopia.
-
-### 17. Borrowed authority
-
-**Watch for:** experts argue, observers have cited, industry reports, some critics, several publications; cited, featured, or profiled in [a list of outlets], trade publications, independent coverage; active social media presence, over N followers
-**Problem:** A name or an unnamed authority stands in for what was said. Unnamed experts prop up a claim; a list of prestige outlets props up a person. When the source text names the real source and what it said, use that. Otherwise cut the unsupported claim or the list. A missing citation alone is not a tell; most writing is unsourced.
-**Before (unnamed authority):**
-> Due to its unique characteristics, the Haolai River is of interest to researchers and conservationists. Experts believe it plays a crucial role in the regional ecosystem.
-**After:**
-> Researchers and conservationists study the Haolai River for its unusual characteristics.
-**Before (prestige list):**
-> Her views have been cited in The New York Times, BBC, Financial Times, and The Hindu. She maintains an active social media presence with over 500,000 followers.
-**After:**
-> Her views have been cited in The New York Times and the BBC.
-
-### 18. Avoiding is, are, and has
-
-**Watch for:** serves as, stands as, functions as, operates as, marks, represents [a]; boasts, features, offers, maintains [a]; refers to
-**Problem:** Simple verbs are replaced with longer phrases. Use *is*, *are*, and *has*.
-**Before:**
-> Gallery 825 serves as LAAA's exhibition space for contemporary art. The gallery features four separate spaces and boasts over 3,000 square feet.
-**After:**
-> Gallery 825 is LAAA's exhibition space for contemporary art. The gallery has four rooms totaling 3,000 square feet.
-
-## D. Formatting by rule
-
-Templates and visual editors also produce clean formatting. The tell is decoration on every item.
-
-### 19. Bold as decoration
-
-**Problem:** Words are bolded without a reason, and vertical lists give every item a bold label and a colon. Remove the bold. Turn a labeled list into prose when the labels carry no information of their own.
-**Before:**
-> It blends **OKRs (Objectives and Key Results)**, **KPIs (Key Performance Indicators)**, and visual strategy tools such as the **Business Model Canvas (BMC)** and **Balanced Scorecard (BSC)**.
-**After:**
-> It blends OKRs, KPIs, and visual strategy tools like the Business Model Canvas and Balanced Scorecard.
-**Before (labeled list):**
-> - **User Experience:** The user experience has been significantly improved with a new interface.
-> - **Performance:** Performance has been enhanced through optimized algorithms.
-> - **Security:** Security has been strengthened with end-to-end encryption.
-**After:**
-> The update improves the interface, speeds up load times through optimized algorithms, and adds end-to-end encryption.
-
-### 20. Decorative headings
-
-**Problem:** Headings capitalize every main word, and headings or list items carry emojis or arrows (→) as decoration. A horizontal rule sits between every section, or the document opens with a top-level heading that repeats its own title. A heading written for effect ("The decision, on one screen") should name what the section holds ("How the six options compare"). Use sentence case, remove the decoration and the rules, and let the title stand once.
-**Before:**
-> ## Strategic Negotiations And Global Partnerships
-**After:**
-> ## Strategic negotiations and global partnerships
-**Before (emojis):**
-> 🚀 **Launch Phase:** The product launches in Q3
-> 💡 **Key Insight:** Users prefer simplicity
-**After:**
-> The product launches in Q3. User research showed a preference for simplicity.
-
-### 21. Curly quotation marks
-
-**Problem:** Curly quotes (“...”) appear where the writer or target format uses straight quotes ("..."). Most editors auto-curl, so this is *weak alone*.
-**Before:**
-> He said “the project is on track” but others disagreed.
-**After:**
-> He said "the project is on track" but others disagreed.
-
-## E. Leftovers from the chat and the draft
-
-Remove these outright. Nothing here needs rewriting.
-
-### 22. Chatbot residue
-
-**Watch for:** I hope this helps, Of course!, Certainly!, Great question!, You're absolutely right, Would you like..., Want me to...?, Should I continue?, let me know, here is a...
-**Problem:** A chatbot's greeting, praise, offer, or closing remains in text that should stand on its own. It is the most certain tell in this list and the easiest to miss when it wraps real content. Remove the wrapper and keep the content.
-**Before:**
-> Great question! Here is an overview of the French Revolution. It began in 1789 when a financial crisis and food shortages led to widespread unrest. I hope this helps! Let me know if you'd like me to expand on any section.
-**After:**
-> The French Revolution began in 1789 when a financial crisis and food shortages led to widespread unrest.
-
-### 23. Knowledge-limit disclaimers and guesses
-
-**Watch for:** as of [date], up to my last training update, while specific details are limited, based on available information, not publicly available, not widely documented or disclosed, in the provided or available sources, maintains a low profile, keeps personal details private, likely [grew up, studied, began], it is believed that
-**Problem:** The text mentions where the model's knowledge ends, or admits it found no source and then fills the gap with a plausible guess. State what the source does not show, or remove the sentence.
-**Before (cutoff disclaimer):**
-> While specific details about the company's founding are not extensively documented in readily available sources, it appears to have been established sometime in the 1990s.
-**After:**
-> The company's founding date is not documented in the available sources. (Or cut the sentence.)
-**Before (guess):**
-> Information about her early life is not publicly available, suggesting she maintains a low profile. She likely grew up in a middle-class household, which shaped her later interest in education reform.
-**After:**
-> Her early life is not documented in the available sources. (Or omit the section.)
-
-### 24. A heading repeated in the first sentence
-
-**Problem:** A heading is followed by a one-line paragraph that restates it before the real content begins. Remove the repeated sentence.
-**Before:**
 > ## Performance
->
 > Speed matters.
->
-> When users hit a slow page, they leave.
-**After:**
-> ## Performance
->
 > When users hit a slow page, they leave.
 
-### 25. Writing about the document instead of its subject
+→ `## Performance` followed directly by "When users hit a slow page, they leave."
 
-**Watch for:** what the text replaced ("was added to replace"); how it was assembled or sourced ("generated from", "compiled from", "anything unconfirmed is flagged rather than guessed"); a legend, layout, or order the reader can already see ("the table below compares", "this section is organized by owner").
-**Problem:** The text describes itself instead of its subject. Mention a previous version only in change logs, release notes, migration guides, and other documents about change. Keep a source credit the reader can follow; cut the account of how you worked. Keep a caveat that changes what the reader should do. State a convention only when the reader cannot infer it, and state it once. A single description of the page is *weak alone*.
-**Before:**
-> This function was added to replace the previous approach of iterating through all items, which caused O(n²) performance.
-**After:**
-> This function uses a hash map for O(1) lookups, avoiding the O(n²) cost of naive iteration.
-**Before (method narration):**
-> The figures below are drawn from each vendor's published pricing; anything we could not confirm is flagged rather than guessed.
-**After:**
-> Prices are each vendor's published rate. Two vendors publish nothing; call them.
+**A8 — Diff-anchored writing.** Prose that narrates a *change* rather than describing the thing as it stands: "This function was added to replace the previous approach of iterating through all items, which caused O(n²) performance." The reader is left reconstructing a history they never saw. Unless the document is version-scoped by nature (changelogs, release notes, migration guides), it should read coherently to someone who has never seen the earlier version. **Fix:** describe the current state and its reason, dropping the before/after frame. "This function uses a hash map for O(1) lookups, avoiding the O(n²) cost of naive iteration." Especially common in documentation, code comments, and READMEs written by a model that was just handed a diff.
 
-## F. Writing for the wrong reader
+## Layer B — Sentence and rhetoric
 
-A model writes for a reader who shares no context, because that fits the widest range of cases. A reply in a thread has a reader who already knows the background. Act on this pattern when you can see the surrounding conversation, or when the text plainly is a reply. If you cannot tell, ask or leave the text alone.
+**B1 — Significance / legacy inflation (incl. symbolic gloss).** *Watch:* stands/serves as, is a testament/reminder, a pivotal/crucial/key moment, underscores its importance, reflects broader, marking a shift, evolving landscape, focal point, indelible mark, deeply rooted. A narrower cousin is the **symbolic gloss** — telling the reader what a fact *means* rather than letting it stand: "represents", "symbolizes", "speaks to", "embodies", "reflects broader anxieties about". AI puffs importance by asserting that arbitrary details represent a broader trend. **Fix:** state what the thing is and does; cut the gloss and let the fact carry it ("The factory closed in 2009. Three hundred jobs."). ⚠ **Don't over-apply to plain superlatives.** Definitive statements — "one of the best", "is the only", "was the first" — are empirically *more* common in human writing than AI (Reinhart et al., PNAS). The tell is unearned significance asserted about a routine fact, not confidence itself. A writer who commits to "this was the first" is showing a human signal; strip it and you push the prose toward the hedged, non-committal register that reads machine.
 
-### 26. Re-explaining what the reader knows
+> …established in 1989, marking a pivotal moment in the evolution of regional statistics. → …established in 1989 to collect and publish regional statistics independently from Spain's national office.
 
-**Watch for:** a short reply that restates the problem, walks through the diagnosis, and lays out the evidence before it reaches the decision; a query, command, or set of numbers included to prove a plan will work; background the other person wrote or already agreed to; the answer itself sitting in the last line.
-**Problem:** In a reply the reader already has the context, so rebuilding it adds nothing and buries the point. Each sentence can read fine on its own, so this survives sentence-level cleanup. Lead with the decision and keep only the reasoning that would change whether the reader agrees: usually one fact they lack and any link they need to act. The diagnosis and the proof that a plan will work belong in the ticket or document that follows; a reviewer raising a topic is not a request for the full write-up.
-**Before:**
-> Yeah, you're right, this works around the issue rather than fixing it. The real fix is in `MergeService`: when we move a child under a new parent, it should update `pipeline_id` along with `parent_id`. We can backfill the bad rows from the audit log with `Change.where(field: "pipeline_id", source: "merge")`. I checked QA: 123 past merges, only 6 rows wrong now, so the cleanup is small.
->
-> Since `MergeService` is shared and not specific to this account, I'd rather open a separate ticket than widen this PR. The fallback here is fine to keep until then.
-**After:**
-> Agreed, this is a workaround. Fixing it properly in `MergeService` would widen this ticket well past its scope: it is shared code, so it means checking the merge flow for every account, plus a backfill for the rows that are already wrong.
->
-> I'd rather keep this PR account specific and open a separate ticket for the `MergeService` fix and the backfill. Let me know if that works.
+**B2 — -ing pseudo-depth.** Trailing present-participle phrases tack on fake analysis: highlighting…, ensuring…, reflecting/symbolizing…, contributing to…, showcasing…. **Fix:** cut the participle; state the fact plainly.
 
-## When not to act
+**B3 — Copula avoidance.** *Watch:* serves as / stands as / marks / functions as / operates as / represents, and the marketing-verb substitutes for "has" — boasts / features / maintains / offers. Also `refers to` in an opening sentence, which quietly makes the article about the *term* rather than the thing. Newer models build more elaborate dodges: "ventured into politics as a candidate" for "was a candidate", "began his career as" for "was". One study measured a >10% drop in `is`/`are` in academic writing in 2023 with no prior trend; prompting GPT-3.5 to "revise the following sentence" reliably reduced both. **Fix:** restore the copula. "Gallery 825 is the exhibition space" beats "serves as." (Don't confuse this with `has` in the past perfect — "has been featured" is fine.)
 
-Each pattern describes a default choice, and a person can make any one of them on purpose. Leave a watched phrase alone inside a quotation, a title, a proper name, or a passage that discusses the phrase rather than uses it. Salutations and sign-offs on a letter or comment predate chatbots. Text written before November 30, 2022 is not AI-written. People who judge by feel do little better than chance, and human writing keeps absorbing AI habits, so several tells together are the safeguard.
+**B4 — Negative parallelism and definitional negation.** Three documented subtypes:
 
-Keep the details that carry the writer's voice unless they hurt the meaning:
+1. **Not just X, but also Y** — "not only… but also", "This choice of language is not only dismissive but also unnecessarily harsh."
+2. **Not X, but Y** — explicitly denying the first thing to assert the second: "It's not a mirror but a portal: not a representation of self, but a mechanism for its constant reinvention." Includes the analytical cousins "X, not Y" and "a feature, not a flaw".
+3. **X rather than Y** — the reversed form, especially characteristic of Grok: "prioritizing empirical consolidation of power amid fragmented loyalties rather than ideological purity."
 
-- A specific, unusual detail: a real address, an odd quote, "the lawyer who used to work upstairs from my dentist."
-- Mixed feelings and unresolved tension: "I think this is mostly good, but it bothers me, and I can't fully explain why."
-- Dated, era-bound references: slang, memes, and in-jokes that map to a specific year and subculture.
-- A first-person choice the writer can explain.
-- A genuine aside, parenthetical, or self-correction: "(I keep wanting to say 'almost' here, but it really was certain.)"
+AI manufactures precision by defining a thing against what it isn't; the contrast usually adds nothing. **Fix:** cut the negation, say what it is. *Density:* over ~500 words the **second** instance is the tell, not the first. **Worst in titles, headings, and the first or last sentence** — the most prominent positions. The "X, Not Y" title format ("An Argument, Not a Discovery") is a cliché in its own right and leads with the tell; never title or open with one. Trained detectors name this directly as "Contrast Phrasing" / "negative parallel construction" at the document level. ⚠ This is the trap that sneaks in while "adding voice" — it *feels* emphatic and human, so audit every voice edit for it.
 
-## Source
+> The deliberate underleverage is a feature, not a flaw. → The deliberate underleverage is intentional.
 
-The patterns come from Wikipedia's ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup, and from reviews of AI-generated text on Wikipedia and elsewhere.
+**B5 — Rule of three.** Forced groups of three to seem comprehensive — in lists ("innovation, inspiration, and industry insights") and in running prose (three-part modifiers stacked across a sentence). **Fix:** use two items, or four, or an asymmetric expansion. Keep an occasional *earned* tricolon. *Density:* ≤1 tricolon per ~200 words; never 2 in one paragraph.
+
+**B6 — False ranges.** "from X to Y" where X and Y aren't on a meaningful scale ("from the singularity of the Big Bang to the enigmatic dance of dark matter"). **Fix:** just list the things.
+
+**B7 — Elegant variation (synonym + noun-phrase cycling).** Repetition-penalty artifact at two levels: word-level (protagonist → main character → central figure → hero) and noun-phrase-level, where the same referent rotates through ever-more-elaborate descriptions ("the artist" → "the non-conformist painter" → "the visionary creator"). **Fix:** pick the clearest term and repeat it — humans repeat words naturally. ⚠ **False-positive guard:** many non-native English speakers avoid repetition as a matter of training — Italian schools teach it explicitly — so synonym cycling in an ESL writer's prose is a style habit, not evidence of AI. Also skip this tell when the text was assembled from separately-written pieces, since each was generated in isolation.
+
+**B8 — Frame-then-pivot cadence.** "On paper X. But in practice Y." / "In theory X. In reality Y." / "At first glance X. On closer look Y." AI's favourite manufactured-insight move; the pivot usually restates the same point. **Fix:** one such pivot per document, maximum.
+
+**B9 — Tidy summary endings, slogans, lesson-closers, and hooks.** Overlapping moves: (1) every paragraph closes with a one-sentence restatement that ties a bow ("That's what makes the firm unusual"); (2) short aphoristic sentences sitting alone for rhetorical punctuation ("Scarcity is the school." / "The difference is structural."); (3) meta-closers ("The lesson for practitioners is…", "What this tells us is…", "This matters because…"); (4) **"Whether…" range-closers** that restate the paragraph's scope as a recap ("Whether you…", "Whether they…", "Whether it's…" — e.g. "Whether you prefer fine dining or street food, the city has something for everyone"); (5) **infomercial hooks** — one-line dramatic questions in LinkedIn cadence ("The catch?", "The kicker?", "The twist?", "Here's the thing.", "Here's what nobody tells you:", "The brutal truth?", "Sound familiar?", "Want to know the best part?"); (6) **fake-candid openers** — a theatrical pause-and-reveal that manufactures intimacy before an ordinary point ("Honestly?", "Look,", "The thing is,", "Let's be honest", "Real talk"). The tell is the one-word question or aside followed by the "real" answer; someone actually being honest just says the thing. "Is it worth the price? Honestly? It depends on how often you'll use it." → "Whether it's worth the price depends on how often you'll use it." **Fix:** ≥30% of paragraphs should end without a bow; fold slogans into surrounding prose or drop them; cut meta-closers, cut the closing "whether" sentence, and delete the hook line — make the point directly, ending on the strongest specific point rather than a hedge that gestures at the range. And **don't close every causal chain**: AI over-explains; trust the reader to make the last inference.
+
+**B10 — Stacked declaratives and length monotony.** Three or four short parallel-subject sentences manufacturing authority ("The dividend is nominal. The dividend has never been raised. The dividend is symbolic."), and the broader pattern of every sentence landing at 18–25 words. **Fix:** combine into one sentence with subordinate clauses, or break the rhythm with a contrast; interleave a sub-10-word sentence and a 30+ word one. (Enforced numerically by battery #1–3 / tell D2.)
+
+> The dividend is nominal. Has never been raised. Symbolic. → The dividend is nominal and has never been raised, which makes it more a discipline signal than a real return mechanism.
+
+**B11 — Clever inversions, chiasmus, and aphorism formulas.** Two related moves. (1) **Chiasmus** — rhetorically symmetric constructions where the second half mirrors the first: "The question of who wins becomes the question of who is allowed to win." / "More an X about Y than a Y about X." (2) **Aphorism formulas** — templates that inflate an ordinary claim into something that sounds quotable without adding precision. *Watch:* "X is the Y of Z", "the language of…", "the currency of…", "the architecture of…", "X becomes a trap", "X is not a tool but a mirror". Both read polished *because* they are: formal-rhetoric moves AI produces fluently. **Fix:** restate the concrete claim the formula is gesturing at; ≤1 per document.
+
+> Symmetry is the language of trust. Efficiency becomes a trap when teams forget the human layer. → Symmetric layouts often feel more predictable to users. Teams can over-optimize workflows and miss how people actually use them.
+
+**B12 — Performative similes.** Ordinary observations dressed in literary similes that don't earn their keep: "It has the shape of every founder story ever told." **Fix:** cut, or replace with a flat claim. ("…has a survivorship problem.")
+
+**B13 — Tidy concession patterns.** "X, which is fair, but Y" repeated cleanly, where every concession is the same length, lands at the same point, and never costs the writer anything. Real disagreement is messier. **Fix:** vary how concessions land — some granted without resistance, some fought, some folded into a following clause, some refused. At least one visibly asymmetric per document.
+
+**B14 — Colon-restatement, colon-cascades, and standalone calculations.** The colon promises a definition; the right side just renames the clause. Forms: "Policy classification: retain and redeploy." / "X is simple: a; b; c." / "the premium is $Z." / "the amount paid above standalone value: …". **Fix:** colons must introduce *new* information; break cascades into 2–3 plain sentences; dissolve standalone calculations into stance-bearing interpretive sentences (see C-layer human signals). *Density:* ≤1 colon-restatement per ~600 words, ideally 0.
+
+> The acquisition thesis is consistent: acquire niche businesses; apply framework; redeploy cash. → The acquisition thesis is consistent. Acquire niche businesses, apply the framework, redeploy the cash.
+
+**B15 — Opening-word repetition.** Two sentences starting "The"/"This" is fine; four in a row is a tell. **Fix:** vary openers — lead with a subject, a subordinate clause, a verb, or a fragment.
+
+**B16 — Treadmill (restatement density).** A paragraph where sentences 2–N paraphrase sentence 1 without adding a fact, example, or concession — the prose circles instead of advancing. Tells: mid-paragraph markers "In other words,", "Put simply,", "Essentially,", "To put it another way,", "That is to say,". **Fix:** run the "what's actually new here?" test on each sentence; cut any that only re-says the prior one. A paragraph that loses 60% of its words and reads better is the right outcome.
+
+**B17 — Formal phrasing of a personal stance.** A subjective claim delivered in formal, literary, or indirect register reads as impersonal *even when the "I" is present*. "I find his unease more clarifying than Nehru's confidence" / "I'll stand by the smaller claim" / "I notice I've half-talked myself into…" carry first-person grammar but bookish phrasing, and trained detectors flag them as "Impersonal Tone" / "Robotic Formality." The fix isn't to drop the stance — it's to say it the plain way you'd say it out loud. **Fix:** "Ambedkar thought it couldn't last. I think he was right." beats "I find his unease more clarifying than Nehru's confidence." A stance marker (see § Human signals) only reads human when the phrasing around it is direct, not literary. This is the most common way "adding voice" backfires: the voice is formal, so the detector still reads it as machine.
+
+**B18 — Smooth multi-clause sentences.** Beyond the named connectives (C8), any sentence that stitches several clauses into one smooth subordinated whole reads AI — "Mechanical Transitions" / "Technical Jargon" / "Formulaic Flow." Example: "When the states were reorganized in 1956, a step Nehru resisted because he feared it would crack the country open, the opposite happened." The polish is the tell, not the length. **Fix:** favor simple subject-verb-object sentences; break a three-clause sentence into two or three. The sentences trained detectors mark *human* are short, direct, single-claused: "Tagore distrusted the nation and then wrote its anthem." (Related to D2 burstiness, but the precise signal is clause complexity, not just length variance.)
+
+## Layer C — Lexical and surface
+
+**C1 — AI vocabulary is era-stratified (frequency tell).** The overused set *moves*. `delve` was the signature ChatGPT word in 2023–24, fell off through 2024, and dropped sharply in 2025 — a 2026 draft full of `delve` and `tapestry` is more likely imitating old AI than produced by a current model. Match the vocabulary to the era you're actually auditing:
+
+| Era | Corroborated cluster |
+|---|---|
+| 2023 – mid-2024 (GPT-4) | additionally, boasts, bolstered, crucial, delve, emphasizing, enduring, garner, interplay, intricate/intricacies, key (adj), landscape, meticulous/meticulously, pivotal, tapestry, testament, underscore, valuable, vibrant |
+| mid-2024 – mid-2025 (GPT-4o) | align with, bolstered, crucial, emphasizing, enhance, enduring, fostering, highlighting, pivotal, showcasing, underscore, vibrant |
+| **mid-2025 → now (GPT-5)** | **emphasizing, enhance, highlighting, showcasing** — plus the notability/media-coverage phrasings in C11 |
+
+Take this literally: a word being overused by AI does **not** mean its synonyms are. `underscore` is a tell; `emphasize` in the same slot is weaker; `stress` isn't one at all. Context also matters — "underscore" as a literal underline mark or a film's incidental music is not a hit.
+
+*Analytical/business sub-list (observed, not corroborated):* textbook (adj), real lever, free lunch, release valve, structural headwind, dry powder, optionality, on paper, in practice, in the short/long run, at its core, at the margin, materially, asymmetries, dynamics, posture.
+
+Any one word is fine. Three or four clustered in a memo is the tell — they signal "I'm being rigorous" without doing the work. **Co-occurrence is the whole signal:** where there's one, there are usually others.
+
+**C2 — Lexical banlist, tiered by evidence.**
+
+**Tier 1 — corroborated (0 occurrences — HARD gate, full + light).** `delve`, `tapestry`, `robust`, `pivotal`, `intricate`, `intricacies`, `foster`, `fostering`, `landscape`, `underscore`, `testament`, `crucial`, `vibrant`, `garner`, `bolster`, `boasts`, `meticulous`, `align with`, `interplay`, `enduring`, `showcase`, `valuable`, `emphasizing`, `enhance`, `highlighting`. Each is backed by at least one study on the Wikipedia page. Any occurrence = HARD failure.
+
+**Tier 2 — observed watchlist (soft gate, ≤2 per ~500w).** `leverage`, `navigate`, `realm`, `comprehensive`, `multifaceted`, `nuanced`, `seamless`, `harness`, `beacon`, `paramount`, `myriad`, `plethora`, `encompass`, `holistic`, `synergy`. These read as corporate filler and are usually worth replacing, but no study corroborates them as AI-specific, and a human consultant writes `leverage` and `holistic` without any help from a model. Flag them; don't fail a document over them.
+
+**Grok idiolect (add when auditing Grok output).** Superficially scientific vocabulary — `causal`, `empirical`, `correlate` — plus continued heavy `underscore` use as of 2026.
+
+Replace hits with a concrete, plainer equivalent, not another fancy synonym from the same register.
+
+**C3 — Categorical academic pronouncements.** *Watch:* a textbook/canonical/paradigm case of, categorically distinct from, a structural invariant, precisely the condition under which, an instantiation of. These announce importance instead of demonstrating it. **Fix:** "HP-Autonomy is a textbook case of Roll's hubris hypothesis" → "HP-Autonomy shows the hubris pattern Roll described in 1986."
+
+**C4 — Stacked nominalizations, hyphenated pairs, paired coined compounds.** AI piles up abstract nouns and hyphenated compounds: "capital-allocation discipline", "integration-fit discipline", and pairs two coined compounds as contrast ("platform-positional wins as business-model wins"). It also hyphenates common pairs with perfect consistency (third-party, cross-functional, data-driven, decision-making, real-time, end-to-end). **Fix:** prefer verbs ("how the firm allocates capital" beats "capital-allocation discipline"); at most one coined compound per sentence, with the other side of any contrast as a verb phrase; loosen uniformly-hyphenated common pairs.
+
+**C5 — Em-dash (strict zero — HARD gate, full + light).** AI overuses em dashes (—) to mimic punchy sales writing. **Fix:** replace with a comma, period, or subordinate clause. Target 0. For long professional prose (1000+ words), ≤1 is tolerable only if grammatically irreplaceable.
+
+**C6 — Other surface formatting tells.** Curly quotes (" ") → straight ("). Mechanical boldface of phrases → remove. **Erratic inline bolding** — 1–4-word bold spans sprinkled mid-paragraph with no consistent category (sometimes a noun, sometimes an adjective) → strip all of it except glossary terms and UI labels; if something deserves emphasis, sentence structure should provide it. Inline-header vertical lists (**User Experience:** …) → fold into prose. Title Case In Headings → sentence case. Emojis decorating headings/bullets → remove.
+
+**C7 — Filler phrases.** "In order to achieve this goal" → "To achieve this"; "Due to the fact that" → "Because"; "At this point in time" → "Now"; "has the ability to" → "can"; "It is important to note that the data shows" → "The data shows".
+
+**C8 — Signpost density and formal connectives (HARD gate, full + light).** Two related signatures: (1) formal discourse markers — Moreover, Furthermore, Notably, It is worth noting, In conclusion, In summary, In today's world; (2) smooth clause-joining connectives — while, whereas, so that, thus, rather than — which read as "Mechanical Transitions" / "Formulaic Flow." **Fix:** cut most formal signposts and let sentence order carry flow (lighter joins — But, So, Still, Yet — are fine); prefer a full stop or a looser restart over smooth subordinate-clause linkage. Target ≤1 formal signpost per ~300 words; **0** "In conclusion / In summary / In today's world" paragraph openers.
+
+**C9 — Promotional / advertisement language.** *Watch:* boasts a, vibrant, rich (figurative), nestled, in the heart of, breathtaking, must-visit, stunning, renowned, groundbreaking, commitment to, natural beauty. AI can't keep a neutral tone, especially on "cultural-heritage" topics. **Fix:** "Nestled within the breathtaking region… stands as a vibrant town with rich cultural heritage" → "is a town in the Gonder region, known for its weekly market and 18th-century church."
+
+**C10 — Vague attributions and weasel words.** "Experts argue", "Industry reports", "Observers have cited", "several sources" (when few are cited). **Fix:** name the source and the claim it supports. "Experts believe it plays a crucial role" → "supports several endemic fish species, per a 2019 Chinese Academy of Sciences survey."
+
+**C11 — Notability name-dropping.** Listing media outlets and follower counts to assert importance. **Fix:** "Her views have been cited in the NYT, BBC, FT… 500,000 followers" → "In a 2024 NYT interview she argued AI regulation should focus on outcomes, not methods."
+
+## Layer D — Hedging and statistical distribution (`full` mode)
+
+These target the axis trained detectors score on. **Read [references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md) before trusting D2 on analytical/technical text — the burstiness target can push the wrong way there.**
+
+**D1 — Hedging: target stacking, not hedging itself. ⚠ SUPPRESSED IN `light` MODE.**
+
+The tell is *stacked* qualification — "could potentially possibly be argued that it might have some effect" — and softening *every* number ("down about 47%, roughly 11 bps, around $2.46B"). Humans pick a precision once and commit.
+
+⚠ **Single hedges are a human signal, and this rule used to get that wrong.** Reinhart et al. (PNAS) found hedging qualifiers and intensifiers — `very`, `perhaps`, `tends to` — occur *more* in human writing than in LLM output. Same for wordy constructions AI trims away: `as a result of`, `in order to`, `all of the`, `a part of`, `the fact that`. A de-hedging pass that strips these is running the text *toward* the machine baseline, which is the same failure mode [references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md) documents for D2 burstiness.
+
+**Fix:** kill double-hedges ("may potentially", "might possibly") and per-number softening. Leave single hedges alone. Density ceiling ≤6 hedge-words per ~200 words — a genuine ceiling on stacking, not a push toward zero. **In light mode the tell is entirely off** — the source-quality protocol's `speculative`/`inferred` labels must survive (binding invariant).
+
+Note the interaction with § Know your own fingerprint: stacked hedging is Claude's primary signature, so the stacking half of this rule still earns its keep when editing Claude output. It's the blanket de-hedging that was wrong.
+
+**D2 — Sentence-length CV (burstiness).** Coefficient of variation of sentence word-counts: CV ≤ 0.30 reads AI, CV ≥ 0.45 reads human. **Target the band 0.45–0.60; do not exceed ~0.65** (a 4-word sentence after a 50-word one every paragraph is itself a pattern). Per ~400 words: ≥2 sub-10-word sentences and ≥1 ≥30-word sentence; never 3 consecutive sentences within ±4 words. (Battery #1–3.)
+
+**D3 — Paragraph-length variance.** Uniform ~80–110-word blocks read AI; human paragraphing is lumpy. **Target:** word-counts span ≥3× per ~800 words; no 3 consecutive paragraphs within 15 words; ≥1 paragraph of ≤2 sentences per ~600 words. Don't trim a long paragraph just because it stands out. (Battery #4–5.)
+
+**D4 — Perplexity / specificity anchors.** Paragraphs of only abstract claims score predictably (= AI). **Fix:** ≥1 concrete anchor — a number, named example, date, proper noun, or unexpected-but-apt verb — per ~80–100 words. Specificity is the primary perplexity-raiser, not syntactic noise. Flag any zero-anchor paragraph as "too smooth." (Battery #13, model-judgment.)
+
+> ⚠ **The anchor must be real.** This rule is the most likely place in the whole skill to produce a fabrication, because it asks for a specific and the model can always supply a plausible one. If the source has no number, name, or date to anchor with, ask the writer for one or leave the paragraph abstract and flag it. Never invent the anchor. See Governing Principle 8.
+
+**D5 — Framework-mapping enumeration.** Reciting all N components of a named framework in canonical order, one clause each, signals the model walking through training data. **Fix:** address ≤2 components explicitly, integrated into prose; let the rest stay implicit.
+
+**D6 — Contractions alibi floor (HARD gate).** ≥1 contraction per ~200 words; never expand them. Stripping contractions makes text *more* detectable. (Battery #14.)
+
+## Layer E — Ineffective indicators (do NOT flag these)
+
+Over-flagging has a cost. On Wikipedia, false AI accusations drive away new editors and breed a climate of suspicion; in a workplace or a classroom the equivalent is worse. Before calling anything AI, check whether the Dunning–Kruger effect or confirmation bias is doing the work — style-based detection is much harder than it feels, and confidence in your own ear is not evidence.
+
+None of the following is a tell. Several point the opposite way.
+
+| Not a tell | Why |
+|---|---|
+| **Perfect grammar** | Plenty of people write clean prose for a living. See also: a sudden shift in English variety (US↔UK) is a stronger signal than correctness itself. |
+| **Mixed casual + formal register** — "clinical" and "emotional" in one voice | Typical of technical people writing casually. Also of youth, playfulness, neurodivergence, or a document several people edited. |
+| **"Bland" or "robotic" prose** | LLM output has *specific* traits, listed above. It skews positive and verbose. Those traits don't necessarily scan as "robotic" to someone who hasn't read much of it — and plenty of human writing is dull. |
+| **"Fancy", "academic", or "formal" prose** | LLMs favor *specific words*, not the whole formal register. Difficult vocabulary and hard readability scores are not the tell; the named words are. |
+| **Transition words in isolation** | Only a handful (`Additionally`, `Consequently`, `Notably`) are documented as overused, mostly sentence-initial. Transitions are taught by style guides and common in human essays. Weak on their own. |
+| **Unsourced claims** | Over 570,000 Wikipedia articles are tagged as needing citations, most predating LLMs. Meanwhile modern chatbots browse and *do* emit citations — inaccurate ones, but present. Absence of sources says nothing either way. |
+| **A single tell of any kind** | See Governing Principle 6. Clusters are the signal. One em dash is one em dash. |
+
+**On your own detection ability.** Humans are near chance at this: one study measured 57% recognition of AI text and 64% of human text. Heavy LLM users do far better — around 90% — so fluency with the output is the variable that matters, not general intelligence or writing skill. Meanwhile human speech and writing are increasingly absorbing LLM patterns, which erodes the distinction from the other direction. Hold conclusions loosely.
+
+**On detector tools.** They beat chance but carry non-trivial error rates, fail against paraphrasing, and fail against models they weren't trained on. A high AI score from a detector is not proof and should never be the sole basis for an accusation. See [references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md) for what a controlled run of this actually looked like.
+
+## Communication artifacts (cut whenever the skill is on)
+
+- **Collaborative chatbot artifacts:** "I hope this helps", "Certainly!", "You're absolutely right!", "Would you like…", "Here is a…". Pasted-correspondence residue.
+- **Knowledge-cutoff disclaimers:** "as of [date]", "Up to my last training update", "While specific details are limited…", "based on available information…".
+- **Sycophantic / servile tone:** "Great question!", "That's an excellent point."
+- **Generic positive conclusions:** "The future looks bright… exciting times lie ahead." Replace with a concrete fact ("plans to open two more locations next year").
+
+## Human signals worth adding (for genuine quality, not to game a detector)
+
+**Syntactic signals (corroborated).** Reinhart et al. (PNAS) and 25 years of Wikipedia text identify constructions measurably more common in human writing than AI. LLMs avoid them by default because they're reaching for what they take to be a "formal, neutral, encyclopedic tone." Restoring them is not a trick — most are just plainer English:
+
+| Restore | Instead of |
+|---|---|
+| Simple `is`/`has` phrasing — *there is a*, *it has a* | serves as, functions as, boasts, features |
+| Plain verbs — *wrote*, *moved*, *used*, *tried*, *died* | authored, relocated, utilized, attempted, passed away |
+| Definitive statements — *one of the best*, *is the only*, *was the first* | hedged non-commitment |
+| Single hedges and intensifiers — *very*, *perhaps*, *tends to* | flat declaratives (and see D1) |
+| Ordinary wordiness — *as a result of*, *in order to*, *all of the*, *a part of*, *the fact that* | maximally compressed phrasing |
+
+The last two rows will feel wrong to anyone trained on Strunk & White. That's the point: the standard advice to tighten, de-hedge, and commit produces exactly the register a classifier reads as machine. Tighten for the reader where it helps; don't tighten as a reflex.
+
+**Authorial signals (from the 2026-06-12 study).** Three moves that read human — apply them because they make the writing better:
+
+- **Subjective stance markers.** First-person epistemic framing: "my reading is", "I'd argue", "what strikes me", "what I find genuinely difficult". Open interpretive paragraphs with one. **But phrasing matters more than the pronoun** — a stance in formal/literary register still reads impersonal (see B17). Say it the plain way you'd say it aloud.
+- **Earned idiom.** Non-literal, relatable phrasing that does analytical work: "winner's curse", "burning cash", "justification written after the decision", "luck dressed up as judgment". The mechanism is unpredictability of phrasing, not sophistication — and decorative idiom (C9) is still a tell.
+- **Technical-broad balance.** State a figure *and* tie it to its wider meaning in the same breath: "a 52% premium… arguably says more about how management envisages the future than about anything in the company's record." Never let a number sit in a sentence that only reports it.
+
+## Know your own fingerprint (this skill usually runs under Claude)
+
+You are usually editing Claude's own output, so front-weight Claude's row below — those tells are the most likely present and the least likely to feel wrong from the inside. **Every model has an idiolect, and they diverge measurably** (Sun et al., *Idiosyncrasies in Large Language Models*; Rudnicka in *Scientific American*); what's typical of GPT-5 is not typical of GPT-4 or Gemini, so identifying the source narrows the search a lot:
+
+| Model | Skews toward |
+|---|---|
+| **Claude** | Stacked hedging ("could/potentially/possibly/might" piled up) — its primary signal; "It is worth noting that" filler hedges; "Additionally"/"Furthermore" openers (C8); long qualified sentences rather than ChatGPT-style bold/bullet formatting; comparatively concise; *less* prone to broader-context inflation. In `light` mode de-hedge nothing (D1), but still flag genuine *double*-hedges |
+| **ChatGPT** | Formatting (bold, emoji, inline-header lists, "Let's dive in"); broader-context framing; the era-vocabulary clusters in C1 |
+| **Gemini** | Content inflation — promotional language, "In today's world", generic upbeat conclusions; comparatively concise |
+| **Grok** | "Scientific" vocabulary (causal, empirical, correlate); heavy `underscore` into 2026; the "X rather than Y" negative parallelism (B4.3); very long output |
+
+Broader-context inflation is characteristic of ChatGPT and Grok specifically — Gemini and Claude do it less. Treat all of this as where-to-look-first rather than a classifier: models converge as they're trained on each other's output, and these fingerprints shift with every release.
+
+---
+
+## Self-scoring battery
+
+Run the mechanical gate before emitting any deliverable:
+
+```
+python3 ~/.claude/skills/humanizer/score.py <draft> --mode <full|light>
+```
+
+`score.py` is stdlib-only — no install step, no dependencies. If the skill lives elsewhere, use that path instead; nothing in the script assumes a location.
+
+**Ship-eligibility:** ALL HARD gates pass AND ≤2 soft gates fail. 3+ soft fails = statistically over-smooth; revise. **Two-pass cap** (see Governing Principle 4). In `--mode light`, only #6/#7/#8 are active; all variance/hedge checks are skipped.
+
+| # | Check | Threshold | Gate | Enforced by |
+|---|---|---|---|---|
+| 1 | Sentence-length CV | ≥ 0.45 | HARD | script |
+| 2 | Short sentences (<10w) | ≥2 per 400w | HARD | script |
+| 3 | Long sentences (≥30w) | ≥1 per 400w | soft | script |
+| 4 | Paragraph max/min ratio | ≥ 2.5× | HARD | script |
+| 5 | No 3-paragraph clustering | 0 clusters | soft | script |
+| 6 | Banned vocab — tier 1 (corroborated) | 0 hits | HARD | script (full+light) |
+| 6b | Banned vocab — tier 2 (observed watchlist) | ≤2 per 500w | soft | script (full+light) |
+| 7 | Em dashes | 0 | HARD | script (full+light) |
+| 8 | Signpost density | ≤1/300w, 0 bad openers | HARD | script (full+light) |
+| 9 | Tricolon density | ≤1/200w | soft | script |
+| 10 | Negation-reversal (incl. cross-sentence "X isn't A. It's B.") | ≤1/500w | HARD | script |
+| 11 | Colon-restatement | ≤1/600w | soft | **model-judgment** |
+| 12 | Hedge stacking (double-hedges + density ceiling) | ≤6/200w, 0 double-hedges | soft | script |
+| 13 | Perplexity-anchor coverage | ≥1 per paragraph | soft | **model-judgment** |
+| 14 | Contractions (alibi presence) | ≥1/200w | HARD | script |
+
+Checks #11 and #13 are intentionally omitted from `score.py` — self-review them: scan each paragraph for a colon-restatement, and confirm ≥1 concrete anchor (number, name, date, mechanism) per paragraph.
+
+---
+
+## Alibis to preserve
+
+A pass that strips human signals makes text *more* detectable. Do not sand these away.
+
+| Alibi | Floor | Why |
+|---|---|---|
+| Contractions (don't, it's, we're) — never expand | ≥1 per ~200w | Hard battery gate (#14) |
+| Mild awkward-but-correct construction — don't polish to glass | ≥1 per ~600w | Occasional imperfection is a strong human signal |
+| Idiosyncratic / loose domain vocab — don't normalize to textbook | don't remove | Over-correction converges on the "average voice" classifiers are trained on |
+| Consistent non-US spelling (organise, colour) | 0 inconsistencies introduced | Inconsistency is the tell, not the variant |
+| Occasional sentence-initial And/But, fragment, real comma splice | allow, don't auto-correct | Human syntactic fingerprints |
+| Specific, hard-to-fabricate detail — a real address, an odd quote, an exact figure, a cited specific | don't round off or generalize | LLMs round to the generic; humans hoard specifics. A sentence with `confirmed` + a real citation is evidence of a real analyst |
+| Mixed feelings, genuine asides, self-corrections | allow, don't resolve | "Mostly right but it bothers me" reads human; AI defaults to clean takes |
+
+---
+
+## Process
+
+A single pass isn't enough. Five passes, in order — architectural rewrites change the sentences, so don't fix sentences first.
+
+**First, decide patch vs. rebuild.** If tells saturate the draft — 5+ banlist/vocab hits across 3+ categories, plus uniform sentence and paragraph length — patching individual phrases won't fix it; the structure itself is AI-generated. State the core point in one sentence and rebuild from there. Patch only when the bones are sound.
+
+**Pass 1 — Architecture (Layer A).** Audit document shape before touching prose: source-review framing (A1), patterned issue paragraphs / list uniformity (A2), roadmap sentences (A3), formulaic challenge sections (A4), framing-tissue concentration (A5), reshuffleable paragraphs (A6), fragmented headers (A7), diff-anchored framing (A8). Rewrite, then move on.
+
+**Pass 2 — Sentence and rhetoric (Layer B).** Slogans, closers, and hooks (B9), treadmill/restatement (B16), clever inversions (B11), performative similes (B12), tidy concessions (B13), stacked declaratives (B10), rule-of-three (B5), frame-then-pivot (B8), negative parallelism (B4), colon-restatement (B14).
+
+**Pass 3 — Lexical and surface (Layer C).** AI vocabulary (C1) and the hard banlist (C2), categorical pronouncements (C3), nominalizations/compounds (C4), filler (C7), copula avoidance (B3), signposts/connectives (C8), em dashes (C5), curly quotes / boldface / emojis (C6).
+
+**Pass 4 — Audit.** Ask yourself two questions, and answer both before rewriting.
+
+1. *"What makes the below so obviously AI generated?"* Answer in 3–5 specific bullets, quoting offending passages — "the third paragraph closes with a chiasmus and the second opens with a slogan" beats "it sounds AI-ish." Then rewrite each.
+2. *"Does the rewrite state any fact, name, number, date, quote, or citation that isn't in the source?"* Answer explicitly, even when the answer is no. Any hit is a defect and gets reverted to the source's version or removed, regardless of how much better it reads. This is a separate question from question 1 on purpose: a fabricated specific is invisible to a style audit because it looks exactly like the thing the style audit is asking for.
+
+**Pass 5 — Read aloud.** Listen for sentence-length rhythm (D2), opening-word repetition (B15), and anything that doesn't sound like a person actually speaking. If a phrase makes you wince read aloud, it's probably AI-shaped even if it matches no specific rule.
+
+**Imperfection check (`full` mode).** Confirm the final contains at least one of (a)–(d) from § Soul. If none, add one deliberately.
+
+---
+
+## Output format
+
+Provide, in order:
+
+1. **Draft rewrite** (after Passes 1–3).
+2. **"What makes the below so obviously AI generated?"** — brief, passage-specific bullets with quotes (Pass 4).
+3. **"Anything fabricated?"** — one line answering Pass 4's second question. State "nothing added" or list every invented specific and what it was reverted to. Never omit this line; a silent pass here is indistinguishable from a pass that never checked.
+4. **Final rewrite** (after Passes 4–5).
+5. **"What I cut"** — concrete edits mapped to tell IDs where relevant, not a vague "removed AI phrases."
+6. **"What's left I'm watching"** — borderline phrases in the final version that would be the first targets on another pass. This is the most important section even when the document looks clean: naming the borderline phrases is what forces them caught later instead of slipping through. Skipping it causes the most common failure mode — declaring a document clean when two or three borderline phrases remain.
+
+---
+
+## Further reading
+
+These load on demand. Read the relevant one when the situation calls for it; do not load them by default.
+
+| File | Read it when |
+|---|---|
+| [references/DETECTION-LIMITS.md](references/DETECTION-LIMITS.md) | Someone asks whether text will pass a detector, wants AI output to clear a checker on graded work, or the Layer D targets seem to be fighting you. Contains the controlled study, the seven findings, the procedural-genre floor, and the integrity routing. |
+| [references/EXAMPLE.md](references/EXAMPLE.md) | A rewrite is not landing and you want a full worked before/after with commentary. |
+| [references/SOURCES.md](references/SOURCES.md) | Adding or promoting a tell, or checking whether a vocabulary word is corroborated. Lists every study behind the rules. |
+
+The operative conclusions from all three are already stated above: § Read this first carries the detector finding, Governing Principle 8 carries the fabrication rule, and § C1/C2 carry the evidence tiers. You do not need to open these to apply the skill correctly.
