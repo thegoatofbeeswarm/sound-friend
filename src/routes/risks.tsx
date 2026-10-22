@@ -13,6 +13,7 @@ import { useI18n } from "@/lib/i18n";
 import { DEFAULT_DEVICE, getDevice, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
 import {
   dosePercent,
+  entryDosePercent,
   formatMinutes,
   lastSevenDays,
   loadExposure,
@@ -132,7 +133,7 @@ function RisksPage() {
               <Stat label={t("risks.loudestSession")} value={today ? `~${today.peakDb} dB` : "-"} sub={t("risks.estimatedPeak")} />
               <Stat
                 label={t("risks.exposureStatus")}
-                value={today ? (statusLabel[statusForDose(dosePercent(today.avgDb, today.minutes / 60))] ?? "-") : t("risks.notSet")}
+                value={today ? (statusLabel[statusForDose(entryDosePercent(today))] ?? "-") : t("risks.notSet")}
                 sub={t("risks.basedOnToday")}
                 highlight={today != null}
               />

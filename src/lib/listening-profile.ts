@@ -33,7 +33,7 @@ export interface ProfileInput {
   /** Number of saved speech-in-noise tests. */
   speechTests: number;
   /** Training sessions, newest first. */
-  sessions: { mode: string; accuracy: number; end_level: number }[];
+  sessions: SessionRow[];
   /** Average pure-tone threshold from an uploaded clinical audiogram, in dB HL. */
   clinicalAvgThresholdDb?: number | null;
   /** Number of uploaded clinical reports with thresholds. */
@@ -44,15 +44,55 @@ export interface ProfileInput {
 
 export type SensitivitySource = "app" | "clinical";
 
-/** Average of every threshold point on an audiogram, ignoring blanks. */
+/** Plausible audiogram range in dB; anything outside is a parsing error, not a reading. */
+const THRESHOLD_MIN_DB = -20;
+const THRESHOLD_MAX_DB = 130;
+
+/**
+ * Average of every threshold point on an audiogram, ignoring blanks.
+ * null, undefined, "" and whitespace are skipped before conversion, because
+ * Number(null) and Number("") are both 0, which would read as a measured 0 dB.
+ * A real numeric 0 still counts.
+ */
 export function averageThreshold(
-  points: { threshold_db: number | string | null }[],
+  points: { threshold_db: number | string | null | undefined }[],
 ): number | null {
   const values = points
-    .map((p) => Number(p.threshold_db))
-    .filter((n) => Number.isFinite(n));
+    .map((p) => p.threshold_db)
+    .filter((v): v is number | string => v != null && !(typeof v === "string" && v.trim() === ""))
+    .map((v) => Number(v))
+    .filter((n) => Number.isFinite(n) && n >= THRESHOLD_MIN_DB && n <= THRESHOLD_MAX_DB);
   if (!values.length) return null;
   return values.reduce((s, n) => s + n, 0) / values.length;
+}
+
+/** One saved training session as the profile reads it. */
+export interface SessionRow {
+  mode: string;
+  /** Stored accuracy. Current rows hold a percentage (0-100); early rows may hold a fraction. */
+  accuracy: number;
+  end_level: number;
+  /** Rounds and correct answers, when stored. These settle the accuracy unambiguously. */
+  rounds?: number | null | undefined;
+  correct?: number | null | undefined;
+}
+
+/**
+ * Accuracy of one session as a percentage, normalised per row before any
+ * averaging. correct/rounds wins whenever it is available, since it carries
+ * no unit ambiguity. Without it, a value in (0, 1) is read as a fraction and
+ * anything else as a percentage; a stored 1 without rounds stays ambiguous
+ * and is read as 1%.
+ */
+export function sessionAccuracyPct(row: SessionRow): number | null {
+  const rounds = Number(row.rounds);
+  const correct = Number(row.correct);
+  if (Number.isFinite(rounds) && rounds > 0 && Number.isFinite(correct) && correct >= 0 && correct <= rounds) {
+    return (correct / rounds) * 100;
+  }
+  const acc = Number(row.accuracy);
+  if (!Number.isFinite(acc) || acc < 0 || acc > 100) return null;
+  return acc > 0 && acc < 1 ? acc * 100 : acc;
 }
 
 /** Modes that feed each trained dimension. */
@@ -68,12 +108,14 @@ const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
  * A trained dimension blends how accurate you are with how hard the material
  * was, so grinding an easy level does not max the score.
  */
-function trainedScore(sessions: { accuracy: number; end_level: number }[]): number {
-  const recent = sessions.slice(0, 6);
-  const acc = recent.reduce((s, r) => s + r.accuracy, 0) / recent.length;
-  const level = recent.reduce((s, r) => s + r.end_level, 0) / recent.length;
-  // accuracy is 0..1 in storage for some rows and 0..100 for others; normalise.
-  const accPct = acc <= 1 ? acc * 100 : acc;
+function trainedScore(sessions: SessionRow[]): number | null {
+  const recent = sessions
+    .slice(0, 6)
+    .map((r) => ({ acc: sessionAccuracyPct(r), level: Number(r.end_level) }))
+    .filter((r): r is { acc: number; level: number } => r.acc != null && Number.isFinite(r.level));
+  if (!recent.length) return null;
+  const accPct = recent.reduce((s, r) => s + r.acc, 0) / recent.length;
+  const level = recent.reduce((s, r) => s + r.level, 0) / recent.length;
   const levelFactor = 0.55 + Math.min(10, Math.max(1, level)) * 0.045; // 1 -> 0.6, 10 -> 1.0
   return clamp(accPct * levelFactor);
 }
@@ -161,7 +203,7 @@ export const DIMENSION_ACTION: Record<DimensionId, { to: "/test" | "/speech" | "
 export interface TimelineInput {
   tone: { created_at: string; avg_threshold_db: number | null }[];
   speech: { created_at: string; score: number }[];
-  sessions: { created_at: string; mode: string; accuracy: number; end_level: number }[];
+  sessions: (SessionRow & { created_at: string })[];
 }
 
 export interface TimelinePoint {
@@ -209,7 +251,7 @@ export function listeningTimeline(input: TimelineInput, maxPoints = 16): Timelin
           speechTests: speech.length,
           sessions: [...sessions]
             .sort((a, b) => b.created_at.localeCompare(a.created_at))
-            .map((s) => ({ mode: s.mode, accuracy: s.accuracy, end_level: s.end_level })),
+            .map((s) => ({ mode: s.mode, accuracy: s.accuracy, end_level: s.end_level, rounds: s.rounds, correct: s.correct })),
         }),
       );
       return score == null ? null : { date: week, score };

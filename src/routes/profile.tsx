@@ -159,7 +159,7 @@ function ProfilePage() {
           .order("created_at", { ascending: false }),
         supabase
           .from("training_sessions")
-          .select("mode, accuracy, end_level, created_at")
+          .select("mode, accuracy, end_level, rounds, correct, created_at")
           .order("created_at", { ascending: false }),
         supabase
           .from("clinical_reports")

@@ -4,15 +4,33 @@
  * threshold. Everything here is an estimate derived from what the user reports.
  */
 
+/** One logged stretch of listening at a single estimated level. */
+export interface ExposureSegment {
+  minutes: number;
+  /** Estimated level for this stretch, dB SPL (reported, not measured). */
+  db: number;
+}
+
 export interface ExposureEntry {
   /** Local calendar day, YYYY-MM-DD. */
   day: string;
   /** Minutes of listening logged for that day. */
   minutes: number;
-  /** Estimated average level across the logged time, dB SPL. */
+  /**
+   * Energy-equivalent average level across the logged time, dB SPL. Derived
+   * from `segments` when they exist; kept as a field for older readers.
+   */
   avgDb: number;
   /** Estimated loudest sustained level that day, dB SPL. */
   peakDb: number;
+  /** Every stretch logged that day, so doses are summed per stretch. */
+  segments?: ExposureSegment[];
+  /**
+   * True for days saved before segments were kept. Their `avgDb` was a
+   * time-weighted mean of dB values, which understates loud stretches, and
+   * cannot be rebuilt; treat their dose as a lower bound.
+   */
+  legacyMerged?: boolean;
 }
 
 const KEY = "audiomaxxer.exposure.v1";
@@ -21,6 +39,12 @@ const MAX_DAYS = 60;
 export function dayId(d = new Date()): string {
   const p = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+/** Older entries have no segments; mark them so their numbers can be labelled. */
+function upgrade(e: ExposureEntry): ExposureEntry {
+  if (Array.isArray(e.segments) && e.segments.length) return e;
+  return { ...e, segments: [{ minutes: e.minutes, db: e.avgDb }], legacyMerged: e.minutes > 0 };
 }
 
 export function loadExposure(): ExposureEntry[] {
@@ -32,6 +56,7 @@ export function loadExposure(): ExposureEntry[] {
     if (!Array.isArray(parsed)) return [];
     return parsed
       .filter((e) => e && typeof e.day === "string")
+      .map(upgrade)
       .sort((a, b) => (a.day < b.day ? 1 : -1))
       .slice(0, MAX_DAYS);
   } catch {
@@ -48,26 +73,34 @@ function save(entries: ExposureEntry[]) {
   }
 }
 
-/** Add listening to today's entry, merging with anything already logged. */
+/**
+ * Energy-equivalent level of several stretches: decibels are averaged as sound
+ * energy, so an hour at 100 dB dominates an hour at 70 dB (about 97 dB, not 85).
+ */
+export function equivalentLevelDb(segments: ExposureSegment[]): number | null {
+  const total = segments.reduce((a, s) => a + s.minutes, 0);
+  if (total <= 0) return null;
+  const energy = segments.reduce((a, s) => a + s.minutes * Math.pow(10, s.db / 10), 0);
+  return 10 * Math.log10(energy / total);
+}
+
+/** Add listening to today's entry as its own stretch. */
 export function logListening(minutes: number, levelDb: number): ExposureEntry[] {
   const entries = loadExposure();
   const today = dayId();
   const idx = entries.findIndex((e) => e.day === today);
-  if (idx === -1) {
-    const next = [{ day: today, minutes, avgDb: levelDb, peakDb: levelDb }, ...entries];
-    save(next);
-    return next;
-  }
-  const cur = entries[idx] as ExposureEntry;
-  const total = cur.minutes + minutes;
+  const cur = idx === -1 ? null : (entries[idx] as ExposureEntry);
+  const segments = [...(cur?.segments ?? []), { minutes, db: levelDb }];
+  const total = segments.reduce((a, s) => a + s.minutes, 0);
   const merged: ExposureEntry = {
     day: today,
     minutes: total,
-    avgDb: total > 0 ? Math.round((cur.avgDb * cur.minutes + levelDb * minutes) / total) : levelDb,
-    peakDb: Math.max(cur.peakDb, levelDb),
+    avgDb: Math.round(equivalentLevelDb(segments) ?? levelDb),
+    peakDb: Math.max(cur?.peakDb ?? levelDb, levelDb),
+    segments,
+    ...(cur?.legacyMerged ? { legacyMerged: true } : {}),
   };
-  const next = [...entries];
-  next[idx] = merged;
+  const next = idx === -1 ? [merged, ...entries] : entries.map((e, i) => (i === idx ? merged : e));
   save(next);
   return next;
 }
@@ -82,10 +115,30 @@ export function todayEntry(entries: ExposureEntry[]): ExposureEntry | null {
   return entries.find((e) => e.day === dayId()) ?? null;
 }
 
-/** WHO-style dose: 100% = 8 h at 85 dB, allowance halving every 3 dB. */
+/**
+ * Reference model for the dose figures: the NIOSH occupational reference,
+ * 85 dBA for 8 hours with a 3 dB exchange rate. It is a way to compare time
+ * and level, not a personal safety limit. (The WHO-ITU standard for personal
+ * listening devices uses a weekly allowance instead: 80 dB for 40 hours a
+ * week for adults, 75 dB for children.)
+ */
+export const DOSE_REFERENCE = { name: "NIOSH", levelDb: 85, hours: 8, exchangeDb: 3 } as const;
+
+/** Unrounded dose for one stretch, as a fraction of the reference (1 = 100%). */
+function doseFraction(levelDb: number, hours: number): number {
+  const allowed = DOSE_REFERENCE.hours * Math.pow(2, (DOSE_REFERENCE.levelDb - levelDb) / DOSE_REFERENCE.exchangeDb);
+  return hours / allowed;
+}
+
+/** Dose for a single level and duration, in percent of the reference. */
 export function dosePercent(levelDb: number, hours: number): number {
-  const allowed = 8 * Math.pow(2, (85 - levelDb) / 3);
-  return Math.round((hours / allowed) * 100);
+  return Math.round(doseFraction(levelDb, hours) * 100);
+}
+
+/** A day's dose: each stretch's contribution summed before rounding. */
+export function entryDosePercent(entry: ExposureEntry): number {
+  const segments = entry.segments?.length ? entry.segments : [{ minutes: entry.minutes, db: entry.avgDb }];
+  return Math.round(segments.reduce((a, s) => a + doseFraction(s.db, s.minutes / 60), 0) * 100);
 }
 
 export type ExposureStatus = "low" | "moderate" | "high";
@@ -105,9 +158,12 @@ export const STATUS_LABEL: Record<ExposureStatus, string> = {
 export interface ExposureWindow {
   days: number;
   totalMinutes: number;
+  /** Energy-equivalent level across the window. */
   avgDb: number | null;
   peakDb: number | null;
   avgDosePercent: number;
+  /** True when any day in the window predates per-stretch logging. */
+  includesLegacy: boolean;
 }
 
 function windowFor(entries: ExposureEntry[], from: Date, to: Date): ExposureWindow {
@@ -115,14 +171,13 @@ function windowFor(entries: ExposureEntry[], from: Date, to: Date): ExposureWind
   const toId = dayId(to);
   const rows = entries.filter((e) => e.day >= fromId && e.day <= toId);
   const totalMinutes = rows.reduce((a, r) => a + r.minutes, 0);
-  const avgDb =
-    totalMinutes > 0
-      ? Math.round(rows.reduce((a, r) => a + r.avgDb * r.minutes, 0) / totalMinutes)
-      : null;
+  const segments = rows.flatMap((r) => (r.segments?.length ? r.segments : [{ minutes: r.minutes, db: r.avgDb }]));
+  const leq = equivalentLevelDb(segments);
+  const avgDb = leq == null ? null : Math.round(leq);
   const peakDb = rows.length ? Math.max(...rows.map((r) => r.peakDb)) : null;
-  const doses = rows.map((r) => dosePercent(r.avgDb, r.minutes / 60));
+  const doses = rows.map(entryDosePercent);
   const avgDosePercent = doses.length ? Math.round(doses.reduce((a, d) => a + d, 0) / doses.length) : 0;
-  return { days: rows.length, totalMinutes, avgDb, peakDb, avgDosePercent };
+  return { days: rows.length, totalMinutes, avgDb, peakDb, avgDosePercent, includesLegacy: rows.some((r) => r.legacyMerged) };
 }
 
 function daysAgo(n: number): Date {
