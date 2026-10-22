@@ -48,7 +48,7 @@ export const heroPack: {
     "hero.tagline": "listening health for the headphone generation",
     "hero.title": "Hearing loss is a growing issue worldwide.",
     "hero.lede":
-      "In US data from 2005 to 2006, as many as 17% of teens aged 12 to 19 had hearing-test results that suggest noise damage, and most of them wouldn't have noticed. Struggling to follow a conversation in a noisy place is one sign to watch for. Audiomaxxer measures five listening skills (sensitivity, speech in noise, discrimination, attention and memory) through a tone check, a speech test and short practice sessions, then points you at the weakest one and retests it.",
+      "In US data from 2005 to 2006, as many as 17% of teens aged 12 to 19 had hearing-test results that suggest noise damage. Audiomaxxer measures five listening skills through a tone check, a speech test and short practice sessions, then points you at the weakest one to practise.",
     "hero.meter.label": "Play a note into the ear",
     "hero.place.danger":
       "Peaks {mm} in from the base. Noise damages this stretch first, and a threshold test can pass straight over it.",
@@ -243,7 +243,7 @@ export const heroPack: {
     "hero.tagline": "为耳机世代打造的听力健康",
     "hero.title": "听力损失正在成为全球性的问题。",
     "hero.lede":
-      "根据美国 2005 至 2006 年的数据，12 至 19 岁的青少年中，多达 17% 的人听力测试结果提示存在噪声损伤，而大多数人并未察觉。在嘈杂环境中跟不上对话，就是值得留意的信号。Audiomaxxer 通过提示音测试、言语测试和简短练习，测量五项听力能力（敏感度、噪声中言语、辨别力、注意力与记忆力），然后指出最弱的一项并重新测试。",
+      "根据美国 2005 至 2006 年的数据，12 至 19 岁的青少年中，多达 17% 的人听力测试结果提示存在噪声损伤。Audiomaxxer 通过提示音测试、言语测试和简短练习测量五项听力能力，然后指出最弱的一项供你练习。",
     "hero.meter.label": "向耳朵里播放一个音",
     "hero.place.danger":
       "峰值位于距底部 {mm} 处——这段区域最先被噪声损伤，而阈值测试往往会直接略过它。",
@@ -436,7 +436,7 @@ export const heroPack: {
     "hero.tagline": "salud auditiva para la generación de los auriculares",
     "hero.title": "La pérdida auditiva es un problema creciente en todo el mundo.",
     "hero.lede":
-      "Según datos de EE. UU. de 2005 a 2006, hasta un 17% de los adolescentes de 12 a 19 años tenía resultados auditivos que sugieren daño por ruido, y la mayoría no lo habría notado. No poder seguir una conversación en un lugar ruidoso es una señal a tener en cuenta. Audiomaxxer mide cinco habilidades auditivas (sensibilidad, habla en ruido, discriminación, atención y memoria) con una prueba de tonos, una prueba de habla y sesiones cortas de práctica, y luego te señala la más débil y la vuelve a medir.",
+      "Según datos de EE. UU. de 2005 a 2006, hasta un 17% de los adolescentes de 12 a 19 años tenía resultados auditivos que sugieren daño por ruido. Audiomaxxer mide cinco habilidades auditivas con una prueba de tonos, una prueba de habla y sesiones cortas de práctica, y luego te señala la más débil para practicar.",
     "hero.meter.label": "Reproduce un tono dentro del oído",
     "hero.place.danger":
       "Su pico está a {mm} de la base: el tramo que el ruido daña primero y que una prueba de umbrales puede pasar por alto.",

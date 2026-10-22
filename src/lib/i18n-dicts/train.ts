@@ -1,5 +1,9 @@
 export const trainPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
+    "train.otherExercises": "Other exercises",
+    "train.startHere.chosen": "You picked this exercise below. Start it here, or choose a different one.",
+    "train.startHere.why": "We suggest this one first because it's the closest to following a conversation with chatter around you. It's a starting point, not a personalised prescription.",
+    "train.startHere.title": "Start here: {mode}",
     "train.tagline": "Closed-loop hearing training",
     "train.heroTitle": "Train the skills you use in real life.",
     "train.heroBody":
@@ -81,6 +85,10 @@ export const trainPage: { en: Record<string, string>; zh: Record<string, string>
     "train.mode.rapid-speech.skill": "Temporal processing",
   },
   zh: {
+    "train.otherExercises": "其他练习",
+    "train.startHere.chosen": "你在下方选择了这个练习。可以在这里开始，或换一个。",
+    "train.startHere.why": "我们建议先做这个，因为它最接近在周围有人聊天时跟上对话。这只是一个起点，不是个性化处方。",
+    "train.startHere.title": "从这里开始：{mode}",
     "train.tagline": "闭环听力训练",
     "train.heroTitle": "训练你在现实生活中用得上的听觉技能。",
     "train.heroBody":
@@ -161,6 +169,10 @@ export const trainPage: { en: Record<string, string>; zh: Record<string, string>
     "train.mode.rapid-speech.skill": "时间处理能力",
   },
   es: {
+    "train.otherExercises": "Otros ejercicios",
+    "train.startHere.chosen": "Elegiste este ejercicio abajo. Empiézalo aquí o elige otro.",
+    "train.startHere.why": "Te sugerimos este primero porque es lo más parecido a seguir una conversación con charla alrededor. Es un punto de partida, no una prescripción personalizada.",
+    "train.startHere.title": "Empieza aquí: {mode}",
     "train.tagline": "Entrenamiento auditivo de circuito cerrado",
     "train.heroTitle": "Entrena las habilidades que usas en la vida real.",
     "train.heroBody":

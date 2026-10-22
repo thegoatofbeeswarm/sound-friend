@@ -433,6 +433,28 @@ function TrainPage() {
       <main className="mx-auto max-w-6xl px-5 py-10">
         {phase === "intro" ? (
           <>
+            <section aria-labelledby="start-here-h" className="rounded-2xl bg-card p-6 md:p-8">
+              <h2 id="start-here-h" className="text-2xl font-semibold tracking-[-0.03em]">
+                {t("train.startHere.title").replace("{mode}", t(`train.mode.${currentMode.id}.label`))}
+              </h2>
+              <p className="mt-2 max-w-2xl">{t(`train.mode.${currentMode.id}.blurb`)}</p>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                {currentMode.id === "speech-in-noise" ? t("train.startHere.why") : t("train.startHere.chosen")}
+              </p>
+              <div className="mt-5 flex flex-wrap items-center gap-4">
+                <Button size="lg" onClick={() => void begin()}>
+                  <Play className="mr-2 h-4 w-4" /> {t("train.startPrefix")} {t(`train.mode.${currentMode.id}.label`).toLowerCase()}
+                </Button>
+                {currentMode.needsSpeech ? (
+                  <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Volume2 className="h-4 w-4 text-signal" /> {t("train.usesSpeaker")}
+                  </span>
+                ) : null}
+                {currentMode.needsSpeech ? (
+                  <span className="text-xs text-muted-foreground">{t("train.languageNote")}</span>
+                ) : null}
+              </div>
+            </section>
 
             {user ? (
               <PlanCard
@@ -456,7 +478,7 @@ function TrainPage() {
             <section className="mt-10">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-2xl font-semibold">{t("train.chooseTrack")}</h2>
+                  <h2 className="text-2xl font-semibold">{t("train.otherExercises")}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {user && allSessions.length > 0 ? (
                       <>
@@ -515,18 +537,10 @@ function TrainPage() {
                   );
                 })}
               </div>
-              <div className="mt-6 flex flex-wrap items-center gap-4">
-                <Button size="lg" onClick={() => void begin()}>
+              <div className="mt-6">
+                <Button size="lg" variant="secondary" onClick={() => void begin()}>
                   <Play className="mr-2 h-4 w-4" /> {t("train.startPrefix")} {t(`train.mode.${currentMode.id}.label`).toLowerCase()}
                 </Button>
-                {currentMode.needsSpeech ? (
-                  <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Volume2 className="h-4 w-4 text-signal" /> {t("train.usesSpeaker")}
-                  </span>
-                ) : null}
-                {currentMode.needsSpeech ? (
-                  <span className="text-xs text-muted-foreground">{t("train.languageNote")}</span>
-                ) : null}
               </div>
             </section>
 
