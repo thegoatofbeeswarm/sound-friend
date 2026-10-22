@@ -53,7 +53,7 @@ function Page() {
         {
           title: "Step 4: Reading the result",
           body: [
-            "The output is an estimated threshold for each ear at each frequency plus a confidence value describing how precise that estimate is, typically in about four minutes. Results are plotted as an audiogram-style curve per ear and stored so you can compare later screenings against the same baseline.",
+            "The output is an estimated threshold for each ear at each frequency plus a confidence value describing how precise that estimate is, after 44 tones at most. Results are plotted as an audiogram-style curve per ear and stored so you can compare later screenings against the same baseline.",
           ],
         },
         {

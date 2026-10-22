@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArticlePage } from "@/components/ArticlePage";
 import { scienceLinks } from "@/lib/science-links";
 
-const TITLE = "Bayesian Adaptive Hearing Testing: The Algorithm Behind a 4-Minute Screening";
+const TITLE = "Bayesian Adaptive Hearing Testing: The Algorithm Behind the Tone Check";
 const DESC =
   "How Bayesian adaptive threshold estimation works, and the exact parameters Audiomaxxer runs with: frequencies, tone duration, prior, likelihood, stopping criterion and lapse rates.";
 
@@ -34,7 +34,7 @@ function Page() {
           body: [
             "A traditional pure-tone audiogram plays fixed tones and moves the level up and down until the person no longer responds. It works, but it spends many trials on levels that were never in question, which is why a full clinical sweep takes time.",
             "Audiomaxxer keeps a probability distribution over your threshold at each frequency and ear, updates it after every response, and presents the next tone where uncertainty is greatest. The approach follows the Bayesian adaptive tradition of QUEST (Watson & Pelli, 1983) and Kontsevich & Tyler (1999).",
-            "The psychometric model includes small rates of false-positive and missed responses, so a single stray press doesn't distort the estimate. Tracks stop when the estimate is stable instead of after a fixed count, which is how a full ten-track screening fits into roughly four minutes.",
+            "The psychometric model includes small rates of false-positive and missed responses, so a single stray press doesn't distort the estimate. Tracks stop when the estimate is stable instead of after a fixed count, so a full ten-track screening ends after 44 tones at most.",
           ],
         },
         {

@@ -303,6 +303,9 @@ function ProfilePage() {
                 <p className="mt-4 text-sm text-muted-foreground">{t("trend.empty")}</p>
               ) : (
                 <>
+                  {timeline[0]!.coverage !== timeline[timeline.length - 1]!.coverage ? (
+                    <p className="mt-3 text-sm">{t("trend.mixNote")}</p>
+                  ) : null}
                   <p className="mt-3 text-sm text-signal">
                     {trendChange == null || Math.abs(trendChange) < 2
                       ? t("trend.changeFlat")
@@ -318,11 +321,6 @@ function ProfilePage() {
             </section>
 
             <section className="relative mt-6 overflow-hidden rounded-3xl border border-border/70 bg-card/70 p-6 shadow-card md:p-10">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full opacity-40 blur-3xl"
-                style={{ background: "radial-gradient(circle, var(--signal), transparent 70%)" }}
-              />
               <div className="relative grid gap-10 lg:grid-cols-[auto_1fr] lg:items-center">
                 <div className="flex flex-col items-center">
                   <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
@@ -334,6 +332,11 @@ function ProfilePage() {
                   <p className="mt-3 text-sm text-muted-foreground">
                     {overall == null ? t("profile.overallEmpty") : t(`profile.band.${bandOf(overall)}`)}
                   </p>
+                  {overall != null ? (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t("profile.coverage").replace("{n}", String(dims.filter((d) => d.score != null).length))}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">

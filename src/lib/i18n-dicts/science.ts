@@ -55,7 +55,7 @@ export const sciencePack: {
       "What a threshold is, what the numbers mean, and how precise they are.",
     "sci.link.bayesian.label": "Bayesian adaptive hearing testing",
     "sci.link.bayesian.blurb":
-      "The adaptive algorithm behind a four-minute screening, in full detail.",
+      "The adaptive algorithm behind the tone check, in full detail.",
     "sci.link.prevention.label": "Hearing loss prevention",
     "sci.link.prevention.blurb":
       "WHO safe-listening guidance and how to keep your weekly sound dose down.",
@@ -117,7 +117,7 @@ export const sciencePack: {
     "sci.link.thresholds.label": "听阈与分贝",
     "sci.link.thresholds.blurb": "什么是听阈、数字代表什么，以及它们有多精确。",
     "sci.link.bayesian.label": "贝叶斯自适应听力测试",
-    "sci.link.bayesian.blurb": "详解四分钟筛查背后的自适应算法。",
+    "sci.link.bayesian.blurb": "提示音测试背后的自适应算法，完整说明。",
     "sci.link.prevention.label": "预防听力损失",
     "sci.link.prevention.blurb": "世卫组织的安全聆听建议，以及如何降低每周的声音剂量。",
     "sci.link.headphones.label": "耳机对听力测试准确度的影响",
@@ -184,7 +184,7 @@ export const sciencePack: {
       "Qué es un umbral, qué significan las cifras y qué precisión tienen.",
     "sci.link.bayesian.label": "Prueba auditiva adaptativa bayesiana",
     "sci.link.bayesian.blurb":
-      "El algoritmo adaptativo detrás de un cribado de cuatro minutos, en detalle.",
+      "El algoritmo adaptativo detrás de la prueba de tonos, en detalle.",
     "sci.link.prevention.label": "Prevención de la pérdida auditiva",
     "sci.link.prevention.blurb":
       "Guía de escucha segura de la OMS y cómo reducir tu dosis sonora semanal.",

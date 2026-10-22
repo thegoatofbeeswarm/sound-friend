@@ -13,11 +13,11 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "train.realWorld": "Real-world scenes",
 
     /* transfer testing */
-    "transfer.title": "Transfer check",
+    "transfer.title": "Fresh-material check",
     "transfer.body":
-      "A short check at a fixed difficulty, using sentences and sounds your training never uses. If your score holds up here, the practice is carrying over.",
-    "transfer.run": "Run transfer check",
-    "transfer.needMore": "Finish two sessions of a track to run its transfer check.",
+      "A short check at a fixed difficulty, using sentences and sounds your training never uses. If your score holds up here, the skill is carrying over to new items.",
+    "transfer.run": "Run fresh-material check",
+    "transfer.needMore": "Finish two sessions of a track to run its fresh-material check.",
     "transfer.trained": "Trained",
     "transfer.unseen": "Unseen material",
     "transfer.gap": "Difference",
@@ -26,10 +26,10 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "transfer.verdict.partial": "Partly carried over",
     "transfer.verdict.notYet": "Not carrying over yet",
     "transfer.verdict.unknown": "Needs a check",
-    "transfer.badge": "Transfer check · unseen material",
-    "transfer.doneTitle": "Transfer check complete",
+    "transfer.badge": "Fresh-material check · items you haven't trained on",
+    "transfer.doneTitle": "Fresh-material check complete",
     "transfer.doneBody":
-      "This score comes from material you never trained on, so it reflects everyday listening.",
+      "This score comes from items you never trained on. It shows whether the skill holds up on new material; it doesn't measure everyday listening.",
     "transfer.fixedLevel": "Fixed difficulty {level}/10",
 
     /* longitudinal listening score */
@@ -85,11 +85,11 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "train.mode.phone-call.skill": "劣化信道言语",
     "train.realWorld": "真实场景",
 
-    "transfer.title": "迁移测验",
+    "transfer.title": "新材料检测",
     "transfer.body":
-      "用训练中从未出现过的句子和声音做一次固定难度的短测验。如果成绩保持得住，说明训练真的迁移到了新材料上。",
-    "transfer.run": "开始迁移测验",
-    "transfer.needMore": "完成某个训练项目的两次练习后即可解锁它的迁移测验。",
+      "在固定难度下进行的简短检测，使用训练中从未出现过的句子和声音。如果你在这里的分数保持住了，说明这项能力也能用在新内容上。",
+    "transfer.run": "进行新材料检测",
+    "transfer.needMore": "完成某个练习项目的两次练习后，才能进行它的新材料检测。",
     "transfer.trained": "训练材料",
     "transfer.unseen": "未见材料",
     "transfer.gap": "差异",
@@ -98,9 +98,9 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "transfer.verdict.partial": "部分迁移",
     "transfer.verdict.notYet": "尚未迁移",
     "transfer.verdict.unknown": "需要测验",
-    "transfer.badge": "迁移测验 · 未见材料",
-    "transfer.doneTitle": "迁移测验完成",
-    "transfer.doneBody": "这个成绩来自你从未训练过的材料，因此更能反映真实生活中的听觉表现。",
+    "transfer.badge": "新材料检测 · 未练习过的内容",
+    "transfer.doneTitle": "新材料检测完成",
+    "transfer.doneBody": "这个分数来自你从未练习过的内容。它显示这项能力在新材料上是否稳定，但并不衡量日常聆听。",
     "transfer.fixedLevel": "固定难度 {level}/10",
 
     "trend.title": "听力分数变化",
@@ -152,11 +152,11 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "train.mode.phone-call.skill": "Habla por canal degradado",
     "train.realWorld": "Escenas reales",
 
-    "transfer.title": "Prueba de transferencia",
+    "transfer.title": "Prueba con material nuevo",
     "transfer.body":
-      "Una prueba corta, a dificultad fija, con frases y sonidos que tu entrenamiento nunca usa. Si tu resultado se mantiene aquí, la práctica se está trasladando de verdad.",
-    "transfer.run": "Hacer la prueba de transferencia",
-    "transfer.needMore": "Completa dos sesiones de una pista para desbloquear su prueba de transferencia.",
+      "Una prueba corta con dificultad fija, con frases y sonidos que el entrenamiento nunca usa. Si tu puntuación se mantiene aquí, la habilidad se traslada a elementos nuevos.",
+    "transfer.run": "Hacer la prueba con material nuevo",
+    "transfer.needMore": "Termina dos sesiones de un ejercicio para hacer su prueba con material nuevo.",
     "transfer.trained": "Material entrenado",
     "transfer.unseen": "Material nuevo",
     "transfer.gap": "Diferencia",
@@ -165,10 +165,10 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "transfer.verdict.partial": "Se ha trasladado en parte",
     "transfer.verdict.notYet": "Aún no se traslada",
     "transfer.verdict.unknown": "Falta comprobar",
-    "transfer.badge": "Prueba de transferencia · material nuevo",
-    "transfer.doneTitle": "Prueba de transferencia completada",
+    "transfer.badge": "Prueba con material nuevo · elementos no entrenados",
+    "transfer.doneTitle": "Prueba con material nuevo completada",
     "transfer.doneBody":
-      "Este resultado viene de material que nunca has entrenado, así que refleja la escucha real y no la práctica.",
+      "Esta puntuación viene de elementos que nunca entrenaste. Muestra si la habilidad se mantiene con material nuevo; no mide la escucha cotidiana.",
     "transfer.fixedLevel": "Dificultad fija {level}/10",
 
     "trend.title": "Puntuación de escucha con el tiempo",

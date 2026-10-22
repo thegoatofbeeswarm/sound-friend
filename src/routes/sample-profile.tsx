@@ -75,12 +75,12 @@ const SAMPLE_DIMENSIONS: Dimension[] = [
 ];
 
 const SAMPLE_TIMELINE: TimelinePoint[] = [
-  { date: "2026-05-10", score: 55 },
-  { date: "2026-05-24", score: 58 },
-  { date: "2026-06-07", score: 57 },
-  { date: "2026-06-21", score: 61 },
-  { date: "2026-07-05", score: 63 },
-  { date: "2026-07-19", score: 64 },
+  { date: "2026-05-10", score: 55, coverage: 5 },
+  { date: "2026-05-24", score: 58, coverage: 5 },
+  { date: "2026-06-07", score: 57, coverage: 5 },
+  { date: "2026-06-21", score: 61, coverage: 5 },
+  { date: "2026-07-05", score: 63, coverage: 5 },
+  { date: "2026-07-19", score: 64, coverage: 5 },
 ];
 
 function toneOf(score: number | null): "accent" | "caution" | "danger" | "muted" {

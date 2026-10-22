@@ -190,6 +190,7 @@ function SpeechPage() {
         {phase === "intro" ? (
           <section>
             <p className="text-muted-foreground">{t("sin.why")}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{t("sin.languageNote")}</p>
 
             <ul className="mt-7 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">

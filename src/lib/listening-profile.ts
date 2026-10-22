@@ -210,6 +210,8 @@ export interface TimelinePoint {
   /** ISO date of the week bucket. */
   date: string;
   score: number;
+  /** How many of the five skills the score averaged at this point. */
+  coverage: number;
 }
 
 /**
@@ -243,8 +245,7 @@ export function listeningTimeline(input: TimelineInput, maxPoints = 16): Timelin
       const sessions = input.sessions.filter((r) => r.created_at <= cutoff);
       const newestTone = tone.sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
       const newestSpeech = speech.sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
-      const score = listeningScore(
-        buildProfile({
+      const dims = buildProfile({
           avgThresholdDb: newestTone?.avg_threshold_db ?? null,
           toneTests: tone.length,
           speechScore: newestSpeech?.score ?? null,
@@ -252,9 +253,10 @@ export function listeningTimeline(input: TimelineInput, maxPoints = 16): Timelin
           sessions: [...sessions]
             .sort((a, b) => b.created_at.localeCompare(a.created_at))
             .map((s) => ({ mode: s.mode, accuracy: s.accuracy, end_level: s.end_level, rounds: s.rounds, correct: s.correct })),
-        }),
-      );
-      return score == null ? null : { date: week, score };
+      });
+      const score = listeningScore(dims);
+      const coverage = dims.filter((d) => d.score != null).length;
+      return score == null ? null : { date: week, score, coverage };
     })
     .filter(Boolean) as TimelinePoint[];
 

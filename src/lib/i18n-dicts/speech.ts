@@ -5,7 +5,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.lead":
       "Three spoken digits play against background chatter. The speech stays at one level while the noise rises, and we measure the signal-to-noise ratio at which you still get all three right.",
     "sin.why":
-      "Because this is a ratio, it barely depends on how loud your headphones run, so it is comparable between runs and between devices.",
+      "Because it's a ratio, it depends less on your volume setting than a tone test does. The speech comes from your browser's built-in voice, so compare results on the same device.",
     "sin.step1": "Wear headphones and set your device volume to a comfortable level.",
     "sin.step2": "Pick the background you want to be tested against.",
     "sin.step3": "Type the three digits you heard. Guess if you are unsure.",
@@ -27,15 +27,15 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.srtExplain":
       "You understood about half of the digit groups when the speech was {srt} dB relative to the background. Lower is better.",
     "sin.band.strong": "Strong speech-in-noise performance",
-    "sin.band.typical": "Typical speech-in-noise performance",
-    "sin.band.watch": "Slightly harder time than typical",
+    "sin.band.typical": "Mid-range result on this test",
+    "sin.band.watch": "Lower part of this test's range",
     "sin.band.difficult": "Noticeable difficulty in noise",
     "sin.interp.strong":
       "You pick out speech well below the noise level. Keep training with harder backgrounds and competing talkers.",
     "sin.interp.typical":
-      "Your result sits in the usual range for everyday listeners. Retest after a couple of weeks of training to see movement.",
+      "Your result is in the middle of this test's range. Retest after a couple of weeks of practice to see whether it moves.",
     "sin.interp.watch":
-      "Noise costs you more than average. Speech-in-noise training is the exercise most likely to help.",
+      "Your result is in the lower part of this test's range. Speech-in-noise practice targets exactly this.",
     "sin.interp.difficult":
       "Understanding speech in noise looks hard for you. It's worth training, and worth mentioning at a hearing check.",
     "sin.spread": "Estimate spread: {spread} dB across {reversals} turning points",
@@ -54,7 +54,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.title": "噪声中的言语",
     "sin.lead":
       "在背景人声中播放三个数字。语音音量保持不变，噪声逐渐逼近，我们测量的是你仍能听清全部三个数字时的信噪比——这正是在咖啡馆或教室里真正重要的听觉能力。",
-    "sin.why": "由于测量的是比值，它几乎不受耳机绝对音量影响，因此不同次测试、不同设备之间都可比较。",
+    "sin.why": "因为这是一个比值，它受音量设置的影响比提示音测试小。语音来自浏览器自带的语音引擎，所以请在同一设备上比较结果。",
     "sin.step1": "戴上耳机，把设备音量调到舒适水平。",
     "sin.step2": "选择你想用来测试的背景噪声。",
     "sin.step3": "输入你听到的三个数字。不确定时可以猜。",
@@ -75,12 +75,12 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.scoreLabel": "聆听得分",
     "sin.srtExplain": "当语音相对背景为 {srt} dB 时，你大约能听懂一半的数字组。数值越低越好。",
     "sin.band.strong": "噪声中言语表现优秀",
-    "sin.band.typical": "噪声中言语表现正常",
-    "sin.band.watch": "比一般人稍吃力",
+    "sin.band.typical": "本测试的中等结果",
+    "sin.band.watch": "处于本测试范围的偏低部分",
     "sin.band.difficult": "在噪声中明显吃力",
     "sin.interp.strong": "你能在远低于噪声的水平中分辨言语。可以继续用更难的背景和竞争说话人训练。",
-    "sin.interp.typical": "你的结果处于日常听者的常见范围。训练两周后重测，看看变化。",
-    "sin.interp.watch": "噪声对你的影响高于平均水平。噪声中言语训练最有可能带来帮助。",
+    "sin.interp.typical": "你的结果处于本测试范围的中间。练习几周后再测一次，看看是否有变化。",
+    "sin.interp.watch": "你的结果处于本测试范围的偏低部分。噪声中言语练习正是针对这一点。",
     "sin.interp.difficult": "在噪声中理解言语对你来说确实困难。值得训练，也值得在听力检查时提出。",
     "sin.spread": "估计离散度：{reversals} 个转折点内相差 {spread} dB",
     "sin.again": "再测一次",
@@ -98,7 +98,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.lead":
       "Tres dígitos hablados sobre ruido de fondo. El habla se mantiene y el ruido se acerca, así que medimos la relación señal-ruido en la que aún aciertas los tres: la habilidad que de verdad importa en una cafetería o un aula.",
     "sin.why":
-      "Al ser una relación, apenas depende del volumen absoluto de tus auriculares, así que es comparable entre pruebas y entre dispositivos.",
+      "Como es una proporción, depende menos del volumen que una prueba de tonos. La voz es la sintetizada del navegador, así que compara resultados en el mismo dispositivo.",
     "sin.step1": "Usa auriculares y ajusta el volumen a un nivel cómodo.",
     "sin.step2": "Elige el fondo con el que quieres hacer la prueba.",
     "sin.step3": "Escribe los tres dígitos que oíste. Adivina si no estás seguro.",
@@ -120,15 +120,15 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.srtExplain":
       "Entendiste cerca de la mitad de los grupos de dígitos cuando el habla estaba a {srt} dB respecto al fondo. Cuanto más bajo, mejor.",
     "sin.band.strong": "Gran rendimiento con ruido",
-    "sin.band.typical": "Rendimiento habitual con ruido",
-    "sin.band.watch": "Algo más de dificultad de lo habitual",
+    "sin.band.typical": "Resultado intermedio en esta prueba",
+    "sin.band.watch": "Parte baja del rango de esta prueba",
     "sin.band.difficult": "Dificultad notable con ruido",
     "sin.interp.strong":
       "Distingues el habla muy por debajo del ruido. Sigue entrenando con fondos más difíciles y voces que compiten.",
     "sin.interp.typical":
-      "Tu resultado está en el rango habitual. Repite la prueba tras un par de semanas de entrenamiento.",
+      "Tu resultado está en la mitad del rango de esta prueba. Repítela tras un par de semanas de práctica para ver si cambia.",
     "sin.interp.watch":
-      "El ruido te cuesta más que a la media. El entrenamiento de habla con ruido es lo que más puede ayudarte.",
+      "Tu resultado está en la parte baja del rango de esta prueba. La práctica de habla en ruido se centra justo en esto.",
     "sin.interp.difficult":
       "Entender el habla con ruido te resulta realmente difícil. Vale la pena entrenarlo y comentarlo en una revisión auditiva.",
     "sin.spread": "Dispersión de la estimación: {spread} dB en {reversals} puntos de giro",

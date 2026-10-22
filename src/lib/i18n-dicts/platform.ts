@@ -4,6 +4,12 @@ export const platformPack: {
   es: Record<string, string>;
 } = {
   en: {
+    "coach.privacy": "Your messages, plus a summary of your saved screenings, reports, training and headphone setup, are sent to Google's Gemini model through the Lovable AI Gateway to write each answer. You can delete a conversation at any time.",
+    "data.privacy": "Your report is stored privately in your account and sent to Google's Gemini model, through the Lovable AI Gateway, so it can read the thresholds. You can't delete a report in the app yet; email the team (see the Team page) to have one removed.",
+    "train.languageNote": "Speech exercises use English recordings and voices, whatever language this page is in.",
+    "sin.languageNote": "The spoken digits are in English, whatever language this page is in.",
+    "trend.mixNote": "The score now covers more skills than it did at the start, so part of this change comes from that, not from your listening.",
+    "profile.coverage": "Based on {n} of 5 skills measured so far",
     /* homepage five-part profile */
     "five.exampleTitle": "Example listening profile",
     "five.exampleBadge": "Sample data",
@@ -80,6 +86,12 @@ export const platformPack: {
     "valid.yourData": "Your clinic comparison",
   },
   zh: {
+    "coach.privacy": "你的消息，以及你保存的筛查、报告、训练和耳机设置的摘要，会通过 Lovable AI Gateway 发送给 Google 的 Gemini 模型来生成回答。你可以随时删除对话。",
+    "data.privacy": "你的报告会私密地保存在你的账户中，并通过 Lovable AI Gateway 发送给 Google 的 Gemini 模型来读取听阈。目前还不能在应用内删除报告；如需删除，请发邮件联系团队（见团队页面）。",
+    "train.languageNote": "无论页面是什么语言，言语练习都使用英语录音和语音。",
+    "sin.languageNote": "无论页面是什么语言，朗读的数字都是英语。",
+    "trend.mixNote": "与开始时相比，分数现在涵盖了更多能力，所以这一变化有一部分来自于此，而不是你的听力。",
+    "profile.coverage": "基于目前已测量的 {n}/5 项能力",
     "five.exampleTitle": "示例聆听档案",
     "five.exampleBadge": "示例数据",
     "five.overall": "综合聆听分",
@@ -148,6 +160,12 @@ export const platformPack: {
     "valid.yourData": "你的临床对比",
   },
   es: {
+    "coach.privacy": "Tus mensajes, junto con un resumen de tus cribados, informes, entrenamiento y auriculares guardados, se envían al modelo Gemini de Google a través de Lovable AI Gateway para escribir cada respuesta. Puedes borrar una conversación cuando quieras.",
+    "data.privacy": "Tu informe se guarda de forma privada en tu cuenta y se envía al modelo Gemini de Google, a través de Lovable AI Gateway, para leer los umbrales. Aún no puedes borrar un informe desde la app; escribe al equipo (ver la página del equipo) para que lo eliminen.",
+    "train.languageNote": "Los ejercicios de habla usan grabaciones y voces en inglés, sea cual sea el idioma de esta página.",
+    "sin.languageNote": "Los dígitos se dicen en inglés, sea cual sea el idioma de esta página.",
+    "trend.mixNote": "La puntuación ahora cubre más habilidades que al principio, así que parte de este cambio viene de eso y no de tu audición.",
+    "profile.coverage": "Basado en {n} de 5 habilidades medidas hasta ahora",
     "five.exampleTitle": "Perfil auditivo de ejemplo",
     "five.exampleBadge": "Datos de muestra",
     "five.overall": "Escucha global",

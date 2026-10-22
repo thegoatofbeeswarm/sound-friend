@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Loader2, MessageSquarePlus } from "lucide-react";
 import { SiteNav } from "@/components/SiteNav";
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/coach/")({
 
 function CoachIndex() {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const { data: threads } = useThreads(user?.id);
   const create = useCreateThread(user?.id);
 
@@ -52,6 +54,7 @@ function CoachIndex() {
               Ask anything about your screenings, audiogram, training curve, device choice or
               overuse risk. The coach answers from your own saved data.
             </p>
+            <p className="mt-3 text-sm text-muted-foreground">{t("coach.privacy")}</p>
             {!user ? (
               <Button asChild className="mt-8">
                 <Link to="/auth">Sign in to start</Link>

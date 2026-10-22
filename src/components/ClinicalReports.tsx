@@ -161,6 +161,7 @@ export function ClinicalReports() {
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-caution" />
           {t("data.report.note")}
         </p>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t("data.privacy")}</p>
       </section>
 
       <section>

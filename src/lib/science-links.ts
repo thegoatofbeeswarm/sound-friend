@@ -33,7 +33,7 @@ export const scienceLinks = {
     key: "bayesian",
     to: "/bayesian-hearing-test",
     label: "Bayesian adaptive hearing testing",
-    blurb: "The adaptive algorithm behind a four-minute screening, in full detail.",
+    blurb: "The adaptive algorithm behind the tone check, in full detail.",
   },
   prevention: {
     key: "prevention",

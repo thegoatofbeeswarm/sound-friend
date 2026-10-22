@@ -63,8 +63,8 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "noise.title": "Room noise",
     "noise.scanPrompt": "Scan your surroundings before testing.",
-    "noise.tooLoud": "About {n} dB. Too loud, so find a quieter spot.",
-    "noise.ok": "About {n} dB. Quiet enough to test.",
+    "noise.tooLoud": "Background noise reads high (about {n} on this microphone's relative scale). Find a quieter spot.",
+    "noise.ok": "Background noise reads low (about {n} on this microphone's relative scale). Good to go.",
     "noise.error": "Microphone access was blocked. Allow it in your browser settings to scan the room.",
     "noise.stop": "Stop",
     "noise.scan": "Scan",
@@ -111,7 +111,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.finding2": "Slightly reduced sensitivity at 4–8 kHz",
     "example.finding3": "Recommended training: speech-in-noise + high-frequency recognition",
     "example.cta": "See what your hearing looks like",
-    "example.footnote": "This is sample data. Your own screening takes about four minutes.",
+    "example.footnote": "This is sample data. Try your own screening to see real results.",
   },
   zh: {
     "data.badge": "你的听力数据",
@@ -176,8 +176,8 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "noise.title": "房间噪音",
     "noise.scanPrompt": "测试前先扫描一下周围环境。",
-    "noise.tooLoud": "约 {n} dB —— 太吵了，请找一个更安静的地方。",
-    "noise.ok": "约 {n} dB —— 足够安静，可以测试。",
+    "noise.tooLoud": "背景噪音读数偏高（在此麦克风的相对刻度上约为 {n}）。请找一个更安静的地方。",
+    "noise.ok": "背景噪音读数偏低（在此麦克风的相对刻度上约为 {n}）。可以开始。",
     "noise.error": "麦克风访问被拒绝。",
     "noise.stop": "停止",
     "noise.scan": "扫描",
@@ -217,7 +217,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.finding2": "4–8 kHz 处敏感度略有下降",
     "example.finding3": "推荐训练：噪音中的言语识别 + 高频识别",
     "example.cta": "查看你的听力状况",
-    "example.footnote": "这是示例数据 —— 你自己的筛查大约只需四分钟。",
+    "example.footnote": "这是示例数据。做一次你自己的筛查，看看真实结果。",
   },
   es: {
     "data.badge": "Tus datos auditivos",
@@ -283,8 +283,8 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
 
     "noise.title": "Ruido de la sala",
     "noise.scanPrompt": "Escanea tu entorno antes de la prueba.",
-    "noise.tooLoud": "~{n} dB - demasiado ruido, busca un lugar más silencioso.",
-    "noise.ok": "~{n} dB - lo bastante silencioso para probar.",
+    "noise.tooLoud": "El ruido de fondo se lee alto (unos {n} en la escala relativa de este micrófono). Busca un lugar más tranquilo.",
+    "noise.ok": "El ruido de fondo se lee bajo (unos {n} en la escala relativa de este micrófono). Todo listo.",
     "noise.error": "Se denegó el acceso al micrófono.",
     "noise.stop": "Detener",
     "noise.scan": "Escanear",
@@ -331,6 +331,6 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.finding2": "Sensibilidad ligeramente reducida entre 4 y 8 kHz",
     "example.finding3": "Entrenamiento recomendado: habla en ruido + reconocimiento de alta frecuencia",
     "example.cta": "Mira cómo es tu audición",
-    "example.footnote": "Datos ilustrativos: tu propio cribado toma unos cuatro minutos.",
+    "example.footnote": "Son datos de ejemplo. Haz tu propio cribado para ver resultados reales.",
   },
 };

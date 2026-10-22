@@ -511,6 +511,9 @@ function TrainPage() {
                     <Volume2 className="h-4 w-4 text-signal" /> {t("train.usesSpeaker")}
                   </span>
                 ) : null}
+                {currentMode.needsSpeech ? (
+                  <span className="text-xs text-muted-foreground">{t("train.languageNote")}</span>
+                ) : null}
               </div>
             </section>
 

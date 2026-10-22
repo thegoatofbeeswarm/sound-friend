@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
@@ -37,6 +38,7 @@ export function CoachChat({
   initialMessages: UIMessage[];
   userId: string;
 }) {
+  const { t } = useI18n();
   const qc = useQueryClient();
   const [input, setInput] = useState("");
   const [context, setContext] = useState<string>("");
@@ -109,6 +111,9 @@ export function CoachChat({
               <p className="mt-2 text-sm text-muted-foreground">
                 It reads your screenings, imported clinic reports, training sessions and device
                 setup.
+              </p>
+              <p className="mx-auto mt-3 max-w-md text-xs leading-relaxed text-muted-foreground">
+                {t("coach.privacy")}
               </p>
               <CoachActions onSelect={(prompt) => void send(prompt)} />
             </div>
