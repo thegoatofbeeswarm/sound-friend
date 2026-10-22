@@ -4,6 +4,10 @@ export const common: {
   es: Record<string, string>;
 } = {
   en: {
+    "audio.back": "Back",
+    "audio.failed": "Couldn't play the audio for this round, so it wasn't scored.",
+    "audio.unsupported": "This browser has no speech voice, so this exercise can't run here. Try Chrome, Safari or Edge, or pick a tone-based track.",
+    "audio.retry": "Play it again",
     "nav.data": "Import clinical data",
     "nav.report": "Report",
     "nav.science": "Science",
@@ -30,6 +34,10 @@ export const common: {
     "auth.googleFailed": "Google sign-in failed. Try again, or use your email.",
   },
   zh: {
+    "audio.back": "返回",
+    "audio.failed": "这一轮的音频没能播放，因此不计分。",
+    "audio.unsupported": "此浏览器没有可用的语音，无法进行这个练习。请换用 Chrome、Safari 或 Edge，或选择基于提示音的练习。",
+    "audio.retry": "再播放一次",
     "nav.data": "数据",
     "nav.report": "报告",
     "nav.science": "科学依据",
@@ -56,6 +64,10 @@ export const common: {
     "auth.googleFailed": "Google 登录失败。",
   },
   es: {
+    "audio.back": "Volver",
+    "audio.failed": "No se pudo reproducir el audio de esta ronda, así que no cuenta.",
+    "audio.unsupported": "Este navegador no tiene voz sintetizada, así que este ejercicio no puede funcionar aquí. Prueba Chrome, Safari o Edge, o elige un ejercicio con tonos.",
+    "audio.retry": "Reproducir de nuevo",
     "nav.data": "Datos",
     "nav.report": "Informe",
     "nav.science": "Ciencia",

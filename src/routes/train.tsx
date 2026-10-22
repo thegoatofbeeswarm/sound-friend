@@ -56,6 +56,8 @@ import {
   type ModeId,
   type ModeRound,
   warmUpSpeech,
+  takeSpeechResult,
+  type PlaybackResult,
 } from "@/lib/training-modes";
 import {
   transferByMode,
@@ -105,7 +107,7 @@ export const Route = createFileRoute("/train")({
 });
 
 const ROUNDS = 12;
-type Phase = "intro" | "playing" | "answer" | "feedback" | "done";
+type Phase = "intro" | "playing" | "answer" | "feedback" | "audioError" | "done";
 
 type StoredSession = SessionRow & { id: string; quietest_db: number | null };
 
@@ -128,6 +130,7 @@ function TrainPage() {
   const qc = useQueryClient();
   const [trainer, setTrainer] = useState<TrainerState>(() => createTrainer());
   /** Set while an answer is being scored, so a round accepts exactly one. */
+  const [audioIssue, setAudioIssue] = useState<PlaybackResult | null>(null);
   const answering = useRef(false);
   const mounted = useRef(true);
   useEffect(() => {
@@ -253,9 +256,18 @@ function TrainPage() {
 
   const play = useCallback(async (nextRound: ModeRound) => {
     setPhase("playing");
+    setAudioIssue(null);
+    takeSpeechResult();
     await new Promise((resolve) => setTimeout(resolve, 350));
     await nextRound.play();
     if (!mounted.current) return;
+    // A round whose speech failed to play is not answerable, so it is never scored.
+    const speech = takeSpeechResult();
+    if (speech && speech !== "ok") {
+      setAudioIssue(speech);
+      setPhase("audioError");
+      return;
+    }
     answering.current = false;
     setPhase("answer");
   }, []);
@@ -477,7 +489,7 @@ function TrainPage() {
           </>
         ) : null}
 
-        {(phase === "playing" || phase === "answer" || phase === "feedback") && round ? (
+        {(phase === "playing" || phase === "answer" || phase === "feedback" || phase === "audioError") && round ? (
           <section className="mx-auto max-w-2xl text-center">
             <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
               <span>
@@ -508,6 +520,21 @@ function TrainPage() {
               </div>
             </div>
             <h2 className="mt-2 text-2xl font-semibold">{phase === "playing" ? t("train.listening") : round.prompt}</h2>
+            {phase === "audioError" ? (
+              <div role="alert" className="mt-6 rounded-xl bg-card p-4 text-sm">
+                <p>{t(audioIssue === "unsupported" ? "audio.unsupported" : "audio.failed")}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {audioIssue !== "unsupported" ? (
+                    <Button size="sm" onClick={() => void play(round)}>
+                      {t("audio.retry")}
+                    </Button>
+                  ) : null}
+                  <Button size="sm" variant="secondary" onClick={() => setPhase("intro")}>
+                    {t("train.chooseAnother")}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {round.options.map((option) => (
                 <Button

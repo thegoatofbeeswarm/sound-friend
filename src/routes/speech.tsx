@@ -20,6 +20,7 @@ import {
   nextSinTrial,
   NOISE_TRACKS,
   playSinTrial,
+  type PlaybackResult,
   sinBand,
   sinDifficulty,
   sinResult,
@@ -71,6 +72,7 @@ function SpeechPage() {
   const [final, setFinal] = useState<SinResult | null>(null);
   const [saving, setSaving] = useState(false);
   const [device, setDeviceState] = useState<DeviceId>(DEFAULT_DEVICE);
+  const [audioIssue, setAudioIssue] = useState<PlaybackResult | null>(null);
   const busy = useRef(false);
 
   useEffect(() => setDeviceState(loadDevice()), []);
@@ -87,9 +89,12 @@ function SpeechPage() {
       }
       setEntry([]);
       setTrial(next);
+      setAudioIssue(null);
       setPlaying(true);
-      await playSinTrial(next, n);
+      const played = await playSinTrial(next, n);
       setPlaying(false);
+      // Digits that never played can't be answered, so the trial stays unscored.
+      if (played !== "ok") setAudioIssue(played);
     },
     [],
   );
@@ -104,7 +109,7 @@ function SpeechPage() {
   }
 
   async function submit() {
-    if (!trial || playing || busy.current || entry.length < 3) return;
+    if (!trial || playing || audioIssue || busy.current || entry.length < 3) return;
     busy.current = true;
     const next = applySinResponse(state, trial, entry);
     setState(next);
@@ -248,6 +253,20 @@ function SpeechPage() {
                 ))}
               </div>
 
+              {audioIssue ? (
+                <div role="alert" className="mx-auto mt-6 max-w-sm rounded-xl bg-background p-4 text-sm">
+                  <p>{t(audioIssue === "unsupported" ? "audio.unsupported" : "audio.failed")}</p>
+                  {audioIssue !== "unsupported" ? (
+                    <Button size="sm" className="mt-3" onClick={() => void runTrial(state, noise)}>
+                      {t("audio.retry")}
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="secondary" className="mt-3" onClick={() => setPhase("intro")}>
+                      {t("audio.back")}
+                    </Button>
+                  )}
+                </div>
+              ) : null}
               <div className="mx-auto mt-8 grid max-w-xs grid-cols-5 gap-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((d) => (
                   <Button
@@ -270,7 +289,7 @@ function SpeechPage() {
                   <Delete className="mr-1 h-4 w-4" />
                   {t("sin.clear")}
                 </Button>
-                <Button disabled={playing || entry.length < 3} onClick={() => void submit()}>
+                <Button disabled={playing || audioIssue != null || entry.length < 3} onClick={() => void submit()}>
                   {t("sin.submit")}
                 </Button>
               </div>

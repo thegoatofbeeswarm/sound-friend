@@ -215,11 +215,15 @@ function wait(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function speakDigits(digits: number[]): Promise<void> {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    await wait(1800);
-    return;
-  }
+/**
+ * How a spoken stimulus went. Only "ok" may be scored: an unsupported engine,
+ * an error, or speech that never started means the listener did not hear the
+ * intended item.
+ */
+export type PlaybackResult = "ok" | "unsupported" | "error" | "not-started";
+
+async function speakDigits(digits: number[]): Promise<PlaybackResult> {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return "unsupported";
   const synth = window.speechSynthesis;
   await warmUpSpeech();
   synth.cancel();
@@ -230,35 +234,42 @@ async function speakDigits(digits: number[]): Promise<void> {
     voices.find((v) => v.default && v.lang?.toLowerCase().startsWith("en")) ??
     voices.find((v) => v.lang?.toLowerCase().startsWith("en"));
 
-  await new Promise<void>((resolve) => {
+  return new Promise<PlaybackResult>((resolve) => {
     const u = new SpeechSynthesisUtterance(digits.join(", "));
     u.rate = 0.85;
     u.volume = SPEECH_LEVEL;
     if (voice) u.voice = voice;
+    let started = false;
     let settled = false;
-    const finish = () => {
+    const finish = (result: PlaybackResult) => {
       if (settled) return;
       settled = true;
       clearInterval(keepAlive);
-      resolve();
+      resolve(result);
     };
-    u.onend = finish;
-    u.onerror = finish;
+    u.onstart = () => {
+      started = true;
+    };
+    u.onend = () => finish("ok");
+    u.onerror = () => finish("error");
     const keepAlive = setInterval(() => {
       if (synth.speaking && !synth.paused) synth.resume();
     }, 4000);
     synth.speak(u);
-    setTimeout(finish, 9000);
+    // Watchdog. Speech that started but never reported its end (a Chrome
+    // quirk) was heard; speech that never started was not.
+    setTimeout(() => finish(started ? "ok" : "not-started"), 9000);
   });
 }
 
 /** Play one trial: babble in, digits spoken over it, babble out. */
-export async function playSinTrial(trial: SinTrial, noise: NoiseId): Promise<void> {
+export async function playSinTrial(trial: SinTrial, noise: NoiseId): Promise<PlaybackResult> {
   stopSinAudio();
   await unlockAudio();
   await startNoise(noise, trial.snrDb);
   await wait(700);
-  await speakDigits(trial.digits);
+  const result = await speakDigits(trial.digits);
   await wait(400);
   stopSinAudio();
+  return result;
 }

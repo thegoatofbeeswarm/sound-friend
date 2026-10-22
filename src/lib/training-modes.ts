@@ -182,10 +182,30 @@ export async function warmUpSpeech(): Promise<void> {
   await wait(150);
 }
 
-/** Speech synthesis with a rate and volume, resolving when it stops. */
+export type PlaybackResult = "ok" | "unsupported" | "error" | "not-started";
+
+/**
+ * Outcome of the speech played during the current round, or null when the
+ * round used no speech. The trainer reads and clears it after each round so a
+ * failed playback is never scored as an answer.
+ */
+let speechResult: PlaybackResult | null = null;
+
+export function takeSpeechResult(): PlaybackResult | null {
+  const r = speechResult;
+  speechResult = null;
+  return r;
+}
+
+function noteSpeech(r: PlaybackResult) {
+  // Within one round, any failure wins over an earlier success.
+  if (speechResult == null || speechResult === "ok") speechResult = r;
+}
+
+/** Speech synthesis with a rate and volume, resolving with how it went. */
 async function speak(text: string, rate: number, volume: number): Promise<void> {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    await wait(900);
+    noteSpeech("unsupported");
     return;
   }
   const synth = window.speechSynthesis;
@@ -202,22 +222,28 @@ async function speak(text: string, rate: number, volume: number): Promise<void> 
       voices.find((x) => x.default && x.lang?.toLowerCase().startsWith("en")) ??
       voices.find((x) => x.lang?.toLowerCase().startsWith("en"));
     if (v) u.voice = v;
+    let started = false;
     let settled = false;
-    const finish = () => {
+    const finish = (result: PlaybackResult) => {
       if (settled) return;
       settled = true;
       clearInterval(keepAlive);
+      noteSpeech(result);
       resolve();
     };
-    u.onend = finish;
-    u.onerror = finish;
+    u.onstart = () => {
+      started = true;
+    };
+    u.onend = () => finish("ok");
+    u.onerror = () => finish("error");
     // Chrome pauses long-running synthesis; resume keeps it flowing.
     const keepAlive = setInterval(() => {
       if (synth.speaking && !synth.paused) synth.resume();
     }, 4000);
     synth.speak(u);
-    // Safety net in case the engine never fires onend.
-    setTimeout(finish, 8000);
+    // Watchdog: speech that started but never fired onend was heard; speech
+    // that never started was not.
+    setTimeout(() => finish(started ? "ok" : "not-started"), 8000);
   });
 }
 
