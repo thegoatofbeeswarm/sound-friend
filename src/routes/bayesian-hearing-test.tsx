@@ -34,7 +34,7 @@ function Page() {
           body: [
             "A traditional pure-tone audiogram plays fixed tones and moves the level up and down until the person no longer responds. It works, but it spends many trials on levels that were never in question, which is why a full clinical sweep takes time.",
             "Audiomaxxer keeps a probability distribution over your threshold at each frequency and ear, updates it after every response, and presents the next tone where uncertainty is greatest. The approach follows the Bayesian adaptive tradition of QUEST (Watson & Pelli, 1983) and Kontsevich & Tyler (1999).",
-            "The psychometric model includes small rates of false-positive and missed responses, so a single stray press does not distort the estimate. Tracks stop when the estimate is stable rather than after a fixed count — which is how a full ten-track screening fits into roughly four minutes.",
+            "The psychometric model includes small rates of false-positive and missed responses, so a single stray press does not distort the estimate. Tracks stop when the estimate is stable instead of after a fixed count, which is how a full ten-track screening fits into roughly four minutes.",
           ],
         },
         {
@@ -43,7 +43,7 @@ function Page() {
             {
               term: "Frequencies tested",
               value:
-                "500, 1000, 2000, 4000 and 8000 Hz, each ear separately — ten tracks per screening. Stimuli are pure sine tones. We do not currently test 250 Hz or 6 kHz.",
+                "500, 1000, 2000, 4000 and 8000 Hz, each ear separately, for ten tracks per screening. Stimuli are pure sine tones. We do not currently test 250 Hz or 6 kHz.",
             },
             {
               term: "Tone duration",
@@ -78,7 +78,7 @@ function Page() {
             {
               term: "Units",
               value:
-                "Levels are relative, estimated values on a clinic-like scale — not measured dB SPL and not clinical dB HL. Compare them with your own previous screenings on the same device and volume setting.",
+                "Levels are relative, estimated values on a clinic-like scale. They are neither measured dB SPL nor clinical dB HL. Compare them with your own previous screenings on the same device and volume setting.",
             },
           ],
         },

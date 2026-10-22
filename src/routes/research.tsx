@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, FlaskConical, Lock, Play, RotateCcw, Trash2 } from "lucide-react";
+import { CheckCircle2, Lock, Play, RotateCcw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { NoiseMeter } from "@/components/NoiseMeter";
 import { DevicePicker } from "@/components/DevicePicker";
@@ -128,12 +129,20 @@ function ResearchPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      <PageHero
+        variant="plate"
+        title={t("res.title")}
+        lede={t("res.lead")}
+        figure={
+          <img
+            src="/img/maico-audiometer-1960s.jpg"
+            width={1147}
+            height={1600}
+            alt="A 1960s portable audiometer in its case, with its headphones and dials"
+          />
+        }
+      />
       <main className="mx-auto max-w-3xl px-5 py-12">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs uppercase tracking-widest text-muted-foreground">
-          <FlaskConical className="h-3.5 w-3.5 text-signal" /> {t("res.banner")}
-        </span>
-        <h1 className="mt-4 text-3xl font-semibold">{t("res.title")}</h1>
-        <p className="mt-3 text-muted-foreground">{t("res.lead")}</p>
 
         <section className="mt-8 rounded-2xl border border-border/70 bg-card/60 p-5">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">

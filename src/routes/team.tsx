@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Instagram, Mail, Users } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
@@ -42,14 +43,8 @@ function TeamPage() {
   return (
     <div className="min-h-screen bg-background">
       <SiteNav />
+      <PageHero variant="article" title={t("team.title")} lede={t("team.lead")} />
       <main className="mx-auto max-w-5xl px-5 py-14">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground">
-          <Users className="h-3.5 w-3.5 text-signal" /> {t("team.badge")}
-        </span>
-        <h1 className="mt-5 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-          {t("team.title")}
-        </h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">{t("team.lead")}</p>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {MEMBERS.map((m) => (

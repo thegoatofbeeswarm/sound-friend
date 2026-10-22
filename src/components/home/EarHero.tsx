@@ -2,18 +2,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, X } from "lucide-react";
-import "@fontsource/barlow/400.css";
-import "@fontsource/barlow/500.css";
-import "@fontsource/barlow/600.css";
-import "@fontsource/barlow-condensed/600.css";
-import "@fontsource/barlow-condensed/700.css";
+import "@fontsource/geist-sans/400.css";
+import "@fontsource/geist-sans/500.css";
+import "@fontsource/geist-sans/600.css";
 import { useI18n } from "@/lib/i18n";
 import type { AnchorId, EarScene, EarState, PartId } from "./earScene";
+import { PART_COLOR } from "./earColors";
+import { Coil } from "@/components/brand/Coil";
 
 /**
- * EarHero: the homepage as a hearing-safety sign you can walk around.
+ * EarHero: the homepage as an exam room with one specimen on the table.
  *
- * A 3D ear (three.js, see ./earScene) turns on a signal-blue field. Drag to
+ * A 3D ear (three.js, see ./earScene) fills the screen under an exam lamp,
+ * with the copy, the specimen readout and the index of parts in the corners. Drag to
  * turn it; press a part and the camera flies to it while a panel opens with
  * what goes wrong there and one experiment that changes the model live.
  *
@@ -65,7 +66,13 @@ const BANDS: { upTo: number; key: string }[] = [
   { upTo: 9000, key: "hero.band.8" },
 ];
 const bandKey = (f: number) => BANDS.find((b) => f < b.upTo)?.key ?? "hero.band.8";
-const formatFreq = (f: number) => (f < 1000 ? `${Math.round(f)} Hz` : `${(f / 1000).toFixed(1)} kHz`);
+const LOCALE = { en: "en-US", zh: "zh-CN", es: "es-ES" } as const;
+const formatFreq = (f: number, lang: keyof typeof LOCALE) =>
+  f < 1000
+    ? `${new Intl.NumberFormat(LOCALE[lang], { maximumFractionDigits: 0 }).format(f)}\u00a0Hz`
+    : `${new Intl.NumberFormat(LOCALE[lang], { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(f / 1000)}\u00a0kHz`;
+const formatMm = (mm: number, lang: keyof typeof LOCALE) =>
+  `${new Intl.NumberFormat(LOCALE[lang], { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(mm)}\u00a0mm`;
 
 /** render a template containing {mm} with the value emphasised */
 function withMm(template: string, value: string) {
@@ -84,7 +91,8 @@ function withMm(template: string, value: string) {
  * ------------------------------------------------------------------ */
 
 export default function EarHero() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const fmtHz = (f: number) => formatFreq(f, language);
   const tp = useCallback((id: PartId, field: string) => t(`hero.part.${id}.${field}`), [t]);
 
   const [hovered, setHovered] = useState<PartId | null>(null);
@@ -218,6 +226,11 @@ export default function EarHero() {
     sceneRef.current?.setShown(hovered, selected);
   }, [ready, hovered, selected]);
 
+  /* on wide screens the ear sits in the gap between the copy and the index (or the panel) */
+  useEffect(() => {
+    sceneRef.current?.setFrame(asSheet ? 0.1 : selected ? -0.2 : 0.02, asSheet ? 0.95 : selected ? 1 : 1.2);
+  }, [ready, asSheet, selected]);
+
   /* focus into the panel when it opens, back to its plate when it closes; Escape closes */
   useEffect(() => {
     if (!selected) {
@@ -332,7 +345,7 @@ export default function EarHero() {
           <>
             <label className="am-x-label" htmlFor="am-freq">{t("hero.meter.label")}</label>
             <p className="am-readout">
-              <span className="am-hz">{formatFreq(freq)}</span>
+              <span className="am-hz">{fmtHz(freq)}</span>
               <span className="am-band">{t(bandKey(freq))}</span>
             </p>
             <input
@@ -344,11 +357,11 @@ export default function EarHero() {
               value={pos}
               onChange={(e) => setPos(Number(e.target.value))}
               aria-describedby="am-place"
-              aria-valuetext={`${formatFreq(freq)}, ${t(bandKey(freq))}`}
+              aria-valuetext={`${fmtHz(freq)}, ${t(bandKey(freq))}`}
               className={inDangerBand ? "am-hot" : undefined}
             />
             <p id="am-place" className="am-read">
-              {withMm(t(inDangerBand ? "hero.place.danger" : "hero.place.normal"), `${mmFromBase.toFixed(1)} mm`)}
+              {withMm(t(inDangerBand ? "hero.place.danger" : "hero.place.normal"), formatMm(mmFromBase, language))}
             </p>
             <div className="am-seg">
               <button type="button" className="am-key" aria-pressed={playing} onClick={playNote}>
@@ -408,6 +421,7 @@ export default function EarHero() {
       }}
       type="button"
       className="am-plate"
+      style={{ "--dot": PART_COLOR[id] } as React.CSSProperties}
       aria-pressed={selected === id}
       data-seen={visited.includes(id) ? "" : undefined}
       data-hot={shown === id ? "" : undefined}
@@ -415,13 +429,14 @@ export default function EarHero() {
       onPointerEnter={(e) => e.pointerType === "mouse" && !selected && setHovered(id)}
       onPointerLeave={() => !selected && setHovered(null)}
     >
-      {t(LABEL[id])}
+      <span className="am-plate-l">{t(LABEL[id])}</span>
     </button>
   );
 
   const panel = (id: PartId) => (
       <div
         className="am-panel"
+        style={{ "--dot": PART_COLOR[id] } as React.CSSProperties}
         role="dialog"
         aria-modal="false"
         aria-labelledby="am-panel-title"
@@ -464,14 +479,12 @@ export default function EarHero() {
   );
 
   return (
-    <section className="am-hero">
+    <section className="am-hero" data-open={selected ? "" : undefined}>
       <style>{CSS}</style>
 
       <div className="am-copy">
         <h1>{t("hero.title")}</h1>
         <p className="am-sub">{t("hero.sub")}</p>
-        <p className="am-lede">{t("hero.lede")}</p>
-
         <div className="am-actions">
           <Link className="am-btn am-btn-go" to="/test">
             {t("hero.cta.test")}
@@ -481,32 +494,12 @@ export default function EarHero() {
             {t("hero.cta.profile")}
           </Link>
         </div>
+        <p className="am-lede">{t("hero.lede")}</p>
         <p className="am-fine">{t("hero.fine")}</p>
-
-        <div className="am-detail" aria-live="polite">
-          {hovered && !selected ? (
-            <div className="am-peek" key={hovered}>
-              <p className="am-peek-title">{tp(hovered, "title")}</p>
-              <p>{tp(hovered, "what")}</p>
-            </div>
-          ) : (
-            <p className="am-hint">
-              {t("hero.hint")}
-              {visited.length > 0 && (
-                <span className="am-count">
-                  {" "}
-                  {t("hero.count").replace("{n}", String(visited.length)).replace("{total}", String(PARTS.length))}
-                </span>
-              )}
-            </p>
-          )}
-        </div>
-
-        {selected && (asSheet ? createPortal(<div className="am-sheet-root">{panel(selected)}</div>, document.body) : panel(selected))}
       </div>
 
       <div className="am-stage" ref={stageRef} data-dim={shown ? "" : undefined}>
-        <div className="am-sign" aria-hidden />
+        <Coil className="am-stage-coil" />
         <div className="am-gl" ref={hostRef} role="img" aria-label={t("hero.svg.alt")} />
         {!ready && !glFailed && <p className="am-status">{t("hero.loading")}</p>}
         {glFailed && <p className="am-status">{t("hero.nogl")}</p>}
@@ -521,6 +514,7 @@ export default function EarHero() {
                 type="button"
                 tabIndex={-1}
                 className="am-tag"
+                style={{ "--dot": PART_COLOR[id] } as React.CSSProperties}
                 data-hot={shown === id ? "" : undefined}
                 data-seen={visited.includes(id) ? "" : undefined}
                 onClick={() => select(id)}
@@ -537,238 +531,256 @@ export default function EarHero() {
               className="am-tag am-tag-hz"
               data-hot={inDangerBand ? "" : undefined}
             >
-              {formatFreq(freq)}
+              {fmtHz(freq)}
             </span>
           </div>
         )}
-      </div>
 
-      <nav className="am-path" aria-label={t("hero.panel.path")}>
-        <div className="am-path-run">{PATH.map(plate)}</div>
-        <div className="am-path-run am-path-side">
-          {OFF_PATH.map(plate)}
+        <div className="am-detail" aria-live="polite">
+          {hovered && !selected ? (
+            <div className="am-peek" key={hovered} style={{ "--dot": PART_COLOR[hovered] } as React.CSSProperties}>
+              <p className="am-peek-title">{tp(hovered, "title")}</p>
+              <p>{tp(hovered, "what")}</p>
+            </div>
+          ) : (
+            <p className="am-hint">
+              {t("hero.hint")}
+              {visited.length > 0 && (
+                <span className="am-count">
+                  {" "}
+                  {t("hero.count").replace("{n}", String(visited.length)).replace("{total}", String(PARTS.length))}
+                </span>
+              )}
+            </p>
+          )}
+        </div>
+
+        <nav className="am-path" aria-label={t("hero.panel.path")}>
+          {PATH.map((id) => plate(id))}
+          <span className="am-path-gap" aria-hidden />
+          {OFF_PATH.map((id) => plate(id))}
           <Link className="am-plate am-plate-out" to="/auditory-pathway">
-            {t("path.hero.step")}
+            <span className="am-plate-l">{t("path.hero.step")}</span>
             <ArrowRight aria-hidden className="am-btn-icon" />
           </Link>
-        </div>
-      </nav>
+        </nav>
+      </div>
+
+      {selected && (asSheet ? createPortal(<div className="am-sheet-root">{panel(selected)}</div>, document.body) : panel(selected))}
     </section>
   );
 }
 
 const CSS = `
-.am-home{
-  --foreground:#f4f1ea; --muted-foreground:#dfe5ee; --signal:#f4f1ea;
-  --primary:#f6b800; --primary-foreground:#121212; --card:#103a72; --border:#2a5c9c;
-  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
-  background:#15488a;
-}
-.am-home header > div{max-width:none; padding-inline:clamp(20px,3vw,48px)}
-.am-home header .nav-link:hover{color:#ffffff}
-.am-home header .nav-link:focus-visible{outline:2px solid #f6b800; outline-offset:2px}
-
 .am-hero,.am-sheet-root{
-  --am-blue:#15488a; --am-blue-deep:#103a72; --am-blue-step:#1b569e;
-  --am-enamel:#f4f1ea; --am-yellow:#f6b800; --am-ink:#121212;
+  --am-bg:var(--background); --am-tone:var(--card); --am-tint:var(--accent);
+  --am-ink:var(--foreground); --am-ink-2:var(--muted-foreground);
+  --am-accent:var(--primary); --am-red:#d93b3f;
   --am-ease:cubic-bezier(0.23,1,0.32,1);
-  --am-cond:"Barlow Condensed","Arial Narrow",sans-serif;
-  --am-text:"Barlow","Helvetica Neue",Arial,sans-serif;
-  font-family:var(--am-text);
+  --am-panel-w:clamp(21rem,28vw,26rem);
+  --am-margin:clamp(20px,4vw,80px);
+  -webkit-font-smoothing:antialiased;
 }
 .am-hero{
   position:relative; display:grid;
-  grid-template-columns:minmax(0,5.6fr) minmax(0,6.4fr);
-  grid-template-rows:1fr auto;
-  min-height:100svh; overflow:hidden;
-  padding:clamp(76px,9vh,104px) clamp(20px,3vw,48px) clamp(20px,3vh,32px);
-  column-gap:clamp(16px,2vw,40px);
-  background:var(--am-blue); color:var(--am-enamel);
-  font-family:var(--am-text);
+  grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);
+  grid-template-areas:none;
+  min-height:max(calc(100svh - 64px), 640px);
+  background:var(--am-bg); color:var(--am-ink);
 }
-.am-hero ::selection{background:var(--am-yellow); color:var(--am-ink)}
 
 /* ---------- copy ---------- */
-.am-copy{position:relative; z-index:3; align-self:center; max-width:40rem; padding-block:clamp(8px,3vh,32px)}
+.am-copy{grid-column:1; grid-row:1; grid-area:auto; justify-self:center; align-self:center; width:min(100%, 46rem); box-sizing:border-box; padding:clamp(32px,5vh,64px) clamp(24px,3vw,48px) clamp(32px,5vh,64px) var(--am-margin)}
 .am-hero h1{
-  font-family:var(--am-cond); font-weight:700; font-size:clamp(2.6rem,4vw,4.4rem);
-  line-height:.94; letter-spacing:-.012em; margin:0 0 clamp(18px,2.6vh,28px); text-wrap:balance;
+  font-weight:600; font-size:clamp(2.5rem,3.7vw,4rem);
+  line-height:1; letter-spacing:-.05em; margin:0; text-wrap:balance;
+  animation:am-lift 700ms var(--am-ease) both;
 }
-.am-sub{font-size:clamp(1.12rem,1.35vw,1.32rem); line-height:1.42; font-weight:500; margin:0 0 1.1rem; max-width:32em; text-wrap:pretty}
-.am-lede{font-size:1rem; line-height:1.6; margin:0; max-width:36em; text-wrap:pretty}
+.am-sub{max-width:44ch; margin:1.4rem 0 0; font-size:clamp(1.08rem,1.3vw,1.22rem); line-height:1.5; font-weight:500; letter-spacing:-.01em; text-wrap:pretty; animation:am-rise 700ms var(--am-ease) 80ms both}
+.am-actions{display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.8rem; animation:am-rise 700ms var(--am-ease) 160ms both}
+.am-lede{max-width:62ch; margin:2rem 0 0; font-size:1.02rem; line-height:1.62; color:var(--am-ink); text-wrap:pretty; animation:am-rise 700ms var(--am-ease) 240ms both}
+.am-fine{margin:.9rem 0 0; font-size:.9rem; line-height:1.5; color:var(--am-ink-2)}
+@keyframes am-rise{from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none}}
+/* the title is painted on the first frame and only travels in */
+@keyframes am-lift{from{transform:translateY(16px)} to{transform:none}}
 
-.am-actions{display:flex; flex-wrap:wrap; gap:.6rem; margin-top:clamp(22px,3.4vh,34px)}
 .am-btn{
-  display:inline-flex; align-items:center; gap:.55rem;
-  font-family:var(--am-cond); font-weight:600; font-size:1.2rem; letter-spacing:.01em;
-  padding:.78rem 1.25rem .74rem; border-radius:0; text-decoration:none;
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-weight:500; font-size:1rem; letter-spacing:-.01em;
+  padding:.85rem 1.35rem; border-radius:999px; text-decoration:none;
   transition:transform 160ms var(--am-ease), background-color 160ms ease;
-  -webkit-tap-highlight-color:transparent;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
 }
 .am-btn:active{transform:scale(.97)}
-.am-btn:focus-visible,.am-plate:focus-visible,.am-key:focus-visible,.am-close:focus-visible{outline:3px solid var(--am-yellow); outline-offset:3px}
-.am-btn-go{background:var(--am-yellow); color:var(--am-ink)}
-.am-btn-quiet{background:var(--am-blue-deep); color:var(--am-enamel)}
+.am-btn-go{background:var(--am-accent); color:var(--primary-foreground)}
+.am-btn-quiet{background:var(--am-tone); color:var(--am-ink)}
 @media (hover:hover) and (pointer:fine){
-  .am-btn-go:hover{background:#ffc928}
-  .am-btn-quiet:hover{background:#0c2f5e}
+  .am-btn-go:hover{background:color-mix(in oklab, var(--am-accent) 88%, black)}
+  .am-btn-quiet:hover{background:color-mix(in oklab, var(--am-tone) 94%, black)}
 }
 .am-btn-icon{width:1.05em; height:1.05em; flex:none}
-.am-fine{font-size:.9rem; line-height:1.5; margin:.85rem 0 0; color:#dfe5ee}
+.am-btn:focus-visible,.am-plate:focus-visible,.am-key:focus-visible,.am-close:focus-visible{outline:2px solid var(--ring); outline-offset:3px}
 
-.am-detail{margin-top:clamp(20px,3.4vh,36px); min-height:6.4em; max-width:34em}
-.am-hint{margin:0; font-size:.95rem; line-height:1.5; color:#dfe5ee}
-.am-count{color:var(--am-enamel); font-weight:600}
-.am-peek{background:var(--am-blue-deep); padding:.85rem 1rem; animation:am-rise 180ms var(--am-ease) both}
-.am-peek p{margin:0; font-size:.95rem; line-height:1.5}
-.am-peek .am-peek-title{font-family:var(--am-cond); font-weight:600; font-size:1.2rem; margin-bottom:.2rem}
-@keyframes am-rise{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
-
-/* ---------- panel: an enamel plate over the copy ---------- */
-.am-panel{
-  position:absolute; z-index:6; inset:0 0 0 0; overflow:auto; overscroll-behavior:contain;
-  background:var(--am-enamel); color:var(--am-ink);
-  padding:clamp(20px,2.4vw,34px);
-  box-shadow:0 18px 48px -12px rgba(5,20,45,.45);
-  animation:am-in 240ms var(--am-ease) both;
-  scrollbar-color:#9aa6b8 transparent;
+/* ---------- the stage: a pale teal field, its corner rounded like the coil ---------- */
+.am-stage{
+  grid-column:2; grid-row:1;
+  position:relative; min-height:0; min-width:0; overflow:hidden;
+  background:var(--am-tint); border-top-left-radius:min(15vw,240px);
+  margin-top:clamp(12px,2vh,24px);
 }
-@keyframes am-in{from{opacity:0; transform:translateY(10px) scale(.985)} to{opacity:1; transform:none}}
-.am-panel:focus{outline:none}
-.am-panel ::selection{background:var(--am-blue); color:var(--am-enamel)}
-.am-panel-head{display:flex; align-items:flex-start; justify-content:space-between; gap:1rem}
-.am-panel h2{font-family:var(--am-cond); font-weight:700; font-size:clamp(2rem,2.6vw,2.6rem); line-height:.98; margin:0}
-.am-close{
-  display:inline-flex; align-items:center; gap:.35rem; flex:none; cursor:pointer;
-  font:600 .95rem var(--am-cond); background:var(--am-ink); color:var(--am-enamel);
-  border:0; border-radius:0; padding:.45rem .75rem; transition:transform 160ms var(--am-ease);
-}
-.am-close:active{transform:scale(.97)}
-.am-kind{margin:.55rem 0 .9rem; font-weight:600; font-size:.98rem; display:flex; align-items:center; gap:.5rem}
-.am-kind::before{content:""; width:.7rem; height:.7rem; background:var(--am-yellow); flex:none}
-.am-panel p{margin:0; font-size:1rem; line-height:1.58}
-.am-panel h3{font-family:var(--am-cond); font-weight:600; font-size:1.2rem; margin:1.5rem 0 .35rem}
-.am-prof{font-weight:600; color:var(--am-blue)}
-.am-onward{margin-top:1.3rem !important; font-weight:500}
-.am-onward a{color:var(--am-blue); font-weight:600; text-underline-offset:3px}
-
-/* the experiment: a blue plate inside the white one */
-.am-try{background:var(--am-blue); color:var(--am-enamel); padding:1rem 1.1rem 1.15rem; margin-top:1.3rem}
-.am-try h3{margin:0 0 .7rem !important}
-.am-try ::selection{background:var(--am-yellow); color:var(--am-ink)}
-.am-x-label{display:block; font-weight:600; font-size:.98rem; margin:0 0 .55rem}
-.am-seg{display:flex; flex-wrap:wrap; gap:.4rem}
-.am-key{
-  font:600 1.05rem var(--am-cond); letter-spacing:.01em; cursor:pointer;
-  background:var(--am-blue-deep); color:var(--am-enamel); border:0; border-radius:0;
-  padding:.55rem .9rem .5rem; transition:transform 160ms var(--am-ease), background-color 140ms ease, color 140ms ease;
-  -webkit-tap-highlight-color:transparent;
-}
-.am-key:active{transform:scale(.97)}
-.am-key[aria-checked=true],.am-key[aria-pressed=true]{background:var(--am-enamel); color:var(--am-ink)}
-.am-key-hazard{background:var(--am-yellow); color:var(--am-ink)}
-.am-key:disabled{cursor:default; background:#0c2f5e; color:#9fb3cf}
-@media (hover:hover) and (pointer:fine){
-  .am-key:not(:disabled):not([aria-pressed=true]):not([aria-checked=true]):not(.am-key-hazard):hover{background:#0c2f5e}
-}
-.am-try .am-read{margin-top:.75rem; font-size:.97rem; line-height:1.55}
-.am-try .am-read strong{font-weight:600; font-variant-numeric:tabular-nums}
-.am-note{margin-top:.5rem !important; font-size:.88rem !important; color:#dfe5ee}
-.am-scar{margin-top:.8rem !important; background:var(--am-yellow); color:var(--am-ink); padding:.6rem .75rem; font-weight:600; font-size:.95rem !important}
-.am-readout{display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap; margin:0 0 .2rem !important}
-.am-hz{font:700 2.6rem/1 var(--am-cond); font-variant-numeric:tabular-nums}
-.am-band{font-size:.98rem}
-
-:is(.am-hero,.am-sheet-root) input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:34px; background:transparent; margin:.1rem 0; cursor:grab}
-:is(.am-hero,.am-sheet-root) input[type=range]:active{cursor:grabbing}
-:is(.am-hero,.am-sheet-root) input[type=range]::-webkit-slider-runnable-track{height:6px; background:var(--am-blue-deep)}
-:is(.am-hero,.am-sheet-root) input[type=range]::-moz-range-track{height:6px; background:var(--am-blue-deep)}
-:is(.am-hero,.am-sheet-root) input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:22px; height:22px; margin-top:-8px; background:var(--am-enamel); border:0; border-radius:0}
-:is(.am-hero,.am-sheet-root) input[type=range]::-moz-range-thumb{width:22px; height:22px; background:var(--am-enamel); border:0; border-radius:0}
-:is(.am-hero,.am-sheet-root) input[type=range].am-hot::-webkit-slider-thumb{background:var(--am-yellow)}
-:is(.am-hero,.am-sheet-root) input[type=range].am-hot::-moz-range-thumb{background:var(--am-yellow)}
-:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible{outline:none}
-:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid var(--am-yellow); outline-offset:2px}
-:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible::-moz-range-thumb{outline:3px solid var(--am-yellow); outline-offset:2px}
-
-/* ---------- stage: the sign the ear came off ---------- */
-.am-stage{position:relative; z-index:2; min-height:0; min-width:0}
-.am-sign{
-  position:absolute; left:50%; top:50%; width:min(94%,76svh); aspect-ratio:1; transform:translate(-50%,-50%);
-  border-radius:50%; background:var(--am-blue-deep);
-  box-shadow:0 0 0 clamp(10px,1vw,16px) var(--am-enamel);
-}
+.am-stage-coil{position:absolute; width:min(92vh,64vw); aspect-ratio:1; right:-16%; bottom:-30%; color:oklch(0.925 0.04 205); pointer-events:none; animation:am-coil 1.4s var(--am-ease) both}
+@keyframes am-coil{from{opacity:0; transform:rotate(-30deg) scale(.94)} to{opacity:1; transform:none}}
 .am-gl{position:absolute; inset:0}
 .am-canvas{display:block; width:100%; height:100%; cursor:grab}
 .am-canvas:active{cursor:grabbing}
-.am-status{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); margin:0; font:600 1.15rem var(--am-cond); text-align:center; max-width:22em}
+.am-status{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); margin:0; font-weight:500; color:var(--am-ink-2); text-align:center; max-width:22em}
 
 .am-tags{position:absolute; inset:0; pointer-events:none}
 .am-tag{
   position:absolute; left:0; top:0; pointer-events:auto; cursor:pointer; white-space:nowrap;
-  font:600 .92rem/1 var(--am-cond); letter-spacing:.01em;
-  background:var(--am-enamel); color:var(--am-ink); border:0; border-radius:0;
-  padding:.38rem .55rem .34rem; margin:0; translate:-50% -50%;
-  transition:background-color 140ms ease, opacity 200ms ease;
+  display:inline-flex; align-items:center; gap:.4rem;
+  font:500 .82rem/1 var(--font-body); letter-spacing:-.005em;
+  background:var(--am-bg); color:var(--am-ink); border:0; border-radius:999px;
+  padding:.42rem .7rem .42rem .5rem; margin:0; translate:-50% -50%;
+  transition:background-color 140ms ease, opacity 200ms ease, color 140ms ease;
+  touch-action:manipulation;
 }
-.am-tag[data-seen]::after{content:""; display:inline-block; width:.42rem; height:.42rem; margin-left:.4rem; vertical-align:.08em; background:var(--am-blue)}
-.am-tag[data-hot]{background:var(--am-yellow)}
-.am-stage[data-dim] .am-tag:not([data-hot]){opacity:.3}
-.am-tag-hz{pointer-events:none; background:var(--am-ink); color:var(--am-enamel); font-variant-numeric:tabular-nums}
-.am-tag-hz[data-hot]{background:var(--am-yellow); color:var(--am-ink)}
+.am-tag::before{content:""; width:.6rem; height:.6rem; border-radius:50%; background:var(--dot); flex:none}
+.am-tag[data-hot]{background:var(--am-ink); color:var(--am-bg)}
+.am-stage[data-dim] .am-tag:not([data-hot]){opacity:.35}
+.am-tag-hz{pointer-events:none; background:var(--am-ink); color:var(--am-bg); padding-left:.7rem; font-variant-numeric:tabular-nums}
+.am-tag-hz::before{display:none}
+.am-tag-hz[data-hot]{background:var(--am-red)}
 
-/* ---------- the signal path: one unbroken row of plates ---------- */
-.am-path{grid-column:1 / -1; position:relative; z-index:4; display:flex; flex-wrap:wrap; gap:clamp(10px,1.4vw,22px); margin-top:clamp(12px,2vh,20px)}
-.am-path-run{display:flex; gap:4px; flex-wrap:wrap}
-.am-path-side{margin-left:auto}
+/* hint or peek, top right of the stage */
+.am-detail{position:absolute; z-index:3; top:clamp(20px,3vh,32px); right:var(--am-margin); width:min(22rem,40%)}
+.am-hint{margin:0; font-size:.95rem; line-height:1.5; color:var(--am-ink); text-align:right}
+.am-count{color:var(--am-ink-2)}
+.am-peek{background:var(--am-bg); border-radius:18px; padding:.95rem 1.1rem; box-shadow:0 12px 30px -16px rgba(15,30,40,.35); animation:am-rise 180ms var(--am-ease) both} /* taste-skill-ignore: floats over the canvas */
+.am-peek p{margin:0; font-size:.93rem; line-height:1.5; color:var(--am-ink)}
+.am-peek .am-peek-title{display:flex; align-items:center; gap:.5rem; font-weight:600; font-size:1.02rem; margin-bottom:.25rem}
+.am-peek .am-peek-title::before{content:""; width:.62rem; height:.62rem; border-radius:50%; background:var(--dot)}
+
+/* the signal path, along the foot of the stage */
+.am-path{position:absolute; z-index:3; left:clamp(20px,2.4vw,36px); right:var(--am-margin); bottom:clamp(20px,3vh,32px); display:flex; flex-wrap:wrap; gap:.4rem; transition:right 300ms var(--am-ease)}
+.am-hero[data-open] .am-path{right:calc(var(--am-margin) + var(--am-panel-w) + 24px)}
+.am-path-gap{width:.8rem}
 .am-plate{
-  position:relative; display:inline-flex; align-items:center; gap:.45rem; cursor:pointer; text-decoration:none;
-  font:600 1.08rem/1 var(--am-cond); letter-spacing:.01em; color:var(--am-enamel);
-  background:var(--am-blue-deep); border:0; border-radius:0; padding:.82rem 1rem .76rem;
+  position:relative; display:inline-flex; align-items:center; gap:.5rem; cursor:pointer; text-decoration:none;
+  font:500 .92rem/1 var(--font-body); letter-spacing:-.01em; color:var(--am-ink);
+  background:var(--am-bg); border:0; border-radius:999px; padding:.68rem 1rem .68rem .8rem;
   transition:transform 160ms var(--am-ease), background-color 140ms ease, color 140ms ease;
-  -webkit-tap-highlight-color:transparent;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
 }
 .am-plate:active{transform:scale(.97)}
-.am-plate::before{content:""; position:absolute; left:0; right:0; top:0; height:4px; background:var(--am-yellow); transform:scaleX(0); transform-origin:left; transition:transform 260ms var(--am-ease)}
-.am-plate[data-chase]::before{transform:scaleX(1)}
-.am-plate[data-seen]::after{content:""; width:.45rem; height:.45rem; background:var(--am-enamel); opacity:.7}
-.am-plate[data-hot]{background:var(--am-blue-step)}
-.am-plate[aria-pressed=true]{background:var(--am-enamel); color:var(--am-ink)}
-.am-plate[aria-pressed=true]::after{background:var(--am-blue)}
-.am-plate-out{background:transparent; padding-inline:.6rem}
+.am-plate-l{white-space:nowrap}
+.am-plate::before{content:""; width:.62rem; height:.62rem; border-radius:50%; background:var(--dot); flex:none; transition:transform 260ms var(--am-ease)}
+.am-plate[data-chase]::before{transform:scale(1.45)}
+.am-plate[data-seen]::before{box-shadow:0 0 0 2px var(--am-bg), 0 0 0 3.5px var(--dot)} /* taste-skill-ignore: a ring, not a shadow */
+.am-plate[data-hot]{background:color-mix(in oklab, var(--am-bg) 92%, var(--am-accent))}
+.am-plate[aria-pressed=true]{background:var(--am-ink); color:var(--am-bg)}
+.am-plate[aria-pressed=true][data-seen]::before{box-shadow:0 0 0 2px var(--am-ink), 0 0 0 3.5px var(--dot)} /* taste-skill-ignore: a ring, not a shadow */
+.am-plate-out{background:transparent; color:var(--am-accent); font-weight:600}
+.am-plate-out::before{display:none}
 @media (hover:hover) and (pointer:fine){
-  .am-plate:not([aria-pressed=true]):hover{background:var(--am-blue-step)}
-  .am-plate-out:hover{background:var(--am-blue-deep)}
+  .am-plate:not([aria-pressed=true]):not(.am-plate-out):hover{background:color-mix(in oklab, var(--am-bg) 92%, var(--am-accent))}
+  .am-plate-out:hover{text-decoration:underline; text-underline-offset:4px}
 }
+
+/* ---------- panel: a white card floating over the stage ---------- */
+.am-panel{
+  position:absolute; z-index:6; right:var(--am-margin); top:clamp(28px,4vh,44px); bottom:clamp(16px,2vh,28px);
+  width:var(--am-panel-w); overflow:auto; overscroll-behavior:contain;
+  background:var(--am-bg); color:var(--am-ink); border-radius:24px;
+  padding:clamp(20px,1.8vw,28px);
+  box-shadow:0 30px 70px -30px rgba(15,30,40,.4); /* taste-skill-ignore: the panel is a dialog */
+  animation:am-in 240ms var(--am-ease) both;
+  scrollbar-width:thin;
+}
+@keyframes am-in{from{opacity:0; transform:translateX(12px)} to{opacity:1; transform:none}}
+.am-panel:focus{outline:none}
+.am-panel-head{display:flex; align-items:flex-start; justify-content:space-between; gap:1rem}
+.am-panel h2{font-weight:600; font-size:clamp(1.7rem,2.1vw,2.1rem); letter-spacing:-.04em; line-height:1.05; margin:0; text-wrap:balance}
+.am-close{
+  display:inline-flex; align-items:center; gap:.3rem; flex:none; cursor:pointer;
+  font:500 .9rem var(--font-body); background:var(--am-tone); color:var(--am-ink);
+  border:0; border-radius:999px; padding:.45rem .8rem; transition:transform 160ms var(--am-ease), background-color 140ms ease;
+  touch-action:manipulation;
+}
+.am-close:hover{background:color-mix(in oklab, var(--am-tone) 92%, black)}
+.am-close:active{transform:scale(.97)}
+.am-kind{margin:.6rem 0 .9rem; font-weight:500; font-size:.92rem; color:var(--am-ink-2); display:flex; align-items:center; gap:.5rem}
+.am-kind::before{content:""; width:.62rem; height:.62rem; border-radius:50%; background:var(--dot); flex:none}
+.am-panel p{margin:0; font-size:.98rem; line-height:1.6; color:var(--am-ink)}
+.am-panel h3{font-weight:600; font-size:1rem; letter-spacing:-.01em; margin:1.4rem 0 .35rem; color:var(--am-ink)}
+.am-prof{font-weight:500; color:var(--am-accent) !important}
+.am-onward{margin-top:1.3rem !important}
+.am-onward a{color:var(--am-accent); font-weight:600; text-underline-offset:3px}
+
+/* the experiment */
+.am-try{background:var(--am-tint); border-radius:18px; padding:1rem 1.1rem 1.15rem; margin-top:1.2rem}
+.am-try h3{margin:0 0 .7rem !important}
+.am-x-label{display:block; font-weight:500; font-size:.93rem; color:var(--am-ink); margin:0 0 .55rem}
+.am-seg{display:flex; flex-wrap:wrap; gap:.4rem}
+.am-key{
+  font:500 .95rem var(--font-body); letter-spacing:-.01em; cursor:pointer;
+  background:var(--am-bg); color:var(--am-ink); border:0; border-radius:999px;
+  padding:.6rem 1rem;
+  transition:transform 160ms var(--am-ease), background-color 140ms ease, color 140ms ease;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+}
+.am-key:active{transform:scale(.97)}
+.am-key[aria-checked=true],.am-key[aria-pressed=true]{background:var(--am-ink); color:var(--am-bg)}
+.am-key-hazard{background:var(--am-red); color:#fff}
+.am-key:disabled{cursor:default; background:transparent; color:var(--am-ink-2)}
+@media (hover:hover) and (pointer:fine){
+  .am-key:not(:disabled):not([aria-pressed=true]):not([aria-checked=true]):not(.am-key-hazard):hover{background:color-mix(in oklab, var(--am-bg) 94%, black)}
+  .am-key-hazard:not(:disabled):hover{background:#c22f33}
+}
+.am-try .am-read{margin-top:.75rem; font-size:.95rem; line-height:1.55}
+.am-try .am-read strong{font-weight:600; font-variant-numeric:tabular-nums}
+.am-note{margin-top:.5rem !important; font-size:.88rem !important; color:var(--am-ink-2) !important}
+.am-scar{margin-top:.8rem !important; background:#fdeaea; color:#8f1d20 !important; border-radius:12px; padding:.65rem .8rem; font-weight:500; font-size:.92rem !important}
+.am-readout{display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap; margin:0 0 .2rem !important}
+.am-hz{font-weight:600; font-size:2.4rem; line-height:1; letter-spacing:-.04em; font-variant-numeric:tabular-nums}
+.am-band{font-size:.93rem}
+
+:is(.am-hero,.am-sheet-root) input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:32px; background:transparent; margin:.1rem 0; cursor:grab}
+:is(.am-hero,.am-sheet-root) input[type=range]:active{cursor:grabbing}
+:is(.am-hero,.am-sheet-root) input[type=range]::-webkit-slider-runnable-track{height:6px; border-radius:99px; background:color-mix(in oklab, var(--am-accent) 22%, white)}
+:is(.am-hero,.am-sheet-root) input[type=range]::-moz-range-track{height:6px; border-radius:99px; background:color-mix(in oklab, var(--am-accent) 22%, white)}
+:is(.am-hero,.am-sheet-root) input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:22px; height:22px; margin-top:-8px; border-radius:50%; background:var(--am-accent); border:3px solid #fff}
+:is(.am-hero,.am-sheet-root) input[type=range]::-moz-range-thumb{width:22px; height:22px; border-radius:50%; background:var(--am-accent); border:3px solid #fff}
+:is(.am-hero,.am-sheet-root) input[type=range].am-hot::-webkit-slider-thumb{background:var(--am-red)}
+:is(.am-hero,.am-sheet-root) input[type=range].am-hot::-moz-range-thumb{background:var(--am-red)}
+:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible{outline:none}
+:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible::-webkit-slider-thumb{outline:2px solid var(--ring); outline-offset:2px}
+:is(.am-hero,.am-sheet-root) input[type=range]:focus-visible::-moz-range-thumb{outline:2px solid var(--ring); outline-offset:2px}
 
 /* ---------- narrower screens ---------- */
 @media (max-width:1000px){
-  .am-hero{display:flex; flex-direction:column; min-height:auto; padding-top:84px}
-  /* the ear comes straight after the headline, before the long read */
+  .am-hero{display:flex; flex-direction:column; min-height:auto}
   .am-copy{display:contents}
-  .am-copy > h1{order:1}
-  .am-sub{order:2}
-  .am-stage{order:3; height:min(100vw,560px); margin-inline:calc(-1 * clamp(20px,3vw,48px))}
-  .am-path{order:4; margin-top:0}
-  .am-lede{order:5; margin-top:clamp(28px,5vh,40px)}
-  .am-actions{order:6}
-  .am-fine{order:7}
-  .am-detail{order:8}
-  .am-sign{width:min(88%,520px)}
-  .am-detail{min-height:0}
-  .am-panel{position:fixed; z-index:60; inset:auto 0 0 0; max-height:78svh; padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)); animation-name:am-up}
+  .am-copy > h1{order:1; padding:40px 20px 0}
+  .am-sub{order:2; padding-inline:20px}
+  .am-actions{order:3; padding-inline:20px}
+  .am-stage{order:4; height:min(118vw,640px); margin:28px 0 0 20px; border-top-left-radius:120px}
+  .am-lede{order:5; padding-inline:20px; margin-top:28px}
+  .am-fine{order:6; padding-inline:20px}
+  .am-detail{left:auto; width:min(18rem,60%)}
+  .am-path{left:16px; right:16px; bottom:16px}
+  .am-hero[data-open] .am-path{right:16px}
+  .am-panel{position:fixed; z-index:60; inset:auto 0 0 0; width:auto; max-height:80svh; border-radius:24px 24px 0 0; padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)); animation-name:am-up}
   @keyframes am-up{from{opacity:0; transform:translateY(24px)} to{opacity:1; transform:none}}
-  .am-path-side{margin-left:0}
 }
 @media (max-width:640px){
-  .am-tag{font-size:.8rem; padding:.3rem .42rem .27rem}
-  /* too small for every label at once: the row below names the parts */
+  .am-tag{font-size:.82rem}
   .am-tag:not([data-hot]):not(.am-tag-hz){opacity:0 !important; pointer-events:none}
-  .am-plate{font-size:1rem; padding:.7rem .8rem .66rem}
-  .am-hero h1{font-size:clamp(2.1rem,9.2vw,3rem)}
+  .am-plate{font-size:.85rem; padding:.58rem .8rem .58rem .66rem}
+  .am-hero h1{font-size:clamp(2.3rem,10vw,3rem)}
+  .am-hint{font-size:.85rem}
 }
 @media (prefers-reduced-motion:reduce){
-  .am-hero *{animation:none !important; transition-property:opacity,background-color,color !important}
-  .am-plate::before{display:none}
+  .am-hero *,.am-sheet-root *{animation:none !important; transition-property:opacity,background-color,color !important}
 }
 `;

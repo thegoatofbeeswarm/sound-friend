@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Ear, FlaskConical, Gauge, Headphones, Loader2, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { NoiseMeter } from "@/components/NoiseMeter";
 import { Audiogram } from "@/components/charts/lazy";
@@ -340,12 +341,11 @@ function TestPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      {phase === "intro" ? <PageHero variant="band" title={t("test.introTitle")} lede={t("test.introBody")} /> : null}
       <main className="mx-auto max-w-3xl px-5 py-12">
         {phase === "intro" ? (
           <section>
-            <h1 className="text-3xl font-semibold">{t("test.introTitle")}</h1>
-            <p className="mt-3 text-muted-foreground">{t("test.introBody")}</p>
-            <p className="mt-4 rounded-xl border border-border/70 bg-card/60 p-3 text-sm text-muted-foreground">
+            <p className="rounded-xl border border-border/70 bg-card/60 p-3 text-sm text-muted-foreground">
               {t("test.disclaimer")}
             </p>
 

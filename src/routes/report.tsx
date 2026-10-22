@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, CalendarDays, Flame, Loader2, Target } from "lucide-react";
+import { ArrowRight, Flame, Loader2, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
@@ -177,14 +178,14 @@ function ReportPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      <PageHero
+        title={t("report.thisWeek")}
+        lede={f("report.weekOf", {
+          date: startOfWeek().toLocaleDateString(locale, { month: "long", day: "numeric" }),
+        })}
+        variant="band"
+      />
       <main className="mx-auto max-w-3xl px-5 py-12">
-        <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-          <CalendarDays className="h-4 w-4 text-signal" />
-          {f("report.weekOf", {
-            date: startOfWeek().toLocaleDateString(locale, { month: "long", day: "numeric" }),
-          })}
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold">{t("report.thisWeek")}</h1>
 
         <section className="mt-8 grid gap-4 sm:grid-cols-4">
           <Stat label={t("report.trainingTime")} value={formatMinutes(report.minutes)} />

@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Activity, AlertTriangle, Headphones, Info, Loader2, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
+import { AlertTriangle, Headphones, Info, Loader2, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -104,16 +105,20 @@ function RisksPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      <PageHero
+        title={t("risks.title")}
+        lede={t("risks.lead")}
+        figure={
+          <img
+            className="page-hero-plate"
+            src="/img/tympanic-membrane.jpg"
+            width={1389}
+            height={1400}
+            alt="A healthy eardrum seen through an otoscope"
+          />
+        }
+      />
       <main className="mx-auto max-w-3xl px-5 py-12">
-        <div className="max-w-2xl">
-          <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-            <Activity className="h-4 w-4 text-signal" /> {t("risks.tagline")}
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold">{t("risks.title")}</h1>
-          <p className="mt-3 text-muted-foreground">
-            {t("risks.lead")}
-          </p>
-        </div>
 
         {loading || (user && isLoading) ? (
           <div className="mt-16 flex justify-center">

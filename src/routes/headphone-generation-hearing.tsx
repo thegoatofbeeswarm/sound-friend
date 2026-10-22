@@ -27,7 +27,7 @@ function Page() {
     <ArticlePage
       kicker="Young listeners"
       title="The headphone generation"
-      intro="If you grew up with earbuds in for several hours a day, your listening history looks nothing like your grandparents' did. The exposure is quieter than a factory floor and lasts far longer — and that combination is exactly what dose-based guidance is about."
+      intro="If you grew up with earbuds in for several hours a day, your listening history looks nothing like your grandparents' did. The exposure is quieter than a factory floor and lasts far longer, and dose-based guidance was written for exactly that combination."
       sections={[
         {
           title: "What the numbers say",
@@ -39,7 +39,7 @@ function Page() {
         {
           title: "Dose, not just volume",
           body: [
-            "Damage risk depends on level and duration together. Roughly, every 3 dB increase in level halves the time you can safely spend at it. Eighty decibels for a full day is a very different exposure from 100 decibels for twenty minutes — but both count towards the same weekly budget.",
+            "Damage risk depends on level and duration together. Roughly, every 3 dB increase in level halves the time you can safely spend at it. Eighty decibels for a full day is a very different exposure from 100 decibels for twenty minutes, but both count towards the same weekly budget.",
             "This is why a single loud concert and a habit of moderately loud commuting both matter, and why 'it doesn't sound that loud' is a poor guide.",
           ],
         },
@@ -47,7 +47,7 @@ function Page() {
           title: "What changes first",
           bullets: [
             "High frequencies, typically around 4–8 kHz, before anything in the speech-critical midrange.",
-            "Temporary dullness or ringing after a loud event — a warning sign, even when the hearing recovers by morning.",
+            "Temporary dullness or ringing after a loud event. Treat it as a warning, even when your hearing recovers by morning.",
             "Difficulty in noisy rooms while quiet listening still feels completely fine.",
             "Nothing at all that you notice, which is the usual case early on. Slow change is very hard to detect from the inside.",
           ],
@@ -55,14 +55,14 @@ function Page() {
         {
           title: "Why it shows up as 'noisy rooms are hard'",
           body: [
-            "Consonants like s, f, th and sh carry much of their energy in the high band. Losing a little sensitivity there rarely makes the world quieter — it makes speech mushier when something else is competing with it. Classrooms, cafeterias, buses and group chats are where it surfaces first.",
+            "Consonants like s, f, th and sh carry much of their energy in the high band. Losing a little sensitivity there makes speech mushier whenever something else competes with it, even though the world doesn't sound quieter. Classrooms, cafeterias, buses and group chats are where it surfaces first.",
           ],
         },
         {
           title: "Habits worth changing now",
           bullets: [
             "Use the 60/60 habit as a starting point: around 60% of maximum volume, and breaks about every 60 minutes.",
-            "Prefer noise-isolating headphones. Most volume creep is an attempt to beat background noise, not a desire for loudness.",
+            "Prefer noise-isolating headphones. Most volume creep comes from trying to beat background noise.",
             "Turn on your phone's headphone-level warnings and check the weekly exposure figure it reports.",
             "Carry cheap filtered earplugs for concerts, clubs and loud sports. They cut level without wrecking sound quality.",
             "Screen yourself regularly and keep the results, so you have your own history rather than a single snapshot years from now.",

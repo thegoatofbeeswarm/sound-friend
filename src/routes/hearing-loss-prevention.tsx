@@ -27,7 +27,7 @@ function Page() {
     <ArticlePage
       kicker="Safe listening"
       title="Hearing loss prevention"
-      intro="Noise-related hearing loss builds up quietly over years. The good news is that the main risk factor — how much sound you take in over a week — is something you can actually see and change."
+      intro="Noise-related hearing loss builds up quietly over years. The main risk factor, how much sound you take in over a week, is something you can see and change."
       sections={[
         {
           title: "The weekly sound dose",
@@ -40,23 +40,23 @@ function Page() {
           title: "Why young listeners are the focus",
           body: [
             "WHO estimates that over a billion people aged 12–35 are at risk of hearing loss from unsafe recreational listening, and that more than 1.5 billion people already live with some degree of hearing loss. Personal audio devices and loud venues are the two dominant sources.",
-            "Early damage is easy to miss because it usually starts in the 4–8 kHz range, where the effect is not a quieter world but a harder time following speech in a busy room.",
+            "Early damage is easy to miss because it usually starts in the 4–8 kHz range, where the first effect is a harder time following speech in a busy room.",
           ],
         },
         {
           title: "Practical ways to lower your exposure",
           bullets: [
-            "Turn the volume down a little rather than a lot less often — small reductions buy back a lot of safe listening time.",
+            "Turn the volume down a little, often. Small reductions buy back a lot of safe listening time.",
             "Use noise-isolating or noise-cancelling headphones so you are not raising the volume to beat background noise.",
-            "Take quiet breaks: your weekly dose is cumulative, and breaks genuinely reduce it.",
+            "Take quiet breaks: your weekly dose is cumulative, and breaks reduce it.",
             "Wear earplugs at concerts, clubs and events; venue levels are usually far above any safe continuous limit.",
-            "Watch the loudest sessions, not only the average — a single very loud hour can dominate a week.",
+            "Watch your loudest sessions as well as the average. A single very loud hour can dominate a week.",
           ],
         },
         {
           title: "How Audiomaxxer frames listening risk",
           body: [
-            "We describe your listening behaviour — estimated exposure, loudest sessions, weekly trend — rather than claiming a personally validated medical exposure limit derived from your hearing thresholds. There is no established way to turn a screening threshold into an individual safe-volume number, and we are not going to pretend otherwise.",
+            "We describe your listening behaviour (estimated exposure, loudest sessions, weekly trend) and don't claim a personal medical exposure limit derived from your hearing thresholds. There is no established way to turn a screening threshold into an individual safe-volume number.",
             "Estimated levels are directional: they depend on your device, headphones and volume setting, so treat them as a trend to manage rather than a measurement.",
           ],
         },

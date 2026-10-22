@@ -2,7 +2,7 @@ export const risksPage: { en: Record<string, string>; zh: Record<string, string>
   en: {
     "risks.tagline": "Listening habits",
     "risks.title": "Personalized Listening Risk",
-    "risks.lead": "Audiomaxxer combines your reported listening habits, estimated sound exposure and screening context to help you understand your behaviour. These estimates are not a diagnosis or a medically validated personal safety limit.",
+    "risks.lead": "Audiomaxxer combines your listening habits, estimated sound exposure and screening results to show how your habits add up. These are estimates, not a diagnosis or a medically validated safety limit for you.",
     "risks.today": "Today",
     "risks.nothingLogged": "Nothing logged",
     "risks.estimatedListening": "estimated listening",
@@ -14,7 +14,7 @@ export const risksPage: { en: Record<string, string>; zh: Record<string, string>
     "risks.notSet": "Not set",
     "risks.basedOnToday": "based on today's estimate",
     "risks.estimateTitle": "Estimate a listening session",
-    "risks.estimateLead": "Pick the device and pattern that best match how you listen. Device output varies by model, fit, seal and volume setting, so treat the dB estimate as directional.",
+    "risks.estimateLead": "Pick the device and pattern that best match how you listen. Device output varies by model, fit, seal and volume setting, so treat the dB estimate as a rough guide.",
     "risks.typicalVolume": "Typical headphone volume",
     "risks.listeningTime": "Listening time",
     "risks.hoursShort": "h",

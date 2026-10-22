@@ -2,7 +2,7 @@ export const historyPage: { en: Record<string, string>; zh: Record<string, strin
   en: {
     "history.tagline": "Your personal hearing dashboard",
     "history.title": "Your Hearing",
-    "history.lead": "A clear view of your screening profile, listening risk, and training momentum.",
+    "history.lead": "Your screening profile, listening risk and training progress in one place.",
     "history.runScreening": "Run a new screening",
     "history.signInPrompt": "Sign in to see your saved screenings and personalized dashboard.",
     "history.signIn": "Sign in",

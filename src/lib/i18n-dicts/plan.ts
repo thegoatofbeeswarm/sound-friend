@@ -7,7 +7,7 @@ export const planPack: {
     "plan.title": "Your training plan",
     "plan.fromClinic": "Anchored to your clinic report: {source}",
     "plan.fromScreening": "Based on your latest Audiomaxxer screening",
-    "plan.fromNone": "A starter plan — take a screening or upload a clinic report to personalize it",
+    "plan.fromNone": "A starter plan. Take a screening or upload a clinic report to personalize it.",
     "plan.step": "Step {n}",
     "plan.start": "Start this track",
     "plan.upload": "Bring your audiogram",
@@ -18,11 +18,11 @@ export const planPack: {
     "plan.summaryLow": "Low frequencies: {db} dB average",
     "plan.summaryAsym": "Between ears at high frequencies: {db} dB apart",
     "plan.reason.highLoss":
-      "Your high frequencies average {db} dB, the range where consonants live — train there first.",
+      "Your high frequencies average {db} dB, the range where consonants live, so train there first.",
     "plan.reason.consonants":
       "Missing high-frequency detail is what makes speech in a busy room hard, so practise it directly.",
     "plan.reason.sinWeak":
-      "Your speech-in-noise score is {score}/100 — understanding talk in noise is your weakest link.",
+      "Your speech-in-noise score is {score}/100, which makes understanding talk in noise your weakest area.",
     "plan.reason.followTalk": "Practise following a conversation and answering questions about it.",
     "plan.reason.asymmetry":
       "Your ears differ by about {db} dB up high, so where a sound comes from is worth practising.",

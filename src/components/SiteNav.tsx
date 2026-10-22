@@ -80,7 +80,7 @@ export function SiteNav({ transparent = false }: { transparent?: boolean } = {})
       className={
         transparent
           ? "absolute inset-x-0 top-0 z-40 bg-transparent"
-          : "sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur"
+          : "sticky top-0 z-40 bg-background"
       }
     >
       <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-3 px-5 py-2">
@@ -91,7 +91,7 @@ export function SiteNav({ transparent = false }: { transparent?: boolean } = {})
           </span>
         </Link>
         <div className="flex min-w-0 items-center gap-2">
-          <nav className="flex items-center gap-0.5 text-sm max-[760px]:hidden">
+          <nav className="flex items-center gap-0.5 text-sm max-[960px]:hidden">
             {groups.map((g) =>
               g.items.length === 0 ? (
                 <Link
@@ -124,7 +124,7 @@ export function SiteNav({ transparent = false }: { transparent?: boolean } = {})
             <Button
               variant="ghost"
               size="sm"
-              className="transition-transform hover:scale-105 max-[760px]:hidden"
+              className="transition-transform hover:scale-105 max-[960px]:hidden"
               onClick={() => void signOut()}
             >
               {t("nav.signOut")}
@@ -133,7 +133,7 @@ export function SiteNav({ transparent = false }: { transparent?: boolean } = {})
             <Button
               asChild
               size="sm"
-              className="transition-transform hover:scale-105 max-[760px]:hidden"
+              className="transition-transform hover:scale-105 max-[960px]:hidden"
             >
               <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
@@ -145,7 +145,7 @@ export function SiteNav({ transparent = false }: { transparent?: boolean } = {})
                 variant="outline"
                 size="icon"
                 aria-label={t("nav.menu")}
-                className="icon-bubble rounded-full bg-card/60 text-muted-foreground hover:text-signal min-[761px]:hidden"
+                className="icon-bubble rounded-full bg-card/60 text-muted-foreground hover:text-signal min-[961px]:hidden"
               >
                 <Menu />
               </Button>
@@ -168,7 +168,7 @@ export function SiteNav({ transparent = false }: { transparent?: boolean } = {})
                       </Link>
                     ) : (
                       <>
-                        <p className="px-3 pt-2 text-xs uppercase tracking-wide text-muted-foreground/70">
+                        <p className="px-3 pt-2 text-[13px] font-medium text-muted-foreground">
                           {g.label}
                         </p>
                         {g.items.map((i) => (

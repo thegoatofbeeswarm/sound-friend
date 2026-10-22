@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { FlaskConical, Info, Loader2 } from "lucide-react";
+import { Info, Loader2 } from "lucide-react";
 import { AgreementScatter } from "@/components/charts/lazy";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -226,13 +227,20 @@ function ValidationPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      <PageHero
+        variant="plate"
+        title={t("valid.title")}
+        lede={t("valid.lead")}
+        figure={
+          <img
+            src="/img/hughes-audiometer-1879.jpg"
+            width={1600}
+            height={1071}
+            alt="Engraving of Hughes' 1879 audiometer, an early instrument for measuring hearing, with a listener holding the receiver"
+          />
+        }
+      />
       <main className="mx-auto max-w-5xl px-5 py-12">
-        <div className="flex items-center gap-2 text-signal">
-          <FlaskConical className="h-5 w-5" />
-          <p className="text-sm font-medium">{t("nav.validation")}</p>
-        </div>
-        <h1 className="mt-2 text-4xl font-semibold">{t("valid.title")}</h1>
-        <p className="mt-4 max-w-2xl text-muted-foreground">{t("valid.lead")}</p>
 
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-caution/40 bg-caution/5 p-5">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-caution" />

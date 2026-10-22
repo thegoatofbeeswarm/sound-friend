@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Activity, Compass, Ear, Loader2, MessagesSquare, Music, Target } from "lucide-react";
 import { ScoreTrend } from "@/components/charts/lazy";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { ScoreRing } from "@/components/ScoreRing";
 import { Button } from "@/components/ui/button";
@@ -240,9 +241,8 @@ function ProfilePage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-5 py-16">
-        <h1 className="text-4xl font-semibold">{t("profile.title")}</h1>
-        <p className="mt-4 max-w-2xl text-muted-foreground">{t("profile.lead")}</p>
+      <PageHero variant="band" title={t("profile.title")} lede={t("profile.lead")} />
+      <main className="mx-auto max-w-6xl px-5 py-12">
 
         {!user && !loading ? (
           <div className="mt-10 rounded-2xl border border-border/70 bg-card/70 p-6">

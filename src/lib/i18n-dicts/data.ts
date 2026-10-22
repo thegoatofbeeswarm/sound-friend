@@ -3,7 +3,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "data.badge": "Your hearing data",
     "data.title": "Compare screenings, transparently.",
     "data.lead":
-      "Bring a past clinic or hearing-center result into the same view as your Audiomaxxer data. The comparison is a measurement check, not a diagnosis.",
+      "Bring a past clinic or hearing-center result into the same view as your Audiomaxxer data. The comparison checks the measurements; it can't diagnose anything.",
     "data.signInPrompt": "Sign in to upload reports and inspect your saved hearing data.",
     "data.signIn": "Sign in",
     "data.howCalcTitle": "How the comparison is calculated",
@@ -11,10 +11,10 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "Only frequency-and-ear pairs visible in both datasets are compared, and they are compared by shape rather than by absolute level, because the two tests are not on the same scale.",
     "data.eq1.title": "Scale offset between the two tests",
     "data.eq1.detail":
-      "The median gap between the two sets of numbers. Because a clinic reports calibrated dB HL and Audiomaxxer reports a relative estimated level, this gap is mostly a difference of scale, not a measurement error. We remove it before comparing anything.",
+      "The median gap between the two sets of numbers. A clinic reports calibrated dB HL and Audiomaxxer reports a relative estimate, so most of this gap is a difference of scale. We remove it before comparing anything.",
     "data.eq2.title": "Shape difference at one matched point",
     "data.eq2.detail":
-      "What is left at each ear-and-frequency point once the scale offset is removed: how differently the two curves rise and fall. Small values mean both tests describe the same hearing pattern. We deliberately do not publish an average error against clinical dB HL, because that needs a measured calibration between the scales that we do not have yet.",
+      "What is left at each ear-and-frequency point once the scale offset is removed: how differently the two curves rise and fall. Small values mean both tests describe the same hearing pattern. We don't publish an average error against clinical dB HL, because that needs a measured calibration between the scales and we don't have one yet.",
     "data.table.title": "Matched threshold data",
     "data.table.subtitle": "{source} vs latest Audiomaxxer screening",
     "data.table.uploadPrompt": "Upload and analyze a report to populate this table.",
@@ -27,13 +27,13 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "data.table.empty":
       "There are no matched ear-frequency points yet. Audiomaxxer currently tests {freqs} Hz; a clinic report needs a readable value at the same frequency for the calculation to include it.",
     "data.table.footnote":
-      "These values compare units as printed: clinic results are usually clinical dB HL, while Audiomaxxer levels are relative/estimated and device-dependent. Treat a large difference as a reason to review the source reports with an audiologist, not as a diagnosis.",
+      "These values compare units as printed. Clinic results are usually clinical dB HL, while Audiomaxxer levels are relative estimates that depend on your device. If the difference is large, go over the source reports with an audiologist.",
 
     "data.report.signIn":
       "Sign in to upload a clinic or hearing-center report and compare it with your Audiomaxxer screening.",
     "data.report.addTitle": "Add a past hearing report",
     "data.report.addDesc":
-      "Upload an audiogram or hearing screening from a clinic or a hearing center. An integrated AI system will then read the report and extract visible air-conduction thresholds. Then, it will compare the data with your available Audiomaxxer screening data.",
+      "Upload an audiogram or hearing screening from a clinic or hearing center. An AI model reads the report, pulls out the air-conduction thresholds it can see, and compares them with your Audiomaxxer screenings.",
     "data.report.fileLabel": "Report file",
     "data.report.helperDefault": "PDF, PNG or JPG · up to 15 MB",
     "data.report.sourceLabel": "Source (optional)",
@@ -41,7 +41,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "data.report.uploadBtn": "Upload and analyze",
     "data.report.analyzing": "Analyzing…",
     "data.report.note":
-      "Keep the original report for clinical use. AI extraction is a convenience layer and can miss symbols or values in a low-quality scan.",
+      "Keep the original report for clinical use. The AI reading is a shortcut and can miss symbols or values in a blurry scan.",
     "data.report.importedTitle": "Imported reports",
     "data.report.importedDesc": "Your private reports and extracted comparison notes.",
     "data.report.saved": "{n} saved",
@@ -75,7 +75,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "device.calibratedAria": "Supported model",
     "device.calibratedNote": "Estimated correction profile applied.",
     "device.calibratedDetail":
-      "Tones use an estimated correction for the typical response of the {device}. This is not a calibration, but levels are closer than a generic guess.",
+      "Tones use an estimated correction for the typical response of the {device}. That isn't a true calibration, but it gets the levels closer than a generic guess.",
     "device.uncalibratedNote": "No model profile for these headphones.",
     "device.uncalibratedDetail":
       "We only assume a generic {hint} response. Results still track relative changes over time, but levels may be off by several dB.",
@@ -91,17 +91,17 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
       "In each ear, adaptive tones narrow in on the quietest level you can hear at each frequency.",
     "how.step.analyze.title": "Analyze",
     "how.step.analyze.body":
-      "Your responses build an individual hearing profile. It emphasizes where you are strong and where sensitivity drops.",
+      "Your responses build a hearing profile that shows where you are strong and where sensitivity drops.",
     "how.step.train.title": "Train",
     "how.step.train.body":
-      "Exercises concentrate on the sounds your profile says you have the most difficulty distinguishing.",
+      "Exercises focus on the sounds your profile says you find hardest to tell apart.",
     "how.step.adapt.title": "Adapt",
     "how.step.adapt.body": "How you perform in a session changes the difficulty and content of the next one.",
     "how.step.track.title": "Track",
     "how.step.track.body":
       "Repeat screenings show how your profile moves over weeks and months. ",
     "how.feedbackPre":
-      "Step 5 feeds back into step 3: an updated profile re-targets your training instead of repeating the same exercises. That feedback arrow is what we mean by {loop}.",
+      "Step 5 feeds back into step 3: an updated profile re-targets your training instead of repeating the same exercises. That is what we mean by {loop}.",
     "how.closedLoop": "closed loop",
 
     "example.title": "Your Hearing Profile",
@@ -111,7 +111,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "example.finding2": "Slightly reduced sensitivity at 4–8 kHz",
     "example.finding3": "Recommended training: speech-in-noise + high-frequency recognition",
     "example.cta": "See what your hearing looks like",
-    "example.footnote": "This is illustrative data. You can try your own screening. It only takes about four minutes.",
+    "example.footnote": "This is sample data. Your own screening takes about four minutes.",
   },
   zh: {
     "data.badge": "你的听力数据",

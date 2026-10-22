@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, ExternalLink, FlaskConical } from "lucide-react";
+import { ExternalLink, FlaskConical, ArrowRight } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { scienceLinks } from "@/lib/science-links";
 import { useI18n } from "@/lib/i18n";
@@ -93,37 +94,53 @@ function SciencePage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
-      <section className="hero-surface border-b border-border/60">
-        <div className="mx-auto max-w-4xl px-5 py-16">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs text-muted-foreground">
-            <BookOpen className="h-3.5 w-3.5 text-signal" /> {t("sci.badge")}
-          </span>
-          <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">{t("sci.h1")}</h1>
-          <p className="mt-5 max-w-2xl text-base text-muted-foreground">{t("sci.lead")}</p>
-        </div>
-      </section>
+      <PageHero
+        title={t("sci.h1")}
+        lede={t("sci.lead")}
+        figure={
+          <img
+            className="page-hero-plate"
+            data-fit="contain"
+            src="/img/tonotopy-chittka-brockmann.jpg"
+            width={1303}
+            height={1600}
+            alt="Diagram of the ear and brain: each place along the cochlea answers one pitch, and the auditory cortex keeps the same order"
+          />
+        }
+      />
 
-      <main className="mx-auto max-w-4xl space-y-8 px-5 py-14">
+      <main className="mx-auto max-w-6xl px-5 py-16">
         {topicGroups.map((group) => (
-          <section key={group.labelKey}>
-            <h2 className="text-xl font-semibold">{t(group.labelKey)}</h2>
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <section key={group.labelKey} className="grid gap-6 py-10 md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] md:gap-12">
+            <h2 className="text-3xl font-semibold tracking-[-0.04em] md:sticky md:top-24 md:self-start">
+              {t(group.labelKey)}
+            </h2>
+            <ul className="grid gap-1">
               {group.links.map((topic) => (
-                <Link
-                  key={topic.to}
-                  to={topic.to}
-                  className="rounded-2xl border border-border/70 bg-card/70 p-5 shadow-card transition-colors hover:border-signal/60"
-                >
-                  <h3 className="text-base font-semibold">{t(`sci.link.${topic.key}.label`)}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {t(`sci.link.${topic.key}.blurb`)}
-                  </p>
-                  <span className="mt-4 inline-flex text-xs font-medium text-signal">{t("sci.read")}</span>
-                </Link>
+                <li key={topic.to}>
+                  <Link
+                    to={topic.to}
+                    className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-6 rounded-2xl px-5 py-5 transition-colors hover:bg-card focus-visible:bg-card"
+                  >
+                    <span>
+                      <span className="block text-xl font-semibold tracking-[-0.02em]">
+                        {t(`sci.link.${topic.key}.label`)}
+                      </span>
+                      <span className="mt-1.5 block leading-relaxed text-muted-foreground">
+                        {t(`sci.link.${topic.key}.blurb`)}
+                      </span>
+                    </span>
+                    <ArrowRight
+                      aria-hidden
+                      className="h-5 w-5 text-signal transition-transform duration-200 group-hover:translate-x-1"
+                    />
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         ))}
+        <div className="mx-auto max-w-4xl space-y-8 pt-8">
         <p className="text-xs text-muted-foreground">{t("sci.note")}</p>
 
         <section className="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-card">
@@ -153,6 +170,7 @@ function SciencePage() {
             ))}
           </ul>
         </section>
+        </div>
       </main>
     </div>
   );

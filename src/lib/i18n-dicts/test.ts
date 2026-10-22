@@ -7,7 +7,7 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.introTitle": "Adaptive hearing screening",
     "test.disclaimer": "This is a self-check, not a diagnosis. Results are estimates from your browser audio and your answers.",
     "test.introBody":
-      "After every answer, the model updates its estimate and probes only where it is still unsure, so as soon as the picture is clear, the test ends.",
+      "After every answer the model updates its estimate and tests only where it's still unsure. The test ends as soon as the picture is clear.",
     "test.step1": "Wear headphones and set your device volume to about 50%.",
     "test.step2": "Sit somewhere quiet. Scan the room noise below first.",
     "test.step3": "Answer honestly for the most reliable and beneficial data.",

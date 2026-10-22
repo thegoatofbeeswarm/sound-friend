@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { TrainingProgress } from "@/components/charts/lazy";
 import type { ProgressPoint } from "@/components/TrainingProgress";
@@ -362,17 +363,17 @@ function TrainPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      {phase === "intro" ? (
+        <PageHero
+          title={t("train.heroTitle")}
+          lede={t("train.heroBody")}
+          variant="band"
+          figure={user ? <LevelSummary level={level} streak={dayStreak(allSessions)} /> : undefined}
+        />
+      ) : null}
       <main className="mx-auto max-w-6xl px-5 py-10">
         {phase === "intro" ? (
           <>
-            <section className="flex flex-wrap items-end justify-between gap-6">
-              <div className="max-w-2xl">
-                <p className="text-sm font-medium text-signal">{t("train.tagline")}</p>
-                <h1 className="mt-2 text-4xl font-semibold">{t("train.heroTitle")}</h1>
-                <p className="mt-4 text-muted-foreground">{t("train.heroBody")}</p>
-              </div>
-              {user ? <LevelSummary level={level} streak={dayStreak(allSessions)} /> : null}
-            </section>
 
             {user ? (
               <PlanCard

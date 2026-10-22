@@ -733,19 +733,19 @@ const CSS = `
   font-size:11.5px; color:rgba(143,160,172,.85); font-variant-numeric:tabular-nums}
 .ap-readout{margin:0; font-size:.85rem; color:var(--ap-muted); white-space:nowrap}
 .ap-readout em{font-style:normal; color:var(--ap-bone); font-size:1.35rem;
-  font-family:var(--am-display, ui-serif, Georgia, serif); font-variant-numeric:tabular-nums}
+  font-family:var(--font-display); font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
 
 .ap-panel{border-left:1px solid rgba(143,160,172,.18); background:rgba(6,11,18,.55);
   padding:clamp(20px,2.4vw,32px); max-height:78vh; overflow-y:auto}
 .ap-card{animation:ap-in .24s ease both}
 @keyframes ap-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
 .ap-latin{margin:0 0 .35rem; font-size:.8rem; color:var(--ap-gold); font-style:italic}
-.ap-card h2{font-family:var(--am-display, ui-serif, Georgia, serif); font-weight:400;
+.ap-card h2{font-family:var(--font-display); font-weight:600; letter-spacing:-.03em;
   font-size:1.65rem; line-height:1.12; margin:0 0 .5rem}
 .ap-card h3{font-size:.8rem; font-weight:600; color:var(--ap-muted); margin:1.35rem 0 .35rem}
 .ap-stamp{margin:.6rem 0 0; font-size:.82rem; color:var(--ap-muted)}
 .ap-stamp em{font-style:normal; color:var(--ap-gold); font-size:1.6rem;
-  font-family:var(--am-display, ui-serif, Georgia, serif)}
+  font-family:var(--font-display); font-weight:600; letter-spacing:-.02em}
 .ap-body{margin:0; font-size:.92rem; line-height:1.62; color:#C3CCD4; max-width:52ch}
 .ap-mind{color:#CFE6DD}
 .ap-prof{color:var(--ap-jade)}

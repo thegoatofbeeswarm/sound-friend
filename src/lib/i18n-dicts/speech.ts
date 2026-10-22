@@ -3,7 +3,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "nav.speech": "Speech test",
     "sin.title": "Speech in noise",
     "sin.lead":
-      "Three spoken digits are put against background chatter. The speech stays put and the noise closes in, so what we measure is the signal-to-noise ratio where you still get all three right.",
+      "Three spoken digits play against background chatter. The speech stays at one level while the noise rises, and we measure the signal-to-noise ratio at which you still get all three right.",
     "sin.why":
       "Because this is a ratio, it barely depends on how loud your headphones run, so it is comparable between runs and between devices.",
     "sin.step1": "Wear headphones and set your device volume to a comfortable level.",
@@ -37,7 +37,7 @@ export const speechPage: { en: Record<string, string>; zh: Record<string, string
     "sin.interp.watch":
       "Noise costs you more than average. Speech-in-noise training is the exercise most likely to help.",
     "sin.interp.difficult":
-      "Understanding speech in noise looks genuinely hard for you. Worth training, and worth mentioning at a hearing check.",
+      "Understanding speech in noise looks hard for you. It's worth training, and worth mentioning at a hearing check.",
     "sin.spread": "Estimate spread: {spread} dB across {reversals} turning points",
     "sin.again": "Test again",
     "sin.train": "Train speech in noise",

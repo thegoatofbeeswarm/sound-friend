@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 
 export type ArticleSection = {
@@ -28,15 +28,7 @@ export function ArticlePage({
     <div className="min-h-screen">
       <SiteNav />
 
-      <section className="hero-surface border-b border-border/60">
-        <div className="mx-auto max-w-4xl px-5 py-16">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs text-muted-foreground">
-            <BookOpen className="h-3.5 w-3.5 text-signal" /> {kicker}
-          </span>
-          <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">{title}</h1>
-          <p className="mt-5 max-w-2xl text-base text-muted-foreground">{intro}</p>
-        </div>
-      </section>
+      <PageHero variant="article" title={title} lede={intro} />
 
       <div className="mx-auto max-w-4xl space-y-5 px-5 py-14">
         {sections.map((s) => (

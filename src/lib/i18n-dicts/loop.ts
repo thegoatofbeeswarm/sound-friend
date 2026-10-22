@@ -2,7 +2,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
   en: {
     /* real-world modes */
     "train.mode.restaurant.label": "Restaurant table",
-    "train.mode.restaurant.blurb": "Catch an order across a busy table. Background noise includes voices and chatter, making it hard.",
+    "train.mode.restaurant.blurb": "Catch an order across a busy table, with voices and chatter in the background.",
     "train.mode.restaurant.skill": "Speech in a crowded room",
     "train.mode.street.label": "Street corner",
     "train.mode.street.blurb": "Follow directions over real traffic before the light changes.",
@@ -15,7 +15,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     /* transfer testing */
     "transfer.title": "Transfer check",
     "transfer.body":
-      "A short check on sentences and sounds your training never uses, at a fixed difficulty. If your score holds up here, the practice is really carrying over.",
+      "A short check at a fixed difficulty, using sentences and sounds your training never uses. If your score holds up here, the practice is carrying over.",
     "transfer.run": "Run transfer check",
     "transfer.needMore": "Finish two sessions of a track to unlock its transfer check.",
     "transfer.trained": "Trained",
@@ -29,7 +29,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "transfer.badge": "Transfer check · unseen material",
     "transfer.doneTitle": "Transfer check complete",
     "transfer.doneBody":
-      "This score comes from material you have never trained on, so it reflects real-world listening rather than practice.",
+      "This score comes from material you never trained on, so it reflects everyday listening.",
     "transfer.fixedLevel": "Fixed difficulty {level}/10",
 
     /* longitudinal listening score */
@@ -45,7 +45,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "nav.validation": "Clinic vs app",
     "valid.title": "Clinic vs Audiomaxxer",
     "valid.lead":
-      "This is how we match your uploaded clinic report and the Audiomaxxer screenings.",
+      "How we line up your uploaded clinic report with your Audiomaxxer screenings.",
     "valid.needClinic": "Upload a clinic hearing report to start comparing.",
     "valid.needTest": "Take a screening so there is something to compare your report against.",
     "valid.upload": "Upload a clinic report",
@@ -70,7 +70,7 @@ export const loopPack: { en: Record<string, string>; zh: Record<string, string>;
     "valid.right": "Right",
     "valid.source": "Compared with: {name}",
     "valid.disclaimer":
-      "A browser screening is an estimate, not a clinical measurement. Differences of 10-15 dB are normal, especially at the highest pitches.",
+      "A browser screening is an estimate, not a clinical measurement. Differences of 10 to 15 dB are normal, especially at the highest pitches.",
     "valid.open": "Compare with your clinic report",
   },
   zh: {

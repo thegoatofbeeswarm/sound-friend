@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Activity, ArrowRight, Compass, Ear, MessagesSquare, Music } from "lucide-react";
 import { Audiogram, ScoreTrend } from "@/components/charts/lazy";
 import { ScoreRing } from "@/components/ScoreRing";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -99,14 +100,12 @@ function SampleProfilePage() {
   return (
     <div className="min-h-screen bg-background">
       <SiteNav />
+      <PageHero
+        title="Sample Listening Profile"
+        lede="The profile tracks five listening skills, updates as you test and train, and points at the one worth working on next."
+        variant="band"
+      />
       <main className="mx-auto max-w-6xl px-5 py-12">
-        <span className="rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground">
-          {t("example.badge")}
-        </span>
-        <h1 className="mt-4 font-display text-4xl font-semibold">Sample Listening Profile</h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          The profile tracks five listening skills, updates as you test and train, and points at the one worth working on next.
-        </p>
 
         <section className="mt-10 grid gap-6 lg:grid-cols-[auto_1fr] lg:items-center">
           <div className="flex justify-center">

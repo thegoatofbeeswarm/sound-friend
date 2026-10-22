@@ -11,7 +11,7 @@ export const charts: {
     "chart.hz": "{v} Hz",
     "chart.dbHl": "{v} dB",
     "chart.audiogramHelp":
-      "Read it like an audiogram: quieter sounds sit at the top, so a line high on the chart means you detected softer tones. These are estimated, device-dependent levels rather than clinical dB HL, so use them to compare your own screenings over time.",
+      "Read it like an audiogram: quieter sounds sit at the top, so a line high on the chart means you heard softer tones. The levels are estimates that depend on your device, not clinical dB HL, so use them to compare your own screenings over time.",
     "chart.accuracy": "Accuracy %",
     "chart.difficulty": "Difficulty reached",
 
@@ -40,7 +40,7 @@ export const charts: {
     "quality.issue.noTrials": "No trials recorded.",
     "quality.issue.lowConfidence": "Average estimate confidence was only {pct}%.",
     "quality.issue.unsettled":
-      "At least one frequency never settled — answers there may have been inconsistent.",
+      "At least one frequency never settled, so your answers there may have been inconsistent.",
     "quality.strength.veryQuiet": "Very quiet room (~{db} dB).",
     "quality.strength.quiet": "Reasonably quiet room (~{db} dB).",
     "quality.strength.calibrated": "{device} has an estimated correction profile applied.",
@@ -48,7 +48,7 @@ export const charts: {
     "quality.strength.confidence": "Average estimate confidence {pct}%.",
     "quality.issue.catchFail": "Reported hearing a tone on {failed} of {total} silent catch trials.",
     "quality.issue.inconsistent": "Repeated tones got the same answer only {pct}% of the time.",
-    "test.stepCatch": "Some trials are silent on purpose. If you don't hear anything, then don't pick any options. Be honest.",
+    "test.stepCatch": "Some trials are silent on purpose. If you hear nothing, don't pick an option.",
     "quality.strength.catchPass": "Passed all {n} silent catch trials.",
     "quality.strength.consistent": "Answers agreed on {pct}% of repeated tones.",
   },

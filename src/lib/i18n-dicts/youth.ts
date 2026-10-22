@@ -6,13 +6,13 @@ export const youthPack: {
   en: {
     "youth.title": "Built for the headphone generation",
     "youth.lead":
-      "Teenagers and young adults spend hours a day with noise drivers inside their ears, and the damage that starts there is silent for years. Audiomaxxer is aimed at this age group.",
+      "Teenagers and young adults spend hours a day with speakers inside their ears, and the damage that starts there stays silent for years. Audiomaxxer is built for this age group.",
     "youth.c1.title": "The damage starts at 4-6 kHz",
     "youth.c1.body":
       "Noise exposure shows up first in high pitches most people never notice missing. The screening spends its trials where early change actually appears.",
     "youth.c2.title": "Normal test, hard classroom",
     "youth.c2.body":
-      "Young people with a clean audiogram can still struggle to follow speech in a noisy cafeteria or lecture hall. Speech in noise is measured separately for exactly this reason.",
+      "Young people with a clean audiogram can still struggle to follow speech in a noisy cafeteria or lecture hall. Speech in noise is measured separately for this reason.",
     "youth.c3.title": "Habits you can still change",
     "youth.c3.body":
       "At 16 the exposure that matters most has not happened yet. You have time to change your habits.",

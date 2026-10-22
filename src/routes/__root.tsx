@@ -15,6 +15,7 @@ import { ThemeProvider, themeBootstrapScript } from "@/lib/theme";
 import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { RouteProgress } from "@/components/RouteProgress";
+import { SiteFooter } from "@/components/SiteFooter";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { initNativeShell } from "@/lib/native";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -183,6 +184,7 @@ function RootComponent() {
             <div key={pathname} className="page-enter">
               <Outlet />
             </div>
+            <SiteFooter />
             <DeferredCoachRail />
             <Toaster position="top-center" />
           </AuthProvider>

@@ -47,7 +47,7 @@ function CoachIndex() {
         {user ? <CoachThreads userId={user.id} /> : null}
         <main className="flex-1 px-5 py-12">
           <div className="mx-auto max-w-xl">
-            <h1 className="text-3xl font-semibold">Your hearing coach</h1>
+            <h1 className="text-4xl font-semibold tracking-[-0.045em]">Your hearing coach</h1>
             <p className="mt-3 text-muted-foreground">
               Ask anything about your screenings, audiogram, training curve, device choice or
               overuse risk. The coach answers from your own saved data.

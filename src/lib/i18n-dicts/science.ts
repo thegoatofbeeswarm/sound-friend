@@ -14,29 +14,29 @@ export const sciencePack: {
       "In each ear, adaptive tones narrow in on the quietest level you can hear at each frequency.",
     "how.s2.title": "Analyze",
     "how.s2.body":
-      "Your responses build an individual hearing profile. It emphasizes where you are strong and where sensitivity drops.",
+      "Your responses build a hearing profile that shows where you are strong and where sensitivity drops.",
     "how.s3.title": "Train",
     "how.s3.body":
-      "Exercises concentrate on the sounds your profile says you have the most difficulty distinguishing.",
+      "Exercises focus on the sounds your profile says you find hardest to tell apart.",
     "how.s4.title": "Adapt",
     "how.s4.body": "How you perform in a session changes the difficulty and content of the next one.",
     "how.s5.title": "Track",
     "how.s5.body":
       "Repeat screenings show how your profile moves over weeks and months. ",
     "how.loop":
-      "Step 5 feeds back into step 3: an updated profile retargets your training instead of repeating the same exercises. That feedback arrow is what we mean by a closed loop.",
+      "Step 5 feeds back into step 3: an updated profile retargets your training instead of repeating the same exercises. That is what we mean by a closed loop.",
 
     "sci.badge": "Methods & evidence",
     "sci.h1": "The science behind Audiomaxxer",
     "sci.lead":
-      "What we measure, why the methods are chosen, and where the evidence comes from. Learn what this app cannot tell you.",
+      "What we measure, why we chose these methods, where the evidence comes from, and what this app can't tell you.",
     "sci.group.test": "Understand the test",
     "sci.group.method": "Understand the method",
     "sci.group.protect": "Protect your hearing",
     "sci.read": "Read the guide →",
     "sci.position.title": "Our position on evidence",
     "sci.position.p1":
-      "Audiomaxxer is a hearing screening and listening-training tool, not a diagnostic device. Adaptive and task-specific training may improve learning efficiency and transfer, although the magnitude of benefit varies across studies and populations. Training improves listening performance; it does not repair damaged cochlear hair cells.",
+      "Audiomaxxer is a hearing screening and listening-training tool, not a diagnostic device. Adaptive, task-specific training may help people learn faster and carry the gains into daily listening, though the size of the benefit varies between studies and groups. Training can improve listening performance. It can't repair damaged hair cells in the cochlea.",
     "sci.position.p2":
       "Consumer headphones, browser volume, room noise and behaviour limit the precision of an online test. Our results are best used to follow your own patterns over time, not as a substitute for a clinical assessment.",
     "sci.references": "References",

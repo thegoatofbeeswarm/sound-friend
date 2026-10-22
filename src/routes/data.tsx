@@ -1,9 +1,10 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Calculator, Database, Loader2 } from "lucide-react";
+import { ArrowRight, Calculator, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClinicalReports } from "@/components/ClinicalReports";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,14 +117,8 @@ function DataPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      <PageHero variant="band" title={t("data.title")} lede={t("data.lead")} />
       <main className="mx-auto max-w-6xl px-5 py-12">
-        <div className="max-w-3xl">
-          <p className="flex items-center gap-2 text-sm font-medium text-signal">
-            <Database className="h-4 w-4" /> {t("data.badge")}
-          </p>
-          <h1 className="mt-3 text-4xl font-semibold md:text-5xl">{t("data.title")}</h1>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">{t("data.lead")}</p>
-        </div>
 
         {loading ? (
           <div className="mt-12 flex justify-center">

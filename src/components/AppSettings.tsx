@@ -21,7 +21,7 @@ export function AppSettings() {
             variant="outline"
             aria-label={t("nav.language")}
             title={t("nav.language")}
-            className="icon-bubble h-9 rounded-full bg-card/60 px-3 text-xs text-muted-foreground hover:text-signal"
+            className="icon-bubble h-9 rounded-full bg-card/60 px-3 text-[13px] text-muted-foreground hover:text-signal"
           >
             <Languages />
             {current.short}

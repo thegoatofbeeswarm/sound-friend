@@ -32,7 +32,7 @@ function Page() {
         {
           title: "What a threshold actually is",
           body: [
-            "Detection is not a hard cutoff. As a tone gets quieter, the probability that you notice it falls smoothly rather than dropping from certain to impossible. A threshold is a point on that curve — conventionally the level where detection becomes reliable — estimated from the pattern of your responses rather than read off a single trial.",
+            "Detection is not a hard cutoff. As a tone gets quieter, the probability that you notice it falls smoothly rather than dropping from certain to impossible. A threshold is a point on that curve, conventionally the level where detection becomes reliable, estimated from the pattern of your responses rather than read off a single trial.",
             "That is why a screening presents several tones near the edge of audibility instead of asking you once. It is also why a single missed press does not move a well-estimated threshold much.",
           ],
         },
@@ -45,14 +45,14 @@ function Page() {
         {
           title: "What the confidence value means",
           body: [
-            "The confidence percentage next to a threshold is not a statement about your headphones — it describes how precisely we pinned down that number from your responses. Near 100% the remaining uncertainty is small, around 3 dB. As it falls towards 0% the uncertainty widens, up to roughly 23 dB. A low-confidence threshold is a rough indication, not a measurement.",
+            "The confidence percentage next to a threshold says nothing about your headphones. It describes how precisely we pinned down that number from your responses. Near 100% the remaining uncertainty is small, around 3 dB. As it falls towards 0% the uncertainty widens, up to roughly 23 dB. A low-confidence threshold is a rough indication, not a measurement.",
             "Confidence rises with more trials on that track and falls when your responses near the threshold are inconsistent.",
           ],
         },
         {
           title: "Units: relative and estimated, not clinical dB HL",
           body: [
-            "The levels we report are estimates on a scale similar to the ones used in clinics, but they are not the same thing. The actual sound pressure reaching your eardrum depends on your headphones, your operating-system and browser volume, and your browser's audio processing — none of which the app can measure.",
+            "The levels we report are estimates on a scale similar to the ones used in clinics, but they are not the same thing. The actual sound pressure reaching your eardrum depends on your headphones, your operating-system and browser volume, and your browser's audio processing, none of which the app can measure.",
             "Room noise readings are likewise estimates from a phone or laptop microphone, not calibrated sound-level measurements. Use our numbers to compare against your own previous tests on the same device with the same volume settings, rather than as absolute dB SPL or clinical dB HL values.",
           ],
         },
@@ -62,7 +62,7 @@ function Page() {
             "Test in a quiet room, with the microphone check reporting a low ambient level.",
             "Use the same headphones and the same system volume every time.",
             "Choose a calibrated headphone model where possible so a correction is applied.",
-            "Complete the whole screening rather than stopping early — fewer trials means wider uncertainty.",
+            "Complete the whole screening. Fewer trials means wider uncertainty.",
             "Re-test when rested; fatigue and inattention widen the spread of responses.",
           ],
         },

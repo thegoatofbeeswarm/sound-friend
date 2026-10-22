@@ -12,6 +12,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { Audiogram } from "@/components/charts/lazy";
 import { ScreeningQuality } from "@/components/ScreeningQuality";
@@ -163,21 +164,14 @@ function HistoryPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      <PageHero variant="band" title={t("history.title")} lede={t("history.lead")}>
+        {user ? (
+          <Button asChild size="lg">
+            <Link to="/test">{t("history.runScreening")}</Link>
+          </Button>
+        ) : null}
+      </PageHero>
       <main className="mx-auto max-w-6xl px-5 py-12">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium text-signal">{t("history.tagline")}</p>
-            <h1 className="mt-2 text-4xl font-semibold">{t("history.title")}</h1>
-            <p className="mt-3 max-w-2xl text-muted-foreground">
-              {t("history.lead")}
-            </p>
-          </div>
-          {user ? (
-            <Button asChild>
-              <Link to="/test">{t("history.runScreening")}</Link>
-            </Button>
-          ) : null}
-        </div>
 
         {!user ? (
           <div className="mt-10 rounded-2xl border border-border/70 bg-card/60 p-8">

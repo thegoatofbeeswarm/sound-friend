@@ -15,7 +15,7 @@ export const platformPack: {
       "A tone test shows you how quiet a sound you can detect. These five measures describe how you listen:",
     "five.dim.sensitivity.body": "The softest tone you can detect at each pitch. ",
     "five.dim.speech.body":
-      "How much background noise you can tolerate and still understand spoken digits/sentences.",
+      "How much background noise you can take and still understand spoken digits or sentences.",
     "five.dim.discrimination.body":
       "Telling apart pitches and fine spectral detail that sit close together.",
     "five.dim.attention.body":
@@ -26,7 +26,7 @@ export const platformPack: {
     /* cohort validation */
     "cohort.title": "Validation data",
     "cohort.lead":
-      "Pooled, anonymous numbers from everyone using Audiomaxxer. No names, no accounts — just counts and repeatability. These numbers are meant to be checked, not trusted.",
+      "Pooled, anonymous numbers from everyone using Audiomaxxer: counts and repeatability, with no names or accounts. Check them rather than taking them on trust.",
     "cohort.participants": "Participants",
     "cohort.screenings": "Screenings",
     "cohort.repeat": "Repeat screenings",
@@ -49,7 +49,7 @@ export const platformPack: {
     "cohort.none": "Not enough data yet",
     "cohort.unknown": "Unspecified device",
     "cohort.note":
-      "Repeatability is not accuracy. It shows how stable a screening is when repeated, which is a precondition for accuracy, not a substitute for a calibrated clinical measurement.",
+      "Repeatability shows how stable a screening is when you repeat it. A test has to be repeatable before it can be accurate, but repeatability alone doesn't make it accurate or replace a calibrated clinical measurement.",
 
     /* pattern comparison (replaces absolute error against dB HL) */
     "valid.scaleWarn": "Different scales",
@@ -59,7 +59,7 @@ export const platformPack: {
     "valid.patternMatch": "Pattern match",
     "valid.patternHint": "How closely the two curves rise and fall together.",
     "valid.offset": "Scale offset",
-    "valid.offsetHint": "Constant gap between the scales. Removed before comparing — it is not an error.",
+    "valid.offsetHint": "Constant gap between the scales. We remove it before comparing because it isn't an error.",
     "valid.shapeSpread": "Shape difference",
     "valid.shapeHint": "Average mismatch after the offset is removed.",
     "valid.withinShape": "Points within 10 dB of the shared shape",

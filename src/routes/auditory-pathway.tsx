@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Brain, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import AuditoryPathway from "@/components/AuditoryPathway";
 import { useI18n } from "@/lib/i18n";
@@ -73,15 +74,7 @@ function AuditoryPathwayPage() {
     <div className="min-h-screen">
       <SiteNav />
 
-      <section className="hero-surface border-b border-border/60">
-        <div className="mx-auto max-w-4xl px-5 py-16">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs text-muted-foreground">
-            <Brain className="h-3.5 w-3.5 text-signal" /> {t("path.badge")}
-          </span>
-          <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">{t("path.h1")}</h1>
-          <p className="mt-5 max-w-2xl text-base text-muted-foreground">{t("path.lead")}</p>
-        </div>
-      </section>
+      <PageHero title={t("path.h1")} lede={t("path.lead")} />
 
       <main className="mx-auto max-w-6xl space-y-8 px-5 py-14">
         <AuditoryPathway />

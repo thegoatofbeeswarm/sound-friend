@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Delete, Headphones, Loader2, MessagesSquare, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { PageHero } from "@/components/PageHero";
 import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -152,15 +153,11 @@ function SpeechPage() {
   return (
     <div className="min-h-screen">
       <SiteNav />
+      {phase === "intro" ? <PageHero variant="band" title={t("sin.title")} lede={t("sin.lead")} /> : null}
       <main className="mx-auto max-w-3xl px-5 py-12">
         {phase === "intro" ? (
           <section>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs text-muted-foreground">
-              <MessagesSquare className="h-3.5 w-3.5 text-signal" /> {t("sin.title")}
-            </span>
-            <h1 className="mt-5 text-3xl font-semibold">{t("sin.title")}</h1>
-            <p className="mt-4 text-muted-foreground">{t("sin.lead")}</p>
-            <p className="mt-3 text-sm text-muted-foreground">{t("sin.why")}</p>
+            <p className="text-muted-foreground">{t("sin.why")}</p>
 
             <ul className="mt-7 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">

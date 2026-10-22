@@ -25,7 +25,7 @@ export const reportPage: { en: Record<string, string>; zh: Record<string, string
     "report.screeningsThisWeek": "{n} screening{plural} this week. ",
     "report.noScreeningThisWeek": "No screening this week. ",
     "report.needTwoScreenings": "Two screenings are needed before Audiomaxxer can describe a change.",
-    "report.withinVariation": "Average threshold moved {sign}{n} dB — within normal test-to-test variation, so no significant change.",
+    "report.withinVariation": "Average threshold moved {sign}{n} dB. That's within normal test-to-test variation, so nothing has really changed.",
     "report.movedSince": "Average threshold moved {sign}{n} dB since the previous screening. Re-test in a quiet room to confirm before reading anything into it.",
     "report.focusNextWeek": "Your focus next week",
     "report.startTrack": "Start this track",

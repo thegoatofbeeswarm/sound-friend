@@ -1,4 +1,5 @@
 import type * as T from "three";
+import { PART_COLOR } from "./earColors";
 
 /**
  * The 3D ear behind the homepage hero.
@@ -61,17 +62,30 @@ export type EarScene = {
   pulse: (kind: "turn" | "swallow" | "strike") => void;
   /** the 4–6 kHz band, as places on the cochlea (0 = base) */
   setDangerBand: (t0: number, t1: number) => void;
+  /** move the subject right by `shift` of the stage width; `zoom` > 1 pulls the home view back */
+  setFrame: (shift: number, zoom: number) => void;
   dispose: () => void;
 };
 
+const hex = (c: string) => parseInt(c.slice(1), 16);
 const COLOR = {
-  enamel: 0xf4f1ea,
-  shade: 0xc9d3e4,
-  bone: 0xe9e2d0,
-  drum: 0xf7d9c8,
-  yellow: 0xf6b800,
-  ink: 0x121212,
-  blue: 0x15488a,
+  outer: hex(PART_COLOR.outer),
+  outerDeep: 0xf07f5c,
+  canal: hex(PART_COLOR.canal),
+  drum: hex(PART_COLOR.drum),
+  bone: hex(PART_COLOR.ossicles),
+  stiff: 0xa3abb8,
+  cochlea: hex(PART_COLOR.cochlea),
+  nerve: hex(PART_COLOR.nerve),
+  nerveSoft: 0xfcc96b,
+  vest: hex(PART_COLOR.vestibular),
+  vestDeep: 0x2f4fd8,
+  tube: hex(PART_COLOR.eustachian),
+  tubeOpen: 0xc9f2d9,
+  red: 0xe5484d,
+  redSoft: 0xf3a1a3,
+  ink: 0xffffff,
+  wave: 0x0e6e7d,
 };
 
 const MAX_WAVES = 13;
@@ -79,9 +93,10 @@ const TRAVEL_DOTS = 26;
 const NERVE_DOTS = 18;
 
 export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): Promise<EarScene> {
-  const [THREE, { OrbitControls }] = await Promise.all([
+  const [THREE, { OrbitControls }, { RoomEnvironment }] = await Promise.all([
     import("three"),
     import("three/examples/jsm/controls/OrbitControls.js"),
+    import("three/examples/jsm/environments/RoomEnvironment.js"),
   ]);
   const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 
@@ -92,8 +107,10 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMapping = THREE.NeutralToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setClearColor(0x000000, 0);
   const canvas = renderer.domElement;
   canvas.className = "am-canvas";
@@ -101,9 +118,12 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-  const HOME_TARGET = V(0.15, -0.2, 0);
+  const HOME_TARGET = V(0.15, -0.55, 0);
   const HOME_DIR = V(0.1, 0.14, 1).normalize();
   let homeDist = 12.5;
+  let frameShift = 0;
+  let frameShiftNow = 0;
+  let frameZoom = 1;
 
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
@@ -118,13 +138,38 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   // vertical swipes keep scrolling the page on phones; sideways ones turn the ear
   canvas.style.touchAction = "pan-y";
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x1b3f73, 1.5));
-  const key = new THREE.DirectionalLight(0xffffff, 2.4);
-  key.position.set(-4, 6, 7);
+  // a soft studio room for reflections, one key light for the ground shadow
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environment = envTex;
+  scene.environmentIntensity = 0.55;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe9ec, 1.5));
+  // a soft rim from behind keeps the silhouette crisp on the pale stage
+  const rim = new THREE.DirectionalLight(0xffffff, 1.1);
+  rim.position.set(2, 3, -8);
+  scene.add(rim);
+  // a soft light from the viewer's side keeps colours clean on surfaces facing us
+  const front = new THREE.DirectionalLight(0xffffff, 0.9);
+  front.position.set(1, 1, 10);
+  scene.add(front);
+  const key = new THREE.DirectionalLight(0xffffff, 1.6);
+  key.position.set(-3, 8, 5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.left = -6;
+  key.shadow.camera.right = 6;
+  key.shadow.camera.top = 6;
+  key.shadow.camera.bottom = -6;
+  key.shadow.radius = 6;
+  key.shadow.bias = -0.0005;
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xbfd4ff, 0.9);
-  fill.position.set(5, -2, 3);
-  scene.add(fill);
+
+  const groundMat = new THREE.ShadowMaterial({ color: 0x0b3a40, opacity: 0.14 });
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -2.75;
+  ground.receiveShadow = true;
+  scene.add(ground);
 
   const ear = new THREE.Group();
   scene.add(ear);
@@ -133,7 +178,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
    * parts registry and helpers
    * ---------------------------------------------------------------- */
 
-  type MatRec = { m: T.MeshStandardMaterial; opacity: number; emissive: number };
+  type MatRec = { m: T.MeshPhysicalMaterial; opacity: number; emissive: number };
   type PartRec = {
     group: T.Group;
     mats: MatRec[];
@@ -159,14 +204,17 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     id: PartId,
     color: number,
     opacity = 1,
-    extra: Partial<T.MeshStandardMaterialParameters> = {},
+    extra: Partial<T.MeshPhysicalMaterialParameters> = {},
   ) => {
-    const m = new THREE.MeshStandardMaterial({
+    // glossy, slightly soft plastic: the premium-render look
+    const m = new THREE.MeshPhysicalMaterial({
       color,
-      roughness: 0.42,
+      roughness: 0.48,
       metalness: 0,
+      clearcoat: 0.35,
+      clearcoatRoughness: 0.35,
       emissive: new THREE.Color(color),
-      emissiveIntensity: 0.06,
+      emissiveIntensity: 0,
       transparent: true,
       opacity,
       depthWrite: opacity > 0.9,
@@ -180,6 +228,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   const mesh = (id: PartId, geo: T.BufferGeometry, mat: T.Material, pick = true) => {
     const o = new THREE.Mesh(geo, mat);
     o.userData["part"] = id;
+    o.castShadow = mat !== hitMat;
     parts[id].group.add(o);
     if (pick) pickables.push(o);
     disposables.push(geo);
@@ -294,8 +343,8 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     [0.32, 0.4, 0.06], [0.5, 0.98, 0.02], [0.22, 1.5, -0.02], [-0.35, 1.64, -0.06],
     [-0.86, 1.26, -0.1], [-1.08, 0.6, -0.12], [-1.05, -0.12, -0.1], [-0.82, -0.78, -0.06], [-0.48, -1.26, -0.02],
   ];
-  const skin = material("outer", COLOR.enamel, 0.96);
-  const skinSoft = material("outer", COLOR.shade, 0.5, { side: THREE.DoubleSide });
+  const skin = material("outer", COLOR.outer);
+  const skinSoft = material("outer", COLOR.outerDeep, 1, { side: THREE.DoubleSide });
   const addPinna = (geo: T.BufferGeometry, m: T.Material) => {
     const o = mesh("outer", geo, m);
     parts.outer.group.remove(o);
@@ -328,7 +377,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   concha.rotateX(-Math.PI / 2);
   concha.scale(1, 1.18, 0.62);
   concha.translate(0.02, -0.12, -0.04);
-  addPinna(concha, material("outer", COLOR.shade, 0.55, { side: THREE.DoubleSide }));
+  addPinna(concha, material("outer", COLOR.outerDeep, 1, { side: THREE.DoubleSide }));
   const tragus = new THREE.SphereGeometry(0.14, 18, 12);
   tragus.scale(0.8, 1.25, 0.7);
   tragus.translate(0.52, -0.2, 0.08);
@@ -349,7 +398,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     V(-1.45, 0.02, -0.14),
     drumAt.clone().add(V(-0.05, 0, 0)),
   ]);
-  mesh("canal", taper(canalCurve, 60, 20, (u) => 0.22 - 0.05 * u, false), material("canal", COLOR.shade, 0.32, { side: THREE.DoubleSide }));
+  mesh("canal", taper(canalCurve, 60, 20, (u) => 0.22 - 0.05 * u, false), material("canal", COLOR.canal, 0.55, { side: THREE.DoubleSide }));
   hit("canal", taper(canalCurve, 20, 8, () => 0.3, false), V(0, 0, 0));
 
   // the earbud the canal experiment pushes in
@@ -375,7 +424,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   const drumGeo = new THREE.SphereGeometry(0.29, 40, 12, 0, Math.PI * 2, 0, 0.55);
   drumGeo.rotateZ(Math.PI / 2);
   drumGeo.translate(0.25, 0, 0);
-  const drumMesh = mesh("drum", drumGeo, material("drum", COLOR.drum, 0.95, { side: THREE.DoubleSide }));
+  const drumMesh = mesh("drum", drumGeo, material("drum", COLOR.drum, 1, { side: THREE.DoubleSide }));
   parts.drum.group.remove(drumMesh);
   drum.add(drumMesh);
   const drumHit = hit("drum", new THREE.SphereGeometry(0.34, 12, 8), V(0, 0, 0));
@@ -436,11 +485,11 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     }
   }
   const tubeR = (t: number) => 0.17 - 0.11 * t;
-  mesh("cochlea", taper(new Spiral(0, 1), 260, 16, tubeR), material("cochlea", COLOR.enamel, 0.94));
+  mesh("cochlea", taper(new Spiral(0, 1), 260, 16, tubeR), material("cochlea", COLOR.cochlea));
 
   // 4–6 kHz band, drawn as a collar over the tube; places come from React
   let dangerMesh: T.Mesh | null = null;
-  const dangerMat = material("cochlea", COLOR.yellow, 0.55);
+  const dangerMat = material("cochlea", COLOR.red, 0.55);
   const setDangerBand = (t0: number, t1: number) => {
     if (dangerMesh) parts.cochlea.group.remove(dangerMesh);
     dangerMesh = mesh("cochlea", taper(new Spiral(t0, t1), 40, 16, (u) => tubeR(t0 + (t1 - t0) * u) + 0.03, false), dangerMat, false);
@@ -448,7 +497,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   };
 
   // the scar left by the noise experiment: permanent, solid yellow
-  const scarMat = material("cochlea", COLOR.yellow, 0);
+  const scarMat = material("cochlea", COLOR.red, 0);
   let scarMesh: T.Mesh | null = null;
 
   const peak = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 14), new THREE.MeshBasicMaterial({ color: 0xffffff }));
@@ -479,14 +528,14 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   const vest = new THREE.Group();
   vest.position.set(0.42, 0.62, -0.25);
   parts.vestibular.group.add(vest);
-  const vestMat = material("vestibular", COLOR.enamel, 0.9);
+  const vestMat = material("vestibular", COLOR.vest);
   const loops: [T.Vector3, T.Euler][] = [
     [V(-0.1, 0.32, 0), new THREE.Euler(0, Math.PI / 2, 0)],
     [V(0.3, 0.2, -0.15), new THREE.Euler(0, 0, 0)],
     [V(0.18, -0.06, 0.18), new THREE.Euler(Math.PI / 2, 0, 0)],
   ];
   const fluid: T.Mesh[] = [];
-  const fluidMat = material("vestibular", COLOR.yellow, 0);
+  const fluidMat = material("vestibular", COLOR.vestDeep, 0);
   for (const [at, rot] of loops) {
     const loop = new THREE.Group();
     loop.position.copy(at);
@@ -512,14 +561,14 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
 
   part("nerve", V(0.5, 0.2, 1));
   const nerveCurve = curve([[C.x, C.y, C.z + 0.25], [1.5, -0.12, -0.3], [2.4, 0.04, -0.55], [3.3, 0.26, -0.78]]);
-  mesh("nerve", taper(nerveCurve, 80, 16, (u) => 0.17 - 0.05 * u), material("nerve", COLOR.enamel, 0.9));
+  mesh("nerve", taper(nerveCurve, 80, 16, (u) => 0.17 - 0.05 * u), material("nerve", COLOR.nerve));
   mesh(
     "nerve",
     taper(curve([[0.3, 0.32, -0.2], [1.5, 0.4, -0.45], [3.2, 0.58, -0.82]]), 60, 10, () => 0.06),
-    material("nerve", COLOR.shade, 0.6),
+    material("nerve", COLOR.nerveSoft),
   );
   const nerveDots = Array.from({ length: NERVE_DOTS }, (_, i) => {
-    const m = new THREE.MeshBasicMaterial({ color: COLOR.blue, transparent: true, opacity: 0, depthWrite: false });
+    const m = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false });
     disposables.push(m);
     const o = new THREE.Mesh(dotGeo, m);
     o.scale.setScalar(1.5);
@@ -527,14 +576,14 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     parts.nerve.group.add(o);
     return o;
   });
-  const nerveScarMat = material("nerve", COLOR.yellow, 0);
+  const nerveScarMat = material("nerve", COLOR.red, 0);
   mesh("nerve", taper(nerveCurve, 40, 16, (u) => (u < 0.06 || u > 0.3 ? 0.0001 : 0.19)), nerveScarMat, false);
 
   part("eustachian", V(0.4, -0.5, 1));
   const tubeCurve = curve([[-0.55, -0.32, -0.05], [0.2, -1.0, 0.2], [1.2, -1.7, 0.45], [2.2, -2.25, 0.6]]);
-  const tubeMat = material("eustachian", COLOR.shade, 0.6);
+  const tubeMat = material("eustachian", COLOR.tube);
   mesh("eustachian", taper(tubeCurve, 70, 14, (u) => 0.07 + 0.11 * u), tubeMat);
-  const tubeOpenMat = material("eustachian", COLOR.enamel, 0);
+  const tubeOpenMat = material("eustachian", COLOR.tubeOpen, 0);
   mesh("eustachian", taper(tubeCurve, 70, 14, (u) => 0.1 + 0.14 * u), tubeOpenMat, false);
 
   /* ---------------------------------------------------------------- *
@@ -549,7 +598,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
   const waveGeo = new THREE.TorusGeometry(1, 0.012, 6, 80);
   disposables.push(waveGeo);
   const waves = Array.from({ length: MAX_WAVES }, () => {
-    const m = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false });
+    const m = new THREE.MeshBasicMaterial({ color: COLOR.wave, transparent: true, opacity: 0, depthWrite: false });
     disposables.push(m);
     const o = new THREE.Mesh(waveGeo, m);
     scene.add(o);
@@ -667,7 +716,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     // keep the whole ear in frame on narrow, tall stages
-    homeDist = 12.5 * Math.pow(Math.max(1, 1.45 / camera.aspect), 0.5);
+    homeDist = 12.5 * Math.pow(Math.max(1, 1.45 / camera.aspect), 0.72);
   };
   const ro = new ResizeObserver(resize);
   ro.observe(host);
@@ -728,7 +777,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     const rock = (0.08 * thump(0.07) * budDrive * stiffDrum + strike * 0.25) * conduct;
     ossicles.rotation.z = -rock * 0.6;
     ossicles.position.x = rock * 0.12;
-    ossMat.color.setHex(state.stiff ? 0x9aa6b8 : COLOR.bone);
+    ossMat.color.setHex(state.stiff ? COLOR.stiff : COLOR.bone);
 
     // travelling wave along the cochlea to its place
     const prog = ((arrival + 0.86) % 1) * 1.15;
@@ -744,7 +793,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     (ring.material as T.MeshBasicMaterial).opacity = (0.25 + 0.7 * hitPeak) * parts.cochlea.vis;
     (peak.material as T.MeshBasicMaterial).opacity = parts.cochlea.vis;
     (peak.material as T.MeshBasicMaterial).transparent = true;
-    dangerMat.color.setHex(state.danger ? COLOR.yellow : 0xf3d77a);
+    dangerMat.color.setHex(state.danger ? COLOR.red : COLOR.redSoft);
     dangerMat.opacity = (state.danger ? 0.95 : 0.5) * parts.cochlea.vis;
     scarMat.opacity = (state.noiseDamage ? 1 : 0) * parts.cochlea.vis;
 
@@ -783,7 +832,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
         if (r.m === budMat || r.m === scarMat || r.m === dangerMat || r.m === nerveScarMat || r.m === fluidMat || r.m === tubeOpenMat) continue;
         r.m.opacity = r.opacity * p.vis;
         r.m.depthWrite = r.opacity > 0.9 && p.vis > 0.9;
-        r.m.emissiveIntensity = r.emissive + p.glow * 0.22;
+        r.m.emissiveIntensity = r.emissive + p.glow * 0.16;
       }
     }
 
@@ -804,7 +853,7 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     const k = Math.min(1, dt * 3.2);
     offset.copy(camera.position).sub(controls.target);
     controls.target.lerp(goal, k);
-    const distGoal = sel ? Math.max(3.2, (sel.radius / Math.sin((camera.fov * Math.PI) / 360)) * 1.35) * Math.pow(Math.max(1, 1.2 / camera.aspect), 0.7) : homeDist;
+    const distGoal = sel ? Math.max(3.2, (sel.radius / Math.sin((camera.fov * Math.PI) / 360)) * 1.35) * Math.pow(Math.max(1, 1.2 / camera.aspect), 0.7) : homeDist * frameZoom;
     const len = offset.length();
     if (dirGoal) {
       offset.normalize().lerp(dirGoal, k * 0.8).normalize();
@@ -813,6 +862,10 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
     offset.multiplyScalar(len + (distGoal - len) * k);
     camera.position.copy(controls.target).add(offset);
     controls.update();
+
+    frameShiftNow += (frameShift - frameShiftNow) * k;
+    if (Math.abs(frameShiftNow) > 1e-4) camera.setViewOffset(w, h, -frameShiftNow * w, 0, w, h);
+    else if (camera.view?.enabled) camera.clearViewOffset();
 
     renderer.render(scene, camera);
 
@@ -885,6 +938,10 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
       if (kind === "strike") strikeAt = clock;
     },
     setDangerBand,
+    setFrame(shift, zoom) {
+      frameShift = shift;
+      frameZoom = zoom;
+    },
     dispose() {
       pause();
       ro.disconnect();
@@ -897,6 +954,10 @@ export async function createEarScene(host: HTMLElement, opts: EarSceneOptions): 
       controls.removeEventListener("start", onStart);
       controls.dispose();
       disposables.forEach((d) => d.dispose());
+      envTex.dispose();
+      pmrem.dispose();
+      ground.geometry.dispose();
+      groundMat.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       canvas.remove();

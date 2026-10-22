@@ -50,8 +50,8 @@ export const profilePage: { en: Record<string, string>; zh: Record<string, strin
     "profile.band.watch": "Room to improve",
     "profile.band.low": "Needs work",
     "profile.loopTitle": "How the profile improves",
-    "profile.loop1": "Test: a tone and a speech-in-noise screening set your baseline (weaknesses and strengths) ",
-    "profile.loop2": "Train: sessions in your weakest skill aim to improve your listening abilities.",
+    "profile.loop1": "Test: a tone screening and a speech-in-noise screening set your baseline, strengths and weaknesses included.",
+    "profile.loop2": "Train: sessions target your weakest skill.",
     "profile.loop3": "Retest: repeat the tests to see whether training carried over.",
     "profile.disclaimer":
       "This is a self-check, not a diagnosis. Scores are estimates from browser audio and your own responses.",

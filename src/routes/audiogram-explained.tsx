@@ -32,7 +32,7 @@ function Page() {
         {
           title: "The two axes",
           body: [
-            "The horizontal axis is frequency — pitch — running from low tones on the left to high tones on the right. Audiomaxxer screens 500, 1000, 2000, 4000 and 8000 Hz, covering the range that carries most of speech plus the high band where noise damage tends to show first.",
+            "The horizontal axis is frequency (pitch), running from low tones on the left to high tones on the right. Audiomaxxer screens 500, 1000, 2000, 4000 and 8000 Hz, covering the range that carries most of speech plus the high band where noise damage tends to show first.",
             "The vertical axis is level: how loud a tone had to be before you responded. Lower on the chart means a quieter tone was still audible, which is the better result. Clinical audiograms plot this axis downwards for the same reason.",
           ],
         },
@@ -48,13 +48,13 @@ function Page() {
             "Flat and low across all frequencies: even sensitivity, nothing standing out.",
             "A dip at 4–8 kHz with normal low frequencies: the classic pattern associated with recreational noise exposure, and the earliest change most people miss.",
             "Reduced across the low frequencies only: often affected by room noise during the test, so re-screen somewhere quiet before reading anything into it.",
-            "Jagged, inconsistent curves: usually a sign of a low-quality screening — noisy room, few trials, or uncertain responses.",
+            "Jagged, inconsistent curves: usually a sign of a low-quality screening, from a noisy room, too few trials, or uncertain responses.",
           ],
         },
         {
           title: "Why high frequencies matter for speech",
           body: [
-            "Consonants like s, f, th and sh carry much of their energy above 4 kHz. Losing sensitivity there rarely makes the world quieter — it makes speech in a busy room harder to disentangle, which is why people notice it in cafés and classrooms long before they notice it anywhere else.",
+            "Consonants like s, f, th and sh carry much of their energy above 4 kHz. Losing sensitivity there makes speech in a busy room harder to pick apart long before the world sounds any quieter, which is why people notice it in cafés and classrooms long before they notice it anywhere else.",
           ],
         },
         {

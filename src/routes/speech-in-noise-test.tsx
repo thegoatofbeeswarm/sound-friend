@@ -32,7 +32,7 @@ function Page() {
         {
           title: "What the test measures",
           body: [
-            "A speech-in-noise screening plays speech material — in Audiomaxxer, spoken digit triplets — inside a steady background of noise, and adapts the balance between the two after every answer. Get it right and the noise gets louder; get it wrong and the speech is given more room.",
+            "A speech-in-noise screening plays speech (in Audiomaxxer, spoken digit triplets) inside a steady background of noise, and adapts the balance between the two after every answer. Get it right and the noise gets louder; get it wrong and the speech is given more room.",
             "After enough trials the level settles around the point where you get roughly half of the items correct. That balance point is called the speech reception threshold in noise, and it is usually reported as a signal-to-noise ratio in decibels. A lower ratio means you can still follow speech when the noise is closer to drowning it out.",
           ],
         },
@@ -47,7 +47,7 @@ function Page() {
           title: "How to read your score",
           bullets: [
             "Audiomaxxer converts your signal-to-noise ratio into a 0–100 listening score, so the direction is intuitive: higher is better.",
-            "The score depends on your headphones, your volume setting and your room. Compare like with like — same setup, similar quiet.",
+            "The score depends on your headphones, your volume setting and your room. Compare like with like: same setup, similarly quiet room.",
             "A single run has real measurement spread. Two or three runs across different days give a far more honest picture than one.",
             "The score is a screening result, not a diagnosis. Persistent difficulty in everyday conversation is a reason to see an audiologist.",
           ],
@@ -55,14 +55,14 @@ function Page() {
         {
           title: "What training can and cannot do",
           body: [
-            "Practising with speech in noise reliably makes people better at the task, and there is reasonable evidence of some transfer to related listening situations. What it does not do is repair damage in the inner ear — improvements come from attention, strategy and pattern learning, not from restored sensitivity.",
+            "Practising with speech in noise reliably makes people better at the task, and there is reasonable evidence of some transfer to related listening situations. It can't repair damage in the inner ear. The gains come from attention, strategy and pattern learning.",
             "That distinction matters for expectations: training is worth doing, and it is not a cure.",
           ],
         },
         {
           title: "Getting a clean measurement",
           bullets: [
-            "Use over-ear or in-ear headphones, not laptop speakers — the noise and speech must arrive together at each ear.",
+            "Use over-ear or in-ear headphones instead of laptop speakers, so the noise and speech arrive together at each ear.",
             "Sit somewhere genuinely quiet; background noise in your room adds to the test noise and depresses your score.",
             "Set the volume once, comfortably, and do not change it mid-test.",
             "Do not test when you are exhausted. Fatigue costs several points on this task.",

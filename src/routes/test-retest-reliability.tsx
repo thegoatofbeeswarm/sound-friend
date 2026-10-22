@@ -27,7 +27,7 @@ function Page() {
     <ArticlePage
       kicker="Measurement quality"
       title="Test-retest reliability"
-      intro="Take the same screening twice in an hour and the two results will not match exactly. That is not a bug — it is what measurement looks like. The useful question is how big the ordinary spread is, so you know when a change means something."
+      intro="Take the same screening twice in an hour and the two results will not match exactly. Every measurement has some spread. The useful question is how big the ordinary spread is, so you know when a change means something."
       sections={[
         {
           title: "Precision is not accuracy",
@@ -40,7 +40,7 @@ function Page() {
             {
               term: "Accuracy (validity)",
               value:
-                "How close a measurement is to the true value from a calibrated clinical setup. This cannot be checked from inside the app — it needs a comparison against clinical results.",
+                "How close a measurement is to the true value from a calibrated clinical setup. The app can't check this on its own; it needs a comparison against clinical results.",
             },
           ],
         },
@@ -57,7 +57,7 @@ function Page() {
           title: "Catch trials and the quality score",
           body: [
             "Some trials in an Audiomaxxer screening are silent. If you report hearing a tone that was never played, that is a false alarm, and enough of them mean the result reflects guessing rather than detection.",
-            "Those catch trials feed a screening-quality score alongside response consistency and estimate stability. A low-quality run is worth repeating rather than interpreting — and it is far better to know that than to build a trend out of unreliable points.",
+            "Those catch trials feed a screening-quality score alongside response consistency and estimate stability. Repeat a low-quality run instead of reading meaning into it, so your trend isn't built on unreliable points.",
           ],
         },
         {
@@ -73,7 +73,7 @@ function Page() {
             "Compare runs with matching conditions: same headphones, same volume setting, similarly quiet room.",
             "Treat a shift smaller than your own typical run-to-run spread as noise.",
             "Prefer trends over three or more sittings to any two-point comparison.",
-            "Research mode locks a protocol so repeat runs are genuinely comparable — that is what makes the spread meaningful.",
+            "Research mode locks a protocol so repeat runs are comparable, which is what makes the spread meaningful.",
           ],
         },
       ]}
