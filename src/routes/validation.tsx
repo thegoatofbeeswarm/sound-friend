@@ -1,3 +1,4 @@
+import { Picture } from "@/components/Picture";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -232,10 +233,10 @@ function ValidationPage() {
         title={t("valid.title")}
         lede={t("valid.lead")}
         figure={
-          <img
-            src="/img/hughes-audiometer-1879.jpg"
-            width={1600}
-            height={1071}
+          <Picture
+            name="hughes-audiometer-1879"
+            sizes="(max-width: 860px) 100vw, 50vw"
+            priority
             alt="Engraving of Hughes' 1879 audiometer, an early instrument for measuring hearing, with a listener holding the receiver"
           />
         }

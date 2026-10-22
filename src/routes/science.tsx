@@ -1,3 +1,4 @@
+import { Picture } from "@/components/Picture";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, FlaskConical, ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
@@ -98,12 +99,11 @@ function SciencePage() {
         title={t("sci.h1")}
         lede={t("sci.lead")}
         figure={
-          <img
-            className="page-hero-plate"
-            data-fit="contain"
-            src="/img/tonotopy-chittka-brockmann.jpg"
-            width={1303}
-            height={1600}
+          <Picture
+            name="tonotopy-chittka-brockmann"
+            className="page-hero-plate" dataFit="contain"
+            sizes="(max-width: 860px) 46vw, 420px"
+            priority
             alt="Diagram of the ear and brain: each place along the cochlea answers one pitch, and the auditory cortex keeps the same order"
           />
         }

@@ -1,0 +1,25 @@
+const strings: Record<string, string> = {
+  "plan.title": "你的训练计划",
+  "plan.fromClinic": "以你的诊所报告为基准：{source}",
+  "plan.fromScreening": "基于你最近一次 Audiomaxxer 筛查",
+  "plan.fromNone": "入门计划——完成一次筛查或上传诊所报告即可个性化",
+  "plan.step": "第 {n} 步",
+  "plan.start": "开始这个训练",
+  "plan.upload": "上传你的听力图",
+  "plan.uploadHint": "上传诊所或听力中心的听力图，本计划会依据真实测量结果重新生成。",
+  "plan.signedOut": "登录后即可根据你自己的结果生成计划。",
+  "plan.summaryHigh": "高频（4 kHz 以上）：平均 {db} dB",
+  "plan.summaryLow": "低频：平均 {db} dB",
+  "plan.summaryAsym": "两耳高频差异：相差 {db} dB",
+  "plan.reason.highLoss": "你的高频平均为 {db} dB，而辅音正处于这一范围——先从这里训练。",
+  "plan.reason.consonants": "缺失高频细节正是在嘈杂环境中听不清说话的原因，因此要直接练习。",
+  "plan.reason.sinWeak": "你的噪声中言语得分为 {score}/100——这是你最薄弱的一环。",
+  "plan.reason.followTalk": "练习跟随一段对话并回答相关问题。",
+  "plan.reason.asymmetry": "你两耳在高频相差约 {db} dB，值得练习判断声音来自哪个方向。",
+  "plan.reason.lowLoss": "低频平均为 {db} dB，请练习在声音逐渐变轻时分辨真实声音。",
+  "plan.reason.general": "噪声中的言语是最能迁移到日常生活的技能。",
+  "plan.reason.discrimination": "精细的音高辨别能提升你耳朵传递细节的能力。",
+  "plan.reason.memory": "快速语音会锻炼听觉注意力与工作记忆。",
+};
+
+export default strings;

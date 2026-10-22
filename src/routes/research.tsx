@@ -1,3 +1,4 @@
+import { Picture } from "@/components/Picture";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -134,10 +135,10 @@ function ResearchPage() {
         title={t("res.title")}
         lede={t("res.lead")}
         figure={
-          <img
-            src="/img/maico-audiometer-1960s.jpg"
-            width={1147}
-            height={1600}
+          <Picture
+            name="maico-audiometer-1960s"
+            sizes="(max-width: 860px) 100vw, 50vw"
+            priority
             alt="A 1960s portable audiometer in its case, with its headphones and dials"
           />
         }

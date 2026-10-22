@@ -1,0 +1,32 @@
+const strings: Record<string, string> = {
+  "audio.back": "返回",
+  "audio.failed": "这一轮的音频没能播放，因此不计分。",
+  "audio.unsupported": "此浏览器没有可用的语音，无法进行这个练习。请换用 Chrome、Safari 或 Edge，或选择基于提示音的练习。",
+  "audio.retry": "再播放一次",
+  "nav.data": "数据",
+  "nav.report": "报告",
+  "nav.science": "科学依据",
+  "nav.coach": "聆听教练",
+  "nav.home": "首页",
+  "nav.menu": "菜单",
+
+  "auth.welcomeBack": "欢迎回来",
+  "auth.createAccount": "创建你的账户",
+  "auth.lead": "保存筛查结果后，Audiomaxxer 可以追踪你的听力随时间的变化。",
+  "auth.email": "邮箱",
+  "auth.password": "密码",
+  "auth.signIn": "登录",
+  "auth.signUp": "注册",
+  "auth.or": "或",
+  "auth.google": "使用 Google 继续",
+  "auth.toSignUp": "还没有账户？立即注册",
+  "auth.toSignIn": "已有账户？前往登录",
+  "auth.close": "关闭并返回首页",
+  "auth.continueWithout": "不登录，直接继续",
+  "auth.created": "账户已创建，你可以开始测试了。",
+  "auth.passwordRule": "密码至少 8 个字符，并且包含 1 个特殊字符。",
+  "auth.failed": "身份验证失败",
+  "auth.googleFailed": "Google 登录失败。",
+};
+
+export default strings;

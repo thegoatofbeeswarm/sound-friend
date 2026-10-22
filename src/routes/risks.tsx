@@ -1,3 +1,4 @@
+import { Picture } from "@/components/Picture";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -112,11 +113,11 @@ function RisksPage() {
         title={t("risks.title")}
         lede={t("risks.lead")}
         figure={
-          <img
+          <Picture
+            name="tympanic-membrane"
             className="page-hero-plate"
-            src="/img/tympanic-membrane.jpg"
-            width={1389}
-            height={1400}
+            sizes="(max-width: 860px) 46vw, 420px"
+            priority
             alt="A healthy eardrum seen through an otoscope"
           />
         }

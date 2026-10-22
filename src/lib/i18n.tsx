@@ -63,101 +63,7 @@ const en = {
 
 export type TranslationKey = keyof typeof en;
 
-const zh: Record<TranslationKey, string> = {
-  "nav.test": "听力测试",
-  "nav.train": "训练",
-  "nav.risks": "风险",
-  "nav.history": "历史记录",
-  "nav.signIn": "登录",
-  "nav.signOut": "退出登录",
-  "nav.theme": "主题",
-  "nav.language": "语言",
-  "nav.light": "浅色",
-  "nav.dark": "深色",
 
-  "home.badge": "为耳机世代打造的聆听健康平台",
-  "home.title1": "你的听力没问题，",
-  "home.title2": "但在嘈杂的酒吧里你还听得清对话吗？",
-  "home.lead":
-    "Audiomaxxer 关注的是人们真正困扰的问题：在噪声环境中听清别人说话。一次简短的筛查会评估你的噪声中言语能力，以及灵敏度、声音辨别、注意力与记忆，然后训练最弱的一项。",
-  "home.ctaTest": "开始筛查",
-  "home.ctaHistory": "查看已保存结果",
-  "home.disclaimer":
-    "需要佩戴耳机。本结果不构成医学诊断。如需更准确的结果，请到当地诊所或听力检测室进行筛查。",
-  "home.pillarsTitle": "它有什么不同？",
-
-  "pillar.adaptive.title": "自适应",
-  "pillar.adaptive.body": "贝叶斯阶梯法会在每次回答后更新对你听阈的判断。",
-  "pillar.prefs.title": "个性化训练",
-  "pillar.prefs.body": "你表现最弱的聆听维度决定 Audiomaxxer 接下来优先安排哪些练习。",
-  "pillar.env.title": "环境感知",
-  "pillar.env.body": "麦克风会估算房间噪音，只有在足够安静时筛查结果才被采信。",
-  "pillar.access.title": "基于浏览器",
-  "pillar.access.body": "在配有耳机的现代手机和电脑上即可使用，无需专用设备。",
-  "pillar.coach.title": "聆听教练",
-  "pillar.coach.body": "结合你自己的结果进行对话，解释这些数据的含义以及下一步该练什么。",
-  "pillar.training.title": "真实场景聆听练习",
-  "pillar.training.body": "以难度逐步提升的任务练习噪声中的言语、声音辨别、注意力与听觉记忆。",
-
-  "stats.people": "全球有这么多人正与听力损失共处",
-  "stats.tracks": "每次筛查测量的频率与耳别组合数",
-  "stats.timeValue": "约 4 分钟",
-  "stats.time": "一次自适应筛查的典型时长",
-  "studies.title": "青少年听力损失：最新研究",
-  "studies.desc": "一份简短的阅读清单，说明为何青少年与年轻成人是这 15 亿人中增长最快的群体。",
-  "footer.note": "结果仅保存在你的私人账户中。本应用仅供筛查——诊断请咨询临床医生。",
-};
-
-const es: Record<TranslationKey, string> = {
-  "nav.test": "Prueba auditiva",
-  "nav.train": "Entrenar",
-  "nav.risks": "Riesgos",
-  "nav.history": "Historial",
-  "nav.signIn": "Iniciar sesión",
-  "nav.signOut": "Cerrar sesión",
-  "nav.theme": "Tema",
-  "nav.language": "Idioma",
-  "nav.light": "Claro",
-  "nav.dark": "Oscuro",
-
-  "home.badge": "Salud auditiva para la generación de los auriculares",
-  "home.title1": "Oyes bien,",
-  "home.title2": "¿pero puedes seguir una conversación en un bar ruidoso?",
-  "home.lead":
-    "Audiomaxxer mide lo que de verdad cuesta: entender el habla cuando hay ruido alrededor. Un cribado corto puntúa tu habla con ruido junto a sensibilidad, discriminación, atención y memoria, y luego entrena tu punto más débil.",
-  "home.ctaTest": "Comenzar un cribado",
-  "home.ctaHistory": "Ver resultados guardados",
-  "home.disclaimer":
-    "Se requieren auriculares. Esto no es un diagnóstico médico. Para mayor precisión, hazte un cribado auditivo en tu clínica o cabina local.",
-  "home.pillarsTitle": "¿Qué lo hace diferente?",
-
-  "pillar.adaptive.title": "Adaptativo",
-  "pillar.adaptive.body": "Una escalera bayesiana actualiza su estimación tras cada respuesta.",
-  "pillar.prefs.title": "Entrenamiento personalizado",
-  "pillar.prefs.body":
-    "Tu dimensión de escucha más baja determina qué ejercicios prioriza Audiomaxxer a continuación.",
-  "pillar.env.title": "Conciencia del entorno",
-  "pillar.env.body":
-    "El micrófono estima el ruido de la sala, así que un cribado solo se considera fiable cuando el espacio está lo bastante silencioso.",
-  "pillar.access.title": "Basado en el navegador",
-  "pillar.access.body":
-    "Funciona en teléfonos y ordenadores modernos con auriculares, sin equipo especializado.",
-  "pillar.coach.title": "Entrenador de escucha",
-  "pillar.coach.body": "Un chat guiado que lee tus resultados y explica qué significan y qué practicar después.",
-  "pillar.training.title": "Ejercicios de escucha reales",
-  "pillar.training.body":
-    "Practica habla con ruido, discriminación, atención y memoria auditiva con tareas cada vez más difíciles.",
-
-  "stats.people": "personas viven con pérdida auditiva en el mundo",
-  "stats.tracks": "combinaciones de frecuencia y oído medidas por cribado",
-  "stats.timeValue": "~4 min",
-  "stats.time": "duración típica de un cribado adaptativo",
-  "studies.title": "Pérdida auditiva en adolescentes: investigación actual",
-  "studies.desc":
-    "Una breve lista de lecturas sobre por qué la audición de adolescentes y jóvenes adultos es la parte que más rápido crece de esos 1500 millones.",
-  "footer.note":
-    "Los resultados quedan en tu cuenta privada. Solo cribado: consulta a un profesional para un diagnóstico.",
-};
 
 import { charts } from "@/lib/i18n-dicts/charts";
 import { common } from "@/lib/i18n-dicts/common";
@@ -181,9 +87,8 @@ import { youthPack } from "@/lib/i18n-dicts/youth";
 import { heroPack } from "@/lib/i18n-dicts/hero";
 import { pathwayPack } from "@/lib/i18n-dicts/pathway";
 
-export type Dict = { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> };
-
-const packs: Dict[] = [
+/** English is bundled; it is also the fallback for any missing key. */
+const englishPacks: Record<string, string>[] = [
   charts,
   common,
   testPage,
@@ -195,8 +100,8 @@ const packs: Dict[] = [
   coachPage,
   sciencePack,
   teamPage,
-  speechPage,
   profilePage,
+  speechPage,
   planPack,
   loopPack,
   navPack,
@@ -207,17 +112,33 @@ const packs: Dict[] = [
   pathwayPack,
 ];
 
+/**
+ * Chinese and Spanish load only when someone picks them, so English readers
+ * never download them. Packs merge in the same order as the English ones
+ * (a few keys appear in two packs and the later one wins), after _base.
+ */
+const PACK_ORDER = ["_base", "charts", "common", "test", "train", "history", "risks", "report", "data", "coach", "science", "team", "profile", "speech", "plan", "loop", "nav", "platform", "research", "youth", "hero", "pathway"];
 
-function merge(lang: Language, base: Record<string, string>): Record<string, string> {
-  return Object.assign({}, base, ...packs.map((p) => p[lang]));
-}
+type Loader = () => Promise<{ default: Record<string, string> }>;
+const lazyPacks: Record<Exclude<Language, "en">, Record<string, Loader>> = {
+  zh: import.meta.glob<{ default: Record<string, string> }>("./i18n-dicts/zh/*.ts"),
+  es: import.meta.glob<{ default: Record<string, string> }>("./i18n-dicts/es/*.ts"),
+};
 
-const bases: Record<Language, Record<string, string>> = { en, zh, es };
-const built: Partial<Record<Language, Record<string, string>>> = {};
+const built: Partial<Record<Language, Record<string, string>>> = {
+  en: Object.assign({}, en, ...englishPacks),
+};
 
-/** Build a language's dictionary the first time it is actually used. */
-function dictionary(lang: Language): Record<string, string> {
-  return (built[lang] ??= merge(lang, bases[lang]!));
+const packName = (path: string) => path.split("/").pop()!.replace(/\.ts$/, "");
+
+/** Fetch and merge a language's strings once; English is always ready. */
+async function loadLanguage(lang: Language): Promise<void> {
+  if (lang === "en" || built[lang]) return;
+  const loaders = Object.entries(lazyPacks[lang]).sort(
+    ([a], [b]) => PACK_ORDER.indexOf(packName(a)) - PACK_ORDER.indexOf(packName(b)),
+  );
+  const mods = await Promise.all(loaders.map(([, load]) => load()));
+  built[lang] = Object.assign({}, ...mods.map((m) => m.default));
 }
 
 type I18nContextValue = {
@@ -258,13 +179,31 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Bumped when a language finishes loading, so strings swap in without a reload.
+  const [loaded, setLoaded] = useState(0);
+  useEffect(() => {
+    if (built[language]) return;
+    let cancelled = false;
+    void loadLanguage(language)
+      .then(() => {
+        if (!cancelled) setLoaded((n) => n + 1);
+      })
+      .catch(() => {
+        /* offline or blocked: English stays in place */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [language]);
+
   const value = useMemo<I18nContextValue>(
     () => ({
       language,
       setLanguage,
-      t: (key: string) => dictionary(language)[key] ?? dictionary("en")[key] ?? key,
+      t: (key: string) => built[language]?.[key] ?? built.en![key] ?? key,
     }),
-    [language, setLanguage],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [language, setLanguage, loaded],
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

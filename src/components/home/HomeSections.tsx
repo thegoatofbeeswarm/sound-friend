@@ -3,6 +3,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { Coil } from "@/components/brand/Coil";
+import { Picture } from "@/components/Picture";
+import type { ImageName } from "@/lib/images";
 import { DEVICES, DEVICE_GROUPS, loadDevice, saveDevice, type DeviceId } from "@/lib/devices";
 
 /**
@@ -102,9 +104,9 @@ function HowItWorks() {
  * ------------------------------------------------------------------ */
 
 const ERAS = [
-  { id: "1879", img: "/img/hughes-audiometer-1879.jpg", w: 1600, h: 1071, alt: "Engraving of Hughes' 1879 audiometer with a listener holding the receiver to her ear" },
-  { id: "1960", img: "/img/maico-audiometer-1960s.jpg", w: 1147, h: 1600, alt: "A 1960s Maico portable audiometer in its case, headphones coiled inside" },
-  { id: "now", img: null, w: 0, h: 0, alt: "" },
+  { id: "1879", img: "hughes-audiometer-1879",  alt: "Engraving of Hughes' 1879 audiometer with a listener holding the receiver to her ear" },
+  { id: "1960", img: "maico-audiometer-1960s",  alt: "A 1960s Maico portable audiometer in its case, headphones coiled inside" },
+  { id: "now", img: null, alt: "" },
 ] as const;
 
 function History() {
@@ -118,7 +120,7 @@ function History() {
       <div className="hs-wrap hs-hist-grid">
         <div className="hs-hist-plate hs-in" key={current.id}>
           {current.img ? (
-            <img src={current.img} width={current.w} height={current.h} alt={current.alt} loading="lazy" decoding="async" />
+            <Picture name={current.img} alt={current.alt} sizes="(max-width: 860px) 100vw, 560px" />
           ) : (
             <div className="hs-hist-now" role="img" aria-label={t("home.hist.now.alt")}>
               <Coil className="hs-hist-coil" />
@@ -137,7 +139,7 @@ function History() {
                 onClick={() => setEra(e.id)}
               >
                 <span className="hs-tab-thumb" aria-hidden>
-                  {e.img ? <img src={e.img} alt="" width={96} height={96} loading="lazy" decoding="async" /> : <Coil className="hs-tab-coil" />}
+                  {e.img ? <Picture name={e.img} alt="" sizes="96px" /> : <Coil className="hs-tab-coil" />}
                 </span>
                 {t(`home.hist.${e.id}.tab`)}
               </button>
@@ -176,9 +178,9 @@ function History() {
 function Measures() {
   const { t } = useI18n();
   const ref = useReveal<HTMLElement>();
-  const slot = (src: string, alt: string, pos: string) => (
+  const slot = (name: ImageName, alt: string, pos: string) => (
     <span className="hs-slot">
-      <img src={src} alt={alt} loading="lazy" decoding="async" width={190} height={100} style={{ objectPosition: pos }} />
+      <Picture name={name} alt={alt} sizes="80px" style={{ objectPosition: pos }} />
     </span>
   );
   return (
@@ -189,11 +191,11 @@ function Measures() {
         </h2>
         <p className="hs-statement hs-in">
           {t("home.feat.1")}
-          {slot("/img/tympanic-membrane.jpg", "A healthy eardrum seen through an otoscope", "50% 50%")}
+          {slot("tympanic-membrane", "A healthy eardrum seen through an otoscope", "50% 50%")}
           {t("home.feat.2")}
-          {slot("/img/tonotopy-chittka-brockmann.jpg", "Diagram of the cochlea marked with the pitches each turn answers", "78% 22%")}
+          {slot("tonotopy-chittka-brockmann", "Diagram of the cochlea marked with the pitches each turn answers", "78% 22%")}
           {t("home.feat.3")}
-          {slot("/img/gray-head-1860.jpg", "Engraving of the side of the head from Gray's Anatomy, 1860", "62% 34%")}
+          {slot("gray-head-1860", "Engraving of the side of the head from Gray's Anatomy, 1860", "62% 34%")}
           {t("home.feat.4")}
         </p>
         <div className="hs-measure-foot hs-in" style={{ transitionDelay: "100ms" }}>

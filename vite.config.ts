@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { visualizer } from "rollup-plugin-visualizer";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -22,6 +23,20 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    // `ANALYZE=1 bun run build` writes a bundle treemap (stats.html) into each build's output
+    // folder; ANALYZE=json writes raw stats.json instead. Off by default.
+    plugins: process.env["ANALYZE"]
+      ? [
+          // One report per build (client, SSR, server), written next to that build's output.
+          visualizer({
+            emitFile: true,
+            filename: process.env["ANALYZE"] === "json" ? "stats.json" : "stats.html",
+            template: process.env["ANALYZE"] === "json" ? "raw-data" : "treemap",
+            gzipSize: true,
+            brotliSize: true,
+          }),
+        ]
+      : [],
     resolve: {
       alias: {
         "entities/lib/decode.js": path.resolve(__dirname, "node_modules/entities/lib/esm/decode.js"),
