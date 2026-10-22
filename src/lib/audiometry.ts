@@ -172,29 +172,18 @@ export function progress(state: TestState): number {
 /* Interpretation                                                      */
 /* ------------------------------------------------------------------ */
 
-export function categorize(db: number): { label: string; tone: "ok" | "watch" | "risk" } {
-  if (db <= 20) return { label: "Normal", tone: "ok" };
-  if (db <= 35) return { label: "Early loss", tone: "watch" };
-  return { label: "Notable loss", tone: "risk" };
-}
-
 /**
- * Personalized listening ceiling. The generic 85 dB guideline is shifted by
- * the listener's own elevation above normal hearing, and capped for safety.
+ * Average and highest estimated level of a screening. These are relative,
+ * device-dependent estimates, not clinical dB HL, so nothing here labels a
+ * result as normal or as loss, and nothing turns a threshold into a personal
+ * safe-volume or safe-time figure: no validated relationship supports that.
  */
-export function safeListening(rs: ThresholdResult[]) {
+export function screeningSummary(rs: ThresholdResult[]) {
   const worst = Math.max(...rs.map((r) => r.thresholdDb));
   const avg = rs.reduce((a, r) => a + r.thresholdDb, 0) / rs.length;
-  const elevation = Math.max(0, avg - 15);
-  const ceiling = Math.round(Math.max(70, 85 - elevation * 0.8));
-  // WHO-style exposure budget: 85 dB -> 8h, halving per 3 dB.
-  const hours = Math.min(16, 8 * Math.pow(2, (85 - ceiling) / 3));
   return {
     worst: Math.round(worst * 10) / 10,
     avg: Math.round(avg * 10) / 10,
-    ceilingDb: ceiling,
-    offsetDb: ceiling - 85,
-    safeHours: Math.round(hours * 10) / 10,
   };
 }
 

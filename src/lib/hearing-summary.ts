@@ -4,16 +4,21 @@ export type EarSummary = {
   ear: Ear;
   avgDb: number;
   highFreqDb: number;
-  label: string;
-  detail: string;
-  tone: "ok" | "watch" | "risk";
+  /** Which description applies; the UI translates it. */
+  pattern: "even" | "highFreq" | "around";
+  /** Frequency range for the "around" pattern, e.g. "1–2 kHz". */
+  range: string | null;
 };
 
-/** 0-100 score: 100 means every threshold sits at or below 0 dB HL. */
+/**
+ * 0-100 score from the average estimated level (lower level = higher score).
+ * Levels are relative and device-dependent, so compare a score only with your
+ * own earlier screenings on the same headphones and volume.
+ */
 export function hearingScore(points: ThresholdResult[]): number | null {
   if (points.length === 0) return null;
   const avg = points.reduce((s, p) => s + p.thresholdDb, 0) / points.length;
-  // 0 dB HL -> 100, 40 dB HL -> ~40, 60 dB HL -> ~10
+  // 0 dB -> 100, 40 dB -> ~40, 60 dB -> ~10
   const score = 100 - Math.max(0, avg) * 1.5;
   return Math.max(0, Math.min(100, Math.round(score)));
 }
@@ -40,46 +45,22 @@ export function summarizeEar(points: ThresholdResult[], ear: Ear): EarSummary | 
     ? high.reduce((s, p) => s + p.thresholdDb, 0) / high.length
     : avgDb;
 
-  const weak = mine.filter((p) => p.thresholdDb >= 25).map((p) => p.frequency);
-  let label = "Normal";
-  let tone: EarSummary["tone"] = "ok";
-  let detail = "Thresholds within the normal range across all tested tones.";
+  // Describe where this ear needed the most level, relative to its own other
+  // tones. No clinical category: these are device-dependent estimates.
+  const top = Math.max(...mine.map((p) => p.thresholdDb));
+  const spread = top - Math.min(...mine.map((p) => p.thresholdDb));
+  const highest = mine.filter((p) => p.thresholdDb >= top - 5).map((p) => p.frequency);
+  let pattern: EarSummary["pattern"] = "even";
+  if (spread >= 10 && highFreqDb - avgDb >= 5) pattern = "highFreq";
+  else if (spread >= 10) pattern = "around";
 
-  if (avgDb >= 40) {
-    label = "Moderate reduction";
-    tone = "risk";
-    detail = "Reduced sensitivity across most of the tested range.";
-  } else if (avgDb >= 25) {
-    label = "Mild reduction";
-    tone = "risk";
-    detail = weak.length ? `Weakest around ${fmtRange(weak)}.` : "Reduced sensitivity overall.";
-  } else if (highFreqDb >= 20) {
-    label = "Slight reduction at 4–8 kHz";
-    tone = "watch";
-    detail = "High-frequency sensitivity is the first thing noise exposure tends to affect.";
-  } else if (weak.length) {
-    label = "Slight reduction";
-    tone = "watch";
-    detail = `Weakest around ${fmtRange(weak)}.`;
-  }
-
-  return { ear, avgDb, highFreqDb, label, detail, tone };
+  return { ear, avgDb, highFreqDb, pattern, range: pattern === "around" ? fmtRange(highest) : null };
 }
 
 /** Positive = thresholds went up (worse) since the previous screening. */
 export function changeSinceLast(current: number | null, previous: number | null): number | null {
   if (current == null || previous == null) return null;
   return Math.round((current - previous) * 10) / 10;
-}
-
-export function listeningRisk(
-  worstDb: number | null,
-  ceilingDb: number,
-): { label: string; tone: "ok" | "watch" | "risk" } {
-  if (worstDb == null) return { label: "Unknown", tone: "watch" };
-  if (worstDb >= 35 || ceilingDb <= 78) return { label: "High", tone: "risk" };
-  if (worstDb >= 20 || ceilingDb < 85) return { label: "Moderate", tone: "watch" };
-  return { label: "Low", tone: "ok" };
 }
 
 function dayKey(d: Date): string {

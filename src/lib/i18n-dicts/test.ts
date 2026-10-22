@@ -1,5 +1,8 @@
 export const testPage: { en: Record<string, string>; zh: Record<string, string>; es: Record<string, string> } = {
   en: {
+    "test.generalGuidance": "General guidance, not a personal limit: the WHO-ITU safe listening standard sets an adult reference of 80 dB for up to 40 hours a week, and 75 dB for children.",
+    "test.levelsMeaning": "These are estimated levels relative to your headphones and volume setting, not clinical dB HL. A screening like this can't tell you whether you have hearing loss or how loud is safe for you. If anything worries you, see an audiologist.",
+    "test.worstThreshold": "Highest level",
     "test.resumeTitle": "Unfinished screening",
     "test.resumeBody": "You stopped at question {n}. You can pick up where you left off, as long as you use the same headphones and volume.",
     "test.resumeBtn": "Resume screening",
@@ -24,12 +27,8 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.nothing": "Nothing",
     "test.resultsTitle": "Your audiogram",
     "test.resultsBody":
-      "Lower is better. The shaded bands mark normal, early loss, and notable loss ranges.",
+      "Lower is better: a lower level means you heard a quieter tone. Compare it with your own earlier screenings on the same headphones and volume.",
     "test.avgThreshold": "Average threshold",
-    "test.volumeCeiling": "Your volume ceiling",
-    "test.safeExposure": "Safe daily exposure",
-    "test.warningTemplate":
-      "The standard phone warning triggers at 85 dB. Based on your thresholds your personal ceiling is {ceiling} dB ({offset} dB versus the generic rule), which allows about {hours} hours of continuous listening per day.",
     "test.confidenceTemplate": "Estimate stability {pct}%",
     "test.seeRisk": "See my overuse risk",
     "test.trainHearing": "Train my hearing",
@@ -41,6 +40,9 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.toastSaveSuccess": "Screening saved to your history.",
   },
   zh: {
+    "test.generalGuidance": "一般性参考，并非个人上限：WHO-ITU 安全聆听标准为成人设定的参考值是每周最多 40 小时、80 dB，儿童为 75 dB。",
+    "test.levelsMeaning": "这些是相对于你的耳机和音量设置的估计值，不是临床 dB HL。这类筛查无法判断你是否有听力损失，也无法告诉你多大音量对你是安全的。如有担心，请咨询听力师。",
+    "test.worstThreshold": "最高数值",
     "test.resumeTitle": "未完成的筛查",
     "test.resumeBody": "你在第 {n} 题停下了。只要使用相同的耳机和音量，就可以从中断处继续。",
     "test.resumeBtn": "继续筛查",
@@ -64,12 +66,8 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.heard": "我听到了",
     "test.nothing": "没听到",
     "test.resultsTitle": "你的听力图",
-    "test.resultsBody": "数值越低越好。阴影区域分别标示正常、轻度损失和明显损失范围。",
+    "test.resultsBody": "数值越低越好：数值越低，表示你听到的提示音越轻。请只与自己之前在同一副耳机、同一音量下的筛查结果比较。",
     "test.avgThreshold": "平均听阈",
-    "test.volumeCeiling": "你的音量上限",
-    "test.safeExposure": "每日安全暴露时长",
-    "test.warningTemplate":
-      "标准手机警告在 85 dB 时触发。根据你的听阈，你的个人音量上限为 {ceiling} dB（相较通用规则相差 {offset} dB），这意味着每天可安全连续收听约 {hours} 小时。",
     "test.confidenceTemplate": "估计稳定度 {pct}%",
     "test.seeRisk": "查看我的过度使用风险",
     "test.trainHearing": "训练我的听力",
@@ -81,6 +79,9 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.toastSaveSuccess": "筛查已保存到你的历史记录。",
   },
   es: {
+    "test.generalGuidance": "Orientación general, no un límite personal: la norma WHO-ITU de escucha segura fija una referencia para adultos de 80 dB hasta 40 horas por semana, y de 75 dB para niños.",
+    "test.levelsMeaning": "Son niveles estimados relativos a tus auriculares y a tu volumen, no dB HL clínicos. Un cribado así no puede decirte si tienes pérdida auditiva ni qué volumen es seguro para ti. Si algo te preocupa, consulta a un audiólogo.",
+    "test.worstThreshold": "Nivel más alto",
     "test.resumeTitle": "Evaluación sin terminar",
     "test.resumeBody": "Te detuviste en la pregunta {n}. Puedes continuar donde lo dejaste, siempre que uses los mismos auriculares y volumen.",
     "test.resumeBtn": "Continuar evaluación",
@@ -105,12 +106,8 @@ export const testPage: { en: Record<string, string>; zh: Record<string, string>;
     "test.nothing": "Nada",
     "test.resultsTitle": "Tu audiograma",
     "test.resultsBody":
-      "Cuanto más bajo, mejor. Las bandas sombreadas marcan los rangos normal, de pérdida leve y de pérdida notable.",
+      "Cuanto más bajo, mejor: un nivel más bajo significa que oíste un tono más suave. Compáralo solo con tus cribados anteriores con los mismos auriculares y volumen.",
     "test.avgThreshold": "Umbral promedio",
-    "test.volumeCeiling": "Tu límite de volumen",
-    "test.safeExposure": "Exposición diaria segura",
-    "test.warningTemplate":
-      "La advertencia estándar del teléfono se activa a 85 dB. Según tus umbrales, tu límite personal es de {ceiling} dB ({offset} dB respecto a la regla genérica), lo que permite unas {hours} horas de escucha continua al día.",
     "test.confidenceTemplate": "Estabilidad de la estimación {pct}%",
     "test.seeRisk": "Ver mi riesgo por uso excesivo",
     "test.trainHearing": "Entrenar mi oído",

@@ -14,14 +14,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import {
   applyResponse,
-  categorize,
   createTestState,
   isComplete,
   nextTrial,
   playTone,
   progress,
   results,
-  safeListening,
+  screeningSummary,
   unlockAudio,
   type TestState,
   type ThresholdResult,
@@ -276,7 +275,7 @@ function TestPage() {
   const saveResults = useCallback(async () => {
     if (!final || !user) return;
     setSaving(true);
-    const summary = safeListening(final);
+    const summary = screeningSummary(final);
     const { data, error } = await supabase
       .from("hearing_tests")
       .insert({
@@ -285,7 +284,8 @@ function TestPage() {
         trials: state.trialCount,
         worst_threshold_db: summary.worst,
         avg_threshold_db: summary.avg,
-        safe_volume_offset_db: summary.offsetDb,
+        // No personal safe-volume figure is derived from a screening any more.
+        safe_volume_offset_db: null,
         device_type: device,
         engine_version: 2,
         notes: protocol ? encodeNotes(protocol) : null,
@@ -508,7 +508,7 @@ function ResultsView({
     repeatAgreed: number;
   };
 }) {
-  const summary = safeListening(points);
+  const summary = screeningSummary(points);
   const { user } = useAuth();
   const { t } = useI18n();
 
@@ -532,25 +532,19 @@ function ResultsView({
          className="mt-6"
        />
 
-       <div className="mt-6 grid gap-4 sm:grid-cols-3">
+       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <Stat label={t("test.avgThreshold")} value={`${summary.avg} dB`} />
-        <Stat label={t("test.volumeCeiling")} value={`${summary.ceilingDb} dB`} highlight />
-        <Stat label={t("test.safeExposure")} value={`${summary.safeHours} h`} />
+        <Stat label={t("test.worstThreshold")} value={`${summary.worst} dB`} />
       </div>
 
-      <p className="mt-4 rounded-xl border border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-        {t("test.warningTemplate")
-          .replace("{ceiling}", String(summary.ceilingDb))
-          .replace("{offset}", String(summary.offsetDb))
-          .replace("{hours}", String(summary.safeHours))}
-      </p>
+      <p className="mt-4 rounded-xl bg-card p-4 text-sm">{t("test.levelsMeaning")}</p>
+      <p className="mt-3 rounded-xl bg-card p-4 text-sm">{t("test.generalGuidance")}</p>
 
       <div className="mt-8 space-y-2">
         {points
           .slice()
           .sort((a, b) => a.frequency - b.frequency || a.ear.localeCompare(b.ear))
           .map((p) => {
-            const cat = categorize(p.thresholdDb);
             return (
               <div
                 key={`${p.ear}-${p.frequency}`}
@@ -564,17 +558,7 @@ function ResultsView({
                   <span className="text-xs text-muted-foreground">
                     {t("test.confidenceTemplate").replace("{pct}", String(Math.round(p.confidence * 100)))}
                   </span>
-                  <span
-                    className={
-                      cat.tone === "ok"
-                        ? "text-signal"
-                        : cat.tone === "watch"
-                          ? "text-caution"
-                          : "text-danger"
-                    }
-                  >
-                    {p.thresholdDb} dB - {cat.label}
-                  </span>
+                  <span className="font-medium tabular-nums">{p.thresholdDb} dB</span>
                 </span>
               </div>
             );

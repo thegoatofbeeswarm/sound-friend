@@ -23,7 +23,6 @@ import type { Ear as EarType, ThresholdResult } from "@/lib/audiometry";
 import {
   changeSinceLast,
   hearingScore,
-  listeningRisk,
   nextScreening,
   scoreTone,
   summarizeEar,
@@ -218,21 +217,7 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
     Number(current.avg_threshold_db),
     previous ? Number(previous.avg_threshold_db) : null,
   );
-   const ceiling = 85 + Number(current.safe_volume_offset_db ?? 0);
-   const risk = listeningRisk(Number(current.worst_threshold_db), ceiling);
-   const riskLabelKey: Record<string, string> = {
-     Unknown: "history.risk.unknown",
-     High: "history.risk.high",
-     Moderate: "history.risk.moderate",
-     Low: "history.risk.low",
-   };
-   const earLabelKey: Record<string, string> = {
-     Normal: "history.ear.normal",
-     "Moderate reduction": "history.ear.moderateReduction",
-     "Mild reduction": "history.ear.mildReduction",
-     "Slight reduction at 4–8 kHz": "history.ear.slightHighFreq",
-     "Slight reduction": "history.ear.slightReduction",
-   };
+   const worstDb = current.worst_threshold_db == null ? null : Number(current.worst_threshold_db);
    const screeningDue = nextScreening(current.created_at);
    const streak = trainingStreak(data.sessions.map((session) => session.created_at));
    const totalSessions = data.sessions.length;
@@ -267,11 +252,11 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
             tone={score == null ? "default" : scoreTone(score)}
           />
           <Metric
-            label={t("history.listeningRisk")}
-            value={t(riskLabelKey[risk.label] ?? "history.risk.unknown")}
-            detail={t("history.personalGuidance").replace("{n}", String(ceiling))}
+            label={t("history.highestLevel")}
+            value={worstDb == null ? "—" : `${worstDb.toFixed(1)} dB`}
+            detail={t("history.levelsRelative")}
             icon={ShieldAlert}
-            tone={risk.tone}
+            tone="default"
           />
           <Metric
             label={t("history.trainingStreak")}
@@ -306,13 +291,13 @@ function Dashboard({ data, t }: { data: { tests: SavedTest[]; sessions: Dashboar
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold capitalize">{t(ear.ear === "left" ? "history.earLeft" : "history.earRight")} {t("history.earSuffix")}</span>
-                      <span className={`rounded-full bg-muted px-2 py-0.5 text-xs font-medium ${toneClass(ear.tone)}`}>
-                        {t(earLabelKey[ear.label] ?? "history.ear.normal")}
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+                        {t(`history.ear.${ear.pattern}`).replace("{range}", ear.range ?? "")}
                       </span>
                     </div>
                     <span className="text-sm text-muted-foreground">{t("history.avgDbHl").replace("{n}", ear.avgDb.toFixed(1))}</span>
                   </div>
-                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{ear.detail}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t(`history.ear.${ear.pattern}Detail`)}</p>
                 </div>
               ) : null,
             )}

@@ -3,7 +3,6 @@ import {
   Legend,
   Line,
   LineChart,
-  ReferenceArea,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -29,9 +28,6 @@ export function Audiogram({ points }: { points: ThresholdResult[] }) {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 12, right: 20, bottom: 36, left: 8 }}>
             <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-            <ReferenceArea y1={-10} y2={20} fill="var(--signal)" fillOpacity={0.07} />
-            <ReferenceArea y1={20} y2={35} fill="var(--caution)" fillOpacity={0.07} />
-            <ReferenceArea y1={35} y2={90} fill="var(--danger)" fillOpacity={0.07} />
             <XAxis
               dataKey="label"
               stroke="var(--muted-foreground)"

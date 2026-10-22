@@ -24,7 +24,7 @@ export async function buildCoachContext(): Promise<string> {
   const { data: tests } = await supabase
     .from("hearing_tests")
     .select(
-      "id, created_at, avg_threshold_db, worst_threshold_db, safe_volume_offset_db, trials, environment_db, device_type",
+      "id, created_at, avg_threshold_db, worst_threshold_db, trials, environment_db, device_type",
     )
     .order("created_at", { ascending: false })
     .limit(5);
@@ -36,7 +36,7 @@ export async function buildCoachContext(): Promise<string> {
     for (const t of tests) {
       const deviceForTest = getDevice(t.device_type);
       lines.push(
-        `- ${new Date(t.created_at).toLocaleDateString()}: avg ${Number(t.avg_threshold_db ?? 0).toFixed(1)} dB HL, worst ${Number(t.worst_threshold_db ?? 0).toFixed(1)} dB HL, ${t.trials} trials, quality inputs: ${deviceForTest.calibrated ? "model profile" : "uncalibrated device"}${
+        `- ${new Date(t.created_at).toLocaleDateString()}: avg ${Number(t.avg_threshold_db ?? 0).toFixed(1)} dB, worst ${Number(t.worst_threshold_db ?? 0).toFixed(1)} dB (relative, device-dependent estimates, not clinical dB HL), ${t.trials} trials, quality inputs: ${deviceForTest.calibrated ? "model profile" : "uncalibrated device"}${
           t.environment_db == null
             ? ", room noise not measured"
             : `, room noise ~${Number(t.environment_db)} dB`
