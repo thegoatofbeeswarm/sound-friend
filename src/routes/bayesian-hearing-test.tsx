@@ -53,7 +53,7 @@ function Page() {
             {
               term: "Catch trials",
               value:
-                "There are no silent catch trials today. Instead the psychometric model carries a fixed 2% false-positive rate and a 3% lapse rate, which absorbs stray or missed presses. The trade-off is that the screening can't detect deliberately random responding; silent catch trials are planned.",
+                "After the sixth trial, the screening can slip in up to three silent catch trials, where no tone plays and the honest answer is \"Nothing\", and up to three repeats of a tone you already answered. Neither changes your thresholds; both feed the screening-quality score, which is how it spots random or habitual pressing. The psychometric model also carries a fixed 2% false-positive rate and a 3% lapse rate, so a single stray or missed press doesn't distort the estimate.",
             },
             {
               term: "Bayesian prior",
