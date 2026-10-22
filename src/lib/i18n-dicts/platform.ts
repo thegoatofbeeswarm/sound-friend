@@ -34,7 +34,7 @@ export const platformPack: {
     /* cohort validation */
     "cohort.title": "Validation data",
     "cohort.lead":
-      "Pooled, anonymous numbers from everyone using Audiomaxxer: counts and repeatability, with no names or accounts. Check them rather than taking them on trust.",
+      "Pooled, anonymous numbers from everyone using Audiomaxxer: counts and repeatability, with no names or accounts. Check them yourself.",
     "cohort.participants": "Participants",
     "cohort.screenings": "Screenings",
     "cohort.repeat": "Repeat screenings",

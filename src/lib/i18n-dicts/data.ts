@@ -111,7 +111,7 @@ export const dataPage: { en: Record<string, string>; zh: Record<string, string>;
     "how.step.track.body":
       "Repeat screenings show how your profile moves over weeks and months. ",
     "how.feedbackPre":
-      "Step 5 feeds back into step 3: an updated profile re-targets your training instead of repeating the same exercises. That is what we mean by {loop}.",
+      "Step 5 feeds back into step 3: an updated profile re-targets your training, so you don't repeat the same exercises. We call this {loop}.",
     "how.closedLoop": "closed loop",
 
     "example.title": "Your hearing profile",

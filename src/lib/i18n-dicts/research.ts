@@ -11,7 +11,7 @@ export const researchPack: {
       "A normal screening lets you change headphones, volume and room between sittings, so two results can differ for reasons that have nothing to do with your hearing. Research mode writes those conditions down and marks a repeat as comparable only when you reproduce them.",
     "res.whyTitle": "Why this exists",
     "res.why":
-      "Repeatability under fixed conditions is the first thing any screening tool has to show. Every run recorded here is stamped with its protocol, so the test-retest numbers on the validation page come from sittings that really were held constant.",
+      "Repeatability under fixed conditions is the first thing any screening tool has to show. Every run recorded here is stamped with its protocol, so the test-retest numbers on the validation page come from sittings that were held constant.",
     "res.protocolTitle": "Your protocol",
     "res.protocolLead": "Set this once. Every research run reuses it exactly.",
     "res.device": "Headphones",

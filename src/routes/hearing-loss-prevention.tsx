@@ -27,12 +27,12 @@ function Page() {
     <ArticlePage
       kicker="Safe listening"
       title="Hearing loss prevention"
-      intro="Noise-related hearing loss builds up quietly over years. The main risk factor, how much sound you take in over a week, is something you can see and change."
+      intro="Noise-related hearing loss builds up slowly over years. The main risk factor, how much sound you take in over a week, is something you can see and change."
       sections={[
         {
           title: "The weekly sound dose",
           body: [
-            "WHO safe-listening guidance, developed with the ITU, is built on a weekly sound dose rather than a single loudness limit. Both how loud and how long matter, and they trade off: every 3 dB louder roughly halves the time you can safely spend listening.",
+            "WHO safe-listening guidance, developed with the ITU, is built on a weekly sound dose rather than a single loudness limit. Both how loud and how long matter. They trade off: every 3 dB louder roughly halves the time you can safely spend listening.",
             "The adult reference is 80 decibels for up to 40 hours a week. WHO also describes a more conservative 75 decibel reference mode, which is the sensible target if you listen most days.",
           ],
         },
@@ -48,7 +48,7 @@ function Page() {
           bullets: [
             "Turn the volume down a little, often. Small reductions buy back a lot of safe listening time.",
             "Use noise-isolating or noise-cancelling headphones so you aren't raising the volume to beat background noise.",
-            "Take quiet breaks: your weekly dose is cumulative, and breaks reduce it.",
+            "Take quiet breaks. Your weekly dose adds up, and breaks reduce it.",
             "Wear earplugs at concerts, clubs and events; venue levels are usually far above any safe continuous limit.",
             "Watch your loudest sessions as well as the average. A single very loud hour can dominate a week.",
           ],

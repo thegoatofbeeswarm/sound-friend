@@ -39,7 +39,7 @@ function Page() {
         {
           title: "Lower numbers are better",
           body: [
-            "Thresholds are reported in decibels, and on this scale a smaller number means you detected a quieter sound. A threshold of 5 dB at 4 kHz is better than 25 dB at the same frequency. Differences of a few decibels between screenings are ordinary measurement variation; consistent shifts of 10 dB or more in the same direction are worth paying attention to.",
+            "Thresholds are in decibels. A smaller number means you detected a quieter sound. A threshold of 5 dB at 4 kHz is better than 25 dB at the same frequency. Differences of a few decibels between screenings are ordinary measurement variation; consistent shifts of 10 dB or more in the same direction are worth paying attention to.",
           ],
         },
         {
@@ -61,7 +61,7 @@ function Page() {
           bullets: [
             "Test in a quiet room, with the microphone check reporting a low ambient level.",
             "Use the same headphones and the same system volume every time.",
-            "Choose a calibrated headphone model where possible so a correction is applied.",
+            "Choose a supported headphone model where possible, so an estimated adjustment is applied.",
             "Complete the whole screening. Fewer trials means wider uncertainty.",
             "Re-test when rested; fatigue and inattention widen the spread of responses.",
           ],

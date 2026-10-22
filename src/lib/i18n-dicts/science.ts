@@ -24,7 +24,7 @@ export const sciencePack: {
     "how.s5.body":
       "Repeat screenings show how your profile moves over weeks and months. ",
     "how.loop":
-      "Step 5 feeds back into step 3: an updated profile retargets your training instead of repeating the same exercises. That is what we mean by a closed loop.",
+      "Step 5 feeds back into step 3: an updated profile re-targets your training, so you don't repeat the same exercises. We call this a closed loop.",
 
     "sci.badge": "Methods & evidence",
     "sci.h1": "The science behind Audiomaxxer",
@@ -66,7 +66,7 @@ export const sciencePack: {
     "sci.link.speechInNoise.blurb": "The listening test that matches real life, and how to read its score.",
     "sci.link.hearingVsListening.label": "Hearing vs listening",
     "sci.link.hearingVsListening.blurb":
-      "Why a normal tone test can sit alongside a genuinely hard classroom.",
+      "Why a normal tone test can sit alongside a hard time in class.",
     "sci.link.reliability.label": "Test-retest reliability",
     "sci.link.reliability.blurb":
       "Measurement spread, catch trials, and telling real change from noise.",

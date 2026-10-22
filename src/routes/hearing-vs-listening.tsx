@@ -27,7 +27,7 @@ function Page() {
     <ArticlePage
       kicker="Concepts"
       title="Hearing vs listening"
-      intro="Hearing is whether a sound reaches you. Listening is what you manage to do with it. Most everyday difficulty lives in the second one, which is why a clean tone test can sit alongside a genuinely hard classroom."
+      intro="Hearing is whether a sound reaches you. Listening is what you manage to do with it. Most everyday difficulty lives in the second. That's why a clean tone test can sit alongside a hard time in class."
       sections={[
         {
           title: "Two different questions",
@@ -35,7 +35,7 @@ function Page() {
             {
               term: "Hearing",
               value:
-                "Detection sensitivity: the quietest tone you can notice at each frequency. This is what an audiogram measures, and what a browser screening estimates.",
+                "Detection sensitivity: the quietest tone you can notice at each frequency. An audiogram measures this. A browser screening estimates it.",
             },
             {
               term: "Listening",
@@ -47,7 +47,7 @@ function Page() {
         {
           title: "Why the two can disagree",
           body: [
-            "Detection is measured in silence with a single, predictable sound. Real conversation is the opposite: several sound sources at once, unpredictable timing, and a listener who has to decide moment by moment what to attend to.",
+            "Detection is measured in silence, with one predictable sound. Conversation is the opposite. Several sources talk at once, the timing is unpredictable, and the listener has to keep deciding, moment by moment, what to attend to.",
             "So a person can detect very quiet tones and still lose the thread in a busy room. Attention, working memory, the acoustics of the room and the health of the fine timing information the ear sends onwards all contribute, and none of them appear on an audiogram.",
           ],
         },
@@ -65,7 +65,7 @@ function Page() {
           title: "Why the distinction changes what you do",
           body: [
             "If the problem is detection, the answers are protection, medical assessment, and where appropriate amplification. If the problem is listening, the answers include practice, strategy, and changing the situation: sitting closer, facing the speaker, cutting the background where you can.",
-            "A profile that separates the two tells you which conversation to have, instead of leaving you with one number that fits everything and explains nothing.",
+            "A profile that separates the two shows which kind of problem you're dealing with.",
           ],
         },
         {

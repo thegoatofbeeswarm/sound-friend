@@ -40,7 +40,7 @@ function Page() {
           title: "Why tones are not enough",
           body: [
             "Pure-tone thresholds tell you how faint a sound can be before it disappears. Understanding speech in noise adds several other jobs on top: separating one voice from competing sound, tracking it over time, filling in the syllables that got masked, and holding the sentence in memory while the next one arrives.",
-            "Two people with near-identical audiograms can perform very differently on the same noise test. This is why a normal tone result and genuine difficulty in a loud room aren't a contradiction.",
+            "Two people with near-identical audiograms can perform very differently on the same noise test. This is why a normal tone result and real difficulty in a loud room aren't a contradiction.",
           ],
         },
         {
@@ -56,14 +56,14 @@ function Page() {
           title: "What training can and cannot do",
           body: [
             "Practising with speech in noise reliably makes people better at the task, and there is reasonable evidence of some transfer to related listening situations. It can't repair damage in the inner ear. The gains come from attention, strategy and pattern learning.",
-            "That distinction matters for expectations: training is worth doing, and it isn't a cure.",
+            "Training is worth doing. It isn't a cure.",
           ],
         },
         {
           title: "Getting a clean measurement",
           bullets: [
             "Use over-ear or in-ear headphones instead of laptop speakers, so the noise and speech arrive together at each ear.",
-            "Sit somewhere genuinely quiet; background noise in your room adds to the test noise and depresses your score.",
+            "Sit somewhere quiet; background noise in your room adds to the test noise and depresses your score.",
             "Set the volume once, comfortably, and don't change it mid-test.",
             "Do not test when you're exhausted. Fatigue costs several points on this task.",
           ],

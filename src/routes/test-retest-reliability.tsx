@@ -40,14 +40,14 @@ function Page() {
             {
               term: "Accuracy (validity)",
               value:
-                "How close a measurement is to the true value from a calibrated clinical setup. The app can't check this on its own; it needs a comparison against clinical results.",
+                "How close a measurement is to the true value from a calibrated clinical setup. The app can't check this on its own. It needs clinical results to compare against.",
             },
           ],
         },
         {
           title: "Where the spread comes from",
           bullets: [
-            "You: attention, tiredness, how willing you're to respond to a tone you're only half sure about.",
+            "You: attention, tiredness, how willing you are to respond to a tone you're only half sure about.",
             "The room: background noise raises the level at which a quiet tone becomes detectable.",
             "The hardware: headphone fit and position shift, and different models deliver different levels for the same setting.",
             "The software stack: browser and operating-system volume paths aren't calibrated to a physical reference.",
@@ -57,13 +57,13 @@ function Page() {
           title: "Catch trials and the quality score",
           body: [
             "Some trials in an Audiomaxxer screening are silent. If you report hearing a tone that was never played, that is a false alarm, and enough of them mean the result reflects guessing rather than detection.",
-            "Those catch trials feed a screening-quality score alongside response consistency and estimate stability. Repeat a low-quality run instead of reading meaning into it, so your trend isn't built on unreliable points.",
+            "Those catch trials feed a screening-quality score alongside response consistency and estimate stability, so when a run scores low, repeat it instead of reading meaning into it and building your trend on points you can't rely on.",
           ],
         },
         {
           title: "Estimate stability vs test conditions",
           body: [
-            "Estimate stability describes how tightly the adaptive algorithm has narrowed in on your threshold given the answers you gave. It is a statement about the maths, not about the room.",
+            "Estimate stability describes how tightly the adaptive algorithm has narrowed in on your threshold given the answers you gave. It says nothing about how quiet your room was.",
             "Test conditions are reported separately: headphones, volume setting, and how quiet your surroundings were. A very stable estimate collected in a noisy kitchen is still a poor measurement, and keeping the two figures apart stops one from disguising the other.",
           ],
         },

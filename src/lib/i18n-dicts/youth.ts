@@ -9,7 +9,7 @@ export const youthPack: {
       "Teenagers and young adults spend hours a day with speakers inside their ears, and the damage that starts there stays silent for years. Audiomaxxer is built for this age group.",
     "youth.c1.title": "The damage starts at 4-6 kHz",
     "youth.c1.body":
-      "Noise exposure shows up first in high pitches most people never notice missing. The screening spends its trials where early change actually appears.",
+      "Noise exposure shows up first in high pitches most people never notice missing. The screening spends more of its trials at those pitches.",
     "youth.c2.title": "Normal test, hard classroom",
     "youth.c2.body":
       "Young people with a clean audiogram can still struggle to follow speech in a noisy cafeteria or lecture hall. Speech in noise is measured separately for this reason.",

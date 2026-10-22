@@ -48,7 +48,7 @@ function Page() {
             {
               term: "Generic types (over-ear, on-ear, in-ear)",
               value:
-                "Rough type-level offsets only, for example about +6 dB for in-ear and +2 dB for on-ear. These aren't calibrated for a specific model, so the real offset may differ.",
+                "Rough type-level offsets only, for example about +6 dB for in-ear and +2 dB for on-ear. These aren't calibrated for a specific model. The real offset may differ.",
             },
           ],
         },
@@ -56,13 +56,13 @@ function Page() {
           title: "How the corrections were obtained",
           body: [
             "They are approximate offsets based on published third-party measurements of how these headphones respond, not on our own coupler or artificial-ear measurements. Fit style matters a great deal (an in-canal seal reads louder than an open earbud), and fit varies from person to person.",
-            "Treat the corrections as accurate to roughly ±5 dB, and even that isn't a guarantee.",
+            "Treat the corrections as accurate to roughly ±5 dB. Even that isn't a guarantee.",
           ],
         },
         {
           title: "Using uncalibrated headphones",
           body: [
-            "If your model isn't in the list, the screening still works and is still useful. Absolute thresholds may be off by several decibels, but relative tracking (comparing today's screening with your own earlier ones on the same hardware) still works, because the unknown offset is roughly constant across your sessions.",
+            "If your model isn't listed, the screening still works. It's still useful. Absolute thresholds may be off by several decibels, but relative tracking (comparing today's screening with your own earlier ones on the same hardware) still works, because the unknown offset is roughly constant across your sessions.",
             "The one thing to avoid is switching headphones or system volume between screenings and then reading meaning into the change.",
           ],
         },

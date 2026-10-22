@@ -27,19 +27,19 @@ function Page() {
     <ArticlePage
       kicker="Reading results"
       title="Audiogram explained"
-      intro="An audiogram is a small chart with a lot of information in it: pitch across the bottom, quietness you can detect up the side, and one curve per ear."
+      intro="An audiogram packs a lot into a small chart. Pitch runs along the bottom, the quietest sound you can detect runs up the side, and each ear gets its own curve."
       sections={[
         {
           title: "The two axes",
           body: [
-            "The horizontal axis is frequency (pitch), running from low tones on the left to high tones on the right. Audiomaxxer screens 500, 1000, 2000, 4000 and 8000 Hz, covering the range that carries most of speech plus the high band where noise damage tends to show first.",
-            "The vertical axis is level: how loud a tone had to be before you responded. Lower on the chart means a quieter tone was still audible, which is the better result. Clinical audiograms plot this axis downwards for the same reason.",
+            "The horizontal axis is frequency, which you hear as pitch. Low tones sit on the left. Audiomaxxer screens 500, 1000, 2000, 4000 and 8000 Hz, which covers most of the range speech uses plus the high band where noise damage tends to show up first.",
+            "The vertical axis is level: how loud a tone had to be before you responded. A lower number is better. It means a quieter tone was still audible, and that's why clinical audiograms put the lowest numbers at the top.",
           ],
         },
         {
           title: "One curve per ear",
           body: [
-            "Each ear is measured independently, so you get two curves. Small left–right differences are common and normal. A consistent gap at the same frequencies across several screenings is more interesting than a one-off difference, which can easily come from headphone fit or a moment of inattention.",
+            "Each ear is measured on its own, so you get two curves. Small left–right differences are common and normal. What's worth noticing is a gap that keeps showing up at the same frequencies across several screenings, because a one-off difference can easily come from how the headphones sat or from a moment when you weren't paying attention.",
           ],
         },
         {
@@ -54,13 +54,13 @@ function Page() {
         {
           title: "Why high frequencies matter for speech",
           body: [
-            "Consonants like s, f, th and sh carry much of their energy above 4 kHz. Losing sensitivity there makes speech in a busy room harder to pick apart long before the world sounds any quieter, which is why people notice it in cafés and classrooms long before they notice it anywhere else.",
+            "Consonants like s, f, th and sh carry much of their energy above 4 kHz. Lose sensitivity there and speech in a busy room gets harder to pick apart long before the world sounds any quieter. That's why people tend to notice it in cafés and classrooms first.",
           ],
         },
         {
           title: "Comparing screenings over time",
           body: [
-            "The single most useful thing you can do with an audiogram from a consumer app is compare it with your own earlier ones, taken with the same headphones, the same volume setting and a similarly quiet room. Trends across repeated screenings are far more trustworthy than any single absolute number.",
+            "The most useful thing you can do with an audiogram from a consumer app is compare it with your own earlier ones, taken with the same headphones, the same volume setting and a similarly quiet room. Keep the setup fixed. A trend across repeated screenings is far more trustworthy than any single number.",
           ],
         },
       ]}

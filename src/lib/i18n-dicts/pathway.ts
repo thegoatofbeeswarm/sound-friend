@@ -20,7 +20,7 @@ export const pathwayPack: {
     "path.badge": "Where hearing becomes thinking",
     "path.h1": "The signal leaves your ear in about one millisecond. It has sixteen more to go.",
     "path.lead":
-      "The screening measures what arrives at the auditory nerve. Everything you actually understand from a conversation is assembled after that, across six relays and a sheet of cortex. This is that stretch of the path, and the part Audiomaxxer aims to train.",
+      "The screening measures what arrives at the auditory nerve. Everything you understand from a conversation is assembled after that, across six relays and a sheet of cortex. This is that stretch of the path, and the part Audiomaxxer aims to train.",
     "path.disclaimer":
       "An explainer, not a diagnosis. Timings are typical values from brainstem-response recordings and vary between people.",
 
@@ -68,7 +68,7 @@ export const pathwayPack: {
     "path.st.cochlea.does":
       "Hair cells turn pressure into electrical spikes, using the pitch to sort them: high notes go near the entrance and low notes go deep inside. Every stage above inherits that map.",
     "path.st.cochlea.mind":
-      "This sets your fidelity ceiling. Nothing further up can recover detail the cochlea never encoded, which is why the 4–6 kHz notch quietly costs you consonants.",
+      "This sets your fidelity ceiling. Nothing further up can recover detail the cochlea never encoded, which is why the 4–6 kHz notch costs you consonants before you notice it.",
     "path.st.cochlea.train":
       "* Frequency discrimination asks how small a pitch difference you can still resolve.\u00a0\n\n\n* High-frequency recognition checks the bands noise takes first.",
     "path.st.cochlea.profile": "Hearing sensitivity and sound discrimination",
@@ -155,7 +155,7 @@ export const pathwayPack: {
     "path.rg.arcuate.mind":
       "This is verbal working memory. Without it you couldn't keep a phone number in your head long enough to dial it, follow a long sentence to the end, or remember a name right after hearing it.",
     "path.rg.arcuate.train":
-      "Conversation simulation asks a question after the exchange, not during it, so the material has to be held rather than reacted to.",
+      "Conversation simulation asks its question after the exchange ends, so you have to hold the material in mind.",
     "path.rg.arcuate.profile": "Auditory memory",
 
     "path.rg.broca.name": "Inferior frontal gyrus",
@@ -175,7 +175,7 @@ export const pathwayPack: {
     "path.rg.dlpfc.mind":
       "Mental effort is limited. At a loud dinner your brain spends so much of it straining to hear the words that little is left for storing them, which is why you leave tired and unable to recall what was said.",
     "path.rg.dlpfc.train":
-      "Everyday sounds and Street corner run long enough to load sustained attention rather than a single snap judgment.",
+      "Everyday sounds and Street corner run long enough to load sustained attention.",
     "path.rg.dlpfc.profile": "Auditory attention",
 
     "path.rg.hippo.name": "Hippocampus",
@@ -185,7 +185,7 @@ export const pathwayPack: {
     "path.rg.hippo.mind":
       "The Lancet Commission on dementia ranks hearing loss as the largest single modifiable midlife risk factor in its model. The link is an association rather than a demonstrated cause, and it is one reason to take an unnoticed loss seriously at twenty rather than sixty.",
     "path.rg.hippo.train":
-      "Restaurant table and Conversation simulation both ask what was said, minutes later, rather than what you heard just now.",
+      "Restaurant table and Conversation simulation both ask about what was said a few minutes earlier.",
     "path.rg.hippo.profile": "Auditory memory",
   },
 

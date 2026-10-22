@@ -27,7 +27,7 @@ function Page() {
     <ArticlePage
       kicker="Methods"
       title="Bayesian adaptive hearing testing"
-      intro="Instead of sweeping every level, an adaptive test asks the most informative question next. These are the exact parameters our screening runs with, so the method can be judged rather than taken on trust."
+      intro="Instead of sweeping every level, an adaptive test asks the most informative question next. These are the exact parameters our screening runs with, so you can judge the method yourself."
       sections={[
         {
           title: "Why adaptive rather than fixed",

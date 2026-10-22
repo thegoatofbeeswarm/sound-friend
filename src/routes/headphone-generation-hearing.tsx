@@ -4,7 +4,7 @@ import { scienceLinks } from "@/lib/science-links";
 
 const TITLE = "The Headphone Generation: Hearing Risk for Teens and Young Adults";
 const DESC =
-  "Hours of daily headphone use, concerts and gaming add up. What the WHO estimates about young listeners, which changes appear first, and what actually helps.";
+  "Hours of daily headphone use, concerts and gaming add up. What the WHO estimates about young listeners, which changes appear first, and what helps.";
 
 export const Route = createFileRoute("/headphone-generation-hearing")({
   head: () => ({
@@ -33,7 +33,7 @@ function Page() {
           title: "What the numbers say",
           body: [
             "A 2022 systematic review published in BMJ Global Health, summarised by the World Health Organization, estimated that around 24% of young people use personal listening devices at unsafe volumes, and that over one billion young people are potentially at risk of hearing loss from unsafe listening.",
-            "Risk estimates aren't predictions about any individual. They describe a population, and they exist because sound dose is the one part of the picture people can actually change.",
+            "Risk estimates aren't predictions about any individual. They describe a population, and they exist because sound dose is the one part of the picture people can change.",
           ],
         },
         {
@@ -55,7 +55,7 @@ function Page() {
         {
           title: "Why it shows up as 'noisy rooms are hard'",
           body: [
-            "Consonants like s, f, th and sh carry much of their energy in the high band. Losing a little sensitivity there makes speech mushier whenever something else competes with it, even though the world doesn't sound quieter. Classrooms, cafeterias, buses and group chats are where it surfaces first.",
+            "Consonants like s, f, th and sh carry much of their energy in the high band. Losing a little sensitivity there makes speech mushier whenever something else competes with it, even though the world doesn't sound quieter, and classrooms, cafeterias, buses and group chats are where that tends to surface first.",
           ],
         },
         {

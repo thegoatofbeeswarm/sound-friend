@@ -4,7 +4,7 @@ import { scienceLinks } from "@/lib/science-links";
 
 const TITLE = "How Online Hearing Tests Work (And What They Can Measure)";
 const DESC =
-  "A step-by-step explanation of browser-based hearing screening: pure-tone tracks, adaptive levels, room noise checks, headphone calibration and honest accuracy limits.";
+  "A step-by-step explanation of browser-based hearing screening: pure-tone tracks, adaptive levels, room noise checks, headphone adjustments and honest accuracy limits.";
 
 export const Route = createFileRoute("/how-online-hearing-tests-work")({
   head: () => ({
@@ -33,13 +33,13 @@ function Page() {
           title: "Step 1: Setting the room and the headphones",
           body: [
             "Before any tone is played, two things decide whether the result will mean anything: how quiet the room is, and what you're listening through. Background noise raises the level at which a tone becomes audible, so a screening taken in a noisy room reports thresholds that look worse than your real ones, especially at low frequencies, where room noise is loudest.",
-            "Audiomaxxer uses the microphone to estimate the background level before and during the screening, and headphone choice applies a model-specific correction where we have one. Both are recorded with the result so a noisy or uncalibrated test is labelled rather than silently trusted.",
+            "Audiomaxxer uses the microphone to estimate the background level before and during the screening, and headphone choice applies a model-specific correction where we have one. Both are saved with the result. A noisy or uncalibrated test gets a label.",
           ],
         },
         {
           title: "Step 2: Playing tones one ear at a time",
           body: [
-            "Each ear is tested separately with pure sine tones at 500, 1000, 2000, 4000 and 8000 Hz, ten tracks in total. Each tone lasts 900 milliseconds with 50 millisecond fades so there is no click at the start or end, followed by a short response window.",
+            "Each ear is tested on its own. The tones are pure sine waves at 500, 1000, 2000, 4000 and 8000 Hz, ten tracks in total. Each tone lasts 900 milliseconds with 50 millisecond fades so there is no click at the start or end, followed by a short response window.",
             "You simply indicate whether you heard the tone. There's no right answer to guess: the informative moments are the ones near the edge of audibility.",
           ],
         },
@@ -47,7 +47,7 @@ function Page() {
           title: "Step 3: Choosing the next level adaptively",
           body: [
             "A traditional audiogram sweeps levels up and down over a wide range, spending a lot of trials on sounds that were never in doubt. Audiomaxxer instead keeps a probability distribution over your threshold at each frequency and ear, updates it after every response, and presents the next tone where uncertainty is highest.",
-            "Because the algorithm also models occasional stray or missed presses, one mistake doesn't swing the estimate. A track finishes when the estimate is stable rather than after a fixed number of tones.",
+            "Because the algorithm also models occasional stray or missed presses, one mistake doesn't swing the estimate. A track ends once its estimate is stable. There's no fixed number of tones.",
           ],
         },
         {
